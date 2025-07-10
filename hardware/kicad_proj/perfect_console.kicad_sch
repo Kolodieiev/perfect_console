@@ -9559,7 +9559,7 @@
 	)
 	(wire
 		(pts
-			(xy 379.73 59.69) (xy 379.73 62.23)
+			(xy 379.73 59.69) (xy 379.73 66.04)
 		)
 		(stroke
 			(width 0)
@@ -9999,7 +9999,7 @@
 	)
 	(wire
 		(pts
-			(xy 379.73 54.61) (xy 379.73 57.15)
+			(xy 379.73 50.8) (xy 379.73 57.15)
 		)
 		(stroke
 			(width 0)
@@ -15014,7 +15014,7 @@
 		(dnp no)
 		(uuid "2d587ee7-fc05-4c4c-9551-1c90c3a197c0")
 		(property "Reference" "C16"
-			(at 636.016 93.98 90)
+			(at 635.254 93.98 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17012,7 +17012,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 379.73 62.23 0)
+		(at 379.73 66.04 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -17022,7 +17022,7 @@
 		(fields_autoplaced yes)
 		(uuid "5d4b6181-e9a7-4a6a-bb86-a59db01fa784")
 		(property "Reference" "#PWR31"
-			(at 379.73 68.58 0)
+			(at 379.73 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17031,7 +17031,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 379.73 67.31 0)
+			(at 379.73 71.12 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17039,7 +17039,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 379.73 62.23 0)
+			(at 379.73 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17048,7 +17048,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 379.73 62.23 0)
+			(at 379.73 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17057,7 +17057,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 379.73 62.23 0)
+			(at 379.73 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18700,7 +18700,7 @@
 	)
 	(symbol
 		(lib_id "power:VBUS")
-		(at 379.73 54.61 0)
+		(at 379.73 50.8 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -18710,7 +18710,7 @@
 		(fields_autoplaced yes)
 		(uuid "913efe58-85ce-4d7a-bfb4-bc93e1ccfba7")
 		(property "Reference" "#PWR30"
-			(at 379.73 58.42 0)
+			(at 379.73 54.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18719,7 +18719,7 @@
 			)
 		)
 		(property "Value" "VBUS"
-			(at 379.73 49.53 0)
+			(at 379.73 45.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18727,7 +18727,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 379.73 54.61 0)
+			(at 379.73 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18736,7 +18736,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 379.73 54.61 0)
+			(at 379.73 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18745,7 +18745,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VBUS\""
-			(at 379.73 54.61 0)
+			(at 379.73 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21609,7 +21609,7 @@
 		(dnp no)
 		(uuid "e07924b6-19ed-43d1-b97a-5e57f4ee719a")
 		(property "Reference" "C12"
-			(at 465.836 63.754 0)
+			(at 465.836 63.246 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21617,8 +21617,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1uF"
-			(at 465.328 65.786 0)
+		(property "Value" "10uF"
+			(at 465.328 66.548 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21751,7 +21751,7 @@
 		(dnp no)
 		(uuid "e3bb8f31-4417-4fcc-8ab2-54b46e7dc0d4")
 		(property "Reference" "C13"
-			(at 559.816 198.374 0)
+			(at 559.816 197.866 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21760,7 +21760,7 @@
 			)
 		)
 		(property "Value" "1uF"
-			(at 559.308 200.406 0)
+			(at 559.816 200.914 0)
 			(effects
 				(font
 					(size 1.27 1.27)
