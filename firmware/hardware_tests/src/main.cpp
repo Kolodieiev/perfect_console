@@ -1,5 +1,5 @@
-#define COMMON_TEST      // Загальне тестування: підключення до CH32, підключення кати пам'яті та дисплею.
-#define MIC_TEST         // Тест мікрофону. Звук зчитується з мікрофону, та транслюється в звукову карту.
+// #define COMMON_TEST      // Загальне тестування: підключення до CH32, підключення кати пам'яті та дисплею.
+#define AUDIO_TEST       // Тест мікрофону та звукової карти. Звук зчитується з мікрофону, та транслюється в звукову карту.
 #define LORA_TEST_MASTER // Тестування модуля LoRa в режимі надсилання пакетів.
 #define LORA_TEST_SLAVE  // Тестування модуля LoRa в режимі прийому пакетів.
 
@@ -15,6 +15,8 @@
 #include "meow/manager/sd/SD_Manager.h"
 #include "meow/manager/files/FileManager.h"
 #include "meow/driver/graphics/TFT_eSPI/TFT_eSPI.h"
+#include "meow/manager/audio/in/I2SInManager.h"
+#include "meow/manager/audio/out/I2SOutManager.h"
 //----------------------------------------
 using namespace meow;
 #define CH32_ADDR 0x66
@@ -142,10 +144,36 @@ void loop()
 #elif defined(AUDIO_TEST)
 // ---------------------------------------------------------------------------------------- Читання звуку з мікрофону і надсилання його до звукової карти
 
+#define BUFF_SIZE 200
+
+int16_t buff[BUFF_SIZE];
+
+void setup()
+{
+    //TODO enable modules
+    _i2s_in.init();
+    _i2s_out.init();
+
+    _i2s_in.enable();
+    _i2s_out.enable();
+}
+
+void loop()
+{
+    size_t samples_read = _i2s_in.read(buff, BUFF_SIZE);
+    _i2s_out.write(buff, samples_read, true);
+}
+
 #elif defined(LORA_TEST_MASTER)
 // ---------------------------------------------------------------------------------------- Надсилання пакетів модулем LoRa
+void setup() {}
+
+void loop() {}
 
 #elif defined(LORA_TEST_SLAVE)
 // ---------------------------------------------------------------------------------------- Читання пакетів модулем LoRa
+void setup() {}
+
+void loop() {}
 
 #endif
