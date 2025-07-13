@@ -150,7 +150,7 @@ int16_t buff[BUFF_SIZE];
 
 void setup()
 {
-    //TODO enable modules
+    // TODO enable modules
     _i2s_in.init();
     _i2s_out.init();
 
