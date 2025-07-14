@@ -19,8 +19,8 @@ const PinMapping _pin_map[] = {
     {GPIOD, GPIO_Pin_2,      3             }, // 9
     {GPIOD, GPIO_Pin_3,      4             }, // 10
     {GPIOD, GPIO_Pin_4,      7             }, // 11
-    {GPIOD, GPIO_Pin_5,      5             }, // 12
-    {GPIOD, GPIO_Pin_6,      6             }, // 13
+    {GPIOD, GPIO_Pin_5,      5             }, // 12 // TX
+    {GPIOD, GPIO_Pin_6,      6             }, // 13 // RX
     {GPIOD, GPIO_Pin_7,      ADC_CHANN_NONE}, // 14
     {GPIOA, GPIO_Pin_4,      ADC_CHANN_NONE}, // 15
     {GPIOA, GPIO_Pin_5,      ADC_CHANN_NONE}, // 16
