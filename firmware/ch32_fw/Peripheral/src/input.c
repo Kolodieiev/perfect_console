@@ -105,7 +105,36 @@ void disableBtn (uint16_t gpio_pin) {
     btn->is_enabled = DISABLE;
 }
 
+void enableBtnByPos (uint8_t btn_pos) {
+    if (!_input) {
+        printf ("\nError: input не було ініціалізовано");
+        return;
+    }
+
+    if (btn_pos >= _btns_counter)
+        return;
+
+    _input->butons[btn_pos].is_enabled = 1;
+}
+
+void disableBtnByPos (uint8_t btn_pos) {
+    if (!_input) {
+        printf ("\nError: input не було ініціалізовано");
+        return;
+    }
+
+    if (btn_pos >= _btns_counter)
+        return;
+
+    _input->butons[btn_pos].is_enabled = 0;
+}
+
 void setInputTouchTreshold (uint16_t treshold) {
+    if (!_input) {
+        printf ("\nError: input не було ініціалізовано");
+        return;
+    }
+
     _input->touch_treshold = treshold;
 }
 
