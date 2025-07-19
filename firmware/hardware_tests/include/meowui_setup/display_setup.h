@@ -23,7 +23,7 @@
 #define TFT_CS 14
 
 #define TFT_DC 38
-#define TFT_RST 39  // TFT reset pin connect to RST
+#define TFT_RST 39
 
 #define BACKLIGHT_PIN (uint8_t)40
 #define PWM_FREQ (uint16_t)3000
