@@ -5,6 +5,8 @@
 #include "touch.h"
 #include "i2c_cmd.h"
 
+#define DEBUG_LOG
+
 //------------------------------------------------------------------------------------------------------------- btns
 #define BTNS_NUM 7
 
@@ -44,8 +46,7 @@ uint8_t _i2c_out_buff[I2C_TEMP_BUFF_SIZE] = {0};
 uint8_t _btns_state_buff[BTNS_NUM_BUFF_SIZE] = {0};
 
 //------------------------------------------------------------------------------------------------------------- power
-#define TIME_TO_TOGGLE_PWR 2000
-#define TIME_TO_PRESS_POWER_RESET 2200
+#define TIME_TO_TOGGLE_PWR 3000
 uint8_t _is_sleeping = 0;
 
 //------------------------------------------------------------------------------------------------------------- func
@@ -69,6 +70,11 @@ int main (void) {
     initUsartPrintf (230400);
 
     //-----------------------
+
+#ifdef DEBUG_LOG
+    printf ("Begin...\r\n");
+#endif
+
     pinMode (PIN_POWER_BTN, GPIO_Mode_IPU);
     initPins();
     enableI2CSlave (I2C_FREQ, RX_ADDR, i2c_read_handler, i2c_write_handler);
@@ -80,9 +86,12 @@ int main (void) {
         if (_is_sleeping == 1) {
             if (digitalRead (PIN_POWER_BTN) == HIGH) {
                 power_btn_press_time = 0;
+#ifdef DEBUG_LOG
+                printf ("PIN_POWER_BTN == HIGH\r\n");
+#endif
                 goToSleep();
             } else {
-                if (millis() - power_btn_press_time > TIME_TO_PRESS_POWER_RESET) {
+                if (power_btn_press_time == 0) {
                     power_btn_press_time = millis();
                 } else if (millis() - power_btn_press_time > TIME_TO_TOGGLE_PWR) {
                     power_btn_press_time = 0;
@@ -94,7 +103,7 @@ int main (void) {
         }
 
         if (digitalRead (PIN_POWER_BTN) == LOW) {
-            if (millis() - power_btn_press_time > TIME_TO_PRESS_POWER_RESET) {
+            if (power_btn_press_time == 0) {
                 power_btn_press_time = millis();
             } else if (millis() - power_btn_press_time > TIME_TO_TOGGLE_PWR) {
                 power_btn_press_time = 0;
@@ -102,6 +111,8 @@ int main (void) {
             }
 
             continue;
+        } else {
+            power_btn_press_time = 0;
         }
 
         static unsigned long input_update_time = 0;
@@ -109,30 +120,51 @@ int main (void) {
             inputUpdate();
             loadInputState (_btns_state_buff);
             input_update_time = millis();
-            // printf ("UPD\r\n");
         }
     }
 }
 
 void initPins (void) {
-    pinMode (PIN_MIC_KEY, GPIO_Mode_Out_PP);
+#ifdef DEBUG_LOG
+    printf ("initPins\r\n");
+#endif
+
+    pinMode (PIN_POWER_KEY, GPIO_Mode_Out_PP); // TODO
+    digitalWrite (PIN_POWER_KEY, HIGH);
+
     pinMode (PIN_DISPLAY_KEY, GPIO_Mode_Out_PP);
-    pinMode (PIN_POWER_KEY, GPIO_Mode_Out_PP);
-    pinMode (PIN_LORA_KEY, GPIO_Mode_Out_PP);
+    digitalWrite (PIN_DISPLAY_KEY, HIGH);
+
     pinMode (PIN_AUDIO_OUT_KEY, GPIO_Mode_Out_PP);
+    digitalWrite (PIN_AUDIO_OUT_KEY, HIGH);
+
+    pinMode (PIN_MIC_KEY, GPIO_Mode_Out_PP);
+    pinMode (PIN_LORA_KEY, GPIO_Mode_Out_PP);
 
     enableInput (BTNS_NUM);
 
     addInputBtn (PIN_PTT_BTN);
-    addInputTouchBtn (PIN_OK_BTN);
-    addInputTouchBtn (PIN_BACK_BTN);
-    addInputTouchBtn (PIN_LEFT_BTN);
-    addInputTouchBtn (PIN_RIGHT_BTN);
-    addInputTouchBtn (PIN_UP_BTN);
-    addInputTouchBtn (PIN_DOWN_BTN);
+
+    addInputBtn (PIN_OK_BTN);
+    addInputBtn (PIN_BACK_BTN);
+    addInputBtn (PIN_LEFT_BTN);
+    addInputBtn (PIN_RIGHT_BTN);
+    addInputBtn (PIN_UP_BTN);
+    addInputBtn (PIN_DOWN_BTN);
+
+    // addInputTouchBtn (PIN_OK_BTN);
+    // addInputTouchBtn (PIN_BACK_BTN);
+    // addInputTouchBtn (PIN_LEFT_BTN);
+    // addInputTouchBtn (PIN_RIGHT_BTN);
+    // addInputTouchBtn (PIN_UP_BTN);
+    // addInputTouchBtn (PIN_DOWN_BTN);
 }
 
 void deinitPins (void) {
+#ifdef DEBUG_LOG
+    printf ("deinitPins\r\n");
+#endif
+
     disableInput();
     disableTouchCap();
 
@@ -176,7 +208,10 @@ void deinitPwrBtnExti (void) {
 }
 
 void goToSleep (void) {
-    // printf ("SLEEP\r\n");
+#ifdef DEBUG_LOG
+    printf ("goToSleep\r\n");
+#endif
+
     _is_sleeping = 1;
     initPwrBtnExti();
     deinitPins();
@@ -184,14 +219,19 @@ void goToSleep (void) {
 }
 
 void wakeUp (void) {
-    // printf ("WAKE UP\r\n");
+#ifdef DEBUG_LOG
+    printf ("wakeUp\r\n");
+#endif
+    deinitPwrBtnExti();
     _is_sleeping = 0;
     initPins();
 }
 
 void EXTI7_0_IRQHandler (void) {
     if (EXTI_GetITStatus (EXTI_Line1) != RESET) {
-        // printf ("EXTI\r\n");
+#ifdef DEBUG_LOG
+        printf ("EXTI\r\n");
+#endif
         EXTI_ClearITPendingBit (EXTI_Line1);
     }
 }
