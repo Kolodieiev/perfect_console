@@ -5,7 +5,7 @@
 #include "touch.h"
 #include "i2c_cmd.h"
 
-#define DEBUG_LOG
+// #define DEBUG_LOG
 
 //------------------------------------------------------------------------------------------------------------- btns
 #define BTNS_NUM 7
@@ -129,15 +129,11 @@ void initPins (void) {
     printf ("initPins\r\n");
 #endif
 
-    pinMode (PIN_POWER_KEY, GPIO_Mode_Out_PP); // TODO
+    pinMode (PIN_POWER_KEY, GPIO_Mode_Out_PP);
     digitalWrite (PIN_POWER_KEY, HIGH);
 
     pinMode (PIN_DISPLAY_KEY, GPIO_Mode_Out_PP);
-    digitalWrite (PIN_DISPLAY_KEY, HIGH);
-
     pinMode (PIN_AUDIO_OUT_KEY, GPIO_Mode_Out_PP);
-    digitalWrite (PIN_AUDIO_OUT_KEY, HIGH);
-
     pinMode (PIN_MIC_KEY, GPIO_Mode_Out_PP);
     pinMode (PIN_LORA_KEY, GPIO_Mode_Out_PP);
 
