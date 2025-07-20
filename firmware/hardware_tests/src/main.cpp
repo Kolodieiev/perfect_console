@@ -53,6 +53,8 @@ void startSPI()
 
 #if defined(COMMON_TEST)
 
+#define CH_DISPLAY_EN_PIN 15
+
 void setup()
 {
     // ---------------------------------------------------------------------------------------- Карта пам'яті
@@ -111,14 +113,15 @@ void setup()
     // ---------------------------------------------------------------------------------------- Дисплей
 
     log_i("Тестування дисплею...");
-
-    log_i("Вмикаю живлення дисплею та його підсвітку..."); // TODO
+    log_i("Вмикаю живлення дисплею та його підсвітку");
 
     pinMode(BACKLIGHT_PIN, OUTPUT);
     digitalWrite(BACKLIGHT_PIN, HIGH);
 
-    EXT_I2C_CMD cmd = I2C_CMD_PIN_ON;
-    _i2c.write(CH32_ADDR, &cmd, sizeof(cmd));
+    uint8_t cmd_buff[2]{I2C_CMD_PIN_ON, CH_DISPLAY_EN_PIN};
+    _i2c.write(CH32_ADDR, &cmd_buff, sizeof(cmd_buff));
+
+    delay(2);
 
     TFT_eSPI tft;
     tft.setRotation(3);
@@ -134,6 +137,8 @@ void setup()
     delay(1000);
 
     log_i("Вимикаю живлення дисплею");
+    cmd_buff[0] = I2C_CMD_PIN_OFF;
+    _i2c.write(CH32_ADDR, &cmd_buff, sizeof(cmd_buff));
     log_i("Тестування дисплею: Завершено");
 }
 
@@ -142,15 +147,30 @@ void loop()
 }
 
 #elif defined(AUDIO_TEST)
+
 // ---------------------------------------------------------------------------------------- Читання звуку з мікрофону і надсилання його до звукової карти
 
+#define CH_MIC_EN_PIN 14
+#define CH_SPK_EN_PIN 24
 #define BUFF_SIZE 200
 
 int16_t buff[BUFF_SIZE];
 
 void setup()
 {
-    // TODO enable modules
+    log_i("Тестування звуку...");
+
+    conectToCH32();
+
+    log_i("Вмикаю живлення звукової карти, підсилювача та мікрофона");
+
+    uint8_t cmd_buff[2]{I2C_CMD_PIN_ON, CH_SPK_EN_PIN};
+    _i2c.write(CH32_ADDR, &cmd_buff, sizeof(cmd_buff));
+    delay(2);
+    cmd_buff[1] = CH_MIC_EN_PIN;
+    _i2c.write(CH32_ADDR, &cmd_buff, sizeof(cmd_buff));
+    delay(2);
+
     _i2s_in.init();
     _i2s_out.init();
 
