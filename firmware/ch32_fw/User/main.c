@@ -133,9 +133,16 @@ void initPins (void) {
     digitalWrite (PIN_POWER_KEY, HIGH);
 
     pinMode (PIN_DISPLAY_KEY, GPIO_Mode_Out_PP);
+    digitalWrite (PIN_DISPLAY_KEY, LOW);
+
     pinMode (PIN_AUDIO_OUT_KEY, GPIO_Mode_Out_PP);
+    digitalWrite (PIN_AUDIO_OUT_KEY, LOW);
+
     pinMode (PIN_MIC_KEY, GPIO_Mode_Out_PP);
+    digitalWrite (PIN_MIC_KEY, LOW);
+
     pinMode (PIN_LORA_KEY, GPIO_Mode_Out_PP);
+    digitalWrite (PIN_LORA_KEY, LOW);
 
     enableInput (BTNS_NUM);
 
