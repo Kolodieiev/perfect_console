@@ -3,7 +3,7 @@
 #include <i2c_slave.h>
 #include "input.h"
 #include "touch.h"
-#include "i2c_cmd.h"
+#include "CoprocessorCMD.h"
 
 // #define DEBUG_LOG
 
@@ -240,34 +240,34 @@ void EXTI7_0_IRQHandler (void) {
 }
 
 void i2c_read_handler (const uint8_t *in_buff, uint8_t in_buff_size) {
-    ExtI2CMD_t cmd = in_buff[0];
+    CoprocessorCMD_t cmd = in_buff[0];
     switch (cmd) {
-    case I2C_CMD_BTNS_STATE:
+    case CCPU_CMD_GET_BTNS_STATE:
         memcpy (_i2c_out_buff, _btns_state_buff, BTNS_NUM_BUFF_SIZE);
         _data_size_to_send = BTNS_NUM_BUFF_SIZE;
         break;
-    case I2C_CMD_PIN_ON:
+    case CCPU_CMD_PIN_ON:
         if (in_buff_size < 2)
             return;
         digitalWrite (in_buff[1], HIGH);
         break;
-    case I2C_CMD_PIN_OFF:
+    case CCPU_CMD_PIN_OFF:
         if (in_buff_size < 2)
             return;
         digitalWrite (in_buff[1], LOW);
         break;
-    case I2C_CMD_OFF_BTN:
+    case CCPU_CMD_OFF_BTN:
         if (in_buff_size < 2)
             return;
         disableBtnByPos (in_buff[1]);
         break;
-    case I2C_CMD_ON_BTN:
+    case CCPU_CMD_ON_BTN:
         if (in_buff_size < 2)
             return;
         enableBtnByPos (in_buff[1]);
         break;
-    case I2C_CMD_DISABLE:
-    case I2C_CMD_ENABLE:
+    case CCPU_CMD_DISABLE:
+    case CCPU_CMD_ENABLE:
     default:
         return;
     }
