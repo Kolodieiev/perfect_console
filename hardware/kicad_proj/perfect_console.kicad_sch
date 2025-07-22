@@ -2296,10 +2296,10 @@
 						)
 					)
 				)
-				(pin input line
-					(at 16.51 -8.89 180)
+				(pin output line
+					(at 8.89 -19.05 90)
 					(length 2.54)
-					(name "L"
+					(name "LN"
 						(effects
 							(font
 								(size 0.508 0.508)
@@ -2314,10 +2314,10 @@
 						)
 					)
 				)
-				(pin output line
-					(at 8.89 -19.05 90)
+				(pin input line
+					(at 16.51 -8.89 180)
 					(length 2.54)
-					(name "LN"
+					(name "L"
 						(effects
 							(font
 								(size 0.508 0.508)
