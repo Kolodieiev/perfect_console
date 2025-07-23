@@ -20,6 +20,9 @@
 #define PIN_UP_BTN 9
 #define PIN_DOWN_BTN 10
 
+#define PIN_PB1 20
+#define PIN_PB3 21
+
 #define INPUT_UPD_TIME_MS 10
 
 //------------------------------------------------------------------------------------------------------------- keys
@@ -147,7 +150,6 @@ void initPins (void) {
     enableInput (BTNS_NUM);
 
     addInputBtn (PIN_PTT_BTN);
-
     addInputBtn (PIN_OK_BTN);
     addInputBtn (PIN_BACK_BTN);
     addInputBtn (PIN_LEFT_BTN);
