@@ -13,8 +13,8 @@ typedef enum {
     CCPU_CMD_PIN_ON,
     CCPU_CMD_PIN_OFF,
     CCPU_CMD_GET_BTNS_STATE,
-    CCPU_CMD_OFF_BTN,
-    CCPU_CMD_ON_BTN,
+    CCPU_CMD_BTN_OFF,
+    CCPU_CMD_BTN_ON,
 } CoprocessorCMD_t;
 
 

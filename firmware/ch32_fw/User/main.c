@@ -258,12 +258,12 @@ void i2c_read_handler (const uint8_t *in_buff, uint8_t in_buff_size) {
             return;
         digitalWrite (in_buff[1], LOW);
         break;
-    case CCPU_CMD_OFF_BTN:
+    case CCPU_CMD_BTN_OFF:
         if (in_buff_size < 2)
             return;
         disableBtnByPos (in_buff[1]);
         break;
-    case CCPU_CMD_ON_BTN:
+    case CCPU_CMD_BTN_ON:
         if (in_buff_size < 2)
             return;
         enableBtnByPos (in_buff[1]);
