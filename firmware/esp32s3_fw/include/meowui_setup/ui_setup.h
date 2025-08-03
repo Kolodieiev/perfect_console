@@ -9,6 +9,7 @@
 #include "context/home/HomeContext.h"
 #include "context/menu/MenuContext.h"
 #include "context/mp3/Mp3Context.h"
+#include "context/files/FilesContext.h"
 
 // -------------------------------- Додай перемикання контексту за прикладом
 #define SCREEN_CASES                   \
@@ -23,6 +24,9 @@
         break;                         \
     case ContextID::ID_CONTEXT_MP3:    \
         context = new Mp3Context();    \
+        break;                         \
+    case ContextID::ID_CONTEXT_FILES:  \
+        context = new FilesContext();  \
         break;
 
 // -------------------------------- Стартовий контекст

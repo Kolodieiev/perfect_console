@@ -50,3 +50,12 @@ const char STR_PREF_FS_AP_PWD[] = "fs_ap_pwd";
 //
 
 const char STR_SD_ERR[] = "SD не примонтовано";
+
+//
+
+const char STR_DEF_SSID[] = "meow";
+const char STR_DEF_PWD[] = "12345678";
+
+//
+
+const char STR_NEW_DIR[] = "Новий каталог";
