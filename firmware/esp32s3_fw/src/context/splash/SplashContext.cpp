@@ -26,9 +26,20 @@ SplashContext::SplashContext()
 
     // SDCARD
     if (_sd.isMounted())
+    {
         addLabel(OFFSET_LBL_INFO, y_pos, STR_SUCCSESS, TFT_GREEN);
+
+        String bright = SettingsManager::get(STR_PREF_BRIGHT);
+
+        if (bright.equals("") || bright.equals("0"))
+            _display.setBrightness(240);
+        else
+            _display.setBrightness(atoi(bright.c_str()));
+    }
     else
+    {
         addLabel(OFFSET_LBL_INFO, y_pos, STR_FAIL, TFT_RED);
+    }
 
     addLabel(OFFSET_LBL_RESULT, y_pos, "Ініціалізація SD", TFT_WHITE);
 
