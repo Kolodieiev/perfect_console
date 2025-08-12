@@ -1,6 +1,9 @@
 #pragma once
 #include <stdint.h>
 
+// Файл містить рядки, що повторюються в більше, ніж одному контексті.
+// Інші рядки знаходяться безпосередньо у cpp файлах контексту.
+
 const char STR_AUTHOR[] = "Автор: @Kolodieiev";
 const char STR_FIRM_VER[] = "Версія прошивки: ";
 const char STR_FIRM_VER_NUM[] = "0.0.1";
@@ -52,10 +55,17 @@ const char STR_PREF_FS_AP_PWD[] = "fs_ap_pwd";
 const char STR_SD_ERR[] = "SD не примонтовано";
 
 //
-
+const char STR_AP_NAME[] = "SSID:";
+const char STR_AP_PWD[] = "PWD:";
 const char STR_DEF_SSID[] = "meow";
 const char STR_DEF_PWD[] = "12345678";
 
 //
 
 const char STR_NEW_DIR[] = "Новий каталог";
+
+//
+
+const char STR_BRIGHT[] = "Яскравість";
+const char STR_AUDIO_MONO[] = "Монозвук";
+const char STR_FILE_SERVER[] = "Файловий сервер";
