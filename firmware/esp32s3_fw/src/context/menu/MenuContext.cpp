@@ -21,7 +21,6 @@ const char STR_READER_ITEM[] = "Читалка";
 const char STR_FILES_ITEM[] = "Файли";
 const char STR_GAME_ITEM[] = "Ігри";
 const char STR_WIFI_ITEM[] = "Підключення";
-const char STR_PREFERENCES_ITEM[] = "Налаштування";
 const char STR_FIRMWARE_ITEM[] = "Прошивка";
 
 uint8_t MenuContext::_last_sel_item_pos;
@@ -123,7 +122,7 @@ MenuContext::MenuContext()
     pref_img->init(ICO_WH, ICO_WH);
     pref_img->setSrc(SETTINGS_IMG);
 
-    Label *pref_lbl = creator.getItemLabel(STR_PREFERENCES_ITEM, 4, 2);
+    Label *pref_lbl = creator.getItemLabel(STR_PREFERENCES, 4, 2);
     pref_item->setLbl(pref_lbl);
 
     // Прошивка

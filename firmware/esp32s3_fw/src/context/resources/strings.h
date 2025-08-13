@@ -42,6 +42,8 @@ const char STR_OK[] = "OK";
 const char STR_NOTIFICATION[] = "Повідомлення";
 const char STR_CHANGE[] = "Змінити";
 const char STR_NONE[] = "NONE";
+const char STR_WAIT[] = "Очікуйте";
+const char STR_PREFERENCES[] = "Налаштування";
 
 //
 
@@ -69,3 +71,18 @@ const char STR_NEW_DIR[] = "Новий каталог";
 const char STR_BRIGHT[] = "Яскравість";
 const char STR_AUDIO_MONO[] = "Монозвук";
 const char STR_FILE_SERVER[] = "Файловий сервер";
+
+//
+
+const char STR_MULTI_GAME[] = "Мультиплеєр";
+const char STR_SOLO_GAME[] = "Один гравець";
+const char STR_TEST_GAME_NICK[] = "test_game_nick";
+const char STR_TEST_GAME_C_PWD[] = "test_game_c_pwd";
+const char STR_TEST_GAME_S_PWD[] = "test_game_s_pwd";
+const char STR_TEST_GAME_S_NAME[] = "test_game_s_name";
+const char STR_NICKNAME[] = "Нікнейм";
+const char STR_ENTER_NICK[] = "Введіть нікнейм";
+const char STR_SERV_NAME[] = "Назва сервера";
+const char STR_ENTER_SERV_NAME[] = "Введіть назву сервера";
+const char STR_SERV_PWD[] = "Пароль від сервера";
+const char STR_ENTER_SERV_PWD[] = "Введіть пароль від сервера";
