@@ -4,13 +4,3 @@ Meowui — це фреймворк, призначений для розробк
 
 [Документація проєкту](https://kolodieiev.github.io/meowui/)
   
-Скриншоти з прошивки на meowui:  
-  
-![](/images/screenshots/menu.gif)  
-  
-![](/images/screenshots/textbox.png)  
-  
-![](/images/screenshots/toggle.png)  
-  
-![](/images/screenshots/sokoban.png)  
-  
