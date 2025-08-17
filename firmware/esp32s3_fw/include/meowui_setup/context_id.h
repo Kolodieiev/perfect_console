@@ -18,6 +18,7 @@ namespace meow
         ID_CONTEXT_FIRMWARE,
         ID_CONTEXT_READER,
         ID_CONTEXT_PREF_SEL,
+        ID_CONTEXT_W_TALKIE,
         // Ігрові контексти
         ID_CONTEXT_SOKOBAN,
         ID_CONTEXT_TEST_SERVER,

@@ -9,6 +9,7 @@
 #include "./res/book.h"
 #include "./res/lua_ico.h"
 #include "./res/wifi_ico.h"
+#include "./res/walkie-talkie_ico.h"
 
 #include "../WidgetCreator.h"
 #include "meow/ui/widget/layout/EmptyLayout.h"
@@ -18,6 +19,7 @@
 
 const char STR_MUSIC_ITEM[] = "Музика";
 const char STR_READER_ITEM[] = "Читалка";
+const char STR_W_TALKIE_ITEM[] = "Рація";
 const char STR_FILES_ITEM[] = "Файли";
 const char STR_GAME_ITEM[] = "Ігри";
 const char STR_WIFI_ITEM[] = "Підключення";
@@ -46,6 +48,19 @@ MenuContext::MenuContext()
     _scrollbar->setHeight(_menu->getHeight());
     _scrollbar->setPos(_menu->getWidth() + _menu->getXPos(), _menu->getYPos());
     _scrollbar->setBackColor(COLOR_MAIN_BACK);
+
+    // Рація
+    MenuItem *w_talkie_item = creator.getMenuItem(ID_CONTEXT_W_TALKIE);
+    _menu->addItem(w_talkie_item);
+
+    Image *w_talkie_img = new Image(1);
+    w_talkie_item->setImg(w_talkie_img);
+    w_talkie_img->setTranspColor(TFT_TRANSPARENT);
+    w_talkie_img->init(ICO_WH, ICO_WH);
+    w_talkie_img->setSrc(WALKIE_TALKIE_IMG);
+
+    Label *w_talkie_lbl = creator.getItemLabel(STR_W_TALKIE_ITEM, 4, 2);
+    w_talkie_item->setLbl(w_talkie_lbl);
 
     // Файли
     MenuItem *files_item = creator.getMenuItem(ID_CONTEXT_FILES);
