@@ -26,9 +26,9 @@ private:
     };
 
     Image *_bat_ico;
-    Label *_bat_cap_lbl{nullptr};
+    Label *_bat_volt_lbl{nullptr};
     unsigned long _upd_timer{0};
     uint16_t *_wallpaper_ptr{nullptr};
 
-    void updateBatCap();
+    void updateBatVoltage();
 };

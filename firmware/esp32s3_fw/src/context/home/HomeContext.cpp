@@ -8,9 +8,12 @@
 
 const char EMPTY_BAT[] = "0.00";
 
+#define VOLTAGE_SAMP_NUM 128
+#define R_DIV_K 0.7627f
+
 HomeContext::HomeContext()
 {
-    // pinMode(PIN_VOLT_MEASH, INPUT);
+    pinMode(PIN_VOLT_MEASH, INPUT);
 
     WidgetCreator creator;
 
@@ -30,24 +33,24 @@ HomeContext::HomeContext()
         layout->addWidget(wallpp_img);
     }
 
-    _bat_cap_lbl = new Label(ID_BAT_LVL);
-    layout->addWidget(_bat_cap_lbl);
-    _bat_cap_lbl->setText(EMPTY_BAT);
-    _bat_cap_lbl->setWidth(56);
-    _bat_cap_lbl->setHeight(35);
-    _bat_cap_lbl->setAlign(Label::ALIGN_CENTER);
-    _bat_cap_lbl->setGravity(Label::GRAVITY_CENTER);
-    _bat_cap_lbl->setPos(_display.width() - TFT_CUTOUT - DISPLAY_PADDING - _bat_cap_lbl->getWidth(), DISPLAY_PADDING);
-    _bat_cap_lbl->setTransparency(true);
+    _bat_volt_lbl = new Label(ID_BAT_LVL);
+    layout->addWidget(_bat_volt_lbl);
+    _bat_volt_lbl->setText(EMPTY_BAT);
+    _bat_volt_lbl->setWidth(56);
+    _bat_volt_lbl->setHeight(35);
+    _bat_volt_lbl->setAlign(Label::ALIGN_CENTER);
+    _bat_volt_lbl->setGravity(Label::GRAVITY_CENTER);
+    _bat_volt_lbl->setPos(_display.width() - TFT_CUTOUT - DISPLAY_PADDING - _bat_volt_lbl->getWidth(), DISPLAY_PADDING);
+    _bat_volt_lbl->setTransparency(true);
 
     _bat_ico = new Image(1);
-    _bat_cap_lbl->setBackImg(_bat_ico);
-    _bat_ico->init(_bat_cap_lbl->getWidth(), _bat_cap_lbl->getHeight());
+    _bat_volt_lbl->setBackImg(_bat_ico);
+    _bat_ico->init(_bat_volt_lbl->getWidth(), _bat_volt_lbl->getHeight());
     _bat_ico->setSrc(ICO_BATTERY);
     _bat_ico->setTransparency(true);
     _bat_ico->setTranspColor(TFT_TRANSPARENT);
 
-    updateBatCap();
+    updateBatVoltage();
 }
 
 HomeContext::~HomeContext()
@@ -72,25 +75,24 @@ void HomeContext::update()
     if (millis() - _upd_timer > UPD_DISPLAY_INTERVAL_MS)
     {
         _upd_timer = millis();
-        updateBatCap();
+        updateBatVoltage();
     }
 }
 
-void HomeContext::updateBatCap()
+void HomeContext::updateBatVoltage() // TODO Винести в утиліти
 {
-    // float DIV_K{0.5827};
-    // const uint8_t READ_CYCLES_NUMBER = 128;
+    float bat_voltage = 0.0f;
 
-    // float bat_voltage{0.0f};
+    for (uint8_t i{0}; i < VOLTAGE_SAMP_NUM; ++i)
+        bat_voltage += analogRead(PIN_VOLT_MEASH);
 
-    // for (uint8_t i{0}; i < READ_CYCLES_NUMBER; ++i)
-    //     bat_voltage += analogRead(PIN_VOLT_MEASH);
+    bat_voltage /= VOLTAGE_SAMP_NUM;
+    bat_voltage *= 3.3;
+    bat_voltage /= 4095;
+    bat_voltage /= R_DIV_K;
 
-    // bat_voltage /= READ_CYCLES_NUMBER;
-    // bat_voltage *= 3.3;
-    // bat_voltage /= 4095;
-    // bat_voltage /= DIV_K;
+    String volt_str = String(bat_voltage);
+    _bat_volt_lbl->setText(volt_str);
 
-    // String volt_str = String(bat_voltage);
-    // _bat_cap_lbl->setText(volt_str);
+    getLayout()->forcedDraw();
 }
