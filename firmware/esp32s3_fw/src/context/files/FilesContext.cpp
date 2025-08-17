@@ -803,9 +803,6 @@ void FilesContext::startFileServer(FileServer::ServerMode mode)
 
 void FilesContext::stopFileServer()
 {
-    if (!_is_back_eabled)
-        return;
-
     _server.stop();
 
     showFilesTmpl();

@@ -82,7 +82,6 @@ private:
     Image *_qr_img;
     uint16_t *_qr_img_buff = nullptr;
     uint16_t _qr_width = 0;
-    bool _is_back_eabled = true;
     //
     FixedMenu *_context_menu;
     ScrollBar *_scrollbar;
