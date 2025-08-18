@@ -1,7 +1,7 @@
 #include "HomeContext.h"
 #include "../WidgetCreator.h"
 #include "meow/util/img/BmpUtil.h"
-#include "./res/ico/battery.h"
+#include "../resources/ico/battery.h"
 
 #define PIN_VOLT_MEASH 4
 #define UPD_DISPLAY_INTERVAL_MS 5000UL
