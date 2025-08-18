@@ -9,7 +9,7 @@
 const char EMPTY_BAT[] = "0.00";
 
 #define VOLTAGE_SAMP_NUM 128
-#define R_DIV_K 0.7627f
+#define R_DIV_K 0.7744f
 
 HomeContext::HomeContext()
 {
