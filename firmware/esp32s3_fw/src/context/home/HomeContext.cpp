@@ -2,19 +2,14 @@
 #include "../WidgetCreator.h"
 #include "meow/util/img/BmpUtil.h"
 #include "../resources/ico/battery.h"
+#include "meow/util/battery/BatteryUtil.h"
 
-#define PIN_VOLT_MEASH 4
 #define UPD_DISPLAY_INTERVAL_MS 5000UL
 
 const char EMPTY_BAT[] = "0.00";
 
-#define VOLTAGE_SAMP_NUM 128
-#define R_DIV_K 0.7744f
-
 HomeContext::HomeContext()
 {
-    pinMode(PIN_VOLT_MEASH, INPUT);
-
     WidgetCreator creator;
 
     EmptyLayout *layout = creator.getEmptyLayout();
@@ -79,18 +74,9 @@ void HomeContext::update()
     }
 }
 
-void HomeContext::updateBatVoltage() // TODO Винести в утиліти
+void HomeContext::updateBatVoltage()
 {
-    float bat_voltage = 0.0f;
-
-    for (uint8_t i{0}; i < VOLTAGE_SAMP_NUM; ++i)
-        bat_voltage += analogRead(PIN_VOLT_MEASH);
-
-    bat_voltage /= VOLTAGE_SAMP_NUM;
-    bat_voltage *= 3.3;
-    bat_voltage /= 4095;
-    bat_voltage /= R_DIV_K;
-
+    float bat_voltage = BatteryUtil::readVoltVal();
     String volt_str = String(bat_voltage);
     _bat_volt_lbl->setText(volt_str);
 
