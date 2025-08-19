@@ -1,4 +1,6 @@
 #include "LoraSettingsContext.h"
+#include "meow/lib/qr/QR_Gen.h"
+#include "meow/manager/settings/SettingsManager.h"
 
 namespace meow
 {

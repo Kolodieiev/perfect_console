@@ -44,7 +44,10 @@ const char STR_CHANGE[] = "Змінити";
 const char STR_NONE[] = "NONE";
 const char STR_WAIT[] = "Очікуйте";
 const char STR_PREFERENCES[] = "Налаштування";
-
+const char STR_ENABLE[] = "Увімкнути";
+const char STR_DISABLE[] = "Вимкнути";
+const char STR_ENABLED[] = "Увімкнено";
+const char STR_DISABLED[] = "Вимкнено";
 //
 
 const char STR_PREF_BRIGHT[] = "brightness";
@@ -86,3 +89,18 @@ const char STR_SERV_NAME[] = "Назва сервера";
 const char STR_ENTER_SERV_NAME[] = "Введіть назву сервера";
 const char STR_SERV_PWD[] = "Пароль від сервера";
 const char STR_ENTER_SERV_PWD[] = "Введіть пароль від сервера";
+
+//
+
+const char STR_EMPTY_BAT[] = "0.00";
+
+//
+const char STR_CHANN_TITLE[] = "Канал:";
+const char STR_ENCRYPT_TITLE[] = "Шифрування:";
+const char STR_POWER_TITLE[] = "Потужність:";
+const char STR_POWER_MIN_VAL[] = "Мінімальна";
+const char STR_POWER_MID_VAL[] = "Середня";
+const char STR_POWER_HIGH_VAL[] = "Висока";
+const char STR_POWER_MAX_VAL[] = "Максимальна";
+const char STR_LORA_SETS_DIR[] = "LRE";
+const char STR_LORA_SETS_NAME[] = "/LRE.sets";

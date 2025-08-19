@@ -1,7 +1,8 @@
 #pragma once
 #include <Arduino.h>
-
 #include "meow/ui/context/IContext.h"
+
+const char STR_GENERATE_KEY[] = "Згенерувати ключ";
 
 namespace meow
 {
