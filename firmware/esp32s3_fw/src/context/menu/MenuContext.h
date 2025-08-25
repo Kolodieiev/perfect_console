@@ -25,11 +25,11 @@ private:
         ID_SCROLLBAR,
     };
 
+    std::vector<IWidget *> _bin;
+
     FixedMenu *_menu;
     ScrollBar *_scrollbar;
 
-    std::vector<IWidget *> _bin;
-    
     static uint8_t _last_sel_item_pos;
 
     void up();

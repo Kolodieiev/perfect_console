@@ -83,110 +83,85 @@ namespace test_server
             ID_CONT_PREF_SERV_PWD,
         };
 
-        ContextID _context_id{ID_CONT_MAIN};
-
-        // Dialog
-        TextBox *_dialog_txt;
-        Keyboard *_keyboard;
         void addDialog(EmptyLayout *layout, const char *title_txt, const char *start_txt);
-        //
-        String _serv_ssid;
-        String _serv_pwd;
-        // ---------------------------- Main
-        const uint16_t IMG_W = 200;
-        const uint16_t IMG_H = 40;
-        const uint16_t ITEMS_SPASING = 10;
-        Image *_img_back_normal;
-        Image *_img_back_hover;
-        FixedMenu *_main_menu;
         void showMainMenu();
         void handleMainBtns();
-
-        // ---------------------------- Role
-        FixedMenu *_role_menu;
         void showSelectRole();
         void handleRoleBtns();
-
-        // ---------------------------- Lobby
-        FixedMenu *_lobby_menu;
-        const uint8_t SERVER_WIFI_CHANN{6};
-
-        // --------------------------------------------------------------- Client lobby
-        String _client_nick;
-
-        GameClient _client;
-        //
-        FixedMenu *_wifi_list_menu;
-
-        // Список wifi
         void showWifiList();
         void handleWifiListBtns();
-        static void wifiScanDoneHandler(void *arg);
         void readWifiScan();
-        // Ввід паролю до wifi
         void showConnectDialog();
-        // Підключення до wifi
         void showConnToAP();
         void handleConnToAPBtns();
-        static void wifiConnDoneHandler(void *arg, wl_status_t conn_status);
         void updateConnectState(wl_status_t conn_status);
-
-        // Підключення до сервера
         void handleServerData(const UdpPacket *packet);
-        static void onServerData(const UdpPacket *packet, void *arg);
         void handleServerConn();
         void handleServerDisconn();
-        static void serverConnHandler(void *arg);
-        static void serverDisconnHandler(void *arg);
 
-        // Вікно лоббі
         void showClientLobby();
         void handleClientLobbyBtns();
 
-        // --------------------------------------------------------------- Server lobby
-        GameServer _server;
-
-        // Головне вікно лоббі. Очікування гравців
-        FixedMenu *_clients_list_menu;
         void showServerLobby();
         void updateClientsList(const ClientWrapper *disconnected_client = nullptr);
         void handleServerLobbyBtns();
         void openServerLobby();
-        // Показати контекстне меню
-        FixedMenu *_lobby_context_menu;
+
         void showServLobbyContMenu();
         void hideServLobbyContMenu();
         void handleLobbyContMenuBtns();
 
-        // Обробка запиту приєднання гравця
-        const ClientWrapper *_conn_client_wrap{nullptr};
-        ConfirmResultHandler_t _confirm_result_handler{nullptr};
-        //
-        // Приєднання клієнта
-        static void clientConfirmHandler(const ClientWrapper *cl_wrap, ConfirmResultHandler_t result_handler, void *arg);
         void handleClientConn(const ClientWrapper *cl_wrap, ConfirmResultHandler_t result_handler);
         void showClientConn();
         void handleClientConnBtns();
-        // Обробка від'єднання клієнта
         void handleClientDisconn(const ClientWrapper *cl_wrap);
-        static void clientDisconnHandler(const ClientWrapper *cl_wrap, void *arg);
-        // ---------------------------- Pref
-        FixedMenu *_pref_menu;
         void showPrefMain();
         void handlePrefMainBtns();
-        //
         void showPrefNick();
         void showPrefServName();
         void showPrefServPwd();
         void handleDialBtns();
         void handlePrefSaveBtns();
-        // ---------------------------- Game
-        bool _is_server{false};
-        bool _is_client{false};
-
-        IGameScene *_scene;
-        DataStream _stored_objs{1}; // Перенесення об'єктів між сценами не буде відбуватися. Тому виділяємо тільки 1 байт
         void showMainScene();
         void updateGame();
+
+        static void clientDisconnHandler(const ClientWrapper *cl_wrap, void *arg);
+        static void serverConnHandler(void *arg);
+        static void serverDisconnHandler(void *arg);
+        static void onServerData(const UdpPacket *packet, void *arg);
+        static void wifiConnDoneHandler(void *arg, wl_status_t conn_status);
+        static void wifiScanDoneHandler(void *arg);
+        static void clientConfirmHandler(const ClientWrapper *cl_wrap, ConfirmResultHandler_t result_handler, void *arg);
+
+    private:
+        GameServer _server;
+        GameClient _client;
+
+        ConfirmResultHandler_t _confirm_result_handler{nullptr};
+
+        String _client_nick;
+        String _serv_ssid;
+        String _serv_pwd;
+
+        DataStream _stored_objs{1}; // Перенесення об'єктів між сценами не буде відбуватися. Тому виділяємо тільки 1 байт
+
+        const ClientWrapper *_conn_client_wrap{nullptr};
+        TextBox *_dialog_txt;
+        Keyboard *_keyboard;
+        Image *_img_back_normal;
+        Image *_img_back_hover;
+        FixedMenu *_main_menu;
+        FixedMenu *_role_menu;
+        FixedMenu *_lobby_menu;
+        FixedMenu *_pref_menu;
+        FixedMenu *_wifi_list_menu;
+        FixedMenu *_clients_list_menu;
+        FixedMenu *_lobby_context_menu;
+        IGameScene *_scene;
+
+        ContextID _context_id{ID_CONT_MAIN};
+
+        bool _is_server{false};
+        bool _is_client{false};
     };
 }

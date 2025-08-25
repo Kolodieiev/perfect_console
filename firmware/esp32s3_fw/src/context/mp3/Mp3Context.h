@@ -1,9 +1,7 @@
 #pragma once
 #include <Arduino.h>
-
 #include "meow/lib/audio/mp3/Audio.h"
 #include "meow/manager/settings/SettingsManager.h"
-
 #include "meow/ui/context/IContext.h"
 #include "meow/ui/widget/scrollbar/ScrollBar.h"
 #include "meow/ui/widget/menu/FixedMenu.h"
@@ -56,47 +54,6 @@ private:
         ID_PROGRESS,
         ID_MSG_LBL,
     };
-
-    SettingsManager _settings;
-
-    Mode _mode{MODE_PLST_SEL};
-
-    Label *_track_name_lbl;
-    Image *_play_btn;
-    Label *_cur_track_time_lbl;
-    Label *_gen_track_time_lbl;
-    Label *_volume_lbl;
-    ProgressBar *_progress;
-
-    Label *_msg_lbl;
-    uint8_t _upd_counter{0};
-
-    unsigned long _upd_msg_time{0};
-
-    Audio _audio;
-
-    String _playlist_name;
-    String _track_name;
-    uint8_t _volume;
-    uint16_t _track_pos{0};
-    int32_t _track_time{-1};
-
-    //
-    uint8_t _attempt_to_play_next_counter{0};
-    bool _is_new_track{true};
-    bool _is_playing{false};
-    //
-    //
-    ScrollBar *_scrollbar;
-    FixedMenu *_context_menu;
-    DynamicMenu *_tracks_list;
-    FixedMenu *_playlists_list;
-    //
-    std::vector<FileInfo> _playlists;
-    std::vector<FileInfo> _tracks;
-    //
-    uint8_t _brightness;
-    bool _is_locked{false};
     //
     void savePref();
     //
@@ -155,4 +112,40 @@ private:
     //
     void handlePrevItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id);
     static void onPrevItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id, void *arg);
+
+private:
+    Audio _audio;
+
+    String _playlist_name;
+    String _track_name;
+
+    std::vector<FileInfo> _playlists;
+    std::vector<FileInfo> _tracks;
+
+    Label *_track_name_lbl;
+    Image *_play_btn;
+    Label *_cur_track_time_lbl;
+    Label *_gen_track_time_lbl;
+    Label *_volume_lbl;
+    ProgressBar *_progress;
+    Label *_msg_lbl;
+    ScrollBar *_scrollbar;
+    FixedMenu *_context_menu;
+    DynamicMenu *_tracks_list;
+    FixedMenu *_playlists_list;
+    //
+    unsigned long _upd_msg_time{0};
+    int32_t _track_time{-1};
+    uint16_t _track_pos{0};
+
+    Mode _mode{MODE_PLST_SEL};
+
+    uint8_t _attempt_to_play_next_counter{0};
+    uint8_t _brightness;
+    uint8_t _upd_counter{0};
+    uint8_t _volume;
+
+    bool _is_new_track{true};
+    bool _is_playing{false};
+    bool _is_locked{false};
 };

@@ -25,8 +25,6 @@ protected:
     virtual void update() override;
 
 private:
-    const uint8_t MENU_ITEMS_NUM{7};
-
     enum Widget_ID : uint8_t
     {
         ID_SCROLLBAR = 1,
@@ -70,44 +68,7 @@ private:
         MODE_FILE_SERVER
     };
     //
-    FileManager _f_mgr;
-    //
-    Label *_msg_lbl;
-    unsigned long _upd_msg_time{0};
-    uint8_t _upd_counter{0};
-    //
-    Mode _mode{MODE_NAVIGATION};
-    //
-    FileServer _server;
-    Image *_qr_img;
-    uint16_t *_qr_img_buff = nullptr;
-    uint16_t _qr_width = 0;
-    //
-    FixedMenu *_context_menu;
-    ScrollBar *_scrollbar;
-    ProgressBar *_task_progress;
-    DynamicMenu *_files_list;
-    Image *_dir_img;
-    //
-    Keyboard *_keyboard;
-    TextBox *_dialog_txt;
-    bool _dialog_success_res{false};
-    String _old_name;
-    //
-    bool _is_dir{false};
-    bool _has_moving_file{false};
-    bool _has_copying_file{false};
-    String _path_from;
-    String _name_from;
-    String _copy_to_path;
-    //
-    Label *_file_size_lbl;
-    Label *_file_pos_lbl;
-    //
-    std::vector<String> _breadcrumbs;
     void makePathFromBreadcrumbs(String &out_str);
-    //
-    std::vector<FileInfo> _files;
     //
     void showFilesTmpl();
     void showCopyingTmpl();
@@ -156,4 +117,37 @@ private:
     static void onPrevItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id, void *arg);
     //
     void showResultToast(bool result);
+
+private:
+    FileServer _server;
+
+    String _path_from;
+    String _name_from;
+    String _copy_to_path;
+    String _old_name;
+    std::vector<FileInfo> _files;
+    std::vector<String> _breadcrumbs;
+    
+    Label *_msg_lbl;
+    Image *_qr_img;
+    uint16_t *_qr_img_buff = nullptr;
+    FixedMenu *_context_menu;
+    ScrollBar *_scrollbar;
+    ProgressBar *_task_progress;
+    DynamicMenu *_files_list;
+    Image *_dir_img;
+    Keyboard *_keyboard;
+    TextBox *_dialog_txt;
+    Label *_file_size_lbl;
+    Label *_file_pos_lbl;
+
+    unsigned long _upd_msg_time{0};
+    uint16_t _qr_width = 0;
+
+    Mode _mode{MODE_NAVIGATION};
+    uint8_t _upd_counter{0};
+    bool _is_dir{false};
+    bool _has_moving_file{false};
+    bool _has_copying_file{false};
+    bool _dialog_success_res{false};
 };
