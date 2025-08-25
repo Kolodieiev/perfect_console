@@ -6,6 +6,7 @@
 #include "meow/ui/widget/layout/EmptyLayout.h"
 #include "meow/ui/widget/toggle/ToggleSwitch.h"
 #include "meow/ui/widget/menu/item/ToggleItem.h"
+#include "meow/manager/settings/SettingsManager.h"
 
 const char STR_TRANSMITTER_STATE[] = "Стан модуля WIFi";
 const char STR_START_SCAN[] = "Розпочато скануваня";
@@ -307,7 +308,7 @@ void WiFiContext::ok()
         }
         else if (ctx_item_id == ID_ITEM_FORGET)
         {
-            String path_to_pwd = _settings.getSettingsFilePath(_main_menu->getCurrItemText().c_str(), STR_WIFI_SUBDIR);
+            String path_to_pwd = SettingsManager::getSettingsFilePath(_main_menu->getCurrItemText().c_str(), STR_WIFI_SUBDIR);
             if (!_fs.rmFile(path_to_pwd.c_str(), true))
                 showToast(STR_FAIL);
             else
@@ -363,7 +364,7 @@ void WiFiContext::showContextMenuTmpl()
         disconn_item->setLbl(disconn_lbl);
     }
 
-    String wifi_pass = _settings.get(_main_menu->getCurrItemText().c_str(), STR_WIFI_SUBDIR);
+    String wifi_pass = SettingsManager::get(_main_menu->getCurrItemText().c_str(), STR_WIFI_SUBDIR);
 
     if (!wifi_pass.isEmpty())
     {
@@ -419,7 +420,7 @@ void WiFiContext::changeKbCaps()
 
 void WiFiContext::savePressed()
 {
-    if (_settings.set(_sel_ssid.c_str(), _pwd_txt->getText().c_str(), STR_WIFI_SUBDIR))
+    if (SettingsManager::set(_sel_ssid.c_str(), _pwd_txt->getText().c_str(), STR_WIFI_SUBDIR))
         connectToNet(_sel_ssid);
     else
         showToast(STR_FAIL, TOAST_LENGTH_LONG);
@@ -500,7 +501,7 @@ void WiFiContext::scanDoneHandler(void *arg)
 
 void WiFiContext::connectToNet(const String &ssid)
 {
-    String wifi_pass = _settings.get(ssid.c_str(), STR_WIFI_SUBDIR);
+    String wifi_pass = SettingsManager::get(ssid.c_str(), STR_WIFI_SUBDIR);
 
     if (wifi_pass.isEmpty())
     {

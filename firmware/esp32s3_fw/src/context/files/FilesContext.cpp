@@ -1,5 +1,4 @@
 #include "FilesContext.h"
-
 #include "meow/lib/qr/QR_Gen.h"
 #include "meow/manager/settings/SettingsManager.h"
 //
@@ -11,6 +10,7 @@
 
 #define UPD_TRACK_INF_INTERVAL 1000UL
 #define PADDING_BOTT 40
+#define MENU_ITEMS_NUM 7
 
 const char STR_SIZE[] = "File size:";
 
@@ -37,7 +37,7 @@ FilesContext::FilesContext()
         return;
     }
 
-    _f_mgr.setTaskDoneHandler(taskDone, this);
+    _fs.setTaskDoneHandler(taskDone, this);
 
     showFilesTmpl();
     indexCurDir();
@@ -368,7 +368,7 @@ void FilesContext::saveDialogResult()
         dir_path += "/";
         dir_path += _dialog_txt->getText();
 
-        _dialog_success_res = _f_mgr.createDir(dir_path.c_str());
+        _dialog_success_res = _fs.createDir(dir_path.c_str());
         showResultToast(_dialog_success_res);
     }
     else if (_mode = MODE_RENAME_DIALOG)
@@ -386,7 +386,7 @@ void FilesContext::saveDialogResult()
         new_name += "/";
         new_name += _dialog_txt->getText();
 
-        _dialog_success_res = _f_mgr.rename(old_name.c_str(), new_name.c_str());
+        _dialog_success_res = _fs.rename(old_name.c_str(), new_name.c_str());
         showResultToast(_dialog_success_res);
     }
 
@@ -444,7 +444,7 @@ void FilesContext::pasteFile()
 
     if (_has_moving_file)
     {
-        if (_f_mgr.exists(old_file_path.c_str()) && _f_mgr.rename(old_file_path.c_str(), new_file_path.c_str()))
+        if (_fs.exists(old_file_path.c_str()) && _fs.rename(old_file_path.c_str(), new_file_path.c_str()))
         {
             indexCurDir();
             fillFilesTmpl();
@@ -456,7 +456,7 @@ void FilesContext::pasteFile()
     }
     else if (_has_copying_file)
     {
-        if (!_f_mgr.fileExist(old_file_path.c_str()) || !_f_mgr.startCopyFile(old_file_path.c_str(), new_file_path.c_str()))
+        if (!_fs.fileExist(old_file_path.c_str()) || !_fs.startCopyFile(old_file_path.c_str(), new_file_path.c_str()))
         {
             showResultToast(false);
         }
@@ -466,7 +466,7 @@ void FilesContext::pasteFile()
             {
                 new_file_path += "_copy";
 
-                while (_f_mgr.fileExist(new_file_path.c_str(), true))
+                while (_fs.fileExist(new_file_path.c_str(), true))
                     new_file_path += "_copy";
             }
 
@@ -491,7 +491,7 @@ void FilesContext::removeFile()
     file_name += "/";
     file_name += _files_list->getCurrItemText();
 
-    if (_f_mgr.startRemoving(file_name.c_str()))
+    if (_fs.startRemoving(file_name.c_str()))
         showRemovingTmpl();
 }
 
@@ -560,7 +560,7 @@ void FilesContext::update()
         back();
     }
 
-    if (_f_mgr.isWorking())
+    if (_fs.isWorking())
     {
         if ((millis() - _upd_msg_time) > UPD_TRACK_INF_INTERVAL)
         {
@@ -583,7 +583,7 @@ void FilesContext::update()
             }
             else if (_mode == MODE_COPYING)
             {
-                _task_progress->setProgress(_f_mgr.getCopyProgress());
+                _task_progress->setProgress(_fs.getCopyProgress());
                 _upd_msg_time = millis();
             }
             else if (_mode == MODE_REMOVING)
@@ -635,10 +635,10 @@ void FilesContext::ok()
 
 void FilesContext::back()
 {
-    if (_f_mgr.isWorking() && _mode != MODE_CANCELING)
+    if (_fs.isWorking() && _mode != MODE_CANCELING)
     {
         showCancelingTmpl();
-        _f_mgr.cancel();
+        _fs.cancel();
     }
     else if (_mode == MODE_CONTEXT_MENU)
         hideContextMenu();
@@ -690,7 +690,7 @@ void FilesContext::updateFileInfo()
     file_name += _files_list->getCurrItemText();
 
     String str_size;
-    double kb_size = _f_mgr.getFileSize(file_name.c_str()) / 1024;
+    double kb_size = _fs.getFileSize(file_name.c_str()) / 1024;
 
     if (kb_size == 0)
     {
@@ -728,7 +728,7 @@ void FilesContext::openNextLevel()
     makePathFromBreadcrumbs(next_dir_path);
     next_dir_path += next_dir;
 
-    if (!_f_mgr.dirExist(next_dir_path.c_str(), true))
+    if (!_fs.dirExist(next_dir_path.c_str(), true))
         return;
 
     _breadcrumbs.push_back(next_dir);
@@ -754,7 +754,7 @@ void FilesContext::indexCurDir()
 {
     String dir_path;
     makePathFromBreadcrumbs(dir_path);
-    _f_mgr.indexAll(_files, dir_path.c_str());
+    _fs.indexAll(_files, dir_path.c_str());
 }
 
 void FilesContext::fillFilesTmpl()
@@ -776,9 +776,8 @@ void FilesContext::fillFilesTmpl()
 
 void FilesContext::startFileServer(FileServer::ServerMode mode)
 {
-    SettingsManager sm;
-    String ssid = sm.get(STR_PREF_FS_AP_SSID);
-    String pwd = sm.get(STR_PREF_FS_AP_PWD);
+    String ssid = SettingsManager::get(STR_PREF_FS_AP_SSID);
+    String pwd = SettingsManager::get(STR_PREF_FS_AP_PWD);
 
     if (ssid.isEmpty())
         ssid = STR_DEF_SSID;

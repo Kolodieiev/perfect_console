@@ -1,14 +1,11 @@
 #include "Mp3Context.h"
-
 #include "./res/play.h"
 #include "./res/pause.h"
 #include "./res/speaker.h"
 #include "./res/forward.h"
 #include "./res/rewind.h"
 #include "./res/clock.h"
-
 #include "../WidgetCreator.h"
-#include "meow/manager/sd/SD_Manager.h"
 #include "meow/manager/coprocessor/CoprocessorManager.h"
 
 #define UPD_TRACK_INF_INTERVAL 1000UL
@@ -38,11 +35,11 @@ bool Mp3Context::loop()
 
 void Mp3Context::savePref()
 {
-    _settings.set(STR_VOLUME_PREF, String(_volume).c_str());
-    _settings.set(STR_TRACK_POS_PREF, String(_track_pos).c_str());
-    _settings.set(STR_TRACK_TIME_PREF, String(_track_time).c_str());
-    _settings.set(STR_PLAYLIST_PREF, _playlist_name.c_str());
-    _settings.set(STR_TRACK_NAME_PREF, _track_name.c_str());
+    SettingsManager::set(STR_VOLUME_PREF, String(_volume).c_str());
+    SettingsManager::set(STR_TRACK_POS_PREF, String(_track_pos).c_str());
+    SettingsManager::set(STR_TRACK_TIME_PREF, String(_track_time).c_str());
+    SettingsManager::set(STR_PLAYLIST_PREF, _playlist_name.c_str());
+    SettingsManager::set(STR_TRACK_NAME_PREF, _track_name.c_str());
 }
 
 //-------------------------------------------------------------------------------------------
@@ -62,26 +59,26 @@ Mp3Context::Mp3Context()
     uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_ON, CH_PIN_SPK_PWR};
     _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
 
-    _brightness = atoi(_settings.get(STR_PREF_BRIGHT).c_str());
+    _brightness = atoi(SettingsManager::get(STR_PREF_BRIGHT).c_str());
     if (_brightness == 0)
         _brightness = 100;
     if (_volume == 0)
         _volume = 5;
 
-    _volume = atoi(_settings.get(STR_VOLUME_PREF).c_str());
+    _volume = atoi(SettingsManager::get(STR_VOLUME_PREF).c_str());
     if (_volume == 0)
         _volume = 5;
 
-    _track_pos = atoi(_settings.get(STR_TRACK_POS_PREF).c_str());
-    _track_time = atoi(_settings.get(STR_TRACK_TIME_PREF).c_str());
-    _playlist_name = _settings.get(STR_PLAYLIST_PREF);
-    _track_name = _settings.get(STR_TRACK_NAME_PREF);
+    _track_pos = atoi(SettingsManager::get(STR_TRACK_POS_PREF).c_str());
+    _track_time = atoi(SettingsManager::get(STR_TRACK_TIME_PREF).c_str());
+    _playlist_name = SettingsManager::get(STR_PLAYLIST_PREF);
+    _track_name = SettingsManager::get(STR_TRACK_NAME_PREF);
 
     _audio.setTone(3, -1, -3);
     _audio.setVolumeSteps(31);
     _audio.setVolume(_volume);
 
-    String mono_mode = _settings.get(STR_PREF_MONO_AUDIO);
+    String mono_mode = SettingsManager::get(STR_PREF_MONO_AUDIO);
     if (mono_mode.equals("1"))
         _audio.forceMono(true);
 

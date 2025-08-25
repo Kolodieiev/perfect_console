@@ -7,6 +7,11 @@
 #include "../common_res/btn_back/btn_back_normal.h"
 #include "../common_res/btn_back/btn_back_hover.h"
 
+#define IMG_W 200U
+#define IMG_H 40U
+#define ITEMS_SPASING 10U
+#define SERVER_WIFI_CHANN 6U
+
 const char STR_SELECT_ROLE_TITLE[] = "Оберіть роль";
 const char STR_WAITING_CLIENT[] = "Очікуйте приєднання клієнтів";
 const char STR_SERVER_SCANNING[] = "Зачекайте, відбувається сканування";
@@ -40,6 +45,7 @@ namespace test_server
 {
     TestServerContext::TestServerContext()
     {
+        sizeof(_conn_client_wrap);
         showMainMenu();
     }
 
@@ -466,9 +472,8 @@ namespace test_server
 
     void TestServerContext::showConnectDialog()
     {
-        SettingsManager settings;
-        _client_nick = settings.get(STR_TEST_GAME_NICK);
-        _serv_pwd = settings.get(STR_TEST_GAME_C_PWD);
+        _client_nick = SettingsManager::get(STR_TEST_GAME_NICK);
+        _serv_pwd = SettingsManager::get(STR_TEST_GAME_C_PWD);
 
         if (_client_nick.isEmpty())
             _client_nick = STR_DEF_NICK;
@@ -710,9 +715,8 @@ namespace test_server
 
     void TestServerContext::openServerLobby()
     {
-        SettingsManager settings;
-        _serv_ssid = settings.get(STR_TEST_GAME_S_NAME);
-        _serv_pwd = settings.get(STR_TEST_GAME_S_PWD);
+        _serv_ssid = SettingsManager::get(STR_TEST_GAME_S_NAME);
+        _serv_pwd = SettingsManager::get(STR_TEST_GAME_S_PWD);
 
         if (_serv_ssid.isEmpty())
             _serv_ssid = STR_DEF_SSID;
@@ -1011,8 +1015,7 @@ namespace test_server
     void TestServerContext::showPrefNick()
     {
         _context_id = ID_CONT_PREF_NICK;
-        SettingsManager setting;
-        _client_nick = setting.get(STR_TEST_GAME_NICK);
+        _client_nick = SettingsManager::get(STR_TEST_GAME_NICK);
 
         WidgetCreator creator;
         EmptyLayout *layout = creator.getEmptyLayout();
@@ -1025,9 +1028,7 @@ namespace test_server
     void TestServerContext::showPrefServName()
     {
         _context_id = ID_CONT_PREF_SERV_NAME;
-
-        SettingsManager setting;
-        _serv_ssid = setting.get(STR_TEST_GAME_S_NAME);
+        _serv_ssid = SettingsManager::get(STR_TEST_GAME_S_NAME);
 
         WidgetCreator creator;
         EmptyLayout *layout = creator.getEmptyLayout();
@@ -1040,9 +1041,7 @@ namespace test_server
     void TestServerContext::showPrefServPwd()
     {
         _context_id = ID_CONT_PREF_SERV_PWD;
-
-        SettingsManager setting;
-        _serv_pwd = setting.get(STR_TEST_GAME_S_PWD);
+        _serv_pwd = SettingsManager::get(STR_TEST_GAME_S_PWD);
 
         WidgetCreator creator;
         EmptyLayout *layout = creator.getEmptyLayout();
@@ -1102,27 +1101,25 @@ namespace test_server
 
     void TestServerContext::handlePrefSaveBtns()
     {
-        SettingsManager settings;
-
         if (_context_id == ID_CONT_PREF_NICK)
         {
             _client_nick = _dialog_txt->getText();
-            settings.set(STR_TEST_GAME_NICK, _client_nick.c_str());
+            SettingsManager::set(STR_TEST_GAME_NICK, _client_nick.c_str());
         }
         else if (_context_id == ID_CONT_PREF_SERV_NAME)
         {
             _serv_ssid = _dialog_txt->getText();
-            settings.set(STR_TEST_GAME_S_NAME, _serv_ssid.c_str());
+            SettingsManager::set(STR_TEST_GAME_S_NAME, _serv_ssid.c_str());
         }
         else if (_context_id == ID_CONT_PREF_SERV_PWD)
         {
             _serv_pwd = _dialog_txt->getText();
-            settings.set(STR_TEST_GAME_S_PWD, _serv_pwd.c_str());
+            SettingsManager::set(STR_TEST_GAME_S_PWD, _serv_pwd.c_str());
         }
         else if (_context_id == ID_CONT_CONN_DIALOG)
         {
             _serv_pwd = _dialog_txt->getText();
-            settings.set(STR_TEST_GAME_C_PWD, _serv_pwd.c_str());
+            SettingsManager::set(STR_TEST_GAME_C_PWD, _serv_pwd.c_str());
             showConnToAP();
             return;
         }

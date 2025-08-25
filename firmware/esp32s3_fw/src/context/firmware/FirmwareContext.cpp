@@ -1,5 +1,6 @@
 #include "FirmwareContext.h"
 #include "Update.h"
+#include "meow/manager/files/FileManager.h"
 
 #include "../WidgetCreator.h"
 
@@ -51,10 +52,10 @@ void FirmwareContext::update()
     {
         _input.lock(BtnID::BTN_OK, 500);
 
-        if (_file_mngr.fileExist(STR_FIRMWARE_FN))
+        if (_fs.fileExist(STR_FIRMWARE_FN))
         {
-            size_t firm_size = _file_mngr.getFileSize(STR_FIRMWARE_FN);
-            FILE *firm_ptr = _file_mngr.openFile(STR_FIRMWARE_FN, "rb");
+            size_t firm_size = _fs.getFileSize(STR_FIRMWARE_FN);
+            FILE *firm_ptr = _fs.openFile(STR_FIRMWARE_FN, "rb");
 
             FileStream f_stream(firm_ptr, STR_FIRMWARE_FN, firm_size);
 
@@ -66,7 +67,7 @@ void FirmwareContext::update()
             Update.writeStream(f_stream);
             Update.end();
 
-            _file_mngr.closeFile(firm_ptr);
+            _fs.closeFile(firm_ptr);
             ESP.restart();
         }
     }

@@ -384,7 +384,7 @@ void ReaderContext::ok()
 
             String book_path = getBookPath(_dir_name.c_str(), _book_name.c_str());
 
-            if (_f_mgr.rmFile(book_path.c_str(), true))
+            if (_fs.rmFile(book_path.c_str(), true))
             {
                 if (_books_list_menu->getCurrItemID() - 2 > -1)
                     _book_pos = _books_list_menu->getCurrItemID() - 2;
@@ -431,7 +431,7 @@ void ReaderContext::updateBookPos()
 void ReaderContext::indexDirs()
 {
     String dirs_path = ROOT_PATH;
-    _f_mgr.indexDirs(_dirs, dirs_path.c_str());
+    _fs.indexDirs(_dirs, dirs_path.c_str());
 }
 
 void ReaderContext::indexBooks()
@@ -439,7 +439,7 @@ void ReaderContext::indexBooks()
     String books_path = ROOT_PATH;
     books_path += "/";
     books_path += _dir_name;
-    _f_mgr.indexFilesExt(_books, books_path.c_str(), BOOK_EXT);
+    _fs.indexFilesExt(_books, books_path.c_str(), BOOK_EXT);
 }
 
 void ReaderContext::handleNextItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id)
@@ -610,7 +610,7 @@ void ReaderContext::openBook(bool contn)
 
     String book_path = getBookPath(_dir_name.c_str(), _book_name.c_str());
 
-    _book_size = _f_mgr.getFileSize(book_path.c_str());
+    _book_size = _fs.getFileSize(book_path.c_str());
 
     if (containCyrillic(_dir_name.c_str(), _book_name.c_str()))
         _num_char_to_read = KIR_NUM_NYTES_TO_READ;
@@ -703,7 +703,7 @@ bool ReaderContext::containCyrillic(const char *dir_name, const char *book_name)
     const uint8_t ARR_SIZE = 160;
     char ch_arr[ARR_SIZE];
 
-    size_t read_bytes = _f_mgr.readFile(path.c_str(), ch_arr, ARR_SIZE);
+    size_t read_bytes = _fs.readFile(path.c_str(), ch_arr, ARR_SIZE);
 
     for (size_t i{0}; i < read_bytes; ++i)
     {
@@ -731,7 +731,7 @@ bool ReaderContext::readText(String &out_str, const char *dir_name, const char *
 
     String book_path = getBookPath(dir_name, book_name);
 
-    size_t bytes_read = _f_mgr.readFile(book_path.c_str(), buffer, len, pos);
+    size_t bytes_read = _fs.readFile(book_path.c_str(), buffer, len, pos);
     buffer[bytes_read] = '\0';
 
     bool is_oef = false;

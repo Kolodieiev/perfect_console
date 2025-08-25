@@ -1,7 +1,6 @@
 #pragma once
 #include <Arduino.h>
 #include "meow/ui/context/IContext.h"
-#include "meow/manager/files/FileManager.h"
 
 using namespace meow;
 
@@ -23,8 +22,6 @@ private:
         ID_AUTHOR,
         ID_VERSION,
     };
-
-    FileManager _file_mngr;
 
     void showUpdating();
 };

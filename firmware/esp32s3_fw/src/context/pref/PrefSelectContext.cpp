@@ -6,6 +6,7 @@
 //
 #include "bright/PrefBrightContext.h"
 #include "file_server/PrefFileServerContext.h"
+#include "meow/manager/settings/SettingsManager.h"
 
 void PrefSelectContext::showSDErrTmpl()
 {
@@ -160,12 +161,12 @@ void PrefSelectContext::ok()
         bool force_mono = toggle->isOn();
         if (force_mono)
         {
-            if (_settings.set(STR_PREF_MONO_AUDIO, "0"))
+            if (SettingsManager::set(STR_PREF_MONO_AUDIO, "0"))
                 toggle->off();
         }
         else
         {
-            if (_settings.set(STR_PREF_MONO_AUDIO, "1"))
+            if (SettingsManager::set(STR_PREF_MONO_AUDIO, "1"))
                 toggle->on();
         }
     }
