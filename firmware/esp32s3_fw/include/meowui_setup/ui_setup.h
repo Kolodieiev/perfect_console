@@ -16,7 +16,7 @@
 #include "context/pref/PrefSelectContext.h"
 #include "context/games/GamesListContext.h"
 #include "context/wifi/WiFiContext.h"
-#include "context/lora/LoraContext.h"
+#include "context/walkie-talkie/WTContext.h"
 // Ігрові контексти
 #include "context/games/sokoban/SokobanContext.h"
 #include "context/games/test_server/TestServerContext.h"
@@ -53,7 +53,7 @@ namespace meow
         {ContextID::ID_CONTEXT_WIFI, []()
          { return new WiFiContext(); }},
         {ContextID::ID_CONTEXT_W_TALKIE, []()
-         { return new LoraContext(); }},
+         { return new WTContext(); }},
     };
 }
 
