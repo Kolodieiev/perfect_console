@@ -578,13 +578,10 @@ void TFT_eSPI::init(uint8_t tc)
     sclkpinmask = (uint32_t) digitalPinToBitMask(TFT_SCLK);
   #endif
 
-
-  meow::SPI_Manager::initBus(SPI_BUS_NUM); // This will set HMISO to input
   spi = *meow::SPI_Manager::getSpi4Bus(SPI_BUS_NUM);
 
 #else
   #if !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
-      meow::SPI_Manager::initBus(SPI_BUS_NUM, TFT_SCLK, TFT_MISO, TFT_MOSI);
       spi = *meow::SPI_Manager::getSpi4Bus(SPI_BUS_NUM);
   #endif
 #endif
