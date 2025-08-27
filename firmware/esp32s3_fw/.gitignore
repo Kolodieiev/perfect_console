@@ -26,3 +26,6 @@
 !include/meowui_setup/**
 !include/modules_setup/
 !include/modules_setup/**
+
+!lib/
+!lib/**
