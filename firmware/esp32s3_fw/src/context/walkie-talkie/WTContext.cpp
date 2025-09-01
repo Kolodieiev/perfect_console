@@ -6,7 +6,6 @@
 #include "meow/manager/audio/out/I2SOutManager.h"
 #include "meow/manager/coprocessor/CoprocessorManager.h"
 #include "meow/util/battery/BatteryUtil.h"
-#include "meow/ui/widget/toggle/ToggleSwitch.h"
 #include "meow/ui/widget/menu/item/ToggleItem.h"
 #include "meow/util/crypto/aes256.h"
 #include "../resources/ico/battery.h"
@@ -237,7 +236,7 @@ void WTContext::showContextMenuTmpl()
     // Шифрування
     ToggleItem *enc_item = new ToggleItem(ID_ITEM_ENC);
     _context_menu->addItem(enc_item);
-    enc_item->setFocusBorderColor(COLOR_LIME);
+    enc_item->setFocusBorderColor(TFT_LIME);
     enc_item->setFocusBackColor(COLOR_FOCUS_BACK);
     enc_item->setChangingBorder(true);
     enc_item->setChangingBack(true);
@@ -250,11 +249,7 @@ void WTContext::showContextMenuTmpl()
     _enc_toggle->setWidth(20);
     _enc_toggle->setHeight(10);
     _enc_toggle->setCornerRadius(2);
-
-    if (_lora_sets.encrypt_en)
-        _enc_toggle->on();
-    else
-        _enc_toggle->off();
+    _enc_toggle->setOn(_lora_sets.encrypt_en);
 
     // Налаштування LoRa
     MenuItem *lora_sets_item = creator.getMenuItem(ID_ITEM_LORA_SETS);
@@ -279,7 +274,7 @@ void WTContext::showContextMenuTmpl()
 
 void WTContext::loadLoraSettings()
 {
-    String sets_path = SettingsManager::getSettingsFilePath("");
+    String sets_path = SettingsManager::getSettingsFilePath(""); //TODO
     sets_path += STR_LORA_SETS_DIR;
 
     if (!_fs.dirExist(sets_path.c_str(), true))
@@ -293,7 +288,7 @@ void WTContext::loadLoraSettings()
 
 void WTContext::loadCodecSettings()
 {
-    String sets_path = SettingsManager::getSettingsFilePath("");
+    String sets_path = SettingsManager::getSettingsFilePath(""); //TODO
     sets_path += STR_CODEC_SETS_DIR;
 
     if (!_fs.dirExist(sets_path.c_str(), true))
@@ -412,16 +407,8 @@ void WTContext::clickOk()
 
         if (id == ID_ITEM_ENC)
         {
-            if (_lora_sets.encrypt_en)
-            {
-                _lora_sets.encrypt_en = false;
-                _enc_toggle->off();
-            }
-            else
-            {
-                _lora_sets.encrypt_en = true;
-                _enc_toggle->on();
-            }
+            _lora_sets.encrypt_en = !_lora_sets.encrypt_en;
+            _enc_toggle->setOn(_lora_sets.encrypt_en);
         }
         else if (id == ID_ITEM_LORA_SETS)
         {

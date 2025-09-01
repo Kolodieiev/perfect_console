@@ -104,6 +104,6 @@ const char STR_POWER_HIGH_VAL[] = "Висока";
 const char STR_POWER_MAX_VAL[] = "Максимальна";
 //
 const char STR_LORA_SETS_DIR[] = "LRE";
-const char STR_LORA_SETS_NAME[] = "/LRE.sets";
+const char STR_LORA_SETS_NAME[] = "LRE.sets";
 const char STR_CODEC_SETS_DIR[] = "codec";
-const char STR_CODEC_SETS_NAME[] = "/codec.sets";
+const char STR_CODEC_SETS_NAME[] = "codec.sets";

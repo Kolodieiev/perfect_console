@@ -4,7 +4,6 @@
 #include <stdint.h>
 
 const uint16_t COLOR_GREY = 0xAD55;
-const uint16_t COLOR_LIME = 0xA7E0;
 
 const uint16_t COLOR_FOCUS_BACK = 0x39E7;
 

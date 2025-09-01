@@ -1,26 +1,26 @@
 #pragma GCC optimize("O3")
-#include "ToggleItem.h"
+#include "SpinItem.h"
 
 namespace meow
 {
-    ToggleItem::ToggleItem(uint16_t widget_ID) : MenuItem(widget_ID, TYPE_ID_TOGGLE_ITEM)
+    SpinItem::SpinItem(uint16_t widget_ID) : MenuItem(widget_ID, TYPE_ID_SPIN_ITEM)
     {
-        setToggle(new ToggleSwitch(1));
+        setSpin(new SpinBox(1));
     }
 
-    ToggleItem::~ToggleItem()
+    SpinItem::~SpinItem()
     {
-        delete _toggle;
+        delete _spinbox;
     }
 
-    void ToggleItem::onDraw()
+    void SpinItem::onDraw()
     {
         if (!_is_changed)
         {
             if (_img)
                 _img->onDraw();
             _label->onDraw();
-            _toggle->onDraw();
+            _spinbox->onDraw();
             return;
         }
 
@@ -46,12 +46,13 @@ namespace meow
             _img->onDraw();
         }
 
-        _toggle->setPos(_width - ITEM_PADDING - _toggle->getWidth(), (_height - _toggle->getHeight()) * 0.5);
-        _toggle->onDraw();
+        _spinbox->setHeight(_spinbox->getCharHgt() + 4);
+        _spinbox->setPos(_width - ITEM_PADDING - _spinbox->getWidth(), (_height - _spinbox->getHeight()) * 0.5);
+        _spinbox->onDraw();
 
-        _label->setHeight(_height - 2);
+        _label->setHeight(_height - 4);
         _label->setPos(img_width + ITEM_PADDING, 1);
-        _label->setWidth(_width - ITEM_PADDING * 2 - img_width - (_toggle->getWidth() + ITEM_PADDING));
+        _label->setWidth(_width - ITEM_PADDING * 2 - img_width - (_spinbox->getWidth() + ITEM_PADDING));
 
         if (_has_focus)
             _label->setFocus();
@@ -61,11 +62,11 @@ namespace meow
         _label->onDraw();
     }
 
-    ToggleItem *ToggleItem::clone(uint16_t id) const
+    SpinItem *SpinItem::clone(uint16_t id) const
     {
         try
         {
-            ToggleItem *cln = new ToggleItem(id);
+            SpinItem *cln = new SpinItem(id);
             cln->_has_border = _has_border;
             cln->_x_pos = _x_pos;
             cln->_y_pos = _y_pos;
@@ -91,7 +92,7 @@ namespace meow
                 cln->setImg(_img->clone(_img->getID()));
 
             cln->setLbl(_label->clone(_label->getID()));
-            cln->setToggle(_toggle->clone(_toggle->getID()));
+            cln->setSpin(_spinbox->clone(_spinbox->getID()));
 
             return cln;
         }
@@ -103,38 +104,53 @@ namespace meow
         }
     }
 
-    void ToggleItem::setToggle(ToggleSwitch *togg_switch_ptr)
+    void SpinItem::setSpin(SpinBox *spinbox_ptr)
     {
-        if (!togg_switch_ptr)
+        if (!spinbox_ptr)
         {
-            log_e("ToggleSwitch не може бути null");
+            log_e("SpinBox не може бути null");
             esp_restart();
         }
 
-        if (togg_switch_ptr == _toggle)
+        if (spinbox_ptr == _spinbox)
             return;
 
-        delete _toggle;
-        _toggle = togg_switch_ptr;
+        delete _spinbox;
+        _spinbox = spinbox_ptr;
 
         _is_changed = true;
 
-        _toggle->setParent(this);
-        _toggle->setChangingBorder(false);
+        _spinbox->setParent(this);
+        _spinbox->setChangingBorder(false);
     }
 
-    void ToggleItem::setOn(bool state)
+    void SpinItem::up()
     {
-        _toggle->setOn(state);
+        _spinbox->up();
     }
 
-    void ToggleItem::toggle()
+    void SpinItem::down()
     {
-        _toggle->toggle();
+        _spinbox->down();
     }
 
-    bool ToggleItem::isOn() const
+    void SpinItem::setMin(float min)
     {
-        return _toggle->isOn();
+        _spinbox->setMin(min);
+    }
+
+    void SpinItem::setMax(float max)
+    {
+        _spinbox->setMax(max);
+    }
+
+    void SpinItem::setValue(float value)
+    {
+        _spinbox->setValue(value);
+    }
+
+    float SpinItem::getValue() const
+    {
+        return _spinbox->getValue();
     }
 }

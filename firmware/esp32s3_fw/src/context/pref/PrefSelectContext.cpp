@@ -58,7 +58,7 @@ void PrefSelectContext::showMainTmpl()
     //
     ToggleItem *mono_item = new ToggleItem(ITEM_ID_AUDIO_MONO);
     _menu->addItem(mono_item);
-    mono_item->setFocusBorderColor(COLOR_LIME);
+    mono_item->setFocusBorderColor(TFT_LIME);
     mono_item->setFocusBackColor(COLOR_FOCUS_BACK);
     mono_item->setChangingBorder(true);
     mono_item->setChangingBack(true);
@@ -73,10 +73,10 @@ void PrefSelectContext::showMainTmpl()
     toggle_mono->setCornerRadius(7);
 
     String mono_mode = SettingsManager::get(STR_PREF_MONO_AUDIO);
-    if (mono_mode == "" || mono_mode == "0")
-        toggle_mono->off();
+    if (mono_mode.equals("") || mono_mode.equals("0"))
+        toggle_mono->setOn(false);
     else
-        toggle_mono->on();
+        toggle_mono->setOn(true);
     //
     MenuItem *file_server_item = creator.getMenuItem(ITEM_ID_FILE_SERVER);
     _menu->addItem(file_server_item);
@@ -158,16 +158,15 @@ void PrefSelectContext::ok()
     {
         ToggleItem *toggle = _menu->getCurrItem()->castTo<ToggleItem>();
 
-        bool force_mono = toggle->isOn();
-        if (force_mono)
+        if (toggle->isOn())
         {
             if (SettingsManager::set(STR_PREF_MONO_AUDIO, "0"))
-                toggle->off();
+                toggle->setOn(false);
         }
         else
         {
             if (SettingsManager::set(STR_PREF_MONO_AUDIO, "1"))
-                toggle->on();
+                toggle->setOn(true);
         }
     }
     else if (id == ITEM_ID_BRIGHT)
