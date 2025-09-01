@@ -11,10 +11,10 @@ struct CodecSettings
 
     float post_filter_beta{0.6f};
     float post_filter_gamma{0.4f};
-    int post_filter_bass_boost{0};
 
     bool agc_in_en{false};
     bool post_filter_en{true};
+    bool post_filter_bboost_en{false};
 };
 
 #pragma pack(pop)

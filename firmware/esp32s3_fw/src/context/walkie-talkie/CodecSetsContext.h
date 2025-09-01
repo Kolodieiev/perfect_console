@@ -6,6 +6,11 @@
 #include "meow/manager/audio/in/I2SInManager.h"
 #include "meow/manager/audio/out/I2SOutManager.h"
 #include "CodecSettingsStruct.h"
+#include "meow/ui/widget/text/Label.h"
+#include "meow/ui/widget/menu/FixedMenu.h"
+#include "meow/ui/widget/toggle/ToggleSwitch.h"
+#include "meow/ui/widget/scrollbar/ScrollBar.h"
+#include "meow/ui/widget/menu/item/SpinItem.h"
 
 using namespace meow;
 
@@ -29,18 +34,38 @@ private:
     enum Widget_ID : uint8_t
     {
         ID_MAIN_MENU = 1,
-        ID_CONTEXT_MENU,
+        ID_CTX_MENU,
+        ID_SCROLLBAR,
         //
         ID_SAVE_SETS_ITEM,
         ID_TEST_AUDIO_ITEM,
+        //
+        ID_HPF_SPIN_ITEM,
+        ID_AGC_OUT_SPIN_ITEM,
+        //
+        ID_AGC_IN_TOG_ITEM,
+        ID_AGC_IN_SPIN_ITEM,
+        //
+        ID_POST_FILTER_TOG_ITEM,
+        ID_POST_BBOOST_TOG_ITEM,
+        ID_POST_BETA_SPIN_ITEM,
+        ID_POST_GAMMA_SPIN_ITEM,
     };
 
     void showMainTmpl();
     void showContextMenuTmpl();
+    void hideContextMenu();
     //
     void loadCodecSettings();
+    bool saveCodecSettings();
+    void updateFilterSets();
+    //
+    void clickOk();
+    void clickBack();
+    void clickUp();
+    void clickDown();
 
-private:
+private: // TODO вирівняти
     CodecSettings _codec_sets;
 
     HighPassFilter _hpf;
@@ -59,7 +84,14 @@ private:
 
     Mode _mode{MODE_MAIN};
 
-    unsigned long _last_delay_time{0};
+    unsigned long _last_delay_ts{0};
 
     bool _audio_test_enabled{false};
+
+    ScrollBar *_scrollbar{nullptr};
+    FixedMenu *_main_menu{nullptr};
+    FixedMenu *_context_menu{nullptr};
+    ToggleSwitch *_test_audio_toggle{nullptr};
+    SpinItem *_spin_item{nullptr};
+    bool _is_item_locked{false};
 };
