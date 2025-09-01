@@ -46,7 +46,7 @@ void LoraSetsContext::showContextMenuTmpl()
 
 void LoraSetsContext::loadLoraSettings() // TODO Додати в налаштування ім'я поточних налаштувань. Завантажувати по імені файлу.
 {
-    String sets_path = SettingsManager::getSettingsFilePath("");
+    String sets_path = SettingsManager::getSettingsFilePath(""); //TODO
     sets_path += STR_LORA_SETS_DIR;
 
     if (!_fs.dirExist(sets_path.c_str(), true))
