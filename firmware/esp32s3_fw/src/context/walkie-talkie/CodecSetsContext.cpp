@@ -3,6 +3,9 @@
 #include "meow/ui/widget/menu/item/ToggleItem.h"
 #include "../WidgetCreator.h"
 
+const char STR_VOLUME_DB[] = "Підсилення";
+const char STR_INTERLEAV_EN[] = "Чергування (перезапусти апп)";
+//
 const char STR_HPS_FREQ[] = "HPF out hz";
 const char STR_AGC_OUT_DB[] = "AGC out db";
 //
@@ -18,7 +21,6 @@ const char STR_SAVE_SETS[] = "Зберегти налаштування";
 const char STR_AUDIO_TEST[] = "Тест аудіо";
 
 #define SAMPLE_RATE 16000U
-
 #define MENU_ITEMS_ON_SCREEN 5U
 
 CodecSetsContext::CodecSetsContext()
@@ -55,25 +57,24 @@ CodecSetsContext::~CodecSetsContext()
     free(_samples_16k_buf);
 }
 
-bool CodecSetsContext::loop() // TODO реалізувати тестове відтворення
+bool CodecSetsContext::loop()
 {
-    // _i2s_in.read(samples_16k_buf, samples_16k_num);
-    // hps.filter(samples_16k_buf, samples_16k_num);
-    // downsampleX2(samples_16k_buf, samples_8k_buf, samples_16k_num);
-    // agc.process(samples_8k_buf, samples_per_frame);
-    // //
-    // codec2_encode_1200(_codec, codec_buf, samples_8k_buf);
-    // codec2_decode_1200(_codec, samples_8k_buf, codec_buf);
-    // //
-    // agc2.process(samples_8k_buf, samples_per_frame);
-    // //
-    // upsampleX2(samples_8k_buf, samples_16k_buf, samples_per_frame);
-    // _i2s_out.write(samples_16k_buf, samples_16k_num, true);
-
-    if (millis() - _last_delay_ts > 1000)
+    if (_audio_test_enabled)
     {
-        vTaskDelay(1 / portTICK_PERIOD_MS);
-        _last_delay_ts = millis();
+        _i2s_in.read(_samples_16k_buf, _samples_16k_num);
+        _hpf.filter(_samples_16k_buf, _samples_16k_num);
+        downsampleX2(_samples_16k_buf, _samples_8k_buf, _samples_16k_num);
+        _agc_out.process(_samples_8k_buf, _samples_per_frame);
+        //
+        codec2_encode_1200(_codec, _codec_buf, _samples_8k_buf);
+        codec2_decode_1200(_codec, _samples_8k_buf, _codec_buf);
+        //
+        if (_codec_sets.agc_in_en)
+            _agc_in.process(_samples_8k_buf, _samples_per_frame);
+        //
+        volume(_samples_8k_buf, _samples_per_frame, _codec_sets.volume);
+        upsampleX2(_samples_8k_buf, _samples_16k_buf, _samples_per_frame);
+        _i2s_out.write(_samples_16k_buf, _samples_16k_num, true);
     }
 
     return true;
@@ -135,27 +136,40 @@ void CodecSetsContext::showMainTmpl()
     _scrollbar->setPos(_main_menu->getWidth() + _main_menu->getXPos(), _main_menu->getYPos());
     _scrollbar->setBackColor(COLOR_MAIN_BACK);
 
-    // HPF
-    SpinItem *hpf_freq_item = new SpinItem(ID_HPF_SPIN_ITEM);
-    _main_menu->addItem(hpf_freq_item);
-    hpf_freq_item->setFocusBorderColor(TFT_LIME);
-    hpf_freq_item->setFocusBackColor(COLOR_FOCUS_BACK);
-    hpf_freq_item->setChangingBorder(true);
-    hpf_freq_item->setChangingBack(true);
+    // VOLUME
+    SpinItem *volume_item = new SpinItem(ID_VOLUME_SPIN_ITEM);
+    _main_menu->addItem(volume_item);
+    volume_item->setFocusBorderColor(TFT_LIME);
+    volume_item->setFocusBackColor(COLOR_FOCUS_BACK);
+    volume_item->setChangingBorder(true);
+    volume_item->setChangingBack(true);
 
-    Label *hpf_freq_lbl = creator.getItemLabel(STR_HPS_FREQ, 2);
-    hpf_freq_item->setLbl(hpf_freq_lbl);
+    Label *volume_lbl = creator.getItemLabel(STR_VOLUME_DB, 2);
+    volume_item->setLbl(volume_lbl);
+
+    SpinBox *volume_spin = volume_item->getSpin();
+    volume_spin->setMax(30);
+    volume_spin->setMin(1);
+    volume_spin->setStep(1);
+    volume_spin->setValue(_codec_sets.volume);
+    volume_spin->setWidth(30);
+    volume_spin->setBackColor(TFT_WHITE);
+    volume_spin->setTextColor(TFT_BLACK);
+    volume_spin->setCornerRadius(5);
+    volume_spin->setCornerRadius(5);
+
+    // HPF
+    SpinItem *hpf_freq_item = volume_item->clone(ID_HPF_SPIN_ITEM);
+    _main_menu->addItem(hpf_freq_item);
+
+    Label *hpf_freq_lbl = hpf_freq_item->getLbl();
+    hpf_freq_lbl->setText(STR_HPS_FREQ);
 
     SpinBox *hpf_freq_spin = hpf_freq_item->getSpin();
     hpf_freq_spin->setMax(500);
     hpf_freq_spin->setMin(80);
     hpf_freq_spin->setStep(10);
     hpf_freq_spin->setValue(_codec_sets.hpf_out_freq);
-    hpf_freq_spin->setWidth(30);
-    hpf_freq_spin->setBackColor(TFT_WHITE);
-    hpf_freq_spin->setTextColor(TFT_BLACK);
-    hpf_freq_spin->setCornerRadius(5);
-    hpf_freq_spin->setCornerRadius(5);
 
     // AGC
     SpinItem *agc_db_item = hpf_freq_item->clone(ID_AGC_OUT_SPIN_ITEM);
@@ -225,6 +239,12 @@ void CodecSetsContext::showMainTmpl()
     post_gamma_item->getLbl()->setText(STR_POST_GAMMA);
     post_gamma_item->getSpin()->setValue(_codec_sets.post_filter_gamma);
 
+    // INTERLEAVING TOGGLE
+    ToggleItem *interleaving_toggle_item = agc_in_toggle_item->clone(ID_INTERLEAV_TOG_ITEM);
+    _main_menu->addItem(interleaving_toggle_item);
+    interleaving_toggle_item->getLbl()->setText(STR_INTERLEAV_EN);
+    interleaving_toggle_item->setOn(_codec_sets.interleaving_en);
+
     _scrollbar->setMax(_main_menu->getSize());
 }
 
@@ -234,6 +254,8 @@ void CodecSetsContext::showContextMenuTmpl()
         return;
 
     _mode = MODE_CTX_MENU;
+
+    _main_menu->disable();
 
     WidgetCreator creator;
 
@@ -270,9 +292,7 @@ void CodecSetsContext::showContextMenuTmpl()
     _test_audio_toggle->setWidth(20);
     _test_audio_toggle->setHeight(10);
     _test_audio_toggle->setCornerRadius(2);
-
     _test_audio_toggle->setOn(_audio_test_enabled);
-    _test_audio_toggle->setOffColor(_audio_test_enabled);
 
     _context_menu->setHeight(_context_menu->getSize() * _context_menu->getItemHeight() + 4);
     _context_menu->setPos(D_WIDTH - _context_menu->getWidth() - DISPLAY_PADDING,
@@ -283,6 +303,7 @@ void CodecSetsContext::hideContextMenu()
 {
     getLayout()->delWidgetByID(ID_CTX_MENU);
     getLayout()->forcedDraw();
+    _main_menu->enable();
     _mode = MODE_MAIN;
 }
 
@@ -311,8 +332,10 @@ void CodecSetsContext::updateFilterSets()
 {
     ToggleItem *agc_in_toggle = _main_menu->getWidgetByID(ID_AGC_IN_TOG_ITEM)->castTo<ToggleItem>();
     ToggleItem *post_filter_toggle = _main_menu->getWidgetByID(ID_POST_FILTER_TOG_ITEM)->castTo<ToggleItem>();
-    ToggleItem *bbost_spin = _main_menu->getWidgetByID(ID_POST_BBOOST_TOG_ITEM)->castTo<ToggleItem>();
+    ToggleItem *bbost_toggle = _main_menu->getWidgetByID(ID_POST_BBOOST_TOG_ITEM)->castTo<ToggleItem>();
+    ToggleItem *interleav_toggle = _main_menu->getWidgetByID(ID_INTERLEAV_TOG_ITEM)->castTo<ToggleItem>();
 
+    SpinItem *volume_spin = _main_menu->getWidgetByID(ID_VOLUME_SPIN_ITEM)->castTo<SpinItem>();
     SpinItem *hpf_spin = _main_menu->getWidgetByID(ID_HPF_SPIN_ITEM)->castTo<SpinItem>();
     SpinItem *agc_out_spin = _main_menu->getWidgetByID(ID_AGC_OUT_SPIN_ITEM)->castTo<SpinItem>();
     SpinItem *agc_in_spin = _main_menu->getWidgetByID(ID_AGC_IN_SPIN_ITEM)->castTo<SpinItem>();
@@ -320,14 +343,17 @@ void CodecSetsContext::updateFilterSets()
     SpinItem *beta_spin = _main_menu->getWidgetByID(ID_POST_BETA_SPIN_ITEM)->castTo<SpinItem>();
     SpinItem *gamma_spin = _main_menu->getWidgetByID(ID_POST_GAMMA_SPIN_ITEM)->castTo<SpinItem>();
 
+    _codec_sets.interleaving_en = interleav_toggle->isOn();
+
     _codec_sets.agc_in_en = agc_in_toggle->isOn();
     _codec_sets.post_filter_en = post_filter_toggle->isOn();
 
+    _codec_sets.volume = volume_spin->getValue();
     _codec_sets.hpf_out_freq = hpf_spin->getValue();
     _codec_sets.agc_out_db = agc_out_spin->getValue();
     _codec_sets.agc_in_db = agc_in_spin->getValue();
 
-    _codec_sets.post_filter_bboost_en = bbost_spin->isOn();
+    _codec_sets.post_filter_bboost_en = bbost_toggle->isOn();
     _codec_sets.post_filter_beta = beta_spin->getValue();
     _codec_sets.post_filter_gamma = gamma_spin->getValue();
 
@@ -338,7 +364,9 @@ void CodecSetsContext::updateFilterSets()
         _codec_sets.post_filter_beta,
         _codec_sets.post_filter_gamma);
 
-    // TODO змінювати параметри фільтрів hpf/agc1/2.
+    _hpf.init(_codec_sets.hpf_out_freq, SAMPLE_RATE);
+    _agc_out.setTargetDB(_codec_sets.agc_out_db);
+    _agc_in.setTargetDB(_codec_sets.agc_in_db);
 }
 
 void CodecSetsContext::clickOk()

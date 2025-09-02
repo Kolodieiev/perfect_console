@@ -40,6 +40,8 @@ private:
         ID_SAVE_SETS_ITEM,
         ID_TEST_AUDIO_ITEM,
         //
+        ID_INTERLEAV_TOG_ITEM,
+        ID_VOLUME_SPIN_ITEM,
         ID_HPF_SPIN_ITEM,
         ID_AGC_OUT_SPIN_ITEM,
         //
