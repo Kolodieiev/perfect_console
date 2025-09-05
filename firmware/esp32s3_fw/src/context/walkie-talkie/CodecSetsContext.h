@@ -67,33 +67,32 @@ private:
     void clickUp();
     void clickDown();
 
-private: // TODO вирівняти
-    CodecSettings _codec_sets;
-
+private:
     HighPassFilter _hpf;
+    CodecSettings _codec_sets;
     SimpleAGC _agc_out;
     SimpleAGC _agc_in;
 
     struct CODEC2 *_codec{nullptr};
     uint8_t *_codec_buf{nullptr};
-
-    int16_t *_samples_16k_buf{nullptr};
-    int16_t *_samples_8k_buf{nullptr};
-
-    int _samples_per_frame{0};
-    int _codec_buf_size{0};
-    uint16_t _samples_16k_num{0};
-
-    Mode _mode{MODE_MAIN};
-
-    unsigned long _last_delay_ts{0};
-
-    bool _audio_test_enabled{false};
-
     ScrollBar *_scrollbar{nullptr};
     FixedMenu *_main_menu{nullptr};
     FixedMenu *_context_menu{nullptr};
     ToggleSwitch *_test_audio_toggle{nullptr};
     SpinItem *_spin_item{nullptr};
+
+    unsigned long _last_delay_ts{0};
+
+    int _samples_per_frame{0};
+    int _codec_buf_size{0};
+
+    int16_t *_samples_16k_buf{nullptr};
+    int16_t *_samples_8k_buf{nullptr};
+
+    uint16_t _samples_16k_num{0};
+
+    Mode _mode{MODE_MAIN};
+
+    bool _audio_test_enabled{false};
     bool _is_item_locked{false};
 };
