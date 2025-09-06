@@ -68,9 +68,9 @@ void FilesContext::showServerTmpl()
     String header_str;
 
     if (_server.getServerMode() == FileServer::SERVER_MODE_SEND)
-        header_str = STR_EXPORT;
+        header_str = STR_SHARE;
     else
-        header_str = STR_IMPORT;
+        header_str = STR_GET;
 
     header_str += ": ";
     header_str += _server.getAddress().c_str();
@@ -284,7 +284,7 @@ void FilesContext::showContextMenu()
     MenuItem *import_item = creator.getMenuItem(ID_ITEM_IMPORT);
     _context_menu->addItem(import_item);
 
-    Label *import_lbl = creator.getItemLabel(STR_IMPORT, 2);
+    Label *import_lbl = creator.getItemLabel(STR_GET, 2);
     import_item->setLbl(import_lbl);
     import_lbl->setTextOffset(1);
 
@@ -292,7 +292,7 @@ void FilesContext::showContextMenu()
     MenuItem *export_item = creator.getMenuItem(ID_ITEM_EXPORT);
     _context_menu->addItem(export_item);
 
-    Label *export_lbl = creator.getItemLabel(STR_EXPORT, 2);
+    Label *export_lbl = creator.getItemLabel(STR_SHARE, 2);
     export_item->setLbl(export_lbl);
     export_lbl->setTextOffset(1);
 
