@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include "meow/ui/context/IContext.h"
-#include "meow/manager/settings/SettingsManager.h"
+#include "meow/manager/SettingsManager.h"
 #include "meow/ui/widget/scrollbar/ScrollBar.h"
 #include "meow/ui/widget/menu/FixedMenu.h"
 #include "meow/ui/widget/menu/DynamicMenu.h"

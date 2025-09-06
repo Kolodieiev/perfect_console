@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "meow/Meowui.h"
 #include "meowui_setup/input_setup.h"
-#include "meow/manager/coprocessor/CoprocessorManager.h"
+#include "meow/manager/CoprocessorManager.h"
 #include "context/resources/ch32_pins_def.h"
 
 using namespace meow;

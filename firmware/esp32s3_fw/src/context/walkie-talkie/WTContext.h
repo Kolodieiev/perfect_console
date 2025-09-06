@@ -51,15 +51,13 @@ private:
     void showLoraErrTmpl();
     void showMainTmpl();
     void showContextMenuTmpl();
-    void loadLoraSettings();
-    void loadCodecSettings();
     void updateBattVoltage();
     void clickBack();
     void clickOk();
     void clickUp();
     void clickDown();
 
-private:
+private: // TODO вирівняти
     LRE32 _lora; // Зміни тип на LRE220T якщо модуль лори -  LRE220.
 
     LoraSettings _lora_sets;

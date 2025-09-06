@@ -1,8 +1,8 @@
 #include "SplashContext.h"
-#include "meow/manager/spi/SPI_Manager.h"
-#include "meow/manager/sd/SD_Manager.h"
-#include "meow/manager/settings/SettingsManager.h"
-#include "meow/manager/i2c/I2C_Manager.h"
+#include "meow/manager/SPI_Manager.h"
+#include "meow/manager/SD_Manager.h"
+#include "meow/manager/SettingsManager.h"
+#include "meow/manager/I2C_Manager.h"
 #include "../WidgetCreator.h"
 #include "meowui_setup/sd_setup.h"
 

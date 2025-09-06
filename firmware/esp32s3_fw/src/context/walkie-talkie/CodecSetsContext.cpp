@@ -1,7 +1,7 @@
 #include "CodecSetsContext.h"
-#include "meow/manager/settings/SettingsManager.h"
 #include "meow/ui/widget/menu/item/ToggleItem.h"
 #include "../WidgetCreator.h"
+#include "meow/manager/SettingsManager.h"
 
 const char STR_VOLUME_DB[] = "Підсилення";
 const char STR_INTERLEAV_EN[] = "Чергування (перезапусти апп)";
@@ -29,7 +29,7 @@ CodecSetsContext::CodecSetsContext()
     EmptyLayout *layout = creator.getEmptyLayout();
     setLayout(layout);
 
-    loadCodecSettings();
+    SettingsManager::load(&_codec_sets, sizeof(CodecSettings), STR_CODEC_SETS_NAME, STR_CODEC_SETS_DIR);
 
     _codec = codec2_create(CODEC2_MODE_1200);
     _samples_per_frame = codec2_samples_per_frame(_codec);
@@ -307,27 +307,6 @@ void CodecSetsContext::hideContextMenu()
     _mode = MODE_MAIN;
 }
 
-void CodecSetsContext::loadCodecSettings()
-{
-    String sets_path = SettingsManager::getSettingsFilePath(STR_CODEC_SETS_NAME, STR_CODEC_SETS_DIR);
-
-    if (sets_path.isEmpty())
-        return;
-
-    if (_fs.fileExist(sets_path.c_str()))
-        _fs.readFile(sets_path.c_str(), &_codec_sets, sizeof(_codec_sets));
-}
-
-bool CodecSetsContext::saveCodecSettings()
-{
-    String sets_path = SettingsManager::getSettingsFilePath(STR_CODEC_SETS_NAME, STR_CODEC_SETS_DIR);
-
-    if (sets_path.isEmpty())
-        return false;
-
-    return _fs.writeFile(sets_path.c_str(), &_codec_sets, sizeof(_codec_sets)) == sizeof(_codec_sets);
-}
-
 void CodecSetsContext::updateFilterSets()
 {
     ToggleItem *agc_in_toggle = _main_menu->getWidgetByID(ID_AGC_IN_TOG_ITEM)->castTo<ToggleItem>();
@@ -401,7 +380,7 @@ void CodecSetsContext::clickOk()
 
         if (item_id == ID_SAVE_SETS_ITEM)
         {
-            if (saveCodecSettings())
+            if (SettingsManager::save(&_codec_sets, sizeof(CodecSettings), STR_CODEC_SETS_NAME, STR_CODEC_SETS_DIR))
                 showToast(STR_SUCCSESS);
             else
                 showToast(STR_FAIL);

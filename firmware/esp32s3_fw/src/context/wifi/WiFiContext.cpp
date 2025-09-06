@@ -6,7 +6,7 @@
 #include "meow/ui/widget/layout/EmptyLayout.h"
 #include "meow/ui/widget/toggle/ToggleSwitch.h"
 #include "meow/ui/widget/menu/item/ToggleItem.h"
-#include "meow/manager/settings/SettingsManager.h"
+#include "meow/manager/SettingsManager.h"
 
 const char STR_TRANSMITTER_STATE[] = "Стан модуля WIFi";
 const char STR_START_SCAN[] = "Розпочато скануваня";

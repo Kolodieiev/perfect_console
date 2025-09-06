@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include <cstring>
 #include <Stream.h>
-#include "../sd/SD_Manager.h"
+#include "SD_Manager.h"
 
 namespace meow
 {

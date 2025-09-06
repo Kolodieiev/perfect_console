@@ -6,7 +6,7 @@
 //
 #include "bright/PrefBrightContext.h"
 #include "file_server/PrefFileServerContext.h"
-#include "meow/manager/settings/SettingsManager.h"
+#include "meow/manager/SettingsManager.h"
 
 void PrefSelectContext::showSDErrTmpl()
 {

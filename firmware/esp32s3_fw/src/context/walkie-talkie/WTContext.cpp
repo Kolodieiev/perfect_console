@@ -1,10 +1,10 @@
 #include "WTContext.h"
 #include "LoraSetsContext.h"
 #include "CodecSetsContext.h"
-#include "meow/manager/settings/SettingsManager.h"
-#include "meow/manager/audio/in/I2SInManager.h"
-#include "meow/manager/audio/out/I2SOutManager.h"
-#include "meow/manager/coprocessor/CoprocessorManager.h"
+#include "meow/manager/SettingsManager.h"
+#include "meow/manager/I2SInManager.h"
+#include "meow/manager/I2SOutManager.h"
+#include "meow/manager/CoprocessorManager.h"
 #include "meow/util/battery/BatteryUtil.h"
 #include "meow/ui/widget/menu/item/ToggleItem.h"
 #include "meow/util/crypto/aes256.h"
@@ -48,15 +48,15 @@ WTContext::WTContext()
         return;
     }
 
-    _i2s_in.init(SAMPLE_RATE, true);
+    SettingsManager::load(&_codec_sets, sizeof(CodecSettings), STR_CODEC_SETS_NAME, STR_CODEC_SETS_DIR);
+    SettingsManager::load(&_lora_sets, sizeof(LoraSettings), STR_LORA_SETS_NAME, STR_LORA_SETS_DIR);
+
+    _i2s_in.init(SAMPLE_RATE, true); // TODO додати налаштування interleaving
     _i2s_in.enable();
     _i2s_out.init(SAMPLE_RATE);
     _i2s_out.enable();
 
-    loadLoraSettings();
-    // TODO Записати налаштування в лору
-    // TODO create lora task. Тест в loop замість таски.
-
+    // TODO Записати налаштування в модуль лори
     showMainTmpl();
 }
 
@@ -270,34 +270,6 @@ void WTContext::showContextMenuTmpl()
     _context_menu->setHeight(_context_menu->getSize() * _context_menu->getItemHeight() + 4);
     _context_menu->setPos(D_WIDTH - _context_menu->getWidth() - DISPLAY_PADDING,
                           D_HEIGHT - DISPLAY_PADDING - _context_menu->getHeight());
-}
-
-void WTContext::loadLoraSettings()
-{
-    String sets_path = SettingsManager::getSettingsFilePath(""); //TODO
-    sets_path += STR_LORA_SETS_DIR;
-
-    if (!_fs.dirExist(sets_path.c_str(), true))
-        return;
-
-    sets_path += STR_LORA_SETS_NAME;
-
-    if (_fs.fileExist(sets_path.c_str()))
-        _fs.readFile(sets_path.c_str(), &_lora_sets, sizeof(_lora_sets));
-}
-
-void WTContext::loadCodecSettings()
-{
-    String sets_path = SettingsManager::getSettingsFilePath(""); //TODO
-    sets_path += STR_CODEC_SETS_DIR;
-
-    if (!_fs.dirExist(sets_path.c_str(), true))
-        return;
-
-    sets_path += STR_CODEC_SETS_NAME;
-
-    if (_fs.fileExist(sets_path.c_str()))
-        _fs.readFile(sets_path.c_str(), &_codec_sets, sizeof(_codec_sets));
 }
 
 bool WTContext::loop()

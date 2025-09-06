@@ -1,15 +1,14 @@
 #pragma once
 #include <Arduino.h>
 #include "meow/ui/context/IContext.h"
-#include "LoraSettingsStruct.h"
 
 using namespace meow;
 
-class LoraSetsContext : public IContext
+class ExchangeSetsContext : public IContext
 {
 public:
-    LoraSetsContext();
-    virtual ~LoraSetsContext();
+    ExchangeSetsContext();
+    virtual ~ExchangeSetsContext();
 
 protected:
     virtual bool loop() override;
@@ -27,14 +26,11 @@ private:
         ID_MAIN_MENU = 1,
         ID_CONTEXT_MENU,
         //
-        ID_SAVE_SETS_ITEM,
     };
 
     void showMainTmpl();
     void showContextMenuTmpl();
     //
-private:
-    LoraSettings _lora_sets;
 
-    Mode _mode{MODE_MAIN};
+private:
 };

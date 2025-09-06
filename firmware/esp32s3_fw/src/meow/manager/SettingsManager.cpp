@@ -1,5 +1,5 @@
 #include "SettingsManager.h"
-#include "../sd/SD_Manager.h"
+#include "SD_Manager.h"
 
 namespace meow
 {
@@ -88,5 +88,28 @@ namespace meow
         path += pref_name;
 
         return path;
+    }
+
+    bool SettingsManager::load(void *out_data_struct, size_t data_struct_size, const char *data_file_name, const char *data_dir_name)
+    {
+        String sets_path = SettingsManager::getSettingsFilePath(data_file_name, data_dir_name);
+
+        if (sets_path.isEmpty())
+            return false;
+
+        if (!_fs.fileExist(sets_path.c_str(), true))
+            return false;
+
+        return _fs.readFile(sets_path.c_str(), out_data_struct, data_struct_size) == data_struct_size;
+    }
+
+    bool SettingsManager::save(const void *data_struct, size_t data_struct_size, const char *data_file_name, const char *data_dir_name)
+    {
+        String sets_path = SettingsManager::getSettingsFilePath(data_file_name, data_dir_name);
+
+        if (sets_path.isEmpty())
+            return false;
+
+        return _fs.writeFile(sets_path.c_str(), data_struct, data_struct_size) == data_struct_size;
     }
 }

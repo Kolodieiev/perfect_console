@@ -3,8 +3,8 @@
 #include <codec2.h>
 #include "meow/ui/context/IContext.h"
 #include "meow/lib/audio/filter/filter.h"
-#include "meow/manager/audio/in/I2SInManager.h"
-#include "meow/manager/audio/out/I2SOutManager.h"
+#include "meow/manager/I2SInManager.h"
+#include "meow/manager/I2SOutManager.h"
 #include "CodecSettingsStruct.h"
 #include "meow/ui/widget/text/Label.h"
 #include "meow/ui/widget/menu/FixedMenu.h"
@@ -58,8 +58,6 @@ private:
     void showContextMenuTmpl();
     void hideContextMenu();
     //
-    void loadCodecSettings();
-    bool saveCodecSettings();
     void updateFilterSets();
     //
     void clickOk();
