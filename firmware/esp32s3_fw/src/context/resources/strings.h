@@ -33,8 +33,8 @@ const char STR_MOVE[] = "Перемістити";
 const char STR_SUCCSESS[] = "Успішно";
 const char STR_FAIL[] = "Невдача";
 const char STR_CONTINUE[] = "Продовжити";
-const char STR_IMPORT[] = "Отримати";
-const char STR_EXPORT[] = "Поділитися";
+const char STR_GET[] = "Отримати";
+const char STR_SHARE[] = "Поділитися";
 const char STR_CONNECT_TO[] = "Приєднатися";
 const char STR_CONFIRM[] = "Прийняти";
 const char STR_REJECT[] = "Відхилити";
@@ -48,6 +48,10 @@ const char STR_ENABLE[] = "Увімкнути";
 const char STR_DISABLE[] = "Вимкнути";
 const char STR_ENABLED[] = "Увімкнено";
 const char STR_DISABLED[] = "Вимкнено";
+const char STR_CREATE[] = "Створити";
+const char STR_APPLY[] = "Застосувати";
+const char STR_EDIT[] = "Редагувати";
+
 //
 
 const char STR_PREF_BRIGHT[] = "brightness";
