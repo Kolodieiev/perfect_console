@@ -33,7 +33,7 @@ private:
         //
         ID_CREATE_ITEM,
         ID_GET_ITEM,
-        ID_USE_ITEM,
+        ID_APPLY_ITEM,
         ID_EDIT_ITEM,
         ID_DELETE_ITEM,
         ID_SHARE_ITEM,

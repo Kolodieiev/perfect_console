@@ -83,37 +83,49 @@ void LoraSetsContext::clickOk()
     if (_mode == MODE_CTX_MENU)
     {
         uint16_t id = _context_menu->getCurrItemID();
-        // TODO
-        if (id == ID_CREATE_ITEM)
+
+        if (id == ID_APPLY_ITEM)
         {
-            _mode = MODE_SUBCONTEXT;
-            getLayout()->delWidgets();
-            // _sub_context = new SetsEditorContext();
-        }
-        else if (id == ID_EDIT_ITEM)
-        {
-            _mode = MODE_SUBCONTEXT;
-            getLayout()->delWidgets();
-            // _sub_context = new SetsEditorContext();
-        }
-        else if (id == ID_GET_ITEM)
-        {
-            _mode = MODE_SUBCONTEXT;
-            getLayout()->delWidgets();
-            // _sub_context = new ExchangeSetsContext();
-        }
-        else if (id == ID_SHARE_ITEM)
-        {
-            _mode = MODE_SUBCONTEXT;
-            getLayout()->delWidgets();
-            // _sub_context = new ExchangeSetsContext();
-        }
-        else if (id == ID_USE_ITEM)
-        {
-            // Зберегти ім'я поточного налаштування
+            hideContextMenu();
+
+            if (!SettingsManager::set(STR_LORA_PRESET, _main_menu->getCurrItemText().c_str(), STR_LORA_SETS_DIR))
+                showToast(STR_FAIL);
+            else
+                showToast(STR_SUCCSESS);
         }
         else if (id == ID_DELETE_ITEM)
         {
+            hideContextMenu();
+            loadSetsList();
+            fillSetsList();
+
+            String file_path = SettingsManager::getSettingsFilePath(_main_menu->getCurrItemText().c_str(), STR_LORA_SETS_DIR);
+
+            if (!_fs.rmFile(file_path.c_str(), true))
+                showToast(STR_FAIL);
+            else
+                showToast(STR_SUCCSESS);
+        }
+        else
+        {
+            // Пункти, які відкривають субконтекст.
+
+            _mode = MODE_SUBCONTEXT;
+            getLayout()->delWidgets();
+
+            if (id == ID_CREATE_ITEM)
+                _sub_context = new SetsEditorContext(emptyString);
+            else if (id == ID_EDIT_ITEM)
+                _sub_context = new SetsEditorContext(_main_menu->getCurrItemText());
+            else if (id == ID_GET_ITEM)
+                _sub_context = new ExchangeSetsContext(emptyString);
+            else if (id == ID_SHARE_ITEM)
+                _sub_context = new ExchangeSetsContext(_main_menu->getCurrItemText());
+            else
+            {
+                log_e("Не реалізований пункт меню");
+                esp_restart();
+            }
         }
     }
 }
@@ -204,14 +216,32 @@ void LoraSetsContext::showContextMenuTmpl()
     create_item->setLbl(create_lbl);
     create_lbl->setTextOffset(1);
 
-    // TODO Отримати STR_GET
+    // Отримати
+    MenuItem *get_item = create_item->clone(ID_GET_ITEM);
+    _context_menu->addItem(get_item);
+    get_item->getLbl()->setText(STR_GET);
 
     if (_main_menu->getSize() > 0)
     {
-        // Застосувати STR_APPLY
-        // Редагувати STR_EDIT
-        // Видалити STR_DELETE
-        // Поділитися STR_SHARE
+        // Застосувати
+        MenuItem *apply_item = create_item->clone(ID_APPLY_ITEM);
+        _context_menu->addItem(apply_item);
+        apply_item->getLbl()->setText(STR_APPLY);
+
+        // Редагувати
+        MenuItem *edit_item = create_item->clone(ID_EDIT_ITEM);
+        _context_menu->addItem(edit_item);
+        edit_item->getLbl()->setText(STR_EDIT);
+
+        // Видалити
+        MenuItem *delete_item = create_item->clone(ID_DELETE_ITEM);
+        _context_menu->addItem(delete_item);
+        delete_item->getLbl()->setText(STR_DELETE);
+
+        // Поділитися
+        MenuItem *share_item = create_item->clone(ID_SHARE_ITEM);
+        _context_menu->addItem(share_item);
+        share_item->getLbl()->setText(STR_SHARE);
     }
 
     _context_menu->setHeight(_context_menu->getSize() * _context_menu->getItemHeight() + 4);
@@ -221,10 +251,10 @@ void LoraSetsContext::showContextMenuTmpl()
 
 void LoraSetsContext::hideContextMenu()
 {
+    _mode = MODE_MAIN;
+    _main_menu->enable();
     getLayout()->delWidgetByID(ID_CTX_MENU);
     getLayout()->forcedDraw();
-    _main_menu->enable();
-    _mode = MODE_MAIN;
 }
 
 void LoraSetsContext::loadSetsList()

@@ -5,9 +5,9 @@
 using namespace meow;
 
 class ExchangeSetsContext : public IContext
-{
+{ 
 public:
-    ExchangeSetsContext(String &sets_file_name, bool is_receiver = true);
+    ExchangeSetsContext(const String &sets_file_name);
     virtual ~ExchangeSetsContext();
 
 protected:
@@ -34,5 +34,5 @@ private:
 
 private:
     String _file_name;
-    bool _is_receiver;
+    bool _is_receiver{true};
 };

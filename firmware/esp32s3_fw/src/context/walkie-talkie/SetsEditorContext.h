@@ -7,7 +7,7 @@ using namespace meow;
 class SetsEditorContext : public IContext
 {
 public:
-    SetsEditorContext(String &sets_file_name, bool is_new = true);
+    SetsEditorContext(const String &sets_file_name);
     virtual ~SetsEditorContext();
 
 protected:
@@ -16,5 +16,5 @@ protected:
 
 private:
     String _file_name;
-    bool _is_new;
+    bool _is_new{true};
 };
