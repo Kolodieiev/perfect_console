@@ -2,6 +2,8 @@
 #include "ExchangeSetsContext.h"
 #include "SetsEditorContext.h"
 #include "../WidgetCreator.h"
+#include "ExchangeSetsContext.h"
+#include "SetsEditorContext.h"
 
 LoraSetsContext::LoraSetsContext()
 {
@@ -84,24 +86,31 @@ void LoraSetsContext::clickOk()
         // TODO
         if (id == ID_CREATE_ITEM)
         {
-        }
-        else if (id == ID_GET_ITEM)
-        {
-            // _mode = MODE_SUBCONTEXT;
-            // getLayout()->delWidgets();
-            // _sub_context = new LoraSetsContext();
-        }
-        else if (id == ID_SHARE_ITEM)
-        {
-            // _mode = MODE_SUBCONTEXT;
-            // getLayout()->delWidgets();
-            // _sub_context = new LoraSetsContext();
-        }
-        else if (id == ID_USE_ITEM)
-        {
+            _mode = MODE_SUBCONTEXT;
+            getLayout()->delWidgets();
+            // _sub_context = new SetsEditorContext();
         }
         else if (id == ID_EDIT_ITEM)
         {
+            _mode = MODE_SUBCONTEXT;
+            getLayout()->delWidgets();
+            // _sub_context = new SetsEditorContext();
+        }
+        else if (id == ID_GET_ITEM)
+        {
+            _mode = MODE_SUBCONTEXT;
+            getLayout()->delWidgets();
+            // _sub_context = new ExchangeSetsContext();
+        }
+        else if (id == ID_SHARE_ITEM)
+        {
+            _mode = MODE_SUBCONTEXT;
+            getLayout()->delWidgets();
+            // _sub_context = new ExchangeSetsContext();
+        }
+        else if (id == ID_USE_ITEM)
+        {
+            // Зберегти ім'я поточного налаштування
         }
         else if (id == ID_DELETE_ITEM)
         {
