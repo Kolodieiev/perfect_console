@@ -183,8 +183,8 @@ void LoraSetsContext::showMainTmpl()
     _main_scrollbar = new ScrollBar(ID_MAIN_SCROLL);
     layout->addWidget(_main_scrollbar);
     _main_scrollbar->setWidth(SCROLLBAR_WIDTH);
-    _main_scrollbar->setHeight(_main_menu->getHeight());
-    _main_scrollbar->setPos(_main_menu->getWidth() + _main_menu->getXPos(), _main_menu->getYPos());
+    _main_scrollbar->setHeight(_main_menu->getHeight() - 4);
+    _main_scrollbar->setPos(_main_menu->getWidth() + _main_menu->getXPos(), _main_menu->getYPos() + 2);
     _main_scrollbar->setBackColor(COLOR_MAIN_BACK);
 }
 
