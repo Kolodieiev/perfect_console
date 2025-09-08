@@ -156,7 +156,6 @@ void CodecSetsContext::showMainTmpl()
     volume_spin->setBackColor(TFT_WHITE);
     volume_spin->setTextColor(TFT_BLACK);
     volume_spin->setCornerRadius(5);
-    volume_spin->setCornerRadius(5);
 
     // HPF
     SpinItem *hpf_freq_item = volume_item->clone(ID_HPF_SPIN_ITEM);
