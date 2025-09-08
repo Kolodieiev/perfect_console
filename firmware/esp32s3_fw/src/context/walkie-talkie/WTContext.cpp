@@ -49,7 +49,9 @@ WTContext::WTContext()
     }
 
     SettingsManager::load(&_codec_sets, sizeof(CodecSettings), STR_CODEC_SETS_NAME, STR_CODEC_SETS_DIR);
-    SettingsManager::load(&_lora_sets, sizeof(LoraSettings), STR_LORA_SETS_NAME, STR_LORA_SETS_DIR);
+
+    // TODO Прочитати імя налаштувань з STR_LORA_PRESET,STR_LORA_SETS_DIR і завантажувати по ньому 
+    // SettingsManager::load(&_lora_sets, sizeof(LoraSettings), STR_LORA_SETS_NAME, STR_LORA_SETS_DIR); 
 
     _i2s_in.init(SAMPLE_RATE, true); // TODO додати налаштування interleaving
     _i2s_in.enable();
