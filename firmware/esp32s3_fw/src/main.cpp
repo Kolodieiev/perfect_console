@@ -37,6 +37,18 @@ void setup()
     ccpu_cmd_data[1] = BtnID::BTN_DOWN;
     _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
 
+    // Вимкнути всю периферію на допоміжному МК.
+    ccpu_cmd_data[0] = CCPU_CMD_PIN_OFF;
+
+    ccpu_cmd_data[1] = CH_PIN_MIC_PWR;
+    _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+
+    ccpu_cmd_data[1] = CH_PIN_LORA_PWR;
+    _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+
+    ccpu_cmd_data[1] = CH_PIN_SPK_PWR;
+    _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data));
+
     // Запустити виконання Meowui.
     MEOW.begin(80);
 }
