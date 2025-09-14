@@ -2,7 +2,7 @@
 #include "../WidgetCreator.h"
 #include "meow/util/img/BmpUtil.h"
 #include "../resources/ico/battery.h"
-#include "meow/util/battery/BatteryUtil.h"
+#include "meow/util/batt_util.h"
 
 #define UPD_DISPLAY_INTERVAL_MS 5000UL
 
@@ -74,7 +74,7 @@ void HomeContext::update()
 
 void HomeContext::updateBattVoltage()
 {
-    float bat_voltage = BatteryUtil::readVoltVal();
+    float bat_voltage = readBattVoltage();
     String volt_str = String(bat_voltage);
     _batt_volt_lbl->setText(volt_str);
 
