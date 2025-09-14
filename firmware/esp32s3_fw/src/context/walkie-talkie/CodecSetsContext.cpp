@@ -144,7 +144,7 @@ void CodecSetsContext::showMainTmpl()
     volume_item->setChangingBorder(true);
     volume_item->setChangingBack(true);
 
-    Label *volume_lbl = creator.getItemLabel(STR_VOLUME_DB, 2);
+    Label *volume_lbl = creator.getItemLabel(STR_VOLUME_DB, 4, 2);
     volume_item->setLbl(volume_lbl);
 
     SpinBox *volume_spin = volume_item->getSpin();
@@ -152,7 +152,9 @@ void CodecSetsContext::showMainTmpl()
     volume_spin->setMin(1);
     volume_spin->setStep(1);
     volume_spin->setValue(_codec_sets.volume);
-    volume_spin->setWidth(30);
+    volume_spin->setWidth(50);
+    volume_spin->setFontID(4);
+    volume_spin->setTextSize(2);
     volume_spin->setBackColor(TFT_WHITE);
     volume_spin->setTextColor(TFT_BLACK);
     volume_spin->setCornerRadius(5);
@@ -189,7 +191,7 @@ void CodecSetsContext::showMainTmpl()
     agc_in_toggle_item->setChangingBorder(true);
     agc_in_toggle_item->setChangingBack(true);
 
-    Label *agc_in_toggle_lbl = creator.getItemLabel(STR_AGC_IN_EN, 2);
+    Label *agc_in_toggle_lbl = creator.getItemLabel(STR_AGC_IN_EN, 4, 2);
     agc_in_toggle_item->setLbl(agc_in_toggle_lbl);
 
     ToggleSwitch *toggle_agc_in = new ToggleSwitch(1);
