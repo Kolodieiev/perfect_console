@@ -101,13 +101,10 @@ const char STR_EMPTY_BAT[] = "0.00";
 //
 const char STR_CHANN_TITLE[] = "Канал:";
 const char STR_ENCRYPT_TITLE[] = "Шифрування:";
-const char STR_POWER_TITLE[] = "Потужність:";
-const char STR_POWER_MIN_VAL[] = " Мінімальна";
-const char STR_POWER_MID_VAL[] = " Середня";
-const char STR_POWER_HIGH_VAL[] = " Висока";
-const char STR_POWER_MAX_VAL[] = " Максимальна";
 //
 const char STR_LORA_PRESET[] = "LRE_PRESET";
 const char STR_LORA_SETS_DIR[] = "LRE";
+const char STR_LORA_SETS_EXT[] = ".lset";
+
 const char STR_CODEC_SETS_DIR[] = "codec";
 const char STR_CODEC_SETS_NAME[] = "codec.sets";

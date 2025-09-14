@@ -5,9 +5,10 @@
 #include "meow/manager/I2SInManager.h"
 #include "meow/manager/I2SOutManager.h"
 #include "meow/manager/CoprocessorManager.h"
-#include "meow/util/battery/BatteryUtil.h"
+#include "meow/util/batt_util.h"
+#include "meow/util/string_util.h"
+#include "meow/util/aes256.h"
 #include "meow/ui/widget/menu/item/ToggleItem.h"
-#include "meow/util/crypto/aes256.h"
 #include "../resources/ico/battery.h"
 #include "../WidgetCreator.h"
 
@@ -15,6 +16,13 @@ const char STR_LORA_STATE_ERR[] = "LoRa не підключено";
 const char STR_ENCRYPTION[] = "Шифрування";
 const char STR_LORA_SETS[] = "LoRa налаштування";
 const char STR_CODEC_SETS[] = "Кодеку налаштування";
+const char STR_POWER_TITLE[] = "Потужність:";
+const char STR_POWER_MIN_VAL[] = "Мінімальна";
+const char STR_POWER_MID_VAL[] = "Середня";
+const char STR_POWER_HIGH_VAL[] = "Висока";
+const char STR_POWER_MAX_VAL[] = "Максимальна";
+const char STR_EMPTY_LORA_SETS[] = "Без налаштувань";
+const char STR_BAT_VOLT_TITLE[] = "Напруга:";
 
 #define SAMPLE_RATE 16000U
 //
@@ -48,23 +56,35 @@ WTContext::WTContext()
         return;
     }
 
+    loadSettings();
+    showMainTmpl();
+}
+
+void WTContext::loadSettings()
+{
     SettingsManager::load(&_codec_sets, sizeof(CodecSettings), STR_CODEC_SETS_NAME, STR_CODEC_SETS_DIR);
-
-    // TODO Прочитати імя налаштувань з STR_LORA_PRESET,STR_LORA_SETS_DIR і завантажувати по ньому 
-    // SettingsManager::load(&_lora_sets, sizeof(LoraSettings), STR_LORA_SETS_NAME, STR_LORA_SETS_DIR); 
-
-    _i2s_in.init(SAMPLE_RATE, true); // TODO додати налаштування interleaving
+    _i2s_in.init(SAMPLE_RATE, _codec_sets.interleaving_en);
     _i2s_in.enable();
     _i2s_out.init(SAMPLE_RATE);
     _i2s_out.enable();
 
-    // TODO Записати налаштування в модуль лори
-    showMainTmpl();
+    _lora_set_name = SettingsManager::get(STR_LORA_PRESET, STR_LORA_SETS_DIR);
+
+    if (!_lora_set_name.isEmpty())
+    {
+        if (!SettingsManager::load(&_lora_sets, sizeof(LoraSettings), _lora_set_name.c_str(), STR_LORA_SETS_DIR))
+        {
+            _lora_set_name = emptyString;
+        }
+        else
+        {
+            // TODO Записати налаштування в модуль лори
+        }
+    }
 }
 
 WTContext::~WTContext()
 {
-    delete _batt_ico;
     _i2s_in.deinit();
     _i2s_out.deinit();
 
@@ -109,34 +129,38 @@ void WTContext::showMainTmpl()
     EmptyLayout *layout = creator.getEmptyLayout();
     setLayout(layout);
 
-    // Акум
-    _batt_val_lbl = new Label(ID_BAT_VAL);
-    layout->addWidget(_batt_val_lbl);
-    _batt_val_lbl->setText(STR_EMPTY_BAT);
-    _batt_val_lbl->setWidth(56);
-    _batt_val_lbl->setHeight(35);
-    _batt_val_lbl->setAlign(Label::ALIGN_CENTER);
-    _batt_val_lbl->setGravity(Label::GRAVITY_CENTER);
-    _batt_val_lbl->setPos(_display.width() - TFT_CUTOUT - DISPLAY_PADDING - _batt_val_lbl->getWidth(), DISPLAY_PADDING);
-    _batt_val_lbl->setTransparency(true);
+    // Ім'я налаштувань
 
-    if (!_batt_ico)
+    Label *ctx_header_lbl = new Label(ID_HEADER_LBL);
+    layout->addWidget(ctx_header_lbl);
+    ctx_header_lbl->setWidth(D_WIDTH);
+    ctx_header_lbl->setHeight(34);
+    ctx_header_lbl->setBackColor(TFT_DARKGREY);
+    ctx_header_lbl->setAlign(IWidget::ALIGN_CENTER);
+    ctx_header_lbl->setGravity(IWidget::GRAVITY_CENTER);
+    ctx_header_lbl->setTextColor(TFT_RED);
+    ctx_header_lbl->setTextSize(2);
+    ctx_header_lbl->setFontID(4);
+    ctx_header_lbl->setTicker(true);
+
+    if (_lora_set_name.isEmpty())
     {
-        _batt_ico = new Image(1);
-        _batt_ico->init(_batt_val_lbl->getWidth(), _batt_val_lbl->getHeight());
-        _batt_ico->setSrc(ICO_BATTERY);
-        _batt_ico->setTransparency(true);
-        _batt_ico->setTranspColor(TFT_TRANSPARENT);
+        _lora_set_name = STR_EMPTY_LORA_SETS;
+        ctx_header_lbl->setText(_lora_set_name);
+    }
+    else
+    {
+        String set_name = _lora_set_name;
+        rmFilenameExt(set_name, STR_LORA_SETS_EXT);
+        ctx_header_lbl->setText(set_name);
     }
 
-    _batt_val_lbl->setBackImg(_batt_ico);
-
-    // Заголовки
+    // Заголовки налаштувань
 
     Label *lbl_title_chnl = new Label(ID_CHNL_TITLE);
     layout->addWidget(lbl_title_chnl);
     lbl_title_chnl->setText(STR_CHANN_TITLE);
-    lbl_title_chnl->setPos(DISPLAY_PADDING, _batt_val_lbl->getYPos() + _batt_val_lbl->getHeight() + DISPLAY_PADDING);
+    lbl_title_chnl->setPos(DISPLAY_PADDING, ctx_header_lbl->getYPos() + ctx_header_lbl->getHeight() + DISPLAY_PADDING);
     lbl_title_chnl->setFontID(4);
     lbl_title_chnl->setTextSize(2);
     lbl_title_chnl->setTextColor(TFT_GREEN);
@@ -153,6 +177,12 @@ void WTContext::showMainTmpl()
     lbl_title_pwr->setText(STR_POWER_TITLE);
     lbl_title_pwr->setPos(DISPLAY_PADDING, lbl_title_enc->getYPos() + lbl_title_enc->getHeight() + DISPLAY_PADDING);
     lbl_title_pwr->initWidthToFit();
+
+    Label *lbl_volt_title = lbl_title_chnl->clone(ID_BAT_TITLE);
+    layout->addWidget(lbl_volt_title);
+    lbl_volt_title->setText(STR_BAT_VOLT_TITLE);
+    lbl_volt_title->setPos(DISPLAY_PADDING, lbl_title_pwr->getYPos() + lbl_title_pwr->getHeight() + DISPLAY_PADDING);
+    lbl_volt_title->initWidthToFit();
 
     // Значення
 
@@ -213,6 +243,14 @@ void WTContext::showMainTmpl()
 
     lbl_val_pwr->setPos(lbl_val_pos, lbl_title_pwr->getYPos());
     lbl_val_pwr->initWidthToFit();
+
+    // Акум
+    _batt_val_lbl = new Label(ID_BAT_VAL);
+    layout->addWidget(_batt_val_lbl);
+    _batt_val_lbl->setText(STR_EMPTY_BAT);
+    _batt_val_lbl->setWidth(56);
+    _batt_val_lbl->setPos(lbl_val_pos, lbl_volt_title->getYPos());
+    _batt_val_lbl->setTransparency(true);
 
     updateBattVoltage();
 }
@@ -288,7 +326,8 @@ bool WTContext::loop()
             delete _sub_context;
             _sub_context = nullptr;
             _mode = MODE_MAIN;
-            // TODO Оновити налаштування лори і кодеку
+
+            loadSettings();
             showMainTmpl();
             return true;
         }
@@ -366,7 +405,7 @@ void WTContext::update()
 
 void WTContext::updateBattVoltage()
 {
-    float bat_voltage = BatteryUtil::readVoltVal();
+    float bat_voltage = readBattVoltage();
     String volt_str = String(bat_voltage);
     _batt_val_lbl->setText(volt_str);
 
@@ -401,8 +440,10 @@ void WTContext::clickOk()
 
 void WTContext::clickUp()
 {
-    if (_mode == MODE_MAIN) // TODO гучність
+    if (_mode == MODE_MAIN)
     {
+        if (_codec_sets.volume < 15)
+            ++_codec_sets.volume;
     }
     else if (_mode == MODE_CTX_MENU)
     {
@@ -412,8 +453,10 @@ void WTContext::clickUp()
 
 void WTContext::clickDown()
 {
-    if (_mode == MODE_MAIN) // TODO гучність
+    if (_mode == MODE_MAIN)
     {
+        if (_codec_sets.volume > 1)
+            --_codec_sets.volume;
     }
     else if (_mode == MODE_CTX_MENU)
     {

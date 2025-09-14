@@ -4,6 +4,8 @@
 #include "meow/ui/widget/text/Label.h"
 #include "meow/ui/widget/menu/FixedMenu.h"
 #include "meow/ui/widget/scrollbar/ScrollBar.h"
+#include "meow/ui/widget/keyboard/Keyboard.h"
+#include "meow/ui/widget/text/TextBox.h"
 #include "LoraSettingsStruct.h"
 
 using namespace meow;
@@ -32,6 +34,8 @@ private:
         ID_HEADER_LBL = 1,
         ID_MAIN_MENU,
         ID_MAIN_SCROLL,
+        ID_DIALOG_TXT,
+        ID_KEYBOARD,
         ID_ITEM_ENC,
         ID_ITEM_CHANN,
         ID_ITEM_POWER,
@@ -39,6 +43,7 @@ private:
     };
 
     void showMainTmpl();
+    void showNameDialogTmpl();
 
     void clickOk();
     void clickUp();
@@ -50,8 +55,6 @@ private:
 
     void saveSets();
 
-    void showNameDialog();
-
 private:
     LoraSettings _lora_sets;
 
@@ -59,6 +62,8 @@ private:
 
     FixedMenu *_main_menu{nullptr};
     ScrollBar *_main_scrollbar{nullptr};
+    TextBox *_dialog_txt;
+    Keyboard *_keyboard;
 
     Mode _mode{MODE_MAIN};
 

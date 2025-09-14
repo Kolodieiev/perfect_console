@@ -4,6 +4,7 @@
 #include "../WidgetCreator.h"
 #include "ExchangeSetsContext.h"
 #include "SetsEditorContext.h"
+#include "meow/util/string_util.h"
 
 LoraSetsContext::LoraSetsContext()
 {
@@ -88,7 +89,10 @@ void LoraSetsContext::clickOk()
         {
             hideContextMenu();
 
-            if (!SettingsManager::set(STR_LORA_PRESET, _main_menu->getCurrItemText().c_str(), STR_LORA_SETS_DIR))
+            String f_name = _main_menu->getCurrItemText();
+            f_name += STR_LORA_SETS_EXT;
+
+            if (!SettingsManager::set(STR_LORA_PRESET, f_name.c_str(), STR_LORA_SETS_DIR))
                 showToast(STR_FAIL);
             else
                 showToast(STR_SUCCSESS);
@@ -96,31 +100,38 @@ void LoraSetsContext::clickOk()
         else if (id == ID_DELETE_ITEM)
         {
             hideContextMenu();
-            loadSetsList();
-            fillSetsList();
 
             String file_path = SettingsManager::getSettingsFilePath(_main_menu->getCurrItemText().c_str(), STR_LORA_SETS_DIR);
-
             if (!_fs.rmFile(file_path.c_str(), true))
+            {
                 showToast(STR_FAIL);
+            }
             else
+            {
+                loadSetsList();
                 showToast(STR_SUCCSESS);
+            }
+
+            fillSetsList();
         }
         else
         {
             // Пункти, які відкривають субконтекст.
 
             _mode = MODE_SUBCONTEXT;
+
+            String curr_item_txt = _main_menu->getCurrItemText();
+
             getLayout()->delWidgets();
 
             if (id == ID_CREATE_ITEM)
                 _sub_context = new SetsEditorContext(emptyString);
             else if (id == ID_EDIT_ITEM)
-                _sub_context = new SetsEditorContext(_main_menu->getCurrItemText());
+                _sub_context = new SetsEditorContext(curr_item_txt);
             else if (id == ID_GET_ITEM)
                 _sub_context = new ExchangeSetsContext(emptyString);
             else if (id == ID_SHARE_ITEM)
-                _sub_context = new ExchangeSetsContext(_main_menu->getCurrItemText());
+                _sub_context = new ExchangeSetsContext(curr_item_txt);
             else
             {
                 log_e("Не реалізований пункт меню");
@@ -254,7 +265,6 @@ void LoraSetsContext::hideContextMenu()
     _mode = MODE_MAIN;
     _main_menu->enable();
     getLayout()->delWidgetByID(ID_CTX_MENU);
-    getLayout()->forcedDraw();
 }
 
 void LoraSetsContext::loadSetsList()
@@ -264,7 +274,7 @@ void LoraSetsContext::loadSetsList()
     if (dir_name.isEmpty())
         return;
 
-    _fs.indexAll(_sets_files, dir_name.c_str());
+    _fs.indexFilesExt(_sets_files, dir_name.c_str(), STR_LORA_SETS_EXT);
 
     while (_fs.isWorking()) // Якщо хочеш, перепиши на асинхронне завантаження списку =)
         delay(1);
@@ -287,8 +297,13 @@ void LoraSetsContext::fillSetsList()
 
         Label *lbl = new Label(1);
         item->setLbl(lbl);
+        lbl->setFontID(4);
+        lbl->setTextSize(2);
         lbl->setTickerInFocus(true);
-        lbl->setText(_sets_files[i].getName());
+
+        String lbl_txt = _sets_files[i].getName();
+        rmFilenameExt(lbl_txt, STR_LORA_SETS_EXT);
+        lbl->setText(lbl_txt);
     }
 
     _main_scrollbar->setValue(0);

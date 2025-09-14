@@ -34,12 +34,14 @@ private:
     enum Widget_ID : uint8_t
     {
         ID_CTX_MENU = 1,
+        ID_HEADER_LBL,
         ID_CHNL_TITLE,
         ID_CHNL_VAL,
         ID_ENCRYPT_TITLE,
         ID_ENCRYPT_VAL,
         ID_POWER_TITLE,
         ID_POWER_VAL,
+        ID_BAT_TITLE,
         ID_BAT_VAL,
         ID_LBL_STATE,
         ID_ITEM_LORA_SETS,
@@ -57,13 +59,16 @@ private:
     void clickUp();
     void clickDown();
 
-private: // TODO вирівняти
+    void loadSettings();
+
+private:
     LRE32 _lora; // Зміни тип на LRE220T якщо модуль лори -  LRE220.
 
     LoraSettings _lora_sets;
     CodecSettings _codec_sets;
 
-    Image *_batt_ico{nullptr};
+    String _lora_set_name;
+
     Label *_state_val_lbl{nullptr};
     Label *_encrypt_val_lbl{nullptr};
     Label *_power_val_lbl{nullptr};

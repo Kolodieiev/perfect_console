@@ -3,24 +3,30 @@
 #include "meow/manager/SettingsManager.h"
 #include "meow/ui/widget/menu/item/ToggleItem.h"
 #include "meow/ui/widget/menu/item/SpinItem.h"
+#include "meow/ui/widget/menu/item/ComboItem.h"
+#include "meow/util/aes256.h"
 
 #define MAX_LORA_CHANN 32u // Максимальна кількість каналів, що підтримуються поточним модулем LoRa.
 #define MENU_ITEMS_ON_SCREEN 5U
 
+const char STR_NAME_SETS[] = "Ім'я налаштування";
 const char STR_EDIT_SETS[] = "Редагувати налаштування";
 const char STR_NEW_SETS[] = "Нове налаштування";
 const char STR_GENERATE_KEY[] = "Згенерувати ключ";
-const char *POWER_VALUES[4] = {STR_POWER_MAX_VAL, STR_POWER_HIGH_VAL, STR_POWER_MID_VAL, STR_POWER_MIN_VAL};
+
+const char STR_COMBO_MIN_VAL[] = "Потужність: Мінімальна";
+const char STR_COMBO_MID_VAL[] = "Потужність: Середня";
+const char STR_COMBO_HIGH_VAL[] = "Потужність: Висока";
+const char STR_COMBO_MAX_VAL[] = "Потужність: Максимальна";
+
+const char *POWER_VALUES[4] = {STR_COMBO_MAX_VAL, STR_COMBO_HIGH_VAL, STR_COMBO_MID_VAL, STR_COMBO_MIN_VAL};
 
 SetsEditorContext::SetsEditorContext(const String &sets_file_name) : _file_name{sets_file_name}
 {
-    if (_file_name.isEmpty())
-    {
-        _is_new = true;
-    }
-    else
+    if (!_file_name.isEmpty())
     {
         _is_new = false;
+        _file_name += STR_LORA_SETS_EXT;
         SettingsManager::load(&_lora_sets, sizeof(LoraSettings), _file_name.c_str(), STR_LORA_SETS_DIR);
     }
 
@@ -47,6 +53,16 @@ void SetsEditorContext::update()
     {
         _input.lock(BtnID::BTN_DOWN, HOLD_LOCK);
         clickDown();
+    }
+    else if (_input.isHolded(BtnID::BTN_LEFT))
+    {
+        _input.lock(BtnID::BTN_LEFT, HOLD_LOCK);
+        clickLeft();
+    }
+    else if (_input.isHolded(BtnID::BTN_RIGHT))
+    {
+        _input.lock(BtnID::BTN_RIGHT, HOLD_LOCK);
+        clickRight();
     }
     else if (_input.isReleased(BtnID::BTN_OK))
     {
@@ -85,7 +101,7 @@ void SetsEditorContext::showMainTmpl()
     ctx_header_lbl->setBackColor(TFT_DARKGREY);
     ctx_header_lbl->setAlign(IWidget::ALIGN_CENTER);
     ctx_header_lbl->setGravity(IWidget::GRAVITY_CENTER);
-    ctx_header_lbl->setTextColor(TFT_ORANGE);
+    ctx_header_lbl->setTextColor(TFT_RED);
 
     if (_is_new)
         ctx_header_lbl->setText(STR_NEW_SETS);
@@ -115,7 +131,7 @@ void SetsEditorContext::showMainTmpl()
     enc_toggle_item->setChangingBorder(true);
     enc_toggle_item->setChangingBack(true);
 
-    Label *enc_toggle_lbl = creator.getItemLabel(STR_ENCRYPT_TITLE, 2);
+    Label *enc_toggle_lbl = creator.getItemLabel(STR_ENCRYPT_TITLE, 4, 2);
     enc_toggle_item->setLbl(enc_toggle_lbl);
 
     ToggleSwitch *toggle_agc_in = new ToggleSwitch(1);
@@ -133,7 +149,7 @@ void SetsEditorContext::showMainTmpl()
     chann_spin_item->setChangingBorder(true);
     chann_spin_item->setChangingBack(true);
 
-    Label *chann_spin_lbl = creator.getItemLabel(STR_CHANN_TITLE, 2);
+    Label *chann_spin_lbl = creator.getItemLabel(STR_CHANN_TITLE, 4, 2);
     chann_spin_item->setLbl(chann_spin_lbl);
 
     SpinBox *chann_spin = chann_spin_item->getSpin();
@@ -141,24 +157,25 @@ void SetsEditorContext::showMainTmpl()
     chann_spin->setMin(0);
     chann_spin->setStep(1);
     chann_spin->setValue(_lora_sets.channel);
-    chann_spin->setWidth(30);
+    chann_spin->setWidth(60);
+    chann_spin->setTextSize(2);
     chann_spin->setBackColor(TFT_WHITE);
     chann_spin->setTextColor(TFT_BLACK);
     chann_spin->setCornerRadius(5);
 
     // Вибір потужності
-    MenuItem *power_item = new MenuItem(ID_ITEM_POWER);
+    ComboItem *power_item = new ComboItem(ID_ITEM_POWER);
     _main_menu->addItem(power_item);
     power_item->setFocusBorderColor(TFT_LIME);
     power_item->setFocusBackColor(COLOR_FOCUS_BACK);
     power_item->setChangingBorder(true);
     power_item->setChangingBack(true);
-
-    String power_item_str = STR_POWER_TITLE;
-    power_item_str += POWER_VALUES[_lora_sets.power];
-
-    Label *power_lbl = creator.getItemLabel(power_item_str.c_str(), 2);
+    Label *power_lbl = creator.getItemLabel(emptyString.c_str(), 4, 2);
     power_item->setLbl(power_lbl);
+
+    std::vector<String> vec(POWER_VALUES, POWER_VALUES + 4);
+    power_item->setRange(vec);
+    power_item->selectPos(_lora_sets.power);
 
     // Генерація ключа
     MenuItem *gen_key_item = power_item->clone(ID_ITEM_GEN_KEY);
@@ -170,22 +187,70 @@ void SetsEditorContext::showMainTmpl()
 
 void SetsEditorContext::saveSets()
 {
-    // TODO Якщо редагування, зберігаємо з поточним іменем і виходимо
-    // Якщо новий відображаємо діалог
-    // Якщо в діалозі, зберігаємо і виходимо
-    // if (_mode != MODE_MAIN)
-    // {
-    //     // SAVE
-    // }
-    // else
-    // {
-    //     // Діалог вводу назви налаштування
-    // }
+    if (_mode == MODE_ENTER_NAME)
+    {
+        _file_name = _dialog_txt->getText();
+
+        if (_file_name.isEmpty())
+        {
+            showToast(STR_FAIL);
+            return;
+        }
+
+        if (_is_new)
+            _file_name += STR_LORA_SETS_EXT;
+    }
+    else if (_is_new)
+    {
+        showNameDialogTmpl();
+        return;
+    }
+
+    const char *str_ptr = STR_FAIL;
+    if (SettingsManager::save(&_lora_sets, sizeof(LoraSettings), _file_name.c_str(), STR_LORA_SETS_DIR))
+    {
+        str_ptr = STR_SUCCSESS;
+        _is_new = false;
+    }
+    showToast(str_ptr);
+
+    showMainTmpl();
 }
 
-void SetsEditorContext::showNameDialog()
+void SetsEditorContext::showNameDialogTmpl()
 {
-    // TODO
+    _mode = MODE_ENTER_NAME;
+
+    WidgetCreator creator;
+    EmptyLayout *layout = creator.getEmptyLayout();
+    setLayout(layout);
+    layout->setBackColor(TFT_BLACK);
+
+    Label *ctx_header_lbl = new Label(ID_HEADER_LBL);
+    layout->addWidget(ctx_header_lbl);
+    ctx_header_lbl->setWidth(D_WIDTH);
+    ctx_header_lbl->setHeight(18);
+    ctx_header_lbl->setBackColor(TFT_DARKGREY);
+    ctx_header_lbl->setAlign(IWidget::ALIGN_CENTER);
+    ctx_header_lbl->setGravity(IWidget::GRAVITY_CENTER);
+    ctx_header_lbl->setTextColor(TFT_RED);
+    ctx_header_lbl->setText(STR_NAME_SETS);
+
+    _dialog_txt = new TextBox(ID_DIALOG_TXT);
+    layout->addWidget(_dialog_txt);
+    _dialog_txt->setTextOffset(5);
+    _dialog_txt->setWidth(D_WIDTH - 10);
+    _dialog_txt->setHeight(40);
+    _dialog_txt->setBackColor(TFT_WHITE);
+    _dialog_txt->setTextColor(TFT_BLACK);
+    _dialog_txt->setFontID(2);
+    _dialog_txt->setTextSize(2);
+    _dialog_txt->setPos(5, ctx_header_lbl->getHeight() + 5);
+    _dialog_txt->setCornerRadius(3);
+
+    _keyboard = creator.getStandardEnKeyboard(ID_KEYBOARD);
+    layout->addWidget(_keyboard);
+    _keyboard->setPos(0, _dialog_txt->getYPos() + _dialog_txt->getHeight() + 5);
 }
 
 void SetsEditorContext::clickOk()
@@ -213,12 +278,13 @@ void SetsEditorContext::clickOk()
         }
         else if (id == ID_ITEM_GEN_KEY)
         {
-            // TODO згенерувати ключ та відобразити toast
+            generateAes256Key(_lora_sets.aes_key);
+            showToast(STR_SUCCSESS);
         }
     }
     else if (_mode == MODE_ENTER_NAME)
     {
-        // TODO Зафіксувати символ
+        _dialog_txt->addChars(_keyboard->getCurrBtnTxt().c_str());
     }
     else if (_mode == MODE_SEL_POWER || _mode == MODE_SEL_CHANN)
     {
@@ -237,16 +303,19 @@ void SetsEditorContext::clickUp()
     }
     else if (_mode == MODE_ENTER_NAME)
     {
-        // TODO
+        _keyboard->focusUp();
     }
     else if (_mode == MODE_SEL_POWER)
     {
-        // TODO
+        ComboItem *power_item = _main_menu->getCurrItem()->castTo<ComboItem>();
+        power_item->scrollUp();
+        _lora_sets.power = power_item->getPos();
     }
     else if (_mode == MODE_SEL_CHANN)
     {
         SpinItem *spin_item = _main_menu->getCurrItem()->castTo<SpinItem>();
         spin_item->up();
+        _lora_sets.channel = spin_item->getValue();
     }
 }
 
@@ -259,16 +328,19 @@ void SetsEditorContext::clickDown()
     }
     else if (_mode == MODE_ENTER_NAME)
     {
-        // TODO
+        _keyboard->focusDown();
     }
     else if (_mode == MODE_SEL_POWER)
     {
-        // TODO
+        ComboItem *power_item = _main_menu->getCurrItem()->castTo<ComboItem>();
+        power_item->scrollDown();
+        _lora_sets.power = power_item->getPos();
     }
     else if (_mode == MODE_SEL_CHANN)
     {
         SpinItem *spin_item = _main_menu->getCurrItem()->castTo<SpinItem>();
         spin_item->down();
+        _lora_sets.channel = spin_item->getValue();
     }
 }
 
@@ -276,7 +348,7 @@ void SetsEditorContext::clickLeft()
 {
     if (_mode == MODE_ENTER_NAME)
     {
-        // TODO
+        _keyboard->focusLeft();
     }
 }
 
@@ -284,7 +356,7 @@ void SetsEditorContext::clickRight()
 {
     if (_mode == MODE_ENTER_NAME)
     {
-        // TODO
+        _keyboard->focusRight();
     }
 }
 
@@ -292,7 +364,7 @@ void SetsEditorContext::clickBack()
 {
     if (_mode == MODE_ENTER_NAME)
     {
-        // TODO del char
+        _dialog_txt->removeLastChar();
     }
 }
 
@@ -300,7 +372,7 @@ void SetsEditorContext::backPressed()
 {
     if (_mode == MODE_ENTER_NAME)
     {
-        // TODO hide dialog
+        showMainTmpl();
     }
     else
     {
