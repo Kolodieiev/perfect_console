@@ -102,6 +102,8 @@ void LoraSetsContext::clickOk()
             hideContextMenu();
 
             String file_path = SettingsManager::getSettingsFilePath(_main_menu->getCurrItemText().c_str(), STR_LORA_SETS_DIR);
+            file_path += STR_LORA_SETS_EXT;
+
             if (!_fs.rmFile(file_path.c_str(), true))
             {
                 showToast(STR_FAIL);
@@ -223,7 +225,7 @@ void LoraSetsContext::showContextMenuTmpl()
     MenuItem *create_item = creator.getMenuItem(ID_CREATE_ITEM);
     _context_menu->addItem(create_item);
 
-    Label *create_lbl = creator.getItemLabel(STR_CREATE, 4);
+    Label *create_lbl = creator.getItemLabel(STR_CREATE, 2);
     create_item->setLbl(create_lbl);
     create_lbl->setTextOffset(1);
 

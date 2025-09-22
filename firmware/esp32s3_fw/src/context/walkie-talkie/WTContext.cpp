@@ -281,7 +281,7 @@ void WTContext::showContextMenuTmpl()
     enc_item->setChangingBorder(true);
     enc_item->setChangingBack(true);
 
-    Label *enc_lbl = creator.getItemLabel(STR_ENCRYPTION, 4);
+    Label *enc_lbl = creator.getItemLabel(STR_ENCRYPTION, 2);
     enc_item->setLbl(enc_lbl);
 
     _enc_toggle = new ToggleSwitch(1);
@@ -295,7 +295,7 @@ void WTContext::showContextMenuTmpl()
     MenuItem *lora_sets_item = creator.getMenuItem(ID_ITEM_LORA_SETS);
     _context_menu->addItem(lora_sets_item);
 
-    Label *lora_sets_lbl = creator.getItemLabel(STR_LORA_SETS, 4);
+    Label *lora_sets_lbl = creator.getItemLabel(STR_LORA_SETS, 2);
     lora_sets_item->setLbl(lora_sets_lbl);
     lora_sets_lbl->setTextOffset(1);
 
@@ -303,7 +303,7 @@ void WTContext::showContextMenuTmpl()
     MenuItem *pref_item = creator.getMenuItem(ID_ITEM_CODEC_SETS);
     _context_menu->addItem(pref_item);
 
-    Label *pref_lbl = creator.getItemLabel(STR_CODEC_SETS, 4);
+    Label *pref_lbl = creator.getItemLabel(STR_CODEC_SETS, 2);
     pref_item->setLbl(pref_lbl);
     pref_lbl->setTextOffset(1);
 
