@@ -818,7 +818,7 @@ void Mp3Context::indexTracks()
     _fs.indexFilesExt(_tracks, playlist_path.c_str(), AUDIO_EXT);
 }
 
-String Mp3Context::getTrackPath(const char *dir_name, const char *track_name)
+String Mp3Context::getTrackPath(const char *dirname, const char *track_name)
 {
     String track_path = ROOT_PATH;
     track_path += "/";

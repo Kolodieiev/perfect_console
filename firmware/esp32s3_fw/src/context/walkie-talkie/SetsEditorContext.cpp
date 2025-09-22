@@ -21,13 +21,13 @@ const char STR_COMBO_MAX_VAL[] = "Потужність: Максимальна";
 
 const char *POWER_VALUES[4] = {STR_COMBO_MAX_VAL, STR_COMBO_HIGH_VAL, STR_COMBO_MID_VAL, STR_COMBO_MIN_VAL};
 
-SetsEditorContext::SetsEditorContext(const String &sets_file_name) : _file_name{sets_file_name}
+SetsEditorContext::SetsEditorContext(const String &sets_filename) : _filename{sets_filename}
 {
-    if (!_file_name.isEmpty())
+    if (!_filename.isEmpty())
     {
         _is_new = false;
-        _file_name += STR_LORA_SETS_EXT;
-        SettingsManager::load(&_lora_sets, sizeof(LoraSettings), _file_name.c_str(), STR_LORA_SETS_DIR);
+        _filename += STR_LORA_SETS_EXT;
+        SettingsManager::load(&_lora_sets, sizeof(LoraSettings), _filename.c_str(), STR_LORA_SETS_DIR);
     }
 
     showMainTmpl();
@@ -189,16 +189,16 @@ void SetsEditorContext::saveSets()
 {
     if (_mode == MODE_ENTER_NAME)
     {
-        _file_name = _dialog_txt->getText();
+        _filename = _dialog_txt->getText();
 
-        if (_file_name.isEmpty())
+        if (_filename.isEmpty())
         {
             showToast(STR_FAIL);
             return;
         }
 
         if (_is_new)
-            _file_name += STR_LORA_SETS_EXT;
+            _filename += STR_LORA_SETS_EXT;
     }
     else if (_is_new)
     {
@@ -207,7 +207,7 @@ void SetsEditorContext::saveSets()
     }
 
     const char *str_ptr = STR_FAIL;
-    if (SettingsManager::save(&_lora_sets, sizeof(LoraSettings), _file_name.c_str(), STR_LORA_SETS_DIR))
+    if (SettingsManager::save(&_lora_sets, sizeof(LoraSettings), _filename.c_str(), STR_LORA_SETS_DIR))
     {
         str_ptr = STR_SUCCSESS;
         _is_new = false;

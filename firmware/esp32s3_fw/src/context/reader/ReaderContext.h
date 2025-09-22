@@ -87,13 +87,13 @@ private:
     void handlePrevItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id);
     static void onPrevItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id, void *arg);
     //
-    String getBookPath(const char *dir_name, const char *book_name);
+    String getBookPath(const char *dirname, const char *book_name);
     bool isCyrillic(char ch);
-    bool containCyrillic(const char *dir_name, const char *book_name);
-    bool readText(String &out_str, const char *dir_name, const char *book_name, size_t len, size_t pos);
+    bool containCyrillic(const char *dirname, const char *book_name);
+    bool readText(String &out_str, const char *dirname, const char *book_name, size_t len, size_t pos);
 
 private:
-    String _dir_name;
+    String _dirname;
     String _book_name;
     
     std::vector<FileInfo> _dirs;

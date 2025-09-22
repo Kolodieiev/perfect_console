@@ -13,7 +13,7 @@ using namespace meow;
 class SetsEditorContext : public IContext
 {
 public:
-    SetsEditorContext(const String &sets_file_name);
+    SetsEditorContext(const String &sets_filename);
     virtual ~SetsEditorContext();
 
 protected:
@@ -58,7 +58,7 @@ private:
 private:
     LoraSettings _lora_sets;
 
-    String _file_name;
+    String _filename;
 
     FixedMenu *_main_menu{nullptr};
     ScrollBar *_main_scrollbar{nullptr};

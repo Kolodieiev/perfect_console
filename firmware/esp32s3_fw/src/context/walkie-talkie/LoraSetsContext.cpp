@@ -269,12 +269,12 @@ void LoraSetsContext::hideContextMenu()
 
 void LoraSetsContext::loadSetsList()
 {
-    String dir_name = SettingsManager::getSettingsDirPath(STR_LORA_SETS_DIR);
+    String dirname = SettingsManager::getSettingsDirPath(STR_LORA_SETS_DIR);
 
-    if (dir_name.isEmpty())
+    if (dirname.isEmpty())
         return;
 
-    _fs.indexFilesExt(_sets_files, dir_name.c_str(), STR_LORA_SETS_EXT);
+    _fs.indexFilesExt(_sets_files, dirname.c_str(), STR_LORA_SETS_EXT);
 
     while (_fs.isWorking()) // Якщо хочеш, перепиши на асинхронне завантаження списку =)
         delay(1);

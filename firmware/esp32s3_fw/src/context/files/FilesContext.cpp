@@ -485,13 +485,13 @@ void FilesContext::pasteFile()
 
 void FilesContext::removeFile()
 {
-    String file_name;
-    makePathFromBreadcrumbs(file_name);
+    String filename;
+    makePathFromBreadcrumbs(filename);
 
-    file_name += "/";
-    file_name += _files_list->getCurrItemText();
+    filename += "/";
+    filename += _files_list->getCurrItemText();
 
-    if (_fs.startRemoving(file_name.c_str()))
+    if (_fs.startRemoving(filename.c_str()))
         showRemovingTmpl();
 }
 
@@ -684,13 +684,13 @@ void FilesContext::down()
 
 void FilesContext::updateFileInfo()
 {
-    String file_name;
-    makePathFromBreadcrumbs(file_name);
-    file_name += "/";
-    file_name += _files_list->getCurrItemText();
+    String filename;
+    makePathFromBreadcrumbs(filename);
+    filename += "/";
+    filename += _files_list->getCurrItemText();
 
     String str_size;
-    double kb_size = _fs.getFileSize(file_name.c_str()) / 1024;
+    double kb_size = _fs.getFileSize(filename.c_str()) / 1024;
 
     if (kb_size == 0)
     {
