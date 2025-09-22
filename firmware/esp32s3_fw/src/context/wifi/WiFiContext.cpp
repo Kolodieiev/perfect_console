@@ -68,7 +68,7 @@ void WiFiContext::update()
     }
     else if (_input.isPressed(BtnID::BTN_OK))
     {
-        _input.lock(BtnID::BTN_OK, CLICK_LOCK);
+        _input.lock(BtnID::BTN_OK, PRESS_LOCK);
 
         if (_mode == MODE_MAIN)
             showContextMenuTmpl();
@@ -77,7 +77,7 @@ void WiFiContext::update()
     }
     else if (_input.isPressed(BtnID::BTN_UP))
     {
-        _input.lock(BtnID::BTN_UP, CLICK_LOCK);
+        _input.lock(BtnID::BTN_UP, PRESS_LOCK);
         changeKbCaps();
     }
     else if (_input.isReleased(BtnID::BTN_BACK))
