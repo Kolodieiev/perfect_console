@@ -66,6 +66,7 @@ const char STR_SD_ERR[] = "SD не примонтовано";
 //
 const char STR_AP_NAME[] = "SSID:";
 const char STR_AP_PWD[] = "PWD:";
+const char STR_REM_IP[] = "192.168.4.1";
 const char STR_DEF_SSID[] = "meow";
 const char STR_DEF_PWD[] = "12345678";
 

@@ -1,13 +1,14 @@
 #pragma once
 #include <Arduino.h>
 #include "meow/ui/context/IContext.h"
+#include "meow/lib/server/file_server/FileServer.h"
 
 using namespace meow;
 
 class ExchangeSetsContext : public IContext
-{ 
+{
 public:
-    ExchangeSetsContext(const String &sets_file_name);
+    ExchangeSetsContext(const String &sets_filename);
     virtual ~ExchangeSetsContext();
 
 protected:
@@ -23,16 +24,18 @@ private:
 
     enum Widget_ID : uint8_t
     {
-        ID_MAIN_MENU = 1,
-        ID_CONTEXT_MENU,
+        ID_HEADER_LBL = 1,
+        ID_QR_IMG,
         //
     };
 
-    void showMainTmpl();
-    void showContextMenuTmpl();
+    void startClient();
+    void startServer(const String &sets_filename);
+    void showServerTmpl();
+    String getFilenameFromDisposition(const String &disposition);
     //
 
 private:
-    String _file_name;
-    bool _is_receiver{true};
+    FileServer _server;
+    uint16_t *_qr_img_buff{nullptr};
 };
