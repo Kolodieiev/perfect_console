@@ -175,7 +175,7 @@ void SetsEditorContext::showMainTmpl()
 
     std::vector<String> vec(POWER_VALUES, POWER_VALUES + 4);
     power_item->setRange(vec);
-    power_item->selectPos(_lora_sets.power);
+    power_item->selectPos(_lora_sets.tr_power);
 
     // Генерація ключа
     MenuItem *gen_key_item = power_item->clone(ID_ITEM_GEN_KEY);
@@ -309,7 +309,7 @@ void SetsEditorContext::clickUp()
     {
         ComboItem *power_item = _main_menu->getCurrItem()->castTo<ComboItem>();
         power_item->scrollUp();
-        _lora_sets.power = power_item->getPos();
+        _lora_sets.tr_power = power_item->getPos();
     }
     else if (_mode == MODE_SEL_CHANN)
     {
@@ -334,7 +334,7 @@ void SetsEditorContext::clickDown()
     {
         ComboItem *power_item = _main_menu->getCurrItem()->castTo<ComboItem>();
         power_item->scrollDown();
-        _lora_sets.power = power_item->getPos();
+        _lora_sets.tr_power = power_item->getPos();
     }
     else if (_mode == MODE_SEL_CHANN)
     {
