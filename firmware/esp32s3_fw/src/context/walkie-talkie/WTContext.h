@@ -1,5 +1,7 @@
 #pragma once
 #include <Arduino.h>
+#include <codec2.h>
+#include "meow/lib/audio/filter/filter.h"
 #include "meow/ui/context/IContext.h"
 #include "meow/lib/lora/LRE32.h"
 #include "meow/lib/lora/LRE220T.h"
@@ -62,12 +64,20 @@ private:
     void loadSettings();
 
 private:
-    LRE32 _lora; // Зміни тип на LRE220T якщо модуль лори -  LRE220.
+    LRE32 _lora; // Зміни тип на LRE220T якщо модуль лори -  LRE220. Можуть бути проблеми з вирівнюванням розміру пакетів.
 
-    LoraSettings _lora_sets;
+    LoraSettings _lora_sets; // TODO вирівняти
     CodecSettings _codec_sets;
 
     String _lora_set_name;
+
+    HighPassFilter _hpf;
+    SimpleAGC _agc_out;
+    SimpleAGC _agc_in;
+
+    struct CODEC2 *_codec{nullptr};
+    uint8_t *_codec_buf{nullptr};
+    uint8_t *_pack_buf{nullptr};
 
     Label *_state_val_lbl{nullptr};
     Label *_encrypt_val_lbl{nullptr};
@@ -78,6 +88,14 @@ private:
     IContext *_sub_context{nullptr};
 
     unsigned long _upd_batt_ts{0};
+
+    int _samples_per_frame{0};
+    int _codec_buf_size{0};
+
+    int16_t *_samples_16k_buf{nullptr};
+    int16_t *_samples_8k_buf{nullptr};
+
+    uint16_t _samples_16k_num{0};
 
     Mode _mode{MODE_MAIN};
 

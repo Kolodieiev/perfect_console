@@ -63,6 +63,27 @@ WTContext::WTContext()
 void WTContext::loadSettings()
 {
     SettingsManager::load(&_codec_sets, sizeof(CodecSettings), STR_CODEC_SETS_NAME, STR_CODEC_SETS_DIR);
+
+    _codec = codec2_create(CODEC2_MODE_1200);
+    _samples_per_frame = codec2_samples_per_frame(_codec);
+    _codec_buf_size = codec2_bytes_per_frame(_codec);
+    _codec_buf = (uint8_t *)malloc(_codec_buf_size);
+    _pack_buf = (uint8_t *)malloc(_codec_buf_size + IV_SIZE + TAG_SIZE);
+    _samples_16k_num = _samples_per_frame * 2;
+    _samples_16k_buf = (int16_t *)malloc(_samples_16k_num * sizeof(int16_t));
+    _samples_8k_buf = (int16_t *)malloc(_samples_per_frame * sizeof(int16_t));
+
+    codec2_set_lpc_post_filter(
+        _codec,
+        _codec_sets.post_filter_en,
+        _codec_sets.post_filter_bboost_en,
+        _codec_sets.post_filter_beta,
+        _codec_sets.post_filter_gamma);
+
+    _hpf.init(_codec_sets.hpf_out_freq, SAMPLE_RATE);
+    _agc_out.setTargetDB(_codec_sets.agc_out_db);
+    _agc_in.setTargetDB(_codec_sets.agc_in_db);
+
     _i2s_in.init(SAMPLE_RATE, _codec_sets.interleaving_en);
     _i2s_in.enable();
     _i2s_out.init(SAMPLE_RATE);
@@ -76,17 +97,19 @@ void WTContext::loadSettings()
         {
             _lora_set_name = emptyString;
         }
-        else
-        {
-            // TODO Записати налаштування в модуль лори
-        }
     }
+
+    _lora.setTransmitPower(static_cast<ILoRa::TransmitPower>(_lora_sets.tr_power));
+    _lora.setChannel(_lora_sets.channel);
+    _lora.setAirDataRate(ILoRa::AIR_DATA_RATE_9_6K);
+    _lora.setPackLen(_codec_buf_size + IV_SIZE + TAG_SIZE);
+    _lora.writeSettings();
+    _lora.setMode(ILoRa::MODE_NORMAL);
 }
 
 WTContext::~WTContext()
 {
-    _i2s_in.deinit();
-    _i2s_out.deinit();
+    _lora.end();
 
     uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_OFF, CH_PIN_LORA_PWR};
     _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
@@ -95,7 +118,15 @@ WTContext::~WTContext()
     _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
 
     ccpu_cmd_data[1] = CH_PIN_MIC_PWR;
-    _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+    _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data));
+
+    _i2s_in.deinit();
+    _i2s_out.deinit();
+
+    codec2_destroy(_codec);
+    free(_codec_buf);
+    free(_samples_8k_buf);
+    free(_samples_16k_buf);
 }
 
 void WTContext::showLoraErrTmpl()
@@ -222,7 +253,7 @@ void WTContext::showMainTmpl()
     Label *lbl_val_pwr = lbl_val_chnl->clone(ID_POWER_VAL);
     layout->addWidget(lbl_val_pwr);
 
-    switch (_lora_sets.power)
+    switch (_lora_sets.tr_power)
     {
     case ILoRa::TransmitPower::TR_POWER_MAX:
         lbl_val_pwr->setText(STR_POWER_MAX_VAL);
@@ -332,15 +363,51 @@ bool WTContext::loop()
             return true;
         }
     }
-    else
+    else if (_ptt_holded == true) // TODO Винести в окрему таску на 0 ядро
     {
-        if (_ptt_holded == true) // TODO to lora task?
-        {
-            // TODO надсилаємо пакети
-        }
+        _i2s_in.read(_samples_16k_buf, _samples_16k_num);
+        _hpf.filter(_samples_16k_buf, _samples_16k_num);
+        downsampleX2(_samples_16k_buf, _samples_8k_buf, _samples_16k_num);
+        _agc_out.process(_samples_8k_buf, _samples_per_frame);
+        //
+        codec2_encode_1200(_codec, _codec_buf, _samples_8k_buf);
+
+        if (_lora_sets.encrypt_en)
+            aes256Encrypt(_lora_sets.aes_key, _codec_buf, _codec_buf_size, _pack_buf);
         else
+            memcpy(_pack_buf, _codec_buf, _codec_buf_size);
+
+        // log_i("SEND");
+        // for (int i = 0; i < _codec_buf_size; ++i)
+        // {
+        //     log_i("%d", _codec_buf[i]);
+        // }
+
+        _lora.writePacket(_pack_buf);
+    }
+    else if (_lora.packAvailable())
+    {
+        if (_lora.readPack(_pack_buf))
         {
-            // TODO отримуємо пакети
+            if (_lora_sets.encrypt_en && !aes256Decrypt(_lora_sets.aes_key, _pack_buf, _codec_buf_size, _codec_buf))
+                return true;
+            else
+                memcpy(_codec_buf, _pack_buf, _codec_buf_size);
+
+            // log_i("RECEIVE");
+            // for (int i = 0; i < _codec_buf_size; ++i)
+            // {
+            //     log_i("%d", _codec_buf[i]);
+            // }
+
+            codec2_decode_1200(_codec, _samples_8k_buf, _codec_buf);
+            //
+            if (_codec_sets.agc_in_en)
+                _agc_in.process(_samples_8k_buf, _samples_per_frame);
+            //
+            volume(_samples_8k_buf, _samples_per_frame, _codec_sets.volume);
+            upsampleX2(_samples_8k_buf, _samples_16k_buf, _samples_per_frame);
+            _i2s_out.write(_samples_16k_buf, _samples_16k_num, true);
         }
     }
 
@@ -360,10 +427,10 @@ void WTContext::update()
         return;
     }
 
-    if (_input.isHolded(BtnID::BTN_PTT))
-        _ptt_holded = true;
-    else
-        _ptt_holded = false;
+    // TODO disable backlight
+    // TODO виправити проблему із залипанням кнопки ptt
+
+    _ptt_holded = _input.isHolded(BtnID::BTN_PTT);
 
     if (_input.isPressed(BtnID::BTN_BACK))
     {
