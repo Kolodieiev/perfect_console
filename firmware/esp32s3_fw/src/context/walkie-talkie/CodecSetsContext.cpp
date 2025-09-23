@@ -46,6 +46,10 @@ CodecSetsContext::CodecSetsContext()
         _codec_sets.post_filter_beta,
         _codec_sets.post_filter_gamma);
 
+    _hpf.init(_codec_sets.hpf_out_freq, SAMPLE_RATE);
+    _agc_out.setTargetDB(_codec_sets.agc_out_db);
+    _agc_in.setTargetDB(_codec_sets.agc_in_db);
+
     showMainTmpl();
 }
 
