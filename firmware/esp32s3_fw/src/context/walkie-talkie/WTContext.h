@@ -13,6 +13,23 @@
 
 using namespace meow;
 
+#define E220
+// #define E32
+
+#ifdef E220
+#define LORA_PACK_SIZE 64
+#define CODEC_BUFF_SIZE 36
+#define CODEC_BUFF_ITER 6
+
+// #define LORA_PACK_SIZE 128
+// #define CODEC_BUFF_SIZE 96
+// #define CODEC_BUFF_ITER 16
+#else
+#define LORA_PACK_SIZE 58
+#define CODEC_BUFF_SIZE 30
+#define CODEC_BUFF_ITER 5
+#endif
+
 class WTContext : public IContext
 {
 public:
@@ -60,11 +77,17 @@ private:
     void clickOk();
     void clickUp();
     void clickDown();
-
     void loadSettings();
+    void toggleBL();
+
+    static void packSenderTask(void *params);
 
 private:
-    LRE32 _lora; // Зміни тип на LRE220T якщо модуль лори -  LRE220. Можуть бути проблеми з вирівнюванням розміру пакетів.
+#ifdef E220
+    LRE220T _lora;
+#else
+    LRE32 _lora;
+#endif
 
     LoraSettings _lora_sets; // TODO вирівняти
     CodecSettings _codec_sets;
@@ -76,8 +99,16 @@ private:
     SimpleAGC _agc_in;
 
     struct CODEC2 *_codec{nullptr};
-    uint8_t *_codec_buf{nullptr};
-    uint8_t *_pack_buf{nullptr};
+    uint8_t _lora_pack_buf1[LORA_PACK_SIZE];
+    uint8_t _lora_pack_buf2[LORA_PACK_SIZE];
+    uint8_t *_lora_pack_write_buf{_lora_pack_buf1};
+    uint8_t *_lora_pack_read_buf{_lora_pack_buf2};
+    uint8_t _codec_pack_buf[CODEC_BUFF_SIZE];
+    uint8_t _codec_pack_i{0};
+
+    volatile xSemaphoreHandle _sync_write_mutex{nullptr};
+    xTaskHandle _pack_sender_handle{nullptr};
+    volatile bool _has_w_packet{false};
 
     Label *_state_val_lbl{nullptr};
     Label *_encrypt_val_lbl{nullptr};
@@ -101,4 +132,6 @@ private:
 
     bool _is_encoding_en{false};
     bool _ptt_holded{false};
+    bool _is_locked{false};
+    bool _is_lora_buff_clean{true};
 };

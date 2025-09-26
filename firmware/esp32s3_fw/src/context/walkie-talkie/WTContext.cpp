@@ -58,6 +58,9 @@ WTContext::WTContext()
 
     loadSettings();
     showMainTmpl();
+
+    _sync_write_mutex = xSemaphoreCreateMutex();
+    xTaskCreatePinnedToCore(packSenderTask, "pst", 20 * 512, this, 10, &_pack_sender_handle, 0);
 }
 
 void WTContext::loadSettings()
@@ -67,8 +70,6 @@ void WTContext::loadSettings()
     _codec = codec2_create(CODEC2_MODE_1200);
     _samples_per_frame = codec2_samples_per_frame(_codec);
     _codec_buf_size = codec2_bytes_per_frame(_codec);
-    _codec_buf = (uint8_t *)malloc(_codec_buf_size);
-    _pack_buf = (uint8_t *)malloc(_codec_buf_size + IV_SIZE + TAG_SIZE);
     _samples_16k_num = _samples_per_frame * 2;
     _samples_16k_buf = (int16_t *)malloc(_samples_16k_num * sizeof(int16_t));
     _samples_8k_buf = (int16_t *)malloc(_samples_per_frame * sizeof(int16_t));
@@ -101,14 +102,70 @@ void WTContext::loadSettings()
 
     _lora.setTransmitPower(static_cast<ILoRa::TransmitPower>(_lora_sets.tr_power));
     _lora.setChannel(_lora_sets.channel);
-    _lora.setAirDataRate(ILoRa::AIR_DATA_RATE_9_6K);
-    _lora.setPackLen(_codec_buf_size + IV_SIZE + TAG_SIZE);
+    _lora.setAirDataRate(ILoRa::AIR_DATA_RATE_4_8K);
+    _lora.setPackLen(LORA_PACK_SIZE);
     _lora.writeSettings();
     _lora.setMode(ILoRa::MODE_NORMAL);
 }
 
+void WTContext::toggleBL()
+{
+    _is_locked = !_is_locked;
+
+    if (_is_locked)
+    {
+        _gui_enabled = false;
+
+        uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_OFF, CH_PIN_DISPLAY_PWR};
+        _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+
+        ccpu_cmd_data[0] = CCPU_CMD_BTN_OFF;
+
+        ccpu_cmd_data[1] = BtnID::BTN_BACK;
+        _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+
+        ccpu_cmd_data[1] = BtnID::BTN_LEFT;
+        _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+
+        ccpu_cmd_data[1] = BtnID::BTN_RIGHT;
+        _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data));
+
+        ccpu_cmd_data[1] = BtnID::BTN_UP;
+        _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+
+        ccpu_cmd_data[1] = BtnID::BTN_OK;
+        _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data));
+    }
+    else
+    {
+        _gui_enabled = true;
+
+        uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_ON, CH_PIN_DISPLAY_PWR};
+        _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+
+        ccpu_cmd_data[0] = CCPU_CMD_BTN_ON;
+
+        ccpu_cmd_data[1] = BtnID::BTN_BACK;
+        _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+
+        ccpu_cmd_data[1] = BtnID::BTN_LEFT;
+        _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+
+        ccpu_cmd_data[1] = BtnID::BTN_RIGHT;
+        _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+
+        ccpu_cmd_data[1] = BtnID::BTN_UP;
+        _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+
+        ccpu_cmd_data[1] = BtnID::BTN_OK;
+        _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data));
+    }
+}
+
 WTContext::~WTContext()
 {
+    vTaskDelete(_pack_sender_handle);
+    vSemaphoreDelete(_sync_write_mutex);
     _lora.end();
 
     uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_OFF, CH_PIN_LORA_PWR};
@@ -124,7 +181,6 @@ WTContext::~WTContext()
     _i2s_out.deinit();
 
     codec2_destroy(_codec);
-    free(_codec_buf);
     free(_samples_8k_buf);
     free(_samples_16k_buf);
 }
@@ -343,6 +399,29 @@ void WTContext::showContextMenuTmpl()
                           D_HEIGHT - DISPLAY_PADDING - _context_menu->getHeight());
 }
 
+void WTContext::packSenderTask(void *params)
+{
+    WTContext &self = *static_cast<WTContext *>(params);
+
+    unsigned long ts = millis();
+    while (1)
+    {
+        if (self._has_w_packet)
+        {
+            xSemaphoreTake(self._sync_write_mutex, portMAX_DELAY);
+            self._has_w_packet = false;
+            self._lora.writePacket(self._lora_pack_read_buf);
+            xSemaphoreGive(self._sync_write_mutex);
+        }
+
+        if (millis() - ts > 2000)
+        {
+            ts = millis();
+            vTaskDelay(1 / portTICK_PERIOD_MS);
+        }
+    }
+}
+
 bool WTContext::loop()
 {
     if (_mode == MODE_SUBCONTEXT)
@@ -363,51 +442,60 @@ bool WTContext::loop()
             return true;
         }
     }
-    else if (_ptt_holded == true) // TODO Винести в окрему таску на 0 ядро
+    else if (_ptt_holded)
     {
         _i2s_in.read(_samples_16k_buf, _samples_16k_num);
         _hpf.filter(_samples_16k_buf, _samples_16k_num);
         downsampleX2(_samples_16k_buf, _samples_8k_buf, _samples_16k_num);
         _agc_out.process(_samples_8k_buf, _samples_per_frame);
         //
-        codec2_encode_1200(_codec, _codec_buf, _samples_8k_buf);
+        codec2_encode_1200(_codec, &_codec_pack_buf[_codec_pack_i * _codec_buf_size], _samples_8k_buf);
+        ++_codec_pack_i;
 
-        if (_lora_sets.encrypt_en)
-            aes256Encrypt(_lora_sets.aes_key, _codec_buf, _codec_buf_size, _pack_buf);
-        else
-            memcpy(_pack_buf, _codec_buf, _codec_buf_size);
+        if (_codec_pack_i == CODEC_BUFF_ITER)
+        {
+            _codec_pack_i = 0;
 
-        // log_i("SEND");
-        // for (int i = 0; i < _codec_buf_size; ++i)
-        // {
-        //     log_i("%d", _codec_buf[i]);
-        // }
+            if (_lora_sets.encrypt_en)
+                aes256Encrypt(_lora_sets.aes_key, _codec_pack_buf, CODEC_BUFF_SIZE, _lora_pack_write_buf);
+            else
+                memcpy(_lora_pack_write_buf, _codec_pack_buf, CODEC_BUFF_SIZE);
 
-        _lora.writePacket(_pack_buf);
+            xSemaphoreTake(_sync_write_mutex, portMAX_DELAY);
+            uint8_t *temp_ptr = _lora_pack_write_buf;
+            _lora_pack_write_buf = _lora_pack_read_buf;
+            _lora_pack_read_buf = temp_ptr;
+            _has_w_packet = true;
+            xSemaphoreGive(_sync_write_mutex);
+        }
     }
     else if (_lora.packAvailable())
     {
-        if (_lora.readPack(_pack_buf))
+        _is_lora_buff_clean = false;
+
+        if (_lora.readPack(_lora_pack_write_buf))
         {
-            if (_lora_sets.encrypt_en && !aes256Decrypt(_lora_sets.aes_key, _pack_buf, _codec_buf_size, _codec_buf))
-                return true;
+            bool deciphered = true;
+
+            if (_lora_sets.encrypt_en)
+                deciphered = aes256Decrypt(_lora_sets.aes_key, _lora_pack_write_buf, CODEC_BUFF_SIZE, _codec_pack_buf);
             else
-                memcpy(_codec_buf, _pack_buf, _codec_buf_size);
+                memcpy(_codec_pack_buf, _lora_pack_write_buf, CODEC_BUFF_SIZE);
 
-            // log_i("RECEIVE");
-            // for (int i = 0; i < _codec_buf_size; ++i)
-            // {
-            //     log_i("%d", _codec_buf[i]);
-            // }
-
-            codec2_decode_1200(_codec, _samples_8k_buf, _codec_buf);
-            //
-            if (_codec_sets.agc_in_en)
-                _agc_in.process(_samples_8k_buf, _samples_per_frame);
-            //
-            volume(_samples_8k_buf, _samples_per_frame, _codec_sets.volume);
-            upsampleX2(_samples_8k_buf, _samples_16k_buf, _samples_per_frame);
-            _i2s_out.write(_samples_16k_buf, _samples_16k_num, true);
+            if (deciphered)
+            {
+                for (int i = 0; i < CODEC_BUFF_ITER; ++i)
+                {
+                    codec2_decode_1200(_codec, _samples_8k_buf, &_codec_pack_buf[i * _codec_buf_size]);
+                    //
+                    if (_codec_sets.agc_in_en)
+                        _agc_in.process(_samples_8k_buf, _samples_per_frame);
+                    //
+                    volume(_samples_8k_buf, _samples_per_frame, _codec_sets.volume);
+                    upsampleX2(_samples_8k_buf, _samples_16k_buf, _samples_per_frame);
+                    _i2s_out.write(_samples_16k_buf, _samples_16k_num, true);
+                }
+            }
         }
     }
 
@@ -426,9 +514,6 @@ void WTContext::update()
 
         return;
     }
-
-    // TODO disable backlight
-    // TODO виправити проблему із залипанням кнопки ptt
 
     _ptt_holded = _input.isHolded(BtnID::BTN_PTT);
 
@@ -461,6 +546,11 @@ void WTContext::update()
     {
         _input.lock(BtnID::BTN_DOWN, CLICK_LOCK);
         clickDown();
+    }
+    else if (_input.isPressed(BtnID::BTN_DOWN))
+    {
+        _input.lock(BtnID::BTN_DOWN, PRESS_LOCK);
+        toggleBL();
     }
 
     if (_mode == MODE_MAIN && millis() - _upd_batt_ts > UPD_DISPLAY_INTERVAL_MS)
