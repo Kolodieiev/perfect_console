@@ -49,19 +49,6 @@ MenuContext::MenuContext()
     _scrollbar->setPos(_menu->getWidth() + _menu->getXPos(), _menu->getYPos());
     _scrollbar->setBackColor(COLOR_MAIN_BACK);
 
-    // Рація
-    MenuItem *w_talkie_item = creator.getMenuItem(ID_CONTEXT_W_TALKIE);
-    _menu->addItem(w_talkie_item);
-
-    Image *w_talkie_img = new Image(1);
-    w_talkie_item->setImg(w_talkie_img);
-    w_talkie_img->setTranspColor(TFT_TRANSPARENT);
-    w_talkie_img->init(ICO_WH, ICO_WH);
-    w_talkie_img->setSrc(WALKIE_TALKIE_IMG);
-
-    Label *w_talkie_lbl = creator.getItemLabel(STR_W_TALKIE_ITEM, 4, 2);
-    w_talkie_item->setLbl(w_talkie_lbl);
-
     // Файли
     MenuItem *files_item = creator.getMenuItem(ID_CONTEXT_FILES);
     _menu->addItem(files_item);
@@ -74,32 +61,6 @@ MenuContext::MenuContext()
 
     Label *files_lbl = creator.getItemLabel(STR_FILES_ITEM, 4, 2);
     files_item->setLbl(files_lbl);
-
-    // Ігри
-    MenuItem *game_item = creator.getMenuItem(ID_CONTEXT_GAMES);
-    _menu->addItem(game_item);
-
-    Image *game_img = new Image(1);
-    game_item->setImg(game_img);
-    game_img->setTranspColor(TFT_TRANSPARENT);
-    game_img->init(ICO_WH, ICO_WH);
-    game_img->setSrc(JOYSTICK_IMG);
-
-    Label *game_lbl = creator.getItemLabel(STR_GAME_ITEM, 4, 2);
-    game_item->setLbl(game_lbl);
-
-    // WiFi
-    MenuItem *wifi_item = creator.getMenuItem(ID_CONTEXT_WIFI);
-    _menu->addItem(wifi_item);
-
-    Image *wifi_img = new Image(1);
-    wifi_item->setImg(wifi_img);
-    wifi_img->setTranspColor(TFT_TRANSPARENT);
-    wifi_img->init(ICO_WH, ICO_WH);
-    wifi_img->setSrc(WIFI_IMG);
-
-    Label *wifi_lbl = creator.getItemLabel(STR_WIFI_ITEM, 4, 2);
-    wifi_item->setLbl(wifi_lbl);
 
     // Музика
     MenuItem *mp3_item = creator.getMenuItem(ID_CONTEXT_MP3);
@@ -114,6 +75,19 @@ MenuContext::MenuContext()
     Label *mp3_lbl = creator.getItemLabel(STR_MUSIC_ITEM, 4, 2);
     mp3_item->setLbl(mp3_lbl);
 
+    // Ігри
+    MenuItem *game_item = creator.getMenuItem(ID_CONTEXT_GAMES);
+    _menu->addItem(game_item);
+
+    Image *game_img = new Image(1);
+    game_item->setImg(game_img);
+    game_img->setTranspColor(TFT_TRANSPARENT);
+    game_img->init(ICO_WH, ICO_WH);
+    game_img->setSrc(JOYSTICK_IMG);
+
+    Label *game_lbl = creator.getItemLabel(STR_GAME_ITEM, 4, 2);
+    game_item->setLbl(game_lbl);
+
     // Читалка
     MenuItem *read_item = creator.getMenuItem(ID_CONTEXT_READER);
     _menu->addItem(read_item);
@@ -126,6 +100,32 @@ MenuContext::MenuContext()
 
     Label *read_lbl = creator.getItemLabel(STR_READER_ITEM, 4, 2);
     read_item->setLbl(read_lbl);
+
+    // WiFi
+    MenuItem *wifi_item = creator.getMenuItem(ID_CONTEXT_WIFI);
+    _menu->addItem(wifi_item);
+
+    Image *wifi_img = new Image(1);
+    wifi_item->setImg(wifi_img);
+    wifi_img->setTranspColor(TFT_TRANSPARENT);
+    wifi_img->init(ICO_WH, ICO_WH);
+    wifi_img->setSrc(WIFI_IMG);
+
+    Label *wifi_lbl = creator.getItemLabel(STR_WIFI_ITEM, 4, 2);
+    wifi_item->setLbl(wifi_lbl);
+
+    // Рація
+    MenuItem *w_talkie_item = creator.getMenuItem(ID_CONTEXT_W_TALKIE);
+    _menu->addItem(w_talkie_item);
+
+    Image *w_talkie_img = new Image(1);
+    w_talkie_item->setImg(w_talkie_img);
+    w_talkie_img->setTranspColor(TFT_TRANSPARENT);
+    w_talkie_img->init(ICO_WH, ICO_WH);
+    w_talkie_img->setSrc(WALKIE_TALKIE_IMG);
+
+    Label *w_talkie_lbl = creator.getItemLabel(STR_W_TALKIE_ITEM, 4, 2);
+    w_talkie_item->setLbl(w_talkie_lbl);
 
     // Налаштування
     MenuItem *pref_item = creator.getMenuItem(ID_CONTEXT_PREF_SEL);
