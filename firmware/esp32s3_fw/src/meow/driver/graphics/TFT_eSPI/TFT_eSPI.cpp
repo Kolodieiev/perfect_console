@@ -14,7 +14,7 @@
  ****************************************************/
 #pragma GCC optimize("O3")
 #include "./TFT_eSPI.h"
-#include "meow/manager/spi/SPI_Manager.h"
+#include "meow/manager/SPI_Manager.h"
 
 #if defined(CONFIG_IDF_TARGET_ESP32S3)
     #include "Processors/TFT_eSPI_ESP32_S3.inc"
@@ -578,13 +578,10 @@ void TFT_eSPI::init(uint8_t tc)
     sclkpinmask = (uint32_t) digitalPinToBitMask(TFT_SCLK);
   #endif
 
-
-  meow::SPI_Manager::initBus(SPI_BUS_NUM); // This will set HMISO to input
   spi = *meow::SPI_Manager::getSpi4Bus(SPI_BUS_NUM);
 
 #else
   #if !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
-      meow::SPI_Manager::initBus(SPI_BUS_NUM, TFT_SCLK, TFT_MISO, TFT_MOSI);
       spi = *meow::SPI_Manager::getSpi4Bus(SPI_BUS_NUM);
   #endif
 #endif

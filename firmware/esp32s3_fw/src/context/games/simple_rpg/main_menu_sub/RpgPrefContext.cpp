@@ -1,5 +1,5 @@
 #include "RpgPrefContext.h"
-#include "meow/manager/settings/SettingsManager.h"
+#include "meow/manager/SettingsManager.h"
 
 #include "../../../WidgetCreator.h"
 
@@ -143,8 +143,7 @@ namespace simple_rpg
     {
         _state_id = STATE_PREF_NICK;
 
-        SettingsManager setting;
-        String client_nick = setting.get(STR_TEST_GAME_NICK);
+        String client_nick = SettingsManager::get(STR_TEST_GAME_NICK);
 
         WidgetCreator creator;
         EmptyLayout *layout = creator.getEmptyLayout();
@@ -156,8 +155,7 @@ namespace simple_rpg
     {
         _state_id = STATE_PREF_SERV_NAME;
 
-        SettingsManager setting;
-        String serv_ssid = setting.get(STR_TEST_GAME_S_NAME);
+        String serv_ssid = SettingsManager::get(STR_TEST_GAME_S_NAME);
 
         WidgetCreator creator;
         EmptyLayout *layout = creator.getEmptyLayout();
@@ -171,8 +169,7 @@ namespace simple_rpg
     {
         _state_id = STATE_PREF_SERV_PWD;
 
-        SettingsManager setting;
-        String serv_pwd = setting.get(STR_TEST_GAME_S_PWD);
+        String serv_pwd = SettingsManager::get(STR_TEST_GAME_S_PWD);
 
         WidgetCreator creator;
         EmptyLayout *layout = creator.getEmptyLayout();
@@ -228,22 +225,20 @@ namespace simple_rpg
 
     void RpgPrefContext::saveDialogResult()
     {
-        SettingsManager settings;
-
         if (_state_id == STATE_PREF_NICK)
         {
             String client_nick = _dialog_txt->getText();
-            settings.set(STR_TEST_GAME_NICK, client_nick.c_str());
+            SettingsManager::set(STR_TEST_GAME_NICK, client_nick.c_str());
         }
         else if (_state_id == STATE_PREF_SERV_NAME)
         {
             String serv_ssid = _dialog_txt->getText();
-            settings.set(STR_TEST_GAME_S_NAME, serv_ssid.c_str());
+            SettingsManager::set(STR_TEST_GAME_S_NAME, serv_ssid.c_str());
         }
         else if (_state_id == STATE_PREF_SERV_PWD)
         {
             String serv_pwd = _dialog_txt->getText();
-            settings.set(STR_TEST_GAME_S_PWD, serv_pwd.c_str());
+            SettingsManager::set(STR_TEST_GAME_S_PWD, serv_pwd.c_str());
         }
 
         showMainMenuTmpl();

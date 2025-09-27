@@ -1,17 +1,13 @@
 #include "HomeContext.h"
 #include "../WidgetCreator.h"
 #include "meow/util/img/BmpUtil.h"
-#include "./res/ico/battery.h"
+#include "../resources/ico/battery.h"
+#include "meow/util/batt_util.h"
 
-#define PIN_VOLT_MEASH 4
 #define UPD_DISPLAY_INTERVAL_MS 5000UL
-
-const char EMPTY_BAT[] = "0.00";
 
 HomeContext::HomeContext()
 {
-    // pinMode(PIN_VOLT_MEASH, INPUT);
-
     WidgetCreator creator;
 
     EmptyLayout *layout = creator.getEmptyLayout();
@@ -30,29 +26,29 @@ HomeContext::HomeContext()
         layout->addWidget(wallpp_img);
     }
 
-    _bat_cap_lbl = new Label(ID_BAT_LVL);
-    layout->addWidget(_bat_cap_lbl);
-    _bat_cap_lbl->setText(EMPTY_BAT);
-    _bat_cap_lbl->setWidth(56);
-    _bat_cap_lbl->setHeight(35);
-    _bat_cap_lbl->setAlign(Label::ALIGN_CENTER);
-    _bat_cap_lbl->setGravity(Label::GRAVITY_CENTER);
-    _bat_cap_lbl->setPos(_display.width() - TFT_CUTOUT - DISPLAY_PADDING - _bat_cap_lbl->getWidth(), DISPLAY_PADDING);
-    _bat_cap_lbl->setTransparency(true);
+    _batt_volt_lbl = new Label(ID_BAT_LVL);
+    layout->addWidget(_batt_volt_lbl);
+    _batt_volt_lbl->setText(STR_EMPTY_BAT);
+    _batt_volt_lbl->setWidth(56);
+    _batt_volt_lbl->setHeight(35);
+    _batt_volt_lbl->setAlign(Label::ALIGN_CENTER);
+    _batt_volt_lbl->setGravity(Label::GRAVITY_CENTER);
+    _batt_volt_lbl->setPos(_display.width() - TFT_CUTOUT - DISPLAY_PADDING - _batt_volt_lbl->getWidth(), DISPLAY_PADDING);
+    _batt_volt_lbl->setTransparency(true);
 
-    _bat_ico = new Image(1);
-    _bat_cap_lbl->setBackImg(_bat_ico);
-    _bat_ico->init(_bat_cap_lbl->getWidth(), _bat_cap_lbl->getHeight());
-    _bat_ico->setSrc(ICO_BATTERY);
-    _bat_ico->setTransparency(true);
-    _bat_ico->setTranspColor(TFT_TRANSPARENT);
+    _batt_ico = new Image(1);
+    _batt_volt_lbl->setBackImg(_batt_ico);
+    _batt_ico->init(_batt_volt_lbl->getWidth(), _batt_volt_lbl->getHeight());
+    _batt_ico->setSrc(ICO_BATTERY);
+    _batt_ico->setTransparency(true);
+    _batt_ico->setTranspColor(TFT_TRANSPARENT);
 
-    updateBatCap();
+    updateBattVoltage();
 }
 
 HomeContext::~HomeContext()
 {
-    delete _bat_ico;
+    delete _batt_ico;
     free(_wallpaper_ptr);
 }
 
@@ -72,25 +68,15 @@ void HomeContext::update()
     if (millis() - _upd_timer > UPD_DISPLAY_INTERVAL_MS)
     {
         _upd_timer = millis();
-        updateBatCap();
+        updateBattVoltage();
     }
 }
 
-void HomeContext::updateBatCap()
+void HomeContext::updateBattVoltage()
 {
-    // float DIV_K{0.5827};
-    // const uint8_t READ_CYCLES_NUMBER = 128;
+    float bat_voltage = readBattVoltage();
+    String volt_str = String(bat_voltage);
+    _batt_volt_lbl->setText(volt_str);
 
-    // float bat_voltage{0.0f};
-
-    // for (uint8_t i{0}; i < READ_CYCLES_NUMBER; ++i)
-    //     bat_voltage += analogRead(PIN_VOLT_MEASH);
-
-    // bat_voltage /= READ_CYCLES_NUMBER;
-    // bat_voltage *= 3.3;
-    // bat_voltage /= 4095;
-    // bat_voltage /= DIV_K;
-
-    // String volt_str = String(bat_voltage);
-    // _bat_cap_lbl->setText(volt_str);
+    getLayout()->forcedDraw();
 }

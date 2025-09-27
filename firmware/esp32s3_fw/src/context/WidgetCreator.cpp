@@ -42,7 +42,7 @@ MenuItem *WidgetCreator::getMenuItem(uint16_t id)
     try
     {
         MenuItem *item = new MenuItem(id);
-        item->setFocusBorderColor(COLOR_LIME);
+        item->setFocusBorderColor(TFT_LIME);
         item->setFocusBackColor(COLOR_FOCUS_BACK);
         item->setBackColor(COLOR_MENU_ITEM);
         item->setChangingBorder(true);
@@ -121,7 +121,7 @@ Keyboard *WidgetCreator::getStandardEnKeyboard(uint16_t id)
     q->setFontID(2);
     q->setGravity(IWidget::GRAVITY_CENTER);
     q->setAlign(IWidget::ALIGN_CENTER);
-    q->setFocusBorderColor(COLOR_LIME);
+    q->setFocusBorderColor(TFT_LIME);
     q->setChangingBorder(true);
     q->setFocusBackColor(COLOR_FOCUS_BACK);
     q->setChangingBack(true);
@@ -329,7 +329,7 @@ Keyboard *WidgetCreator::getCapsdEnKeyboard(uint16_t id)
     q->setFontID(2);
     q->setGravity(IWidget::GRAVITY_CENTER);
     q->setAlign(IWidget::ALIGN_CENTER);
-    q->setFocusBorderColor(COLOR_LIME);
+    q->setFocusBorderColor(TFT_LIME);
     q->setChangingBorder(true);
     q->setFocusBackColor(COLOR_FOCUS_BACK);
     q->setChangingBack(true);

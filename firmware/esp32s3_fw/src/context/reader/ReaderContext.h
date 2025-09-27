@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include "meow/ui/context/IContext.h"
-#include "meow/manager/settings/SettingsManager.h"
+#include "meow/manager/SettingsManager.h"
 #include "meow/ui/widget/scrollbar/ScrollBar.h"
 #include "meow/ui/widget/menu/FixedMenu.h"
 #include "meow/ui/widget/menu/DynamicMenu.h"
@@ -47,34 +47,6 @@ private:
         ID_CONT_ITEM,
     };
     //
-    FileManager _f_mgr;
-    //
-    Mode _mode{MODE_BOOK_DIR_SEL};
-    unsigned long _upd_msg_time{0};
-    //
-    uint16_t _num_char_to_read{0};
-    //
-    Label *_progress_lbl;
-    //
-    Label *_page;
-    ScrollBar *_scrollbar;
-    FixedMenu *_context_menu;
-    FixedMenu *_book_dirs_menu;
-    DynamicMenu *_books_list_menu;
-    //
-    String _dir_name;
-    String _book_name;
-    uint16_t _book_pos{0};
-    size_t _book_size{0};
-    size_t _read_pos{0};
-    //
-    uint8_t _old_brightness;
-    uint8_t _brightness;
-    bool _brightness_edit_en{true};
-    //
-    std::vector<FileInfo> _dirs;
-    std::vector<FileInfo> _books;
-    //
     void savePref();
     //
     void ok();
@@ -84,7 +56,6 @@ private:
     void right();
     void back();
     void backPressed();
-
     //
     void showBookDirsTmpl();
     void fillBookDirs();
@@ -115,11 +86,40 @@ private:
     //
     void handlePrevItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id);
     static void onPrevItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id, void *arg);
+    //
+    String getBookPath(const char *dirname, const char *book_name);
+    bool isCyrillic(char ch);
+    bool containCyrillic(const char *dirname, const char *book_name);
+    bool readText(String &out_str, const char *dirname, const char *book_name, size_t len, size_t pos);
+
+private:
+    String _dirname;
+    String _book_name;
+    
+    std::vector<FileInfo> _dirs;
+    std::vector<FileInfo> _books;
 
     //
+    Label *_progress_lbl;
+    Label *_page;
+    ScrollBar *_scrollbar;
+    FixedMenu *_context_menu;
+    FixedMenu *_book_dirs_menu;
+    DynamicMenu *_books_list_menu;
 
-    String getBookPath(const char *dir_name, const char *book_name);
-    bool isCyrillic(char ch);
-    bool containCyrillic(const char *dir_name, const char *book_name);
-    bool readText(String &out_str, const char *dir_name, const char *book_name, size_t len, size_t pos);
+    unsigned long _upd_msg_time{0};
+
+    size_t _book_size{0};
+    size_t _read_pos{0};
+
+    uint16_t _book_pos{0};
+    uint16_t _num_char_to_read{0};
+
+    //
+    Mode _mode{MODE_BOOK_DIR_SEL};
+
+    uint8_t _old_brightness;
+    uint8_t _brightness;
+    
+    bool _brightness_edit_en{true};
 };

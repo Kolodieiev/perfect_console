@@ -9,11 +9,7 @@ namespace meow
     {
         if (loop())
         {
-            if ((millis() - _upd_time) < UI_UPDATE_DELAY)
-            {
-                vTaskDelay(2 / portTICK_PERIOD_MS);
-            }
-            else
+            if ((millis() - _upd_time) > UI_UPDATE_DELAY)
             {
                 _upd_time = millis();
 

@@ -9,6 +9,7 @@
 #include "./res/book.h"
 #include "./res/lua_ico.h"
 #include "./res/wifi_ico.h"
+#include "./res/walkie-talkie_ico.h"
 
 #include "../WidgetCreator.h"
 #include "meow/ui/widget/layout/EmptyLayout.h"
@@ -18,6 +19,7 @@
 
 const char STR_MUSIC_ITEM[] = "Музика";
 const char STR_READER_ITEM[] = "Читалка";
+const char STR_W_TALKIE_ITEM[] = "Рація";
 const char STR_FILES_ITEM[] = "Файли";
 const char STR_GAME_ITEM[] = "Ігри";
 const char STR_WIFI_ITEM[] = "Підключення";
@@ -60,6 +62,19 @@ MenuContext::MenuContext()
     Label *files_lbl = creator.getItemLabel(STR_FILES_ITEM, 4, 2);
     files_item->setLbl(files_lbl);
 
+    // Музика
+    MenuItem *mp3_item = creator.getMenuItem(ID_CONTEXT_MP3);
+    _menu->addItem(mp3_item);
+
+    Image *mp3_img = new Image(1);
+    mp3_item->setImg(mp3_img);
+    mp3_img->setTranspColor(TFT_TRANSPARENT);
+    mp3_img->init(ICO_WH, ICO_WH);
+    mp3_img->setSrc(HEADPHONES_IMG);
+
+    Label *mp3_lbl = creator.getItemLabel(STR_MUSIC_ITEM, 4, 2);
+    mp3_item->setLbl(mp3_lbl);
+
     // Ігри
     MenuItem *game_item = creator.getMenuItem(ID_CONTEXT_GAMES);
     _menu->addItem(game_item);
@@ -72,6 +87,19 @@ MenuContext::MenuContext()
 
     Label *game_lbl = creator.getItemLabel(STR_GAME_ITEM, 4, 2);
     game_item->setLbl(game_lbl);
+
+    // Читалка
+    MenuItem *read_item = creator.getMenuItem(ID_CONTEXT_READER);
+    _menu->addItem(read_item);
+
+    Image *read_img = new Image(1);
+    read_item->setImg(read_img);
+    read_img->setTranspColor(TFT_TRANSPARENT);
+    read_img->init(ICO_WH, ICO_WH);
+    read_img->setSrc(BOOK_IMG);
+
+    Label *read_lbl = creator.getItemLabel(STR_READER_ITEM, 4, 2);
+    read_item->setLbl(read_lbl);
 
     // WiFi
     MenuItem *wifi_item = creator.getMenuItem(ID_CONTEXT_WIFI);
@@ -86,31 +114,18 @@ MenuContext::MenuContext()
     Label *wifi_lbl = creator.getItemLabel(STR_WIFI_ITEM, 4, 2);
     wifi_item->setLbl(wifi_lbl);
 
-    // Музика
-    MenuItem *mp3_item = creator.getMenuItem(ID_CONTEXT_MP3);
-    _menu->addItem(mp3_item);
+    // Рація
+    MenuItem *w_talkie_item = creator.getMenuItem(ID_CONTEXT_W_TALKIE);
+    _menu->addItem(w_talkie_item);
 
-    Image *mp3_img = new Image(1);
-    mp3_item->setImg(mp3_img);
-    mp3_img->setTranspColor(TFT_TRANSPARENT);
-    mp3_img->init(ICO_WH, ICO_WH);
-    mp3_img->setSrc(HEADPHONES_IMG);
+    Image *w_talkie_img = new Image(1);
+    w_talkie_item->setImg(w_talkie_img);
+    w_talkie_img->setTranspColor(TFT_TRANSPARENT);
+    w_talkie_img->init(ICO_WH, ICO_WH);
+    w_talkie_img->setSrc(WALKIE_TALKIE_IMG);
 
-    Label *mp3_lbl = creator.getItemLabel(STR_MUSIC_ITEM, 4, 2);
-    mp3_item->setLbl(mp3_lbl);
-
-    // Читалка
-    MenuItem *read_item = creator.getMenuItem(ID_CONTEXT_READER);
-    _menu->addItem(read_item);
-
-    Image *read_img = new Image(1);
-    read_item->setImg(read_img);
-    read_img->setTranspColor(TFT_TRANSPARENT);
-    read_img->init(ICO_WH, ICO_WH);
-    read_img->setSrc(BOOK_IMG);
-
-    Label *read_lbl = creator.getItemLabel(STR_READER_ITEM, 4, 2);
-    read_item->setLbl(read_lbl);
+    Label *w_talkie_lbl = creator.getItemLabel(STR_W_TALKIE_ITEM, 4, 2);
+    w_talkie_item->setLbl(w_talkie_lbl);
 
     // Налаштування
     MenuItem *pref_item = creator.getMenuItem(ID_CONTEXT_PREF_SEL);

@@ -23,7 +23,7 @@ bool ReaderContext::loop()
 
 void ReaderContext::savePref()
 {
-    SettingsManager::set(STR_BOOK_DIR_PREF, _dir_name.c_str());
+    SettingsManager::set(STR_BOOK_DIR_PREF, _dirname.c_str());
     SettingsManager::set(STR_BOOK_NAME_PREF, _book_name.c_str());
     SettingsManager::set(STR_READ_POS_PREF, String(_read_pos).c_str());
 }
@@ -281,7 +281,7 @@ ReaderContext::ReaderContext()
     else
         _brightness = atoi(book_br.c_str());
 
-    _dir_name = SettingsManager::get(STR_BOOK_DIR_PREF);
+    _dirname = SettingsManager::get(STR_BOOK_DIR_PREF);
     _book_name = SettingsManager::get(STR_BOOK_NAME_PREF);
     _read_pos = atoi(SettingsManager::get(STR_READ_POS_PREF).c_str());
 
@@ -360,7 +360,7 @@ void ReaderContext::ok()
         }
         else
         {
-            _dir_name = _book_dirs_menu->getCurrItemText();
+            _dirname = _book_dirs_menu->getCurrItemText();
             _book_pos = 0;
             indexBooks();
             showBooksListTmpl();
@@ -382,9 +382,9 @@ void ReaderContext::ok()
             if (_book_name.isEmpty())
                 return;
 
-            String book_path = getBookPath(_dir_name.c_str(), _book_name.c_str());
+            String book_path = getBookPath(_dirname.c_str(), _book_name.c_str());
 
-            if (_f_mgr.rmFile(book_path.c_str(), true))
+            if (_fs.rmFile(book_path.c_str(), true))
             {
                 if (_books_list_menu->getCurrItemID() - 2 > -1)
                     _book_pos = _books_list_menu->getCurrItemID() - 2;
@@ -431,15 +431,15 @@ void ReaderContext::updateBookPos()
 void ReaderContext::indexDirs()
 {
     String dirs_path = ROOT_PATH;
-    _f_mgr.indexDirs(_dirs, dirs_path.c_str());
+    _fs.indexDirs(_dirs, dirs_path.c_str());
 }
 
 void ReaderContext::indexBooks()
 {
     String books_path = ROOT_PATH;
     books_path += "/";
-    books_path += _dir_name;
-    _f_mgr.indexFilesExt(_books, books_path.c_str(), BOOK_EXT);
+    books_path += _dirname;
+    _fs.indexFilesExt(_books, books_path.c_str(), BOOK_EXT);
 }
 
 void ReaderContext::handleNextItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id)
@@ -598,7 +598,7 @@ void ReaderContext::openBook(bool contn)
 {
     if (contn)
     {
-        if ((_dir_name.isEmpty() || _book_name.isEmpty()))
+        if ((_dirname.isEmpty() || _book_name.isEmpty()))
             return;
     }
     else
@@ -608,11 +608,11 @@ void ReaderContext::openBook(bool contn)
         _read_pos = 0;
     }
 
-    String book_path = getBookPath(_dir_name.c_str(), _book_name.c_str());
+    String book_path = getBookPath(_dirname.c_str(), _book_name.c_str());
 
-    _book_size = _f_mgr.getFileSize(book_path.c_str());
+    _book_size = _fs.getFileSize(book_path.c_str());
 
-    if (containCyrillic(_dir_name.c_str(), _book_name.c_str()))
+    if (containCyrillic(_dirname.c_str(), _book_name.c_str()))
         _num_char_to_read = KIR_NUM_NYTES_TO_READ;
     else
         _num_char_to_read = LAT_NUM_BYTES_TO_READ;
@@ -630,7 +630,7 @@ void ReaderContext::loadNextTxt()
     setCpuFrequencyMhz(240);
 
     String txt;
-    readText(txt, _dir_name.c_str(), _book_name.c_str(), _num_char_to_read, _read_pos);
+    readText(txt, _dirname.c_str(), _book_name.c_str(), _num_char_to_read, _read_pos);
 
     if (!txt.isEmpty())
     {
@@ -656,7 +656,7 @@ void ReaderContext::loadPrevTxt()
         _read_pos = 0;
 
     String txt;
-    readText(txt, _dir_name.c_str(), _book_name.c_str(), _num_char_to_read, _read_pos);
+    readText(txt, _dirname.c_str(), _book_name.c_str(), _num_char_to_read, _read_pos);
 
     if (!txt.isEmpty())
     {
@@ -680,11 +680,11 @@ void ReaderContext::updateReadProgress()
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
 
-String ReaderContext::getBookPath(const char *dir_name, const char *book_name)
+String ReaderContext::getBookPath(const char *dirname, const char *book_name)
 {
     String book_path = ROOT_PATH;
     book_path += "/";
-    book_path += dir_name;
+    book_path += dirname;
     book_path += "/";
     book_path += book_name;
     return book_path;
@@ -696,14 +696,14 @@ bool ReaderContext::isCyrillic(char ch)
     return (uc >= 0xC0 && uc <= 0xFF) || (uc >= 0x80 && uc <= 0xBF);
 }
 
-bool ReaderContext::containCyrillic(const char *dir_name, const char *book_name)
+bool ReaderContext::containCyrillic(const char *dirname, const char *book_name)
 {
-    String path = getBookPath(dir_name, book_name);
+    String path = getBookPath(dirname, book_name);
 
     const uint8_t ARR_SIZE = 160;
     char ch_arr[ARR_SIZE];
 
-    size_t read_bytes = _f_mgr.readFile(path.c_str(), ch_arr, ARR_SIZE);
+    size_t read_bytes = _fs.readFile(path.c_str(), ch_arr, ARR_SIZE);
 
     for (size_t i{0}; i < read_bytes; ++i)
     {
@@ -714,7 +714,7 @@ bool ReaderContext::containCyrillic(const char *dir_name, const char *book_name)
     return false;
 }
 
-bool ReaderContext::readText(String &out_str, const char *dir_name, const char *book_name, size_t len, size_t pos)
+bool ReaderContext::readText(String &out_str, const char *dirname, const char *book_name, size_t len, size_t pos)
 {
     char *buffer;
     if (psramInit())
@@ -729,9 +729,9 @@ bool ReaderContext::readText(String &out_str, const char *dir_name, const char *
         return false;
     }
 
-    String book_path = getBookPath(dir_name, book_name);
+    String book_path = getBookPath(dirname, book_name);
 
-    size_t bytes_read = _f_mgr.readFile(book_path.c_str(), buffer, len, pos);
+    size_t bytes_read = _fs.readFile(book_path.c_str(), buffer, len, pos);
     buffer[bytes_read] = '\0';
 
     bool is_oef = false;

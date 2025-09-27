@@ -33,8 +33,8 @@ const char STR_MOVE[] = "Перемістити";
 const char STR_SUCCSESS[] = "Успішно";
 const char STR_FAIL[] = "Невдача";
 const char STR_CONTINUE[] = "Продовжити";
-const char STR_IMPORT[] = "Отримати";
-const char STR_EXPORT[] = "Поділитися";
+const char STR_GET[] = "Отримати";
+const char STR_SHARE[] = "Поділитися";
 const char STR_CONNECT_TO[] = "Приєднатися";
 const char STR_CONFIRM[] = "Прийняти";
 const char STR_REJECT[] = "Відхилити";
@@ -44,6 +44,13 @@ const char STR_CHANGE[] = "Змінити";
 const char STR_NONE[] = "NONE";
 const char STR_WAIT[] = "Очікуйте";
 const char STR_PREFERENCES[] = "Налаштування";
+const char STR_ENABLE[] = "Увімкнути";
+const char STR_DISABLE[] = "Вимкнути";
+const char STR_ENABLED[] = "Увімкнено";
+const char STR_DISABLED[] = "Вимкнено";
+const char STR_CREATE[] = "Створити";
+const char STR_APPLY[] = "Застосувати";
+const char STR_EDIT[] = "Редагувати";
 
 //
 
@@ -59,6 +66,7 @@ const char STR_SD_ERR[] = "SD не примонтовано";
 //
 const char STR_AP_NAME[] = "SSID:";
 const char STR_AP_PWD[] = "PWD:";
+const char STR_REM_IP[] = "192.168.4.1";
 const char STR_DEF_SSID[] = "meow";
 const char STR_DEF_PWD[] = "12345678";
 
@@ -86,3 +94,18 @@ const char STR_SERV_NAME[] = "Назва сервера";
 const char STR_ENTER_SERV_NAME[] = "Введіть назву сервера";
 const char STR_SERV_PWD[] = "Пароль від сервера";
 const char STR_ENTER_SERV_PWD[] = "Введіть пароль від сервера";
+
+//
+
+const char STR_EMPTY_BAT[] = "0.00";
+
+//
+const char STR_CHANN_TITLE[] = "Канал:";
+const char STR_ENCRYPT_TITLE[] = "Шифрування:";
+//
+const char STR_LORA_PRESET[] = "LRE_PRESET";
+const char STR_LORA_SETS_DIR[] = "LRE";
+const char STR_LORA_SETS_EXT[] = ".lset";
+
+const char STR_CODEC_SETS_DIR[] = "codec";
+const char STR_CODEC_SETS_NAME[] = "codec.sets";

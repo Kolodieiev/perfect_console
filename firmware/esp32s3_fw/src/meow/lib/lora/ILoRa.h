@@ -35,6 +35,7 @@ namespace meow
 
         ILoRa(AirDataRate min_data_rate,
               AirDataRate max_data_rate,
+              uint16_t max_pack_len,
               uint8_t max_chann);
 
         virtual ~ILoRa();
@@ -171,14 +172,21 @@ namespace meow
          */
         bool isInited() const { return _is_inited; }
 
-         /**
-          * @brief Записує усі налаштування модуля в його тимчасові регістри.
-          * 
-          * @param temporary Прапор, який вказує на спосіб запису налаштувань. Тимчасово до вимкнення живлення - true(default), або зберегти в памя'ть модуля - false.
-          * @return true - В разі успіху запису.
-          * @return false - Інакше.
-          */
+        /**
+         * @brief Записує усі налаштування модуля в його тимчасові регістри, та переводить модуль в режим сну.
+         *
+         * @param temporary Прапор, який вказує на спосіб запису налаштувань. Тимчасово до вимкнення живлення - true(default), або зберегти в памя'ть модуля - false.
+         * @return true - В разі успіху запису.
+         * @return false - Інакше.
+         */
         bool writeSettings(bool temporary = true);
+
+        /**
+         * @brief Повертає кількість каналів, що доступні для поточного об'єкту LoRa.
+         *
+         * @return uint8_t
+         */
+        uint8_t getMaxChann() const { return MAX_CHANN_VAL; }
 
     protected:
         bool isBusy();
@@ -190,13 +198,14 @@ namespace meow
         virtual bool readRegisters() = 0;
 
     private:
-        const AirDataRate _min_air_data_rate{AIR_DATA_RATE_2_4K};
-        const AirDataRate _max_air_data_rate{AIR_DATA_RATE_2_4K};
+        const uint16_t MAX_PACK_LEN{0};
+        const AirDataRate MIN_AIR_DATA_RATE{AIR_DATA_RATE_2_4K};
+        const AirDataRate MAX_AIR_DATA_RATE{AIR_DATA_RATE_2_4K};
         AirDataRate _air_data_rate{AIR_DATA_RATE_2_4K};
         TransmitPower _transmit_power{TR_POWER_MAX};
         Mode _mode{MODE_CONFIG};
 
-        const uint8_t _max_chann{0};
+        const uint8_t MAX_CHANN_VAL{0};
         uint8_t _channel{23};
         uint8_t _packet_len{1};
 

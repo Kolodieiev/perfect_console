@@ -16,6 +16,7 @@
 #include "context/pref/PrefSelectContext.h"
 #include "context/games/GamesListContext.h"
 #include "context/wifi/WiFiContext.h"
+#include "context/walkie-talkie/WTContext.h"
 // Ігрові контексти
 #include "context/games/sokoban/SokobanContext.h"
 #include "context/games/test_server/TestServerContext.h"
@@ -51,6 +52,8 @@ namespace meow
          { return new simple_rpg::SimpleRpgContext(); }},
         {ContextID::ID_CONTEXT_WIFI, []()
          { return new WiFiContext(); }},
+        {ContextID::ID_CONTEXT_W_TALKIE, []()
+         { return new WTContext(); }},
     };
 }
 

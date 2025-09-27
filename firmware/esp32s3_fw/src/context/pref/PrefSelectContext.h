@@ -1,7 +1,5 @@
 #pragma once
 #include <Arduino.h>
-#include "meow/manager/settings/SettingsManager.h"
-
 #include "meow/ui/context/IContext.h"
 #include "meow/ui/widget/menu/FixedMenu.h"
 #include "meow/ui/widget/scrollbar/ScrollBar.h"
@@ -42,8 +40,6 @@ private:
         MODE_SD_UNCONN,
         MODE_SUBCONTEXT,
     };
-
-    SettingsManager _settings;
 
     Mode _mode = MODE_NORMAL;
 

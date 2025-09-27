@@ -1,6 +1,6 @@
 #pragma GCC optimize("O3")
 #include "GameServer.h"
-#include "meow/manager/wifi/WiFiManager.h"
+#include "meow/manager/WiFiManager.h"
 
 namespace meow
 {
@@ -46,7 +46,7 @@ namespace meow
         }
         else if (_wifi.isConnected())
         {
-            log_e("%s", STR_ERR_ROUTER_NOT_CONNECTED);
+            log_e("%s", STR_ROUTER_NOT_CONNECTED);
             return false;
         }
         else

@@ -25,10 +25,10 @@ private:
         ID_DAY_LBL,
     };
 
-    Image *_bat_ico;
-    Label *_bat_cap_lbl{nullptr};
+    Image *_batt_ico;
+    Label *_batt_volt_lbl{nullptr};
     unsigned long _upd_timer{0};
     uint16_t *_wallpaper_ptr{nullptr};
 
-    void updateBatCap();
+    void updateBattVoltage();
 };
