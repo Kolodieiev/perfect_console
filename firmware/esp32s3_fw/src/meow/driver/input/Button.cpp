@@ -1,8 +1,7 @@
 #pragma GCC optimize("O3")
 
 #include "Button.h"
-#include <driver/touch_sensor.h>
-// #include <driver/touch_sens.h> //TODO
+#include <driver/touch_sens.h>
 #include "esp32-hal-touch.h"
 #include "hal/gpio_hal.h"
 #include "meowui_setup/input_setup.h"
@@ -26,7 +25,7 @@ namespace meow
         _lock_time = millis();
     }
 
-    void Button::_update()
+    void Button::__update()
     {
         if (!_is_enabled)
             return;
@@ -41,16 +40,9 @@ namespace meow
         if (_is_touch)
         {
 #if defined(CONFIG_IDF_TARGET_ESP32S3)
-            static uint32_t touch_value;
+            _is_holded = touchRead(_btn_id) > BTN_TOUCH_TRESHOLD;
 #else
-            static uint16_t touch_value;
-#endif
-            touch_pad_read_raw_data((touch_pad_t)_pad, &touch_value);
-
-#if defined(CONFIG_IDF_TARGET_ESP32S3)
-            _is_holded = touch_value > BTN_TOUCH_TRESHOLD;
-#else
-            _is_holded = touch_value < BTN_TOUCH_TRESHOLD;
+            _is_holded = touchRead(_btn_id) < BTN_TOUCH_TRESHOLD;
 #endif
         }
         else
@@ -63,10 +55,10 @@ namespace meow
 #endif
         }
 
-        updateSelfState();
+        updateState();
     }
 
-    void Button::_extUpdate(bool is_holded)
+    void Button::__extUpdate(bool is_holded)
     {
         if (!_is_enabled)
             return;
@@ -80,10 +72,10 @@ namespace meow
 
         _is_holded = is_holded;
 
-        updateSelfState();
+        updateState();
     }
 
-    void Button::updateSelfState()
+    void Button::updateState()
     {
         if (!_is_holded)
         {
@@ -129,10 +121,10 @@ namespace meow
         {
             pinMode(_btn_id, INPUT_PULLUP);
         }
-        else
+        else if (!touchRead(_btn_id))
         {
-            touchRead(_btn_id); // init channel
-            _pad = digitalPinToTouchChannel(_btn_id);
+            log_e("Помилка ініціалізації сенсорної кнопки");
+            esp_restart();
         }
 #endif
     }
