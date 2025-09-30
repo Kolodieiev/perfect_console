@@ -1,3 +1,4 @@
+#pragma GCC optimize("O3")
 #include "FilesContext.h"
 #include "meow/lib/qr/QR_Gen.h"
 #include "meow/manager/SettingsManager.h"
@@ -7,15 +8,44 @@
 
 #include "../WidgetCreator.h"
 #include "./res/folder.h"
+#include "./res/lua.h"
 
 #define UPD_TRACK_INF_INTERVAL 1000UL
 #define PADDING_BOTT 40
 #define MENU_ITEMS_NUM 7
 
 const char STR_SIZE[] = "File size:";
+const char STR_LUA_EXT[] = ".lua";
+const char STR_LUA_RUNNING[] = "LuaVM працює";
 
 bool FilesContext::loop()
 {
+    if (_mode == MODE_LUA)
+    {
+        if (_lua_context->isReleased())
+        {
+            String msg = _lua_context->getMsg();
+            if (!msg.equals(""))
+            {
+                _mode = MODE_NOTIFICATION;
+                _notification->setMsgText(msg);
+                showNotification(_notification);
+            }
+            else
+            {
+                _mode = MODE_NAVIGATION;
+                getLayout()->forcedDraw();
+            }
+
+            delete _lua_context;
+            _lua_context = nullptr;
+        }
+        else
+        {
+            _lua_context->tick();
+            return false;
+        }
+    }
     return true;
 }
 
@@ -27,6 +57,9 @@ FilesContext::FilesContext()
     _dir_img->setSrc(FOLDER_IMG);
     _dir_img->setTransparency(true);
 
+    _lua_img = _dir_img->clone(1);
+    _lua_img->setSrc(LUA_IMG);
+
     WidgetCreator creator;
     EmptyLayout *layout = creator.getEmptyLayout();
     setLayout(layout);
@@ -37,11 +70,21 @@ FilesContext::FilesContext()
         return;
     }
 
+    createNotificationObj();
+
     _fs.setTaskDoneHandler(taskDone, this);
 
     showFilesTmpl();
     indexCurDir();
     fillFilesTmpl();
+}
+
+FilesContext::~FilesContext()
+{
+    delete _dir_img;
+    delete _lua_img;
+    delete _lua_context;
+    delete _notification;
 }
 
 //-------------------------------------------------------------------------------------------
@@ -304,6 +347,17 @@ void FilesContext::showContextMenu()
     upd_item->setLbl(upd_lbl);
     upd_lbl->setTextOffset(1);
 
+    // Виконати
+    if (!_files[id - 1].isDir() && _files[id - 1].nameEndsWith(STR_LUA_EXT))
+    {
+        MenuItem *exec_item = creator.getMenuItem(ID_ITEM_EXECUTE);
+        _context_menu->addItem(exec_item);
+
+        Label *exec_lbl = creator.getItemLabel(STR_EXECUTE, 2);
+        exec_item->setLbl(exec_lbl);
+        exec_lbl->setTextOffset(1);
+    }
+
     //
     _context_menu->setHeight(_context_menu->getSize() * _context_menu->getItemHeight() + 4);
     _context_menu->setPos(D_WIDTH - _context_menu->getWidth() - 1,
@@ -371,7 +425,7 @@ void FilesContext::saveDialogResult()
         _dialog_success_res = _fs.createDir(dir_path.c_str());
         showResultToast(_dialog_success_res);
     }
-    else if (_mode = MODE_RENAME_DIALOG)
+    else if (_mode == MODE_RENAME_DIALOG)
     {
         String old_name;
         String new_name;
@@ -395,7 +449,7 @@ void FilesContext::saveDialogResult()
 
 void FilesContext::keyboardClickHandler()
 {
-    // uint16_t id = _keyboard->getCurrentBtnID();
+    // uint16_t id = _keyboard->getCurrBtnID();
     // if (id ==)
     // {
     // }
@@ -628,9 +682,19 @@ void FilesContext::ok()
             startFileServer(FileServer::SERVER_MODE_RECEIVE);
         else if (id == ID_ITEM_EXPORT)
             startFileServer(FileServer::SERVER_MODE_SEND);
+        else if (id == ID_ITEM_EXECUTE)
+            executeScript();
     }
     else if (_mode == MODE_NEW_DIR_DIALOG || _mode == MODE_RENAME_DIALOG)
+    {
         keyboardClickHandler();
+    }
+    else if (_mode == MODE_NOTIFICATION)
+    {
+        hideNotification();
+        _mode = MODE_NAVIGATION;
+        getLayout()->forcedDraw();
+    }
 }
 
 void FilesContext::back()
@@ -690,20 +754,21 @@ void FilesContext::updateFileInfo()
     filename += _files_list->getCurrItemText();
 
     String str_size;
-    double kb_size = _fs.getFileSize(filename.c_str()) / 1024;
+    double f_size = _fs.getFileSize(filename.c_str());
 
-    if (kb_size == 0)
+    if (f_size < 1024)
     {
-        str_size = "0";
+        str_size = String(f_size);
+        str_size += "b";
     }
-    else if (kb_size < 1024)
+    else if (f_size < 1024 * 1024)
     {
-        str_size = String(kb_size);
+        str_size = String(f_size / 1024.0);
         str_size += "kb";
     }
     else
     {
-        str_size = String(kb_size / 1024);
+        str_size = String(f_size * 9.53674316e-7); // 1 / (1024 * 1024)
         str_size += "mb";
     }
 
@@ -815,15 +880,15 @@ void FilesContext::taskDoneHandler(bool result)
 {
     showResultToast(result);
 
-    showFilesTmpl();
     indexCurDir();
+    showFilesTmpl();
     fillFilesTmpl();
 }
 
 void FilesContext::taskDone(bool result, void *arg)
 {
-    FilesContext *this_ptr = static_cast<FilesContext *>(arg);
-    this_ptr->taskDoneHandler(result);
+    FilesContext *self = static_cast<FilesContext *>(arg);
+    self->taskDoneHandler(result);
 }
 
 //-------------------------------------------------------------------------------------------
@@ -855,6 +920,8 @@ void FilesContext::makeMenuFilesItems(std::vector<MenuItem *> &items, uint16_t f
 
         if (_files[i].isDir())
             item->setImg(_dir_img);
+        else if (_files[i].nameEndsWith(STR_LUA_EXT))
+            item->setImg(_lua_img);
 
         lbl->setText(_files[i].getName());
     }
@@ -872,8 +939,8 @@ void FilesContext::handleNextItemsLoad(std::vector<MenuItem *> &items, uint8_t s
 
 void FilesContext::onNextItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id, void *arg)
 {
-    FilesContext *this_ptr = static_cast<FilesContext *>(arg);
-    this_ptr->handleNextItemsLoad(items, size, cur_id);
+    FilesContext *self = static_cast<FilesContext *>(arg);
+    self->handleNextItemsLoad(items, size, cur_id);
 }
 
 //
@@ -905,14 +972,75 @@ void FilesContext::handlePrevItemsLoad(std::vector<MenuItem *> &items, uint8_t s
 
 void FilesContext::onPrevItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id, void *arg)
 {
-    FilesContext *this_ptr = static_cast<FilesContext *>(arg);
-    this_ptr->handlePrevItemsLoad(items, size, cur_id);
+    FilesContext *self = static_cast<FilesContext *>(arg);
+    self->handlePrevItemsLoad(items, size, cur_id);
 }
 
 void FilesContext::showResultToast(bool result)
 {
     if (result)
-        showToast(STR_SUCCSESS, 1500);
+        showToast(STR_SUCCSESS, TOAST_LENGTH_SHORT);
     else
-        showToast(STR_FAIL, 1500);
+        showToast(STR_FAIL, TOAST_LENGTH_SHORT);
+}
+
+void FilesContext::createNotificationObj()
+{
+    _notification = new Notification(1);
+    _notification->setLeftBackColor(TFT_DARKCYAN);
+    _notification->setRightBackColor(TFT_DARKCYAN);
+    _notification->setTitleText(STR_NOTIFICATION);
+    _notification->setRightText(STR_OK);
+}
+
+void FilesContext::executeScript()
+{
+    String file_name;
+    makePathFromBreadcrumbs(file_name);
+    file_name += "/";
+    file_name += _files_list->getCurrItemText();
+
+    size_t f_size = _fs.getFileSize(file_name.c_str());
+
+    if (f_size == 0)
+    {
+        log_e("Скрипт порожній");
+        return;
+    }
+
+    char *text_buf;
+
+    if (psramInit())
+        text_buf = static_cast<char *>(ps_malloc(f_size + 1));
+    else
+        text_buf = static_cast<char *>(malloc(f_size + 1));
+
+    if (!text_buf)
+    {
+        log_e("Помилка виділення пам'яті");
+        return;
+    }
+
+    hideContextMenu();
+
+    _fs.readFile(file_name.c_str(), text_buf, f_size);
+    text_buf[f_size] = '\0';
+
+    _lua_context = new LuaContext();
+    if (!_lua_context->execScript(text_buf))
+    {
+        String msg = _lua_context->getMsg();
+        _notification->setMsgText(msg);
+        _mode = MODE_NOTIFICATION;
+        showNotification(_notification);
+        delete _lua_context;
+        _lua_context = nullptr;
+    }
+    else
+    {
+        _mode = MODE_LUA;
+        log_i("%s", STR_LUA_RUNNING);
+    }
+
+    free(text_buf);
 }

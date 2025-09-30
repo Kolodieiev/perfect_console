@@ -1,8 +1,12 @@
 #pragma once
+#pragma GCC optimize("O3")
 #include <Arduino.h>
 #include "meow/ui/context/IContext.h"
 #include "meow/manager/FileManager.h"
 #include "meow/lib/server/file_server/FileServer.h"
+//
+#include "meow/plugin/lua/context/LuaContext.h"
+#include "meow/ui/widget/notification/Notification.h"
 //
 #include "meow/ui/widget/scrollbar/ScrollBar.h"
 #include "meow/ui/widget/menu/FixedMenu.h"
@@ -18,7 +22,7 @@ class FilesContext : public IContext
 {
 public:
     FilesContext();
-    virtual ~FilesContext() { delete _dir_img; }
+    virtual ~FilesContext();
 
 protected:
     virtual bool loop() override;
@@ -49,6 +53,7 @@ private:
         ID_ITEM_COPY,
         ID_ITEM_REMOVE,
         ID_ITEM_NEW_DIR,
+        ID_ITEM_EXECUTE,
         ID_ITEM_RENAME,
         ID_ITEM_IMPORT,
         ID_ITEM_EXPORT,
@@ -57,6 +62,8 @@ private:
     enum Mode : uint8_t
     {
         MODE_NAVIGATION = 0,
+        MODE_LUA,
+        MODE_NOTIFICATION,
         MODE_COPYING,
         MODE_REMOVING,
         MODE_MOVING,
@@ -117,6 +124,10 @@ private:
     static void onPrevItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id, void *arg);
     //
     void showResultToast(bool result);
+    //
+    void createNotificationObj();
+    //
+    void executeScript();
 
 private:
     FileServer _server;
@@ -127,22 +138,25 @@ private:
     String _old_name;
     std::vector<FileInfo> _files;
     std::vector<String> _breadcrumbs;
-    
-    Label *_msg_lbl;
-    Image *_qr_img;
-    uint16_t *_qr_img_buff = nullptr;
-    FixedMenu *_context_menu;
-    ScrollBar *_scrollbar;
-    ProgressBar *_task_progress;
-    DynamicMenu *_files_list;
-    Image *_dir_img;
-    Keyboard *_keyboard;
-    TextBox *_dialog_txt;
-    Label *_file_size_lbl;
-    Label *_file_pos_lbl;
+
+    LuaContext *_lua_context{nullptr};
+    Notification *_notification{nullptr};
+    Image *_lua_img{nullptr};
+    Label *_msg_lbl{nullptr};
+    Image *_qr_img{nullptr};
+    uint16_t *_qr_img_buff{nullptr};
+    FixedMenu *_context_menu{nullptr};
+    ScrollBar *_scrollbar{nullptr};
+    ProgressBar *_task_progress{nullptr};
+    DynamicMenu *_files_list{nullptr};
+    Image *_dir_img{nullptr};
+    Keyboard *_keyboard{nullptr};
+    TextBox *_dialog_txt{nullptr};
+    Label *_file_size_lbl{nullptr};
+    Label *_file_pos_lbl{nullptr};
 
     unsigned long _upd_msg_time{0};
-    uint16_t _qr_width = 0;
+    uint16_t _qr_width{0};
 
     Mode _mode{MODE_NAVIGATION};
     uint8_t _upd_counter{0};
