@@ -173,8 +173,6 @@ void ReaderContext::fillBooks(uint16_t pos)
     std::vector<MenuItem *> items;
     makeBooksItems(items, pos, _books_list_menu->getItemsNumOnScreen());
 
-    uint16_t books_num = _books.size();
-
     uint16_t size = items.size();
 
     for (size_t i = 0; i < size; ++i)
@@ -473,14 +471,14 @@ void ReaderContext::handlePrevItemsLoad(std::vector<MenuItem *> &items, uint8_t 
 
 void ReaderContext::onNextItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id, void *arg)
 {
-    ReaderContext *this_ptr = static_cast<ReaderContext *>(arg);
-    this_ptr->handleNextItemsLoad(items, size, cur_id);
+    ReaderContext *self = static_cast<ReaderContext *>(arg);
+    self->handleNextItemsLoad(items, size, cur_id);
 }
 
 void ReaderContext::onPrevItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id, void *arg)
 {
-    ReaderContext *this_ptr = static_cast<ReaderContext *>(arg);
-    this_ptr->handlePrevItemsLoad(items, size, cur_id);
+    ReaderContext *self = static_cast<ReaderContext *>(arg);
+    self->handlePrevItemsLoad(items, size, cur_id);
 }
 
 //-------------------------------------------------------------------------------------------
@@ -718,9 +716,9 @@ bool ReaderContext::readText(String &out_str, const char *dirname, const char *b
 {
     char *buffer;
     if (psramInit())
-        buffer = (char *)ps_malloc(len + 1);
+        buffer = static_cast<char *>(ps_malloc(len + 1));
     else
-        buffer = (char *)malloc(len + 1);
+        buffer = static_cast<char *>(malloc(len + 1));
 
     if (!buffer)
     {
@@ -754,7 +752,7 @@ bool ReaderContext::readText(String &out_str, const char *dirname, const char *b
 
         if (correct_char_pos > 0)
         {
-            char *temp_buff = (char *)malloc(correct_char_pos + 2);
+            char *temp_buff = static_cast<char *>(malloc(correct_char_pos + 2));
             if (temp_buff)
             {
                 memcpy(temp_buff, buffer, correct_char_pos + 1);
@@ -767,7 +765,9 @@ bool ReaderContext::readText(String &out_str, const char *dirname, const char *b
         }
     }
     else
+    {
         out_str = String(buffer, bytes_read);
+    }
 
     free(buffer);
     return !is_oef;

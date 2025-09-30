@@ -146,8 +146,8 @@ namespace test_server
 
     void TestServerContext::wifiScanDoneHandler(void *arg)
     {
-        TestServerContext *this_ptr = static_cast<TestServerContext *>(arg);
-        this_ptr->readWifiScan();
+        TestServerContext *self = static_cast<TestServerContext *>(arg);
+        self->readWifiScan();
     }
 
     void TestServerContext::readWifiScan()
