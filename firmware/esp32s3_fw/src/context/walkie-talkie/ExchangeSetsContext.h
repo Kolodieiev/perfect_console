@@ -8,7 +8,7 @@ using namespace meow;
 class ExchangeSetsContext : public IContext
 {
 public:
-    ExchangeSetsContext(const String &sets_filename);
+    explicit ExchangeSetsContext(const String &sets_filename);
     virtual ~ExchangeSetsContext();
 
 protected:

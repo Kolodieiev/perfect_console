@@ -454,7 +454,7 @@ namespace test_server
         {
             _input.lock(BtnID::BTN_OK, CLICK_LOCK);
 
-            MenuItem *cur_item = _wifi_list_menu->getCurrItem()->castTo<MenuItem>();
+            const MenuItem *cur_item = _wifi_list_menu->getCurrItem()->castTo<MenuItem>();
             if (!cur_item)
                 return;
 
@@ -813,7 +813,6 @@ namespace test_server
 
         getLayout()->delWidgetByID(ID_LOBBY_CONTEXT_MENU);
         _clients_list_menu->enable();
-        _context_id == ID_CONT_SERVER_LOBBY;
     }
 
     void TestServerContext::handleLobbyContMenuBtns()

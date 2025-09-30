@@ -240,7 +240,7 @@ void FilesContext::showFilesTmpl()
 
 //-------------------------------------------------------------------------------------------
 
-void FilesContext::makePathFromBreadcrumbs(String &out_str)
+void FilesContext::makePathFromBreadcrumbs(String &out_str) const
 {
     out_str = "";
     for (uint8_t i{0}; i < _breadcrumbs.size(); ++i)
@@ -287,6 +287,17 @@ void FilesContext::showContextMenu()
 
     if (id > 0)
     {
+        // Виконати
+        if (!_files[id - 1].isDir() && _files[id - 1].nameEndsWith(STR_LUA_EXT))
+        {
+            MenuItem *exec_item = creator.getMenuItem(ID_ITEM_EXECUTE);
+            _context_menu->addItem(exec_item);
+
+            Label *exec_lbl = creator.getItemLabel(STR_EXECUTE, 2);
+            exec_item->setLbl(exec_lbl);
+            exec_lbl->setTextOffset(1);
+        }
+
         // перейменувати
         MenuItem *rename_item = creator.getMenuItem(ID_ITEM_RENAME);
         _context_menu->addItem(rename_item);
@@ -346,17 +357,6 @@ void FilesContext::showContextMenu()
     Label *upd_lbl = creator.getItemLabel(STR_UPDATE, 2);
     upd_item->setLbl(upd_lbl);
     upd_lbl->setTextOffset(1);
-
-    // Виконати
-    if (!_files[id - 1].isDir() && _files[id - 1].nameEndsWith(STR_LUA_EXT))
-    {
-        MenuItem *exec_item = creator.getMenuItem(ID_ITEM_EXECUTE);
-        _context_menu->addItem(exec_item);
-
-        Label *exec_lbl = creator.getItemLabel(STR_EXECUTE, 2);
-        exec_item->setLbl(exec_lbl);
-        exec_lbl->setTextOffset(1);
-    }
 
     //
     _context_menu->setHeight(_context_menu->getSize() * _context_menu->getItemHeight() + 4);

@@ -75,7 +75,7 @@ private:
         MODE_FILE_SERVER
     };
     //
-    void makePathFromBreadcrumbs(String &out_str);
+    void makePathFromBreadcrumbs(String &out_str) const;
     //
     void showFilesTmpl();
     void showCopyingTmpl();

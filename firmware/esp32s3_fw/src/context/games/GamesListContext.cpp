@@ -99,7 +99,6 @@ void GamesListContext::update()
     else if (_input.isReleased(BtnID::BTN_OK))
     {
         _input.lock(BtnID::BTN_OK, CLICK_LOCK);
-
         openContextByID((ContextID)_menu->getCurrItemID());
     }
 }
@@ -114,10 +113,4 @@ void GamesListContext::down()
 {
     _menu->focusDown();
     _scrollbar->scrollDown();
-}
-
-void GamesListContext::ok()
-{
-    uint8_t context_id = _menu->getCurrItemID();
-    openContextByID((ContextID)context_id); // Ігровий екран буде відкриватися без додаткової перевірки.
 }

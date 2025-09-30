@@ -105,7 +105,7 @@ private:
     void indexPlaylists();
     void indexTracks();
 
-    String getTrackPath(const char *dirname, const char *track_name);
+    String getTrackPath(const char *dirname, const char *track_name) const;
 
     void handleNextItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id);
     static void onNextItemsLoad(std::vector<MenuItem *> &items, uint8_t size, uint16_t cur_id, void *arg);

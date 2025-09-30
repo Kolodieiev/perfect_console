@@ -34,9 +34,9 @@ namespace sokoban
     private:
         DataStream _stored_objs{1024};
 
-        FixedMenu *_lvl_menu;
-        ScrollBar *_scrollbar;
-        IGameScene *_scene;
+        FixedMenu *_lvl_menu{nullptr};
+        ScrollBar *_scrollbar{nullptr};
+        IGameScene *_scene{nullptr};
 
         bool _is_game_started{false};
     };

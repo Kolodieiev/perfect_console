@@ -372,7 +372,7 @@ namespace test_server
             while (packet->space() > 5) // В роділі даних повинно зберігатися мінімум (obj_id(4) + class_id(1) + 1 ) для відновлення
             {
                 uint8_t class_id;
-                packet->extractBytes(&class_id, packet->index() + 4, 1); // class_id зберігається після ob_id
+                packet->extractBytes(&class_id, packet->getDataIndex() + 4, 1); // class_id зберігається після ob_id
                 log_i("class_id: %d", class_id);
 
                 // Створюємо для кожного із образів новий об'єкт
@@ -398,7 +398,7 @@ namespace test_server
             while (packet->space() > 5)
             {
                 uint32_t id;
-                packet->extractBytes(&id, packet->index(), 4); // Читаємо перші 4 байти після команди
+                packet->extractBytes(&id, packet->getDataIndex(), 4); // Читаємо перші 4 байти після команди
 
                 // Шукаємо об'єкт в ігровому світі
                 auto it = _game_objs.find(id);
@@ -413,7 +413,7 @@ namespace test_server
 
                     // Інакше створюємо новий об'єкт за вказаним ід класу
                     uint8_t class_id;
-                    packet->extractBytes(&class_id, packet->index() + 4, 1); // Читаємо один байт після команди + ід об'єкта
+                    packet->extractBytes(&class_id, packet->getDataIndex() + 4, 1); // Читаємо один байт після команди + ід об'єкта
                     log_i("class_id: %d", class_id);
 
                     // Створюємо об'єкт по цьому id

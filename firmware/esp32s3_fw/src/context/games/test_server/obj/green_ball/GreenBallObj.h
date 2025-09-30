@@ -13,7 +13,7 @@ namespace test_server
                      WavManager &audio,
                      TerrainManager &terrain,
                      std::unordered_map<uint32_t, IGameObject *> &game_objs) : BallObj(res, audio, terrain, game_objs) {}
-        virtual ~GreenBallObj() {}
+        virtual ~GreenBallObj() override {}
 
         virtual void init() override;
 

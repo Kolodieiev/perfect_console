@@ -26,7 +26,6 @@ private:
 
     void up();
     void down();
-    void ok();
 
 private:
     std::vector<IWidget *> _bin;

@@ -8,6 +8,7 @@ bool PrefFileServerContext::loop()
     return true;
 }
 
+// cppcheck-suppress useInitializationList
 PrefFileServerContext::PrefFileServerContext()
 {
     _ssid_str = SettingsManager::get(STR_PREF_FS_AP_SSID);

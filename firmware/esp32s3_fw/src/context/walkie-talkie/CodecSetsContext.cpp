@@ -34,10 +34,10 @@ CodecSetsContext::CodecSetsContext()
     _codec = codec2_create(CODEC2_MODE_1200);
     _samples_per_frame = codec2_samples_per_frame(_codec);
     _codec_buf_size = codec2_bytes_per_frame(_codec);
-    _codec_buf = (uint8_t *)malloc(_codec_buf_size);
+    _codec_buf = static_cast<uint8_t *>(malloc(_codec_buf_size));
     _samples_16k_num = _samples_per_frame * 2;
-    _samples_16k_buf = (int16_t *)malloc(_samples_16k_num * sizeof(int16_t));
-    _samples_8k_buf = (int16_t *)malloc(_samples_per_frame * sizeof(int16_t));
+    _samples_16k_buf = static_cast<int16_t *>(malloc(_samples_16k_num * sizeof(int16_t)));
+    _samples_8k_buf = static_cast<int16_t *>(malloc(_samples_per_frame * sizeof(int16_t)));
 
     codec2_set_lpc_post_filter(
         _codec,
@@ -314,18 +314,18 @@ void CodecSetsContext::hideContextMenu()
 
 void CodecSetsContext::updateFilterSets()
 {
-    ToggleItem *agc_in_toggle = _main_menu->getWidgetByID(ID_AGC_IN_TOG_ITEM)->castTo<ToggleItem>();
-    ToggleItem *post_filter_toggle = _main_menu->getWidgetByID(ID_POST_FILTER_TOG_ITEM)->castTo<ToggleItem>();
-    ToggleItem *bbost_toggle = _main_menu->getWidgetByID(ID_POST_BBOOST_TOG_ITEM)->castTo<ToggleItem>();
-    ToggleItem *interleav_toggle = _main_menu->getWidgetByID(ID_INTERLEAV_TOG_ITEM)->castTo<ToggleItem>();
+    const ToggleItem *agc_in_toggle = _main_menu->getWidgetByID(ID_AGC_IN_TOG_ITEM)->castTo<ToggleItem>();
+    const ToggleItem *post_filter_toggle = _main_menu->getWidgetByID(ID_POST_FILTER_TOG_ITEM)->castTo<ToggleItem>();
+    const ToggleItem *bbost_toggle = _main_menu->getWidgetByID(ID_POST_BBOOST_TOG_ITEM)->castTo<ToggleItem>();
+    const ToggleItem *interleav_toggle = _main_menu->getWidgetByID(ID_INTERLEAV_TOG_ITEM)->castTo<ToggleItem>();
 
-    SpinItem *volume_spin = _main_menu->getWidgetByID(ID_VOLUME_SPIN_ITEM)->castTo<SpinItem>();
-    SpinItem *hpf_spin = _main_menu->getWidgetByID(ID_HPF_SPIN_ITEM)->castTo<SpinItem>();
-    SpinItem *agc_out_spin = _main_menu->getWidgetByID(ID_AGC_OUT_SPIN_ITEM)->castTo<SpinItem>();
-    SpinItem *agc_in_spin = _main_menu->getWidgetByID(ID_AGC_IN_SPIN_ITEM)->castTo<SpinItem>();
+    const SpinItem *volume_spin = _main_menu->getWidgetByID(ID_VOLUME_SPIN_ITEM)->castTo<SpinItem>();
+    const SpinItem *hpf_spin = _main_menu->getWidgetByID(ID_HPF_SPIN_ITEM)->castTo<SpinItem>();
+    const SpinItem *agc_out_spin = _main_menu->getWidgetByID(ID_AGC_OUT_SPIN_ITEM)->castTo<SpinItem>();
+    const SpinItem *agc_in_spin = _main_menu->getWidgetByID(ID_AGC_IN_SPIN_ITEM)->castTo<SpinItem>();
 
-    SpinItem *beta_spin = _main_menu->getWidgetByID(ID_POST_BETA_SPIN_ITEM)->castTo<SpinItem>();
-    SpinItem *gamma_spin = _main_menu->getWidgetByID(ID_POST_GAMMA_SPIN_ITEM)->castTo<SpinItem>();
+    const SpinItem *beta_spin = _main_menu->getWidgetByID(ID_POST_BETA_SPIN_ITEM)->castTo<SpinItem>();
+    const SpinItem *gamma_spin = _main_menu->getWidgetByID(ID_POST_GAMMA_SPIN_ITEM)->castTo<SpinItem>();
 
     _codec_sets.interleaving_en = interleav_toggle->isOn();
 

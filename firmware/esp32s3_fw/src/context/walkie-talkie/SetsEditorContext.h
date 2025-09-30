@@ -13,7 +13,7 @@ using namespace meow;
 class SetsEditorContext : public IContext
 {
 public:
-    SetsEditorContext(const String &sets_filename);
+    explicit SetsEditorContext(const String &sets_filename);
     virtual ~SetsEditorContext();
 
 protected:

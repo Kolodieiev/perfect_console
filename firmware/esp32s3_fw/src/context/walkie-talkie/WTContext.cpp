@@ -71,8 +71,8 @@ void WTContext::loadSettings()
     _samples_per_frame = codec2_samples_per_frame(_codec);
     _codec_buf_size = codec2_bytes_per_frame(_codec);
     _samples_16k_num = _samples_per_frame * 2;
-    _samples_16k_buf = (int16_t *)malloc(_samples_16k_num * sizeof(int16_t));
-    _samples_8k_buf = (int16_t *)malloc(_samples_per_frame * sizeof(int16_t));
+    _samples_16k_buf = static_cast<int16_t *>(malloc(_samples_16k_num * sizeof(int16_t)));
+    _samples_8k_buf = static_cast<int16_t *>(malloc(_samples_per_frame * sizeof(int16_t)));
 
     codec2_set_lpc_post_filter(
         _codec,

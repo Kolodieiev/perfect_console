@@ -10,7 +10,7 @@ namespace simple_rpg
     {
     public:
         explicit CaveScene(DataStream &stored_objs);
-        virtual ~CaveScene();
+        virtual ~CaveScene() override;
 
     protected:
         virtual void onTrigger(uint8_t trigg_id) override;

@@ -10,7 +10,7 @@ namespace simple_rpg
     {
     public:
         explicit OpenWorldScene(DataStream &stored_objs);
-        virtual ~OpenWorldScene();
+        virtual ~OpenWorldScene() override;
 
     protected:
         // Метод, який буде викликано ігровим рушієм у разі, якщо хоча б один із об'єктів на сцені підніме прапор спрацювання тригера.

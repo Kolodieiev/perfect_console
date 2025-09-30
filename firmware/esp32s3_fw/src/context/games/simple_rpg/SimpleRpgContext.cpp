@@ -140,13 +140,13 @@ namespace simple_rpg
 
     void SimpleRpgContext::setItemBackNormal()
     {
-        MenuItem *item = _main_menu->getCurrItem()->castTo<MenuItem>();
+        const MenuItem *item = _main_menu->getCurrItem()->castTo<MenuItem>();
         item->getLbl()->setBackImg(_img_back_normal);
     }
 
     void SimpleRpgContext::setItemBackHover()
     {
-        MenuItem *item = _main_menu->getCurrItem()->castTo<MenuItem>();
+        const MenuItem *item = _main_menu->getCurrItem()->castTo<MenuItem>();
         item->getLbl()->setBackImg(_img_back_hover);
     }
 
