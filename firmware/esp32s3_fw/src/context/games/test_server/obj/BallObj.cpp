@@ -31,7 +31,7 @@ namespace test_server
 
     void BallObj::deserialize(DataStream &ds)
     {
-        ds.read(const_cast<uint32_t*>(&_obj_ID), sizeof(_obj_ID)); // Зняття константності для запису ID
+        ds.read(const_cast<uint32_t *>(&_obj_ID), sizeof(_obj_ID)); // Зняття константності для запису ID
         ds.read(&_type_ID, sizeof(_type_ID));
         ds.read(&_x_global, sizeof(_x_global));
         ds.read(&_y_global, sizeof(_y_global));

@@ -10,9 +10,9 @@ namespace test_server
     {
     public:
         BallObj(ResManager &res,
-            	WavManager &audio,
-            	TerrainManager &terrain,
-            	std::unordered_map<uint32_t, IGameObject *> &game_objs) : IGameObject(res, audio, terrain, game_objs)
+                WavManager &audio,
+                TerrainManager &terrain,
+                std::unordered_map<uint32_t, IGameObject *> &game_objs) : IGameObject(res, audio, terrain, game_objs)
         {
         }
 
