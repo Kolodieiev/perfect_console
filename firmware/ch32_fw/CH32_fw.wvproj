@@ -15,6 +15,13 @@
 			"calibrateCommand": ""
 		},
 		"linkedFolders": [],
+		"removedResources": [
+			{
+				"parentLogicPath": "",
+				"type": "file",
+				"name": "*.wvproj"
+			}
+		],
 		"projectName": "CH32_fw",
 		"architecture": "RISC-V",
 		"projectType": "c"
