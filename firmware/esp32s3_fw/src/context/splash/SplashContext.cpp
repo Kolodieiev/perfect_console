@@ -27,7 +27,7 @@ SplashContext::SplashContext()
     // SDCARD
     if (_sd.isMounted())
     {
-        addLabel(OFFSET_LBL_INFO, y_pos, STR_SUCCSESS, TFT_GREEN);
+        addLabel(OFFSET_LBL_INFO, y_pos, STR_SUCCESS, TFT_GREEN);
 
         String bright = SettingsManager::get(STR_PREF_BRIGHT);
 
@@ -48,7 +48,7 @@ SplashContext::SplashContext()
     // PSRAM
     bool psram_ok = psramInit();
     if (psram_ok)
-        addLabel(OFFSET_LBL_INFO, y_pos, STR_SUCCSESS, TFT_GREEN);
+        addLabel(OFFSET_LBL_INFO, y_pos, STR_SUCCESS, TFT_GREEN);
     else
         addLabel(OFFSET_LBL_INFO, y_pos, STR_FAIL, TFT_RED);
 

@@ -209,7 +209,7 @@ void SetsEditorContext::saveSets()
     const char *str_ptr = STR_FAIL;
     if (SettingsManager::save(&_lora_sets, sizeof(LoraSettings), _filename.c_str(), STR_LORA_SETS_DIR))
     {
-        str_ptr = STR_SUCCSESS;
+        str_ptr = STR_SUCCESS;
         _is_new = false;
     }
     showToast(str_ptr);
@@ -279,7 +279,7 @@ void SetsEditorContext::clickOk()
         else if (id == ID_ITEM_GEN_KEY)
         {
             generateAes256Key(_lora_sets.aes_key);
-            showToast(STR_SUCCSESS);
+            showToast(STR_SUCCESS);
         }
     }
     else if (_mode == MODE_ENTER_NAME)

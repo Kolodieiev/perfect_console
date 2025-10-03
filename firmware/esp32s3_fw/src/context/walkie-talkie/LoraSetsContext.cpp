@@ -95,7 +95,7 @@ void LoraSetsContext::clickOk()
             if (!SettingsManager::set(STR_LORA_PRESET, f_name.c_str(), STR_LORA_SETS_DIR))
                 showToast(STR_FAIL);
             else
-                showToast(STR_SUCCSESS);
+                showToast(STR_SUCCESS);
         }
         else if (id == ID_DELETE_ITEM)
         {
@@ -111,7 +111,7 @@ void LoraSetsContext::clickOk()
             else
             {
                 loadSetsList();
-                showToast(STR_SUCCSESS);
+                showToast(STR_SUCCESS);
             }
 
             fillSetsList();
