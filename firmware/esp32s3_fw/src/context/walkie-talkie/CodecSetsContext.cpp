@@ -386,7 +386,7 @@ void CodecSetsContext::clickOk()
         if (item_id == ID_SAVE_SETS_ITEM)
         {
             if (SettingsManager::save(&_codec_sets, sizeof(CodecSettings), STR_CODEC_SETS_NAME, STR_CODEC_SETS_DIR))
-                showToast(STR_SUCCSESS);
+                showToast(STR_SUCCESS);
             else
                 showToast(STR_FAIL);
 

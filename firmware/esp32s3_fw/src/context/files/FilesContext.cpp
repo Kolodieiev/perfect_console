@@ -1,5 +1,6 @@
 #pragma GCC optimize("O3")
 #include "FilesContext.h"
+#include "meow/util/img/BmpUtil.h"
 #include "meow/lib/qr/QR_Gen.h"
 #include "meow/manager/SettingsManager.h"
 //
@@ -16,7 +17,9 @@
 
 const char STR_SIZE[] = "File size:";
 const char STR_LUA_EXT[] = ".lua";
+const char STR_BMP_EXT[] = ".bmp";
 const char STR_LUA_RUNNING[] = "LuaVM працює";
+const char STR_SET_WALLPP[] = "На шпалери";
 
 bool FilesContext::loop()
 {
@@ -240,11 +243,14 @@ void FilesContext::showFilesTmpl()
 
 //-------------------------------------------------------------------------------------------
 
-void FilesContext::makePathFromBreadcrumbs(String &out_str) const
+String FilesContext::makePathFromBreadcrumbs() const
 {
-    out_str = "";
+    String out_str;
+
     for (uint8_t i{0}; i < _breadcrumbs.size(); ++i)
         out_str += _breadcrumbs[i];
+
+    return out_str;
 }
 
 void FilesContext::showContextMenu()
@@ -287,15 +293,48 @@ void FilesContext::showContextMenu()
 
     if (id > 0)
     {
-        // Виконати
-        if (!_files[id - 1].isDir() && _files[id - 1].nameEndsWith(STR_LUA_EXT))
+        if (!_files[id - 1].isDir())
         {
-            MenuItem *exec_item = creator.getMenuItem(ID_ITEM_EXECUTE);
-            _context_menu->addItem(exec_item);
+            // Виконати Lua-скрипт
+            if (_files[id - 1].nameEndsWith(STR_LUA_EXT))
+            {
+                MenuItem *exec_item = creator.getMenuItem(ID_ITEM_EXECUTE);
+                _context_menu->addItem(exec_item);
 
-            Label *exec_lbl = creator.getItemLabel(STR_EXECUTE, 2);
-            exec_item->setLbl(exec_lbl);
-            exec_lbl->setTextOffset(1);
+                Label *exec_lbl = creator.getItemLabel(STR_EXECUTE, 2);
+                exec_item->setLbl(exec_lbl);
+                exec_lbl->setTextOffset(1);
+            }
+            else if (_files[id - 1].nameEndsWith(STR_BMP_EXT))
+            {
+                String path_to_bmp = makePathFromBreadcrumbs();
+                path_to_bmp += "/";
+                path_to_bmp += _files[id - 1].getName();
+
+                FILE *bmp_file = _fs.openFile(path_to_bmp.c_str(), "r");
+                if (bmp_file)
+                {
+                    BmpHeader bmp_header;
+                    if (BmpUtil::checkBmpFile(bmp_file, bmp_header))
+                    {
+                        MenuItem *set_wall_item = creator.getMenuItem(ID_ITEM_SET_WALLPP);
+                        _context_menu->addItem(set_wall_item);
+
+                        Label *set_wall_lbl = creator.getItemLabel(STR_SET_WALLPP, 2);
+                        set_wall_item->setLbl(set_wall_lbl);
+                        set_wall_lbl->setTextOffset(1);
+                    }
+                    _fs.closeFile(bmp_file);
+                }
+            }
+
+            // копіювати
+            MenuItem *copy_item = creator.getMenuItem(ID_ITEM_COPY);
+            _context_menu->addItem(copy_item);
+
+            Label *copy_lbl = creator.getItemLabel(STR_COPY, 2);
+            copy_item->setLbl(copy_lbl);
+            copy_lbl->setTextOffset(1);
         }
 
         // перейменувати
@@ -305,17 +344,6 @@ void FilesContext::showContextMenu()
         Label *rename_lbl = creator.getItemLabel(STR_RENAME, 2);
         rename_item->setLbl(rename_lbl);
         rename_lbl->setTextOffset(1);
-
-        // копіювати
-        if (_files.size() >= id && !_files[id - 1].isDir())
-        {
-            MenuItem *copy_item = creator.getMenuItem(ID_ITEM_COPY);
-            _context_menu->addItem(copy_item);
-
-            Label *copy_lbl = creator.getItemLabel(STR_COPY, 2);
-            copy_item->setLbl(copy_lbl);
-            copy_lbl->setTextOffset(1);
-        }
 
         // перемістити
         MenuItem *move_item = creator.getMenuItem(ID_ITEM_MOVE);
@@ -417,8 +445,7 @@ void FilesContext::saveDialogResult()
 {
     if (_mode == MODE_NEW_DIR_DIALOG)
     {
-        String dir_path;
-        makePathFromBreadcrumbs(dir_path);
+        String dir_path = makePathFromBreadcrumbs();
         dir_path += "/";
         dir_path += _dialog_txt->getText();
 
@@ -427,12 +454,8 @@ void FilesContext::saveDialogResult()
     }
     else if (_mode == MODE_RENAME_DIALOG)
     {
-        String old_name;
-        String new_name;
-
-        makePathFromBreadcrumbs(old_name);
-        new_name = old_name;
-
+        String old_name = makePathFromBreadcrumbs();
+        String new_name = old_name;
         old_name += "/";
         old_name += _old_name;
         _old_name = "";
@@ -464,7 +487,7 @@ void FilesContext::keyboardClickHandler()
 
 void FilesContext::prepareFileMoving()
 {
-    makePathFromBreadcrumbs(_path_from);
+    _path_from = makePathFromBreadcrumbs();
     _name_from = _files_list->getCurrItemText();
 
     _has_moving_file = true;
@@ -475,7 +498,7 @@ void FilesContext::prepareFileMoving()
 
 void FilesContext::prepareFileCopying()
 {
-    makePathFromBreadcrumbs(_path_from);
+    _path_from = makePathFromBreadcrumbs();
     _name_from = _files_list->getCurrItemText();
 
     _has_moving_file = false;
@@ -490,9 +513,7 @@ void FilesContext::pasteFile()
     old_file_path += "/";
     old_file_path += _name_from;
 
-    String new_file_path;
-    makePathFromBreadcrumbs(new_file_path);
-
+    String new_file_path = makePathFromBreadcrumbs();
     new_file_path += "/";
     new_file_path += _name_from;
 
@@ -539,9 +560,7 @@ void FilesContext::pasteFile()
 
 void FilesContext::removeFile()
 {
-    String filename;
-    makePathFromBreadcrumbs(filename);
-
+    String filename = makePathFromBreadcrumbs();
     filename += "/";
     filename += _files_list->getCurrItemText();
 
@@ -684,6 +703,8 @@ void FilesContext::ok()
             startFileServer(FileServer::SERVER_MODE_SEND);
         else if (id == ID_ITEM_EXECUTE)
             executeScript();
+        else if (id == ID_ITEM_SET_WALLPP)
+            saveWallppSettings();
     }
     else if (_mode == MODE_NEW_DIR_DIALOG || _mode == MODE_RENAME_DIALOG)
     {
@@ -748,8 +769,7 @@ void FilesContext::down()
 
 void FilesContext::updateFileInfo()
 {
-    String filename;
-    makePathFromBreadcrumbs(filename);
+    String filename = makePathFromBreadcrumbs();
     filename += "/";
     filename += _files_list->getCurrItemText();
 
@@ -789,8 +809,7 @@ void FilesContext::openNextLevel()
     String next_dir = "/";
     next_dir += _files_list->getCurrItemText();
 
-    String next_dir_path;
-    makePathFromBreadcrumbs(next_dir_path);
+    String next_dir_path = makePathFromBreadcrumbs();
     next_dir_path += next_dir;
 
     if (!_fs.dirExist(next_dir_path.c_str(), true))
@@ -817,8 +836,7 @@ void FilesContext::openPrevlevel()
 
 void FilesContext::indexCurDir()
 {
-    String dir_path;
-    makePathFromBreadcrumbs(dir_path);
+    String dir_path = makePathFromBreadcrumbs();
     _fs.indexAll(_files, dir_path.c_str());
 }
 
@@ -852,8 +870,7 @@ void FilesContext::startFileServer(FileServer::ServerMode mode)
     _server.setSSID(ssid.c_str());
     _server.setPWD(pwd.c_str());
     //
-    String cur_path;
-    makePathFromBreadcrumbs(cur_path);
+    String cur_path = makePathFromBreadcrumbs();
     if (_server.begin(cur_path.c_str(), mode))
     {
         QR_Gen gen;
@@ -979,7 +996,7 @@ void FilesContext::onPrevItemsLoad(std::vector<MenuItem *> &items, uint8_t size,
 void FilesContext::showResultToast(bool result)
 {
     if (result)
-        showToast(STR_SUCCSESS, TOAST_LENGTH_SHORT);
+        showToast(STR_SUCCESS, TOAST_LENGTH_SHORT);
     else
         showToast(STR_FAIL, TOAST_LENGTH_SHORT);
 }
@@ -995,8 +1012,7 @@ void FilesContext::createNotificationObj()
 
 void FilesContext::executeScript()
 {
-    String file_name;
-    makePathFromBreadcrumbs(file_name);
+    String file_name = makePathFromBreadcrumbs();
     file_name += "/";
     file_name += _files_list->getCurrItemText();
 
@@ -1043,4 +1059,18 @@ void FilesContext::executeScript()
     }
 
     free(text_buf);
+}
+
+void FilesContext::saveWallppSettings()
+{
+    hideContextMenu();
+
+    String path_to_bmp = makePathFromBreadcrumbs();
+    path_to_bmp += "/";
+    path_to_bmp += _files_list->getCurrItemText();
+
+    if (!SettingsManager::set(STR_SET_WALLPP, path_to_bmp.c_str()))
+        showToast(STR_FAIL);
+    else
+        showToast(STR_SUCCESS);
 }
