@@ -54,6 +54,7 @@ private:
         ID_ITEM_REMOVE,
         ID_ITEM_NEW_DIR,
         ID_ITEM_EXECUTE,
+        ID_ITEM_SET_WALLPP,
         ID_ITEM_RENAME,
         ID_ITEM_IMPORT,
         ID_ITEM_EXPORT,
@@ -75,7 +76,7 @@ private:
         MODE_FILE_SERVER
     };
     //
-    void makePathFromBreadcrumbs(String &out_str) const;
+    String makePathFromBreadcrumbs() const;
     //
     void showFilesTmpl();
     void showCopyingTmpl();
@@ -128,6 +129,7 @@ private:
     void createNotificationObj();
     //
     void executeScript();
+    void saveWallppSettings();
 
 private:
     FileServer _server;

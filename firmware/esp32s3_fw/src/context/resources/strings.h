@@ -30,7 +30,7 @@ const char STR_COPY[] = "Копіювати";
 const char STR_UPDATE[] = "Оновити";
 const char STR_DELETE[] = "Видалити";
 const char STR_MOVE[] = "Перемістити";
-const char STR_SUCCSESS[] = "Успішно";
+const char STR_SUCCESS[] = "Успішно";
 const char STR_FAIL[] = "Невдача";
 const char STR_CONTINUE[] = "Продовжити";
 const char STR_GET[] = "Отримати";
@@ -109,3 +109,6 @@ const char STR_LORA_SETS_EXT[] = ".lset";
 
 const char STR_CODEC_SETS_DIR[] = "codec";
 const char STR_CODEC_SETS_NAME[] = "codec.sets";
+
+//
+const char STR_WALLPP_FILENAME[] = "wallpp";

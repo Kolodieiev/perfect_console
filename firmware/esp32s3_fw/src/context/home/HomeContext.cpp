@@ -1,4 +1,5 @@
 #include "HomeContext.h"
+#include "meow/manager/SettingsManager.h"
 #include "../WidgetCreator.h"
 #include "meow/util/img/BmpUtil.h"
 #include "../resources/ico/battery.h"
@@ -15,8 +16,12 @@ HomeContext::HomeContext()
 
     Image *wallpp_img = new Image(ID_WALLPAPER);
 
-    BmpUtil util;
-    ImgData bmp = util.loadBmp("/wall/wallpaper.bmp");
+    String walpp_path = SettingsManager::get(STR_WALLPP_FILENAME);
+
+    if (walpp_path.isEmpty())
+        walpp_path = "/wall/wallpaper.bmp";
+
+    ImgData bmp = BmpUtil::loadBmp(walpp_path.c_str());
 
     if (bmp.data_ptr)
     {
