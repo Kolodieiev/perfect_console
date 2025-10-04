@@ -34,8 +34,9 @@ HomeContext::HomeContext()
     _batt_volt_lbl = new Label(ID_BAT_LVL);
     layout->addWidget(_batt_volt_lbl);
     _batt_volt_lbl->setText(STR_EMPTY_BAT);
-    _batt_volt_lbl->setWidth(56);
-    _batt_volt_lbl->setHeight(35);
+    _batt_volt_lbl->setWidth(ICO_BATTERY_WIDTH);
+    _batt_volt_lbl->setHeight(ICO_BATTERY_HEIGHT);
+    _batt_volt_lbl->setFontID(4);
     _batt_volt_lbl->setAlign(Label::ALIGN_CENTER);
     _batt_volt_lbl->setGravity(Label::GRAVITY_CENTER);
     _batt_volt_lbl->setPos(_display.width() - TFT_CUTOUT - DISPLAY_PADDING - _batt_volt_lbl->getWidth(), DISPLAY_PADDING);
