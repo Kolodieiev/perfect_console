@@ -9,7 +9,6 @@
 #include "meow/util/string_util.h"
 #include "meow/util/aes256.h"
 #include "meow/ui/widget/menu/item/ToggleItem.h"
-#include "../resources/ico/battery.h"
 #include "../WidgetCreator.h"
 
 const char STR_LORA_STATE_ERR[] = "LoRa не підключено";
