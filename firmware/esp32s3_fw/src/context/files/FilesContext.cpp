@@ -674,7 +674,9 @@ void FilesContext::update()
 void FilesContext::ok()
 {
     if (_mode == MODE_NAVIGATION)
+    {
         openNextLevel();
+    }
     else if (_mode == MODE_CONTEXT_MENU)
     {
         uint16_t id = _context_menu->getCurrItemID();
