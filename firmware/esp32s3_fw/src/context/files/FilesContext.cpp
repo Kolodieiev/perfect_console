@@ -1071,7 +1071,7 @@ void FilesContext::saveWallppSettings()
     path_to_bmp += "/";
     path_to_bmp += _files_list->getCurrItemText();
 
-    if (!SettingsManager::set(STR_SET_WALLPP, path_to_bmp.c_str()))
+    if (!SettingsManager::set(STR_WALLPP_FILENAME, path_to_bmp.c_str()))
         showToast(STR_FAIL);
     else
         showToast(STR_SUCCESS);
