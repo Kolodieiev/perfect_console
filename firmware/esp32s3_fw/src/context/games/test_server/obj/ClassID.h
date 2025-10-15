@@ -4,9 +4,9 @@
 
 namespace test_server
 {
-    enum ClassID : uint8_t
-    {
-        GREEN_BALL = 0,
-        BLUE_BALL,
-    };
+  enum ClassID : uint8_t
+  {
+    GREEN_BALL = 0,
+    BLUE_BALL,
+  };
 }

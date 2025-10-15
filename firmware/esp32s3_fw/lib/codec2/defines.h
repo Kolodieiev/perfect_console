@@ -69,7 +69,8 @@
 
 /* Structure to hold constants calculated at run time based on sample rate */
 
-typedef struct {
+typedef struct
+{
   int Fs;      /* sample rate of this instance             */
   int n_samp;  /* number of samples per 10ms frame at Fs   */
   int max_amp; /* maximum number of harmonics              */
@@ -84,7 +85,8 @@ typedef struct {
 
 /* Structure to hold model parameters for one frame */
 
-typedef struct {
+typedef struct
+{
   float Wo;               /* fundamental frequency estimate in radians  */
   int L;                  /* number of harmonics                        */
   float A[MAX_AMP + 1];   /* amplitiude of each harmonic                */
@@ -94,14 +96,15 @@ typedef struct {
 
 /* describes each codebook  */
 
-struct lsp_codebook {
+struct lsp_codebook
+{
   int k;            /* dimension of vector	*/
   int log2m;        /* number of bits in m	*/
   int m;            /* elements in codebook	*/
 #ifdef __EMBEDDED__ /* make sure stored in flash  */
-  const float *cb;  /* The elements		*/
+  const float* cb;  /* The elements		*/
 #else
-  float *cb; /* The elements		*/
+  float* cb; /* The elements		*/
 #endif
 };
 

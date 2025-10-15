@@ -37,26 +37,30 @@
 #ifdef MODEMPROBE_ENABLE
 
 /* Internal functions */
-void modem_probe_init_int(const char *modname, const char *runname);
+void modem_probe_init_int(const char* modname, const char* runname);
 void modem_probe_close_int();
 
-void modem_probe_samp_i_int(const char *tracename, int samp[], size_t cnt);
-void modem_probe_samp_f_int(const char *tracename, float samp[], size_t cnt);
-void modem_probe_samp_c_int(const char *tracename, COMP samp[], size_t cnt);
+void modem_probe_samp_i_int(const char* tracename, int samp[], size_t cnt);
+void modem_probe_samp_f_int(const char* tracename, float samp[], size_t cnt);
+void modem_probe_samp_c_int(const char* tracename, COMP samp[], size_t cnt);
 
 /*
  * Init the probe library.
  * const char *modname - Name of the modem under test
  * const char *runname - Name/path of the file data is dumped to
  */
-static inline void modem_probe_init(const char *modname, const char *runname) {
+static inline void modem_probe_init(const char* modname, const char* runname)
+{
   modem_probe_init_int(modname, runname);
 }
 
 /*
  * Dump traces to a file and clean up
  */
-static inline void modem_probe_close() { modem_probe_close_int(); }
+static inline void modem_probe_close()
+{
+  modem_probe_close_int();
+}
 
 /*
  * Save some number of int samples to a named trace
@@ -64,7 +68,8 @@ static inline void modem_probe_close() { modem_probe_close_int(); }
  * int samp[] - int samples
  * size_t cnt - how many samples to save
  */
-static inline void modem_probe_samp_i(const char *tracename, int samp[], size_t cnt) {
+static inline void modem_probe_samp_i(const char* tracename, int samp[], size_t cnt)
+{
   modem_probe_samp_i_int(tracename, samp, cnt);
 }
 
@@ -74,8 +79,8 @@ static inline void modem_probe_samp_i(const char *tracename, int samp[], size_t 
  * float samp[] - int samples
  * size_t cnt - how many samples to save
  */
-static inline void modem_probe_samp_f(const char *tracename, float samp[],
-                                      size_t cnt) {
+static inline void modem_probe_samp_f(const char* tracename, float samp[], size_t cnt)
+{
   modem_probe_samp_f_int(tracename, samp, cnt);
 }
 
@@ -85,8 +90,8 @@ static inline void modem_probe_samp_f(const char *tracename, float samp[],
  * COMP samp[] - int samples
  * size_t cnt - how many samples to save
  */
-static inline void modem_probe_samp_c(const char *tracename, COMP samp[],
-                                      size_t cnt) {
+static inline void modem_probe_samp_c(const char* tracename, COMP samp[], size_t cnt)
+{
   modem_probe_samp_c_int(tracename, samp, cnt);
 }
 
@@ -96,31 +101,40 @@ static inline void modem_probe_samp_c(const char *tracename, COMP samp[],
  * float complex samp[] - int samples
  * size_t cnt - how many samples to save
  */
-static inline void modem_probe_samp_cft(const char *tracename, complex float samp[],
-                                        size_t cnt) {
-  modem_probe_samp_c_int(tracename, (COMP *)samp, cnt);
+static inline void modem_probe_samp_cft(const char* tracename, complex float samp[], size_t cnt)
+{
+  modem_probe_samp_c_int(tracename, (COMP*)samp, cnt);
 }
 
 #else
 
-static inline void modem_probe_init(const char *modname, const char *runname) { return; }
-
-static inline void modem_probe_close() { return; }
-
-static inline void modem_probe_samp_i(const const char *name, int samp[], size_t sampcnt) {
+static inline void modem_probe_init(const char* modname, const char* runname)
+{
   return;
 }
 
-static inline void modem_probe_samp_f(const char *name, float samp[], size_t cnt) {
+static inline void modem_probe_close()
+{
   return;
 }
 
-static inline void modem_probe_samp_c(const char *name, COMP samp[], size_t cnt) {
+static inline void modem_probe_samp_i(const const char* name, int samp[], size_t sampcnt)
+{
   return;
 }
 
-static inline void modem_probe_samp_cft(const char *name, complex float samp[],
-                                        size_t cnt) {
+static inline void modem_probe_samp_f(const char* name, float samp[], size_t cnt)
+{
+  return;
+}
+
+static inline void modem_probe_samp_c(const char* name, COMP samp[], size_t cnt)
+{
+  return;
+}
+
+static inline void modem_probe_samp_cft(const char* name, complex float samp[], size_t cnt)
+{
   return;
 }
 

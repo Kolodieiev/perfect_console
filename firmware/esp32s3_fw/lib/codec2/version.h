@@ -25,7 +25,7 @@
   along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
-//this functions both as an include guard and your typical HAVE macro
+// this functions both as an include guard and your typical HAVE macro
 #ifndef CODEC2_HAVE_VERSION
 #define CODEC2_HAVE_VERSION
 
@@ -35,4 +35,4 @@
 #define CODEC2_VERSION "0.9.2"
 #define GIT_HASH "undefined"
 
-#endif //CODEC2_HAVE_VERSION
+#endif  // CODEC2_HAVE_VERSION

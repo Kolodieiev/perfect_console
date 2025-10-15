@@ -1,38 +1,37 @@
 #pragma once
 #include <Arduino.h>
 
-#include "meow/ui/context/IContext.h"
+#include "pixeler/ui/context/IContext.h"
+#include "pixeler/ui/widget/menu/FixedMenu.h"
+#include "pixeler/ui/widget/scrollbar/ScrollBar.h"
 
-#include "meow/ui/widget/menu/FixedMenu.h"
-#include "meow/ui/widget/scrollbar/ScrollBar.h"
-
-using namespace meow;
+using namespace pixeler;
 
 class MenuContext : public IContext
 {
 public:
-    MenuContext();
-    virtual ~MenuContext();
+  MenuContext();
+  virtual ~MenuContext();
 
 protected:
-    virtual bool loop() override;
-    virtual void update() override;
+  virtual bool loop() override;
+  virtual void update() override;
 
 private:
-    enum Widget_ID : uint8_t
-    {
-        ID_MENU = 1,
-        ID_SCROLLBAR,
-    };
+  enum Widget_ID : uint8_t
+  {
+    ID_MENU = 1,
+    ID_SCROLLBAR,
+  };
 
-    std::vector<IWidget *> _bin;
+  std::vector<IWidget*> _bin;
 
-    FixedMenu *_menu;
-    ScrollBar *_scrollbar;
+  FixedMenu* _menu;
+  ScrollBar* _scrollbar;
 
-    static uint8_t _last_sel_item_pos;
+  static uint8_t _last_sel_item_pos;
 
-    void up();
-    void down();
-    void ok();
+  void up();
+  void down();
+  void ok();
 };

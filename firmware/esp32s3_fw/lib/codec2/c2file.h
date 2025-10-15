@@ -10,7 +10,8 @@
 
 const char c2_file_magic[3] = {0xc0, 0xde, 0xc2};
 
-struct c2_header {
+struct c2_header
+{
   char magic[3];
   char version_major;
   char version_minor;

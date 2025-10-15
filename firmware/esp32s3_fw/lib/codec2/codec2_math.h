@@ -27,54 +27,57 @@
 #include <stddef.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif  // __cplusplus
 
 #include "comp.h"
 
-//==========================================================================
-// Note: the functions in this file must be implemented in your code if you
-// intend on using Codec2 in a non-ARM based embedded device. Otherwise,
-// linker errors will occur. For ARM, a default implementation of these
-// functions exists in codec2_math_arm.c.
-//==========================================================================
+  //==========================================================================
+  // Note: the functions in this file must be implemented in your code if you
+  // intend on using Codec2 in a non-ARM based embedded device. Otherwise,
+  // linker errors will occur. For ARM, a default implementation of these
+  // functions exists in codec2_math_arm.c.
+  //==========================================================================
 
-//==========================================================================
-/// Calculates the dot product of two real-valued float vectors.
-///
-/// @param leftHandSideRealVector A pointer to the first vector to use for the
-/// dot product.
-/// @param rightHandSideRealVector A pointer to the second vector to use for the
-/// dot product.
-/// @param vectorLength The length of the vector. Both vectors should be at
-/// least this long.
-/// @param resultReal A pointer to the variable in which to store the scalar
-/// result.
-///
-//==========================================================================
-void codec2_dot_product_f32(float* leftHandSideRealVector,
-                            float* rightHandSideRealVector, size_t vectorLength,
-                            float* resultReal);
+  //==========================================================================
+  /// Calculates the dot product of two real-valued float vectors.
+  ///
+  /// @param leftHandSideRealVector A pointer to the first vector to use for the
+  /// dot product.
+  /// @param rightHandSideRealVector A pointer to the second vector to use for the
+  /// dot product.
+  /// @param vectorLength The length of the vector. Both vectors should be at
+  /// least this long.
+  /// @param resultReal A pointer to the variable in which to store the scalar
+  /// result.
+  ///
+  //==========================================================================
+  void codec2_dot_product_f32(float* leftHandSideRealVector,
+                              float* rightHandSideRealVector,
+                              size_t vectorLength,
+                              float* resultReal);
 
-//==========================================================================
-/// Calculates the dot product of two complex-valued float vectors.
-///
-/// @param leftHandSideComplexVector A pointer to the first vector to use for
-/// the dot product.
-/// @param rightHandSideComplexVector A pointer to the second vector to use for
-/// the dot product.
-/// @param vectorLength The length of the vector. Both vectors should be at
-/// least this long.
-/// @param resultReal A pointer to the variable in which to store the real
-/// component of the result.
-/// @param resultImag A pointer to the variable in which to store the imaginary
-/// component of the result.
-///
-//==========================================================================
-void codec2_complex_dot_product_f32(COMP* leftHandSideComplexVector,
-                                    COMP* rightHandSideComplexVector,
-                                    size_t vectorLength, float* resultReal,
-                                    float* resultImag);
+  //==========================================================================
+  /// Calculates the dot product of two complex-valued float vectors.
+  ///
+  /// @param leftHandSideComplexVector A pointer to the first vector to use for
+  /// the dot product.
+  /// @param rightHandSideComplexVector A pointer to the second vector to use for
+  /// the dot product.
+  /// @param vectorLength The length of the vector. Both vectors should be at
+  /// least this long.
+  /// @param resultReal A pointer to the variable in which to store the real
+  /// component of the result.
+  /// @param resultImag A pointer to the variable in which to store the imaginary
+  /// component of the result.
+  ///
+  //==========================================================================
+  void codec2_complex_dot_product_f32(COMP* leftHandSideComplexVector,
+                                      COMP* rightHandSideComplexVector,
+                                      size_t vectorLength,
+                                      float* resultReal,
+                                      float* resultImag);
 
 #ifdef __cplusplus
 }

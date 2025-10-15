@@ -1,91 +1,90 @@
 #pragma once
 #include <Arduino.h>
 
-#include "meow/manager/WiFiManager.h"
+#include "pixeler/manager/WiFiManager.h"
+#include "pixeler/ui/context/IContext.h"
+#include "pixeler/ui/widget/keyboard/Keyboard.h"
+#include "pixeler/ui/widget/menu/FixedMenu.h"
+#include "pixeler/ui/widget/scrollbar/ScrollBar.h"
+#include "pixeler/ui/widget/text/Label.h"
+#include "pixeler/ui/widget/text/TextBox.h"
 
-#include "meow/ui/context/IContext.h"
-#include "meow/ui/widget/text/Label.h"
-#include "meow/ui/widget/text/TextBox.h"
-#include "meow/ui/widget/menu/FixedMenu.h"
-#include "meow/ui/widget/scrollbar/ScrollBar.h"
-#include "meow/ui/widget/keyboard/Keyboard.h"
-
-using namespace meow;
+using namespace pixeler;
 
 class WiFiContext : public IContext
 {
 public:
-    WiFiContext();
-    virtual ~WiFiContext();
+  WiFiContext();
+  virtual ~WiFiContext();
 
 protected:
-    virtual bool loop() override;
-    virtual void update() override;
+  virtual bool loop() override;
+  virtual void update() override;
 
 private:
-    enum Widget_ID : uint8_t
-    {
-        ID_MAIN_MENU = 1,
-        ID_CTX_MENU,
-        ID_ERR_LBL,
-        ID_PWD_TXT,
-        ID_KEYBOARD
-    };
+  enum Widget_ID : uint8_t
+  {
+    ID_MAIN_MENU = 1,
+    ID_CTX_MENU,
+    ID_ERR_LBL,
+    ID_PWD_TXT,
+    ID_KEYBOARD
+  };
 
-    enum Mode : uint8_t
-    {
-        MODE_MAIN = 0,
-        MODE_SD_UNCONN,
-        MODE_CONTEXT_MENU,
-        MODE_ENTER_PWD
-    };
+  enum Mode : uint8_t
+  {
+    MODE_MAIN = 0,
+    MODE_SD_UNCONN,
+    MODE_CONTEXT_MENU,
+    MODE_ENTER_PWD
+  };
 
-    enum ItemId : uint8_t
-    {
-        ID_ITEM_WIFI_STATE = 1,
-        ID_ITEM_DISCONN,
-        ID_ITEM_FORGET,
-        ID_ITEM_CUR_NET // Повинен бути завжди останнім в перечисленні
-    };
-    //
-    void showSDErrTmpl();
-    void showMainTmpl();
-    void showEnterPwdTmpl();
-    void showContextMenuTmpl();
-    void hideContextMenu();
-    //
-    void addCurrNetItem();
-    //
-    void up();
-    void down();
-    void left();
-    void right();
-    void ok();
-    void back();
-    void changeKbCaps();
-    void savePressed();
-    void exitPressed();
-    //
-    void loadNetsList();
-    void updateNetList(bool no_scan = false);
-    void connectToNet(const String &ssid);
-    //
-    static void scanDoneHandler(void *arg);
-    static void connDoneHandler(void *arg, wl_status_t conn_status);
+  enum ItemId : uint8_t
+  {
+    ID_ITEM_WIFI_STATE = 1,
+    ID_ITEM_DISCONN,
+    ID_ITEM_FORGET,
+    ID_ITEM_CUR_NET  // Повинен бути завжди останнім в перечисленні
+  };
+  //
+  void showSDErrTmpl();
+  void showMainTmpl();
+  void showEnterPwdTmpl();
+  void showContextMenuTmpl();
+  void hideContextMenu();
+  //
+  void addCurrNetItem();
+  //
+  void up();
+  void down();
+  void left();
+  void right();
+  void ok();
+  void back();
+  void changeKbCaps();
+  void savePressed();
+  void exitPressed();
+  //
+  void loadNetsList();
+  void updateNetList(bool no_scan = false);
+  void connectToNet(const String& ssid);
+  //
+  static void scanDoneHandler(void* arg);
+  static void connDoneHandler(void* arg, wl_status_t conn_status);
 
 private:
-    String _sel_ssid;
-    std::vector<String> _ssids;
+  String _sel_ssid;
+  std::vector<String> _ssids;
 
-    FixedMenu *_main_menu;
-    FixedMenu *_context_menu;
-    TextBox *_pwd_txt;
-    Keyboard *_keyboard;
+  FixedMenu* _main_menu;
+  FixedMenu* _context_menu;
+  TextBox* _pwd_txt;
+  Keyboard* _keyboard;
 
-    uint16_t _pwd_kb_x_pos = 0;
-    uint16_t _pwd_kb_y_pos = 0;
+  uint16_t _pwd_kb_x_pos = 0;
+  uint16_t _pwd_kb_y_pos = 0;
 
-    Mode _mode = MODE_MAIN;
+  Mode _mode = MODE_MAIN;
 
-    bool _is_standrad_kb = true;
+  bool _is_standrad_kb = true;
 };

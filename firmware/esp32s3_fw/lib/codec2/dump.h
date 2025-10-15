@@ -38,12 +38,12 @@ void dump_Sn(int m_pitch, float Sn[]);
 void dump_Sw(COMP Sw[]);
 void dump_Sw_(COMP Sw_[]);
 void dump_Ew(COMP Ew[]);
-void dump_softdec(float *softdec, int n);
+void dump_softdec(float* softdec, int n);
 
 /* amplitude modelling */
 
-void dump_model(MODEL *m);
-void dump_quantised_model(MODEL *m);
+void dump_model(MODEL* m);
+void dump_quantised_model(MODEL* m);
 void dump_Pwn(COMP Pw[]);
 void dump_Pw(float Pw[]);
 void dump_Rw(float Rw[]);

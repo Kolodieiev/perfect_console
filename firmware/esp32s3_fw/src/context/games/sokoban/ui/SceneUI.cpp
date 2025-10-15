@@ -2,7 +2,7 @@
 
 namespace sokoban
 {
-    void SceneUI::onDraw()
-    {
-    }
-}
+  void SceneUI::onDraw()
+  {
+  }
+}  // namespace sokoban

@@ -1,29 +1,29 @@
 #pragma once
 #include <Arduino.h>
 
-#include "meow/ui/context/IContext.h"
-#include "meow/ui/widget/progress/ProgressBar.h"
+#include "pixeler/ui/context/IContext.h"
+#include "pixeler/ui/widget/progress/ProgressBar.h"
 
-using namespace meow;
+using namespace pixeler;
 
 class PrefBrightContext : public IContext
 {
 public:
-    PrefBrightContext();
-    virtual ~PrefBrightContext() {}
+  PrefBrightContext();
+  virtual ~PrefBrightContext() {}
 
 protected:
-    virtual bool loop() override;
-    virtual void update() override;
+  virtual bool loop() override;
+  virtual void update() override;
 
 private:
-    enum Widget_ID : uint8_t
-    {
-        ID_NAVBAR = 2,
-        ID_HEADER,
-        ID_PROGRESSBAR
-    };
+  enum Widget_ID : uint8_t
+  {
+    ID_NAVBAR = 2,
+    ID_HEADER,
+    ID_PROGRESSBAR
+  };
 
-    uint8_t _old_bright;
-    ProgressBar *_progress;
+  uint8_t _old_bright;
+  ProgressBar* _progress;
 };

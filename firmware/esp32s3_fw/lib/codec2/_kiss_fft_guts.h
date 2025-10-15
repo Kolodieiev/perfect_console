@@ -41,7 +41,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  4*4*4*2
  */
 
-struct kiss_fft_state {
+struct kiss_fft_state
+{
   int nfft;
   int inverse;
   int factors[2 * MAXFACTORS];
@@ -73,10 +74,14 @@ struct kiss_fft_state {
 #if defined(CHECK_OVERFLOW)
 #define CHECK_OVERFLOW_OP(a, op, b)                                         \
   if ((SAMPPROD)(a)op(SAMPPROD)(b) > SAMP_MAX ||                            \
-      (SAMPPROD)(a)op(SAMPPROD)(b) < SAMP_MIN) {                            \
+      (SAMPPROD)(a)op(SAMPPROD)(b) < SAMP_MIN)                              \
+  {                                                                         \
     fprintf(stderr,                                                         \
             "WARNING:overflow @ " __FILE__ "(%d): (%d " #op " %d) = %ld\n", \
-            __LINE__, (a), (b), (SAMPPROD)(a)op(SAMPPROD)(b));              \
+            __LINE__,                                                       \
+            (a),                                                            \
+            (b),                                                            \
+            (SAMPPROD)(a)op(SAMPPROD)(b));                                  \
   }
 #endif
 
@@ -86,7 +91,8 @@ struct kiss_fft_state {
 #define S_MUL(a, b) sround(smul(a, b))
 
 #define C_MUL(m, a, b)                                       \
-  do {                                                       \
+  do                                                         \
+  {                                                          \
     (m).r = sround(smul((a).r, (b).r) - smul((a).i, (b).i)); \
     (m).i = sround(smul((a).r, (b).i) + smul((a).i, (b).r)); \
   } while (0)
@@ -94,13 +100,15 @@ struct kiss_fft_state {
 #define DIVSCALAR(x, k) (x) = sround(smul(x, SAMP_MAX / k))
 
 #define C_FIXDIV(c, div)   \
-  do {                     \
+  do                       \
+  {                        \
     DIVSCALAR((c).r, div); \
     DIVSCALAR((c).i, div); \
   } while (0)
 
 #define C_MULBYSCALAR(c, s)         \
-  do {                              \
+  do                                \
+  {                                 \
     (c).r = sround(smul((c).r, s)); \
     (c).i = sround(smul((c).i, s)); \
   } while (0)
@@ -109,13 +117,15 @@ struct kiss_fft_state {
 
 #define S_MUL(a, b) ((a) * (b))
 #define C_MUL(m, a, b)                     \
-  do {                                     \
+  do                                       \
+  {                                        \
     (m).r = (a).r * (b).r - (a).i * (b).i; \
     (m).i = (a).r * (b).i + (a).i * (b).r; \
   } while (0)
 #define C_FIXDIV(c, div) /* NOOP */
 #define C_MULBYSCALAR(c, s) \
-  do {                      \
+  do                        \
+  {                         \
     (c).r *= (s);           \
     (c).i *= (s);           \
   } while (0)
@@ -126,21 +136,24 @@ struct kiss_fft_state {
 #endif
 
 #define C_ADD(res, a, b)               \
-  do {                                 \
+  do                                   \
+  {                                    \
     CHECK_OVERFLOW_OP((a).r, +, (b).r) \
     CHECK_OVERFLOW_OP((a).i, +, (b).i) \
     (res).r = (a).r + (b).r;           \
     (res).i = (a).i + (b).i;           \
   } while (0)
 #define C_SUB(res, a, b)               \
-  do {                                 \
+  do                                   \
+  {                                    \
     CHECK_OVERFLOW_OP((a).r, -, (b).r) \
     CHECK_OVERFLOW_OP((a).i, -, (b).i) \
     (res).r = (a).r - (b).r;           \
     (res).i = (a).i - (b).i;           \
   } while (0)
 #define C_ADDTO(res, a)                  \
-  do {                                   \
+  do                                     \
+  {                                      \
     CHECK_OVERFLOW_OP((res).r, +, (a).r) \
     CHECK_OVERFLOW_OP((res).i, +, (a).i) \
     (res).r += (a).r;                    \
@@ -148,7 +161,8 @@ struct kiss_fft_state {
   } while (0)
 
 #define C_SUBFROM(res, a)                \
-  do {                                   \
+  do                                     \
+  {                                      \
     CHECK_OVERFLOW_OP((res).r, -, (a).r) \
     CHECK_OVERFLOW_OP((res).i, -, (a).i) \
     (res).r -= (a).r;                    \
@@ -162,15 +176,16 @@ struct kiss_fft_state {
 #elif defined(USE_SIMD)
 #define KISS_FFT_COS(phase) _mm_set1_ps(cosf(phase))
 #define KISS_FFT_SIN(phase) _mm_set1_ps(sinf(phase))
-#define HALF_OF(x) ((x)*_mm_set1_ps(.5))
+#define HALF_OF(x) ((x) * _mm_set1_ps(.5))
 #else
 #define KISS_FFT_COS(phase) (kiss_fft_scalar) cosf(phase)
 #define KISS_FFT_SIN(phase) (kiss_fft_scalar) sinf(phase)
-#define HALF_OF(x) ((x)*.5)
+#define HALF_OF(x) ((x) * .5)
 #endif
 
 #define kf_cexp(x, phase)         \
-  do {                            \
+  do                              \
+  {                               \
     (x)->r = KISS_FFT_COS(phase); \
     (x)->i = KISS_FFT_SIN(phase); \
   } while (0)

@@ -1,22 +1,22 @@
 #pragma once
 #include <Arduino.h>
 
-#include "meow/game/IGameUI.h"
-#include "meow/game/object/IGameObject.h"
+#include "pixeler/game/IGameUI.h"
+#include "pixeler/game/object/IGameObject.h"
 
-using namespace meow;
+using namespace pixeler;
 
 namespace test_server
 {
-    class SceneUI : public IGameUI
-    {
-    public:
-        SceneUI();
-        virtual ~SceneUI() {}
-        virtual void onDraw() override;
-        void hideStartMsg();
+  class SceneUI : public IGameUI
+  {
+  public:
+    SceneUI();
+    virtual ~SceneUI() {}
+    virtual void onDraw() override;
+    void hideStartMsg();
 
-    private:
-        bool _is_msg_hide{false};
-    };
-}
+  private:
+    bool _is_msg_hide{false};
+  };
+}  // namespace test_server

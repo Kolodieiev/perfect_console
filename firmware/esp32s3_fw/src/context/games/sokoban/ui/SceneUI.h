@@ -1,20 +1,20 @@
 #pragma once
 #include <Arduino.h>
 
-#include "meow/game/IGameUI.h"
-#include "meow/game/object/IGameObject.h"
+#include "pixeler/game/IGameUI.h"
+#include "pixeler/game/object/IGameObject.h"
 
-using namespace meow;
+using namespace pixeler;
 
 namespace sokoban
 {
-    class SceneUI : public IGameUI
-    {
-    public:
-        SceneUI() {}
-        virtual ~SceneUI() {}
-        virtual void onDraw() override;
+  class SceneUI : public IGameUI
+  {
+  public:
+    SceneUI() {}
+    virtual ~SceneUI() {}
+    virtual void onDraw() override;
 
-    private:
-    };
-}
+  private:
+  };
+}  // namespace sokoban

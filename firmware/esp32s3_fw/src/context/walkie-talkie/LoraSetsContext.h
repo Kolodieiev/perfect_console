@@ -1,64 +1,65 @@
 #pragma once
 #include <Arduino.h>
-#include "meow/ui/context/IContext.h"
-#include "meow/ui/widget/menu/FixedMenu.h"
-#include "meow/ui/widget/scrollbar/ScrollBar.h"
-#include "meow/manager/SettingsManager.h"
 
-using namespace meow;
+#include "pixeler/manager/SettingsManager.h"
+#include "pixeler/ui/context/IContext.h"
+#include "pixeler/ui/widget/menu/FixedMenu.h"
+#include "pixeler/ui/widget/scrollbar/ScrollBar.h"
+
+using namespace pixeler;
 
 class LoraSetsContext : public IContext
 {
 public:
-    LoraSetsContext();
-    virtual ~LoraSetsContext();
+  LoraSetsContext();
+  virtual ~LoraSetsContext();
 
 protected:
-    virtual bool loop() override;
-    virtual void update() override;
+  virtual bool loop() override;
+  virtual void update() override;
 
 private:
-    enum Mode : uint8_t
-    {
-        MODE_MAIN = 0,
-        MODE_CTX_MENU,
-        MODE_SUBCONTEXT,
-    };
+  enum Mode : uint8_t
+  {
+    MODE_MAIN = 0,
+    MODE_CTX_MENU,
+    MODE_SUBCONTEXT,
+  };
 
-    enum Widget_ID : uint8_t
-    {
-        ID_MAIN_MENU = 1,
-        ID_MAIN_SCROLL,
-        ID_CTX_MENU,
-        //
-        ID_CREATE_ITEM,
-        ID_GET_ITEM,
-        ID_APPLY_ITEM,
-        ID_EDIT_ITEM,
-        ID_DELETE_ITEM,
-        ID_SHARE_ITEM,
-    };
-
-    void showMainTmpl();
-    void showContextMenuTmpl();
-    void hideContextMenu();
+  enum Widget_ID : uint8_t
+  {
+    ID_MAIN_MENU = 1,
+    ID_MAIN_SCROLL,
+    ID_CTX_MENU,
     //
-    void loadSetsList();
-    void fillSetsList();
+    ID_CREATE_ITEM,
+    ID_GET_ITEM,
+    ID_APPLY_ITEM,
+    ID_EDIT_ITEM,
+    ID_DELETE_ITEM,
+    ID_SHARE_ITEM,
+  };
 
-    //
-    void clickOk();
-    void clickBack();
-    void clickUp();
-    void clickDown();
+  void showMainTmpl();
+  void showContextMenuTmpl();
+  void hideContextMenu();
+  //
+  void loadSetsList();
+  void fillSetsList();
+
+  //
+  void clickOk();
+  void clickBack();
+  void clickUp();
+  void clickDown();
 
 private:
-    std::vector<FileInfo> _sets_files;
+  std::vector<FileInfo> _sets_files;
 
-    IContext *_sub_context{nullptr};
-    FixedMenu *_main_menu{nullptr};
-    ScrollBar *_main_scrollbar{nullptr};
-    FixedMenu *_context_menu{nullptr};
+  IContext* _sub_context{nullptr};
+  FixedMenu* _main_menu{nullptr};
+  ScrollBar* _main_scrollbar{nullptr};
+  FixedMenu* _context_menu{nullptr};
 
-    Mode _mode{MODE_MAIN};
+  Mode _mode{MODE_MAIN};
 };
