@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+#include <cstring>
+
 #include "pixeler/driver/graphics/DisplayWrapper.h"
 #include "pixeler/plugin/lua/lua_lib/helper/lua_helper.h"
 
@@ -19,16 +21,6 @@ int lua_gl_width(lua_State* L)
 int lua_gl_height(lua_State* L)
 {
   lua_pushinteger(L, TFT_HEIGHT);
-  return 1;
-}
-
-int lua_gl_cutout(lua_State* L)
-{
-#if defined(TFT_CUTOUT)
-  lua_pushinteger(L, TFT_CUTOUT);
-#else
-  lua_pushinteger(L, 0);
-#endif
   return 1;
 }
 
@@ -94,10 +86,11 @@ int lua_gl_fill_r_rect(lua_State* L)
   return 1;
 }
 
-int lua_gl_set_text_font(lua_State* L)
+int lua_gl_set_font(lua_State* L)
 {
-  int font_id = luaL_checkinteger(L, 1);
-  // _display.setTextFont(font_id); // TODO
+  const char* font_name = luaL_checkstring(L, 1);
+  const uint8_t* font = fontNameToFont(font_name);
+  _display.setFont(font);
   return 0;
 }
 
@@ -134,12 +127,11 @@ int lua_gl_print(lua_State* L)
 const struct luaL_Reg LIB_GL[] = {
     {"width", lua_gl_width},
     {"height", lua_gl_height},
-    {"cutout", lua_gl_cutout},
     {"drawRect", lua_gl_draw_rect},
     {"fillRect", lua_gl_fill_rect},
     {"drawRoundRect", lua_gl_draw_r_rect},
     {"fillRoundRect", lua_gl_fill_r_rect},
-    {"setTextFont", lua_gl_set_text_font},
+    {"setFont", lua_gl_set_font},
     {"setTextSize", lua_gl_set_text_size},
     {"setTextColor", lua_gl_set_text_color},
     {"print", lua_gl_print},

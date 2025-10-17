@@ -2,6 +2,7 @@
 #include "lua_label.h"
 
 #include "./lua_iwidget.h"
+#include "pixeler/plugin/lua/lua_lib/helper/lua_helper.h"
 #include "pixeler/plugin/lua/res/lua_strs.h"
 #include "pixeler/ui/widget/image/Image.h"
 #include "pixeler/ui/widget/text/Label.h"
@@ -81,11 +82,11 @@ int lua_label_set_text_color(lua_State* L)
   return 0;
 }
 
-int lua_label_set_font_id(lua_State* L)
+int lua_label_set_font(lua_State* L)
 {
   Label* label = *(Label**)lua_touserdata(L, 1);
-  uint8_t font_id = luaL_checkinteger(L, 2);
-  // label->setFontID(font_id);  //TODO
+  const char* font_name = luaL_checkstring(L, 2);
+  label->setFont(fontNameToFont(font_name));
   return 0;
 }
 
@@ -113,11 +114,11 @@ int lua_label_set_align(lua_State* L)
   return 0;
 }
 
-int lua_label_set_text_offset(lua_State* L)
+int lua_label_set_h_padding(lua_State* L)
 {
   Label* label = *(Label**)lua_touserdata(L, 1);
-  uint8_t offset = luaL_checkinteger(L, 2);
-  label->setTextOffset(offset);
+  uint8_t padding = luaL_checkinteger(L, 2);
+  label->setHPadding(padding);
   return 0;
 }
 
@@ -161,7 +162,7 @@ int lua_label_set_multiline(lua_State* L)
   return 0;
 }
 
-int lua_label_set_ticker_delay(lua_State* L)
+int lua_label_set_autoscroll_delay(lua_State* L)
 {
   Label* label = *(Label**)lua_touserdata(L, 1);
   int delay = luaL_checkinteger(L, 2);
@@ -176,16 +177,16 @@ const struct luaL_Reg TYPE_METH_LABEL[] = {
     {"getText", lua_label_get_text},
     {"setTextSize", lua_label_set_text_size},
     {"setTextColor", lua_label_set_text_color},
-    {"setFontID", lua_label_set_font_id},
+    {"setFont", lua_label_set_font},
     {"setGravity", lua_label_set_gravity},
     {"setAlign", lua_label_set_align},
-    {"setTextOffset", lua_label_set_text_offset},
+    {"setHPadding", lua_label_set_h_padding},
     {"getLen", lua_label_get_text_len},
     {"setAutoscroll", lua_label_set_ticker},
     {"setAutoscrollInFocus", lua_label_set_ticker_in_focus},
+    {"setAutoscrollDelay", lua_label_set_autoscroll_delay},
     {"setBackImg", lua_label_set_back_img},
     {"setMultiline", lua_label_set_multiline},
-    {"setTickerDelay", lua_label_set_ticker_delay},
     {STR_LUA_WIDGET_CLONE, lua_label_clone},
     {nullptr, nullptr},
 };
