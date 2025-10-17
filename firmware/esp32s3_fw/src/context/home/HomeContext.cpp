@@ -38,7 +38,7 @@ HomeContext::HomeContext()
   _batt_volt_lbl->setText(STR_EMPTY_BAT);
   _batt_volt_lbl->setWidth(ICO_BATTERY_WIDTH);
   _batt_volt_lbl->setHeight(ICO_BATTERY_HEIGHT);
-  _batt_volt_lbl->setFont(u8g2_font_unifont_t_cyrillic);
+  _batt_volt_lbl->setFont(u8g2_font_5x7_t_cyrillic);
   _batt_volt_lbl->setAlign(Label::ALIGN_CENTER);
   _batt_volt_lbl->setGravity(Label::GRAVITY_CENTER);
   _batt_volt_lbl->setPos(TFT_WIDTH - DISPLAY_PADDING - _batt_volt_lbl->getWidth(), DISPLAY_PADDING);
