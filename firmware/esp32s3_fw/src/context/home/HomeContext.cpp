@@ -50,7 +50,6 @@ HomeContext::HomeContext()
   _batt_ico->setHeight(_batt_volt_lbl->getHeight());
   _batt_ico->setSrc(ICO_BATTERY);
   _batt_ico->setTransparency(true);
-  _batt_ico->setTranspColor(COLOR_TRANSPARENT);
 
   updateBattVoltage();
 }

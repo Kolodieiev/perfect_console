@@ -22,7 +22,6 @@ namespace simple_rpg
     _type_ID = CLASS_PORTAL;
     _sprite.has_animation = true;        // Вказати, що об'єкт має анімацію
     _sprite.animation_vec = &spin_anim;  // Задати вказівник на вектор анімації
-    _sprite.transp_color = COLOR_WHITE;  // Встановити колір, який буде ігноруватися під час малювання спрайту
     _sprite.frames_between_anim = 5;
     _sprite.width = 64;
     _sprite.height = 64;

@@ -39,10 +39,10 @@ GamesListContext::GamesListContext()
   soko_img->setWidth(32);
   soko_img->setHeight(32);
   soko_img->setCornerRadius(5);
-  soko_img->setTranspColor(COLOR_TRANSPARENT);
+  soko_img->setTransparency(true);
   soko_img->setSrc(ICO_SOKOBAN);
 
-  Label* soko_lbl = creator.getItemLabel(STR_SOKOBAN_ITEM, font_unifont, 2);
+  Label* soko_lbl = creator.getItemLabel(STR_SOKOBAN_ITEM, font_10x20);
   sokoban_item->setLbl(soko_lbl);
   soko_lbl->setAutoscrollInFocus(true);
 
@@ -50,7 +50,7 @@ GamesListContext::GamesListContext()
   MenuItem* test_server_item = creator.getMenuItem(ID_CONTEXT_TEST_SERVER);
   _menu->addItem(test_server_item);
 
-  Label* server_lbl = creator.getItemLabel(STR_TEST_SERV_ITEM, font_unifont, 2);
+  Label* server_lbl = creator.getItemLabel(STR_TEST_SERV_ITEM, font_10x20);
   test_server_item->setLbl(server_lbl);
   server_lbl->setAutoscrollInFocus(true);
 
@@ -58,7 +58,7 @@ GamesListContext::GamesListContext()
   MenuItem* simple_rpg_item = creator.getMenuItem(ID_CONTEXT_SIMPLE_RPG);
   _menu->addItem(simple_rpg_item);
 
-  Label* simple_rpg_lbl = creator.getItemLabel(STR_SIMPLE_RPG_ITEM, font_unifont, 2);
+  Label* simple_rpg_lbl = creator.getItemLabel(STR_SIMPLE_RPG_ITEM, font_10x20);
   simple_rpg_item->setLbl(simple_rpg_lbl);
   simple_rpg_lbl->setAutoscrollInFocus(true);
 

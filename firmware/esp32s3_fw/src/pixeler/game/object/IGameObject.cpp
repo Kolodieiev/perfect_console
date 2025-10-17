@@ -133,16 +133,9 @@ namespace pixeler
       }
 
       if (_sprite.angle == 0)
-      {
-        _display.drawBitmapTransp(_x_local, _y_local, _sprite.animation_vec->at(_sprite.anim_pos), _sprite.width, _sprite.height, _sprite.transp_color);
-      }
+        _display.drawBitmapTransp(_x_local, _y_local, _sprite.animation_vec->at(_sprite.anim_pos), _sprite.width, _sprite.height);
       else
-      {
-        // _display.pushRotated(_obj_sprite, _x_local + _sprite.x_pivot, _y_local + _sprite.y_pivot, _sprite.angle, _sprite.transp_color);
-        // TODO
-        log_e("Ще не реалізовано");
-        esp_restart();
-      }
+        _display.drawBitmapRotated(_x_local, _y_local, _sprite.animation_vec->at(_sprite.anim_pos), _sprite.width, _sprite.height, _sprite.x_pivot, _sprite.y_pivot, _sprite.angle);
 
       if (_sprite.frames_counter != _sprite.frames_between_anim)
       {
@@ -166,16 +159,9 @@ namespace pixeler
       }
 
       if (_sprite.angle == 0)
-      {
-        _display.drawBitmapTransp(_x_local, _y_local, _sprite.img_ptr, _sprite.width, _sprite.height, _sprite.transp_color);
-      }
+        _display.drawBitmapTransp(_x_local, _y_local, _sprite.img_ptr, _sprite.width, _sprite.height);
       else
-      {
-        // _display.pushRotated(_obj_sprite, _x_local + _sprite.x_pivot, _y_local + _sprite.y_pivot, _sprite.angle, _sprite.transp_color);
-        // TODO
-        log_e("Ще не реалізовано");
-        esp_restart();
-      }
+        _display.drawBitmapRotated(_x_local, _y_local, _sprite.img_ptr, _sprite.width, _sprite.height, _sprite.x_pivot, _sprite.y_pivot, _sprite.angle);
     }
   }
 

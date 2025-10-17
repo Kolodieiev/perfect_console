@@ -61,8 +61,6 @@ const uint8_t* fontNameToFont(const char* font_name)
     return font_10x20;
   else if (strcmp(font_name, "font_cu12") == 0)
     return font_cu12;
-  else if (strcmp(font_name, "font_haxrcorp4089") == 0)
-    return font_haxrcorp4089;
   else if (strcmp(font_name, "font_inr24") == 0)
     return font_inr24;
   else if (strcmp(font_name, "font_inr27") == 0)

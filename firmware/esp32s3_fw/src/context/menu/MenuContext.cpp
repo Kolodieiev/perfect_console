@@ -54,12 +54,12 @@ MenuContext::MenuContext()
 
   Image* files_img = new Image(1);
   files_item->setImg(files_img);
-  files_img->setTranspColor(COLOR_TRANSPARENT);
+  files_img->setTransparency(true);
   files_img->setWidth(ICO_WH);
   files_img->setHeight(ICO_WH);
   files_img->setSrc(SD_IMG);
 
-  Label* files_lbl = creator.getItemLabel(STR_FILES_ITEM, font_unifont, 2);
+  Label* files_lbl = creator.getItemLabel(STR_FILES_ITEM, font_10x20);
   files_item->setLbl(files_lbl);
 
   // Музика
@@ -68,12 +68,12 @@ MenuContext::MenuContext()
 
   Image* mp3_img = new Image(1);
   mp3_item->setImg(mp3_img);
-  mp3_img->setTranspColor(COLOR_TRANSPARENT);
+  mp3_img->setTransparency(true);
   mp3_img->setWidth(ICO_WH);
   mp3_img->setHeight(ICO_WH);
   mp3_img->setSrc(HEADPHONES_IMG);
 
-  Label* mp3_lbl = creator.getItemLabel(STR_MUSIC_ITEM, font_unifont, 2);
+  Label* mp3_lbl = creator.getItemLabel(STR_MUSIC_ITEM, font_10x20);
   mp3_item->setLbl(mp3_lbl);
 
   // Ігри
@@ -82,12 +82,12 @@ MenuContext::MenuContext()
 
   Image* game_img = new Image(1);
   game_item->setImg(game_img);
-  game_img->setTranspColor(COLOR_TRANSPARENT);
+  game_img->setTransparency(true);
   game_img->setWidth(ICO_WH);
   game_img->setHeight(ICO_WH);
   game_img->setSrc(JOYSTICK_IMG);
 
-  Label* game_lbl = creator.getItemLabel(STR_GAME_ITEM, font_unifont, 2);
+  Label* game_lbl = creator.getItemLabel(STR_GAME_ITEM, font_10x20);
   game_item->setLbl(game_lbl);
 
   // Читалка
@@ -96,12 +96,12 @@ MenuContext::MenuContext()
 
   Image* read_img = new Image(1);
   read_item->setImg(read_img);
-  read_img->setTranspColor(COLOR_TRANSPARENT);
+  read_img->setTransparency(true);
   read_img->setWidth(ICO_WH);
   read_img->setHeight(ICO_WH);
   read_img->setSrc(BOOK_IMG);
 
-  Label* read_lbl = creator.getItemLabel(STR_READER_ITEM, font_unifont, 2);
+  Label* read_lbl = creator.getItemLabel(STR_READER_ITEM, font_10x20);
   read_item->setLbl(read_lbl);
 
   // WiFi
@@ -110,12 +110,12 @@ MenuContext::MenuContext()
 
   Image* wifi_img = new Image(1);
   wifi_item->setImg(wifi_img);
-  wifi_img->setTranspColor(COLOR_TRANSPARENT);
+  wifi_img->setTransparency(true);
   wifi_img->setWidth(ICO_WH);
   wifi_img->setHeight(ICO_WH);
   wifi_img->setSrc(WIFI_IMG);
 
-  Label* wifi_lbl = creator.getItemLabel(STR_WIFI_ITEM, font_unifont, 2);
+  Label* wifi_lbl = creator.getItemLabel(STR_WIFI_ITEM, font_10x20);
   wifi_item->setLbl(wifi_lbl);
 
   // Рація
@@ -124,13 +124,13 @@ MenuContext::MenuContext()
 
   Image* w_talkie_img = new Image(1);
   w_talkie_item->setImg(w_talkie_img);
-  w_talkie_img->setTranspColor(COLOR_TRANSPARENT);
+  w_talkie_img->setTransparency(true);
   w_talkie_img->setWidth(ICO_WH);
   w_talkie_img->setHeight(ICO_WH);
 
   w_talkie_img->setSrc(WALKIE_TALKIE_IMG);
 
-  Label* w_talkie_lbl = creator.getItemLabel(STR_W_TALKIE_ITEM, font_unifont, 2);
+  Label* w_talkie_lbl = creator.getItemLabel(STR_W_TALKIE_ITEM, font_10x20);
   w_talkie_item->setLbl(w_talkie_lbl);
 
   // Налаштування
@@ -139,12 +139,12 @@ MenuContext::MenuContext()
 
   Image* pref_img = new Image(1);
   pref_item->setImg(pref_img);
-  pref_img->setTranspColor(COLOR_TRANSPARENT);
+  pref_img->setTransparency(true);
   pref_img->setWidth(ICO_WH);
   pref_img->setHeight(ICO_WH);
   pref_img->setSrc(SETTINGS_IMG);
 
-  Label* pref_lbl = creator.getItemLabel(STR_PREFERENCES, font_unifont, 2);
+  Label* pref_lbl = creator.getItemLabel(STR_PREFERENCES, font_10x20);
   pref_item->setLbl(pref_lbl);
 
   // Прошивка
@@ -153,12 +153,12 @@ MenuContext::MenuContext()
 
   Image* firm_img = new Image(1);
   firm_item->setImg(firm_img);
-  firm_img->setTranspColor(COLOR_TRANSPARENT);
+  firm_img->setTransparency(true);
   firm_img->setWidth(ICO_WH);
   firm_img->setHeight(ICO_WH);
   firm_img->setSrc(CHIP_IMG);
 
-  Label* firm_lbl = creator.getItemLabel(STR_FIRMWARE_ITEM, font_unifont, 2);
+  Label* firm_lbl = creator.getItemLabel(STR_FIRMWARE_ITEM, font_10x20);
   firm_item->setLbl(firm_lbl);
   //
   // Зображення не видаляються віджетами автоматично задля можливості превикористання.

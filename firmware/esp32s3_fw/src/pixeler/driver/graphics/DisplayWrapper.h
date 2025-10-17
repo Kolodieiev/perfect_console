@@ -42,7 +42,8 @@ namespace pixeler
     void fillRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t radius, uint16_t color);
 
     void drawBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h);
-    void drawBitmapTransp(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h, uint16_t transparent_color);
+    void drawBitmapTransp(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h);
+    void drawBitmapRotated(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h, int16_t piv_x, int16_t piv_y, float angle);
 
     uint16_t getWidth();
     uint16_t getHeight();
@@ -88,6 +89,7 @@ namespace pixeler
 #endif  // BACKLIGHT_PIN
 
   private:
+    
 #ifdef DOUBLE_BUFFERRING
     static void displayRendererTask(void* params);
 #endif  // DOUBLE_BUFFERRING

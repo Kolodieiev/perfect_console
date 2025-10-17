@@ -7,7 +7,7 @@
 #include "pixeler/ui/widget/menu/item/ToggleItem.h"
 #include "pixeler/ui/widget/toggle/ToggleSwitch.h"
 
-const char STR_TRANSMITTER_STATE[] = "Стан модуля WIFi";
+const char STR_TRANSMITTER_STATE[] = "Стан модуля WiFi";
 const char STR_START_SCAN[] = "Розпочато скануваня";
 const char STR_START_SCAN_ERR[] = "Помилка сканування";
 const char STR_WIFI_BUSY[] = "Модуль зайнятий";
@@ -130,7 +130,7 @@ void WiFiContext::showMainTmpl()
   wifi_state_item->setChangingBorder(true);
   wifi_state_item->setChangingBack(true);
 
-  Label* wifi_state_lbl = creator.getItemLabel(STR_TRANSMITTER_STATE, font_unifont, 2);
+  Label* wifi_state_lbl = creator.getItemLabel(STR_TRANSMITTER_STATE, font_10x20);
   wifi_state_item->setLbl(wifi_state_lbl);
 
   ToggleSwitch* wifi_state_toggle = new ToggleSwitch(1);
@@ -189,10 +189,10 @@ void WiFiContext::addCurrNetItem()
   conn_ico->setWidth(16);
   conn_ico->setHeight(16);
   conn_ico->setCornerRadius(1);
-  conn_ico->setTranspColor(COLOR_TRANSPARENT);
+  conn_ico->setTransparency(true);
   conn_ico->setSrc(ICO_CONNECT);
 
-  Label* conn_lbl = creator.getItemLabel(ssid_name.c_str(), font_unifont, 2);
+  Label* conn_lbl = creator.getItemLabel(ssid_name.c_str(), font_10x20);
   cur_net_item->setLbl(conn_lbl);
   conn_lbl->setAutoscrollInFocus(true);
 }
@@ -481,7 +481,7 @@ void WiFiContext::updateNetList(bool no_scan)
     MenuItem* item = creator.getMenuItem(i);
     _main_menu->addItem(item);
 
-    Label* item_lbl = creator.getItemLabel((i_b)->c_str());
+    Label* item_lbl = creator.getItemLabel((i_b)->c_str(), font_10x20);
     item->setLbl(item_lbl);
     ++i;
   }

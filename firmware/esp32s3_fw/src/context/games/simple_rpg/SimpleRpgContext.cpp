@@ -80,14 +80,14 @@ namespace simple_rpg
     _img_back_normal->setHeight(IMG_H);
     _img_back_normal->setSrc(BTN_BACK_NORMAL);
     _img_back_normal->setBackColor(COLOR_MAIN_BACK);
-    _img_back_normal->setTranspColor(COLOR_TRANSPARENT);
+    _img_back_normal->setTransparency(true);
     // Зображення для стану "У фокусі" пункта меню.
     _img_back_hover = new Image(1);
     _img_back_hover->setWidth(IMG_W);
     _img_back_hover->setHeight(IMG_H);
     _img_back_hover->setSrc(BTN_BACK_HOVER);
     _img_back_hover->setBackColor(COLOR_MAIN_BACK);
-    _img_back_hover->setTranspColor(COLOR_TRANSPARENT);
+    _img_back_hover->setTransparency(true);
 
     // Створення віджета головного меню гри
     _main_menu = new FixedMenu(ID_MENU_MAIN);

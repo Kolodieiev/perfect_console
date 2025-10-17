@@ -149,7 +149,7 @@ void Mp3Context::showPlaying()
   _play_btn->setHeight(32);
   _play_btn->setSrc(PAUSE_IMG);
   _play_btn->setBackColor(COLOR_MAIN_BACK);
-  _play_btn->setTranspColor(COLOR_TRANSPARENT);
+  _play_btn->setTransparency(true);
   _play_btn->setPos(getCenterX(_play_btn), getCenterY(_play_btn));
 
   Image* forward_img = new Image(ID_FORWARD_IMG);
@@ -158,7 +158,7 @@ void Mp3Context::showPlaying()
   forward_img->setHeight(24);
   forward_img->setSrc(FORWARD_IMG);
   forward_img->setBackColor(COLOR_MAIN_BACK);
-  forward_img->setTranspColor(COLOR_TRANSPARENT);
+  forward_img->setTransparency(true);
   forward_img->setPos(_play_btn->getXPos() + 32 * 2, _play_btn->getYPos() + 4);
 
   Image* rewind_img = new Image(ID_REWIND_IMG);
@@ -167,7 +167,7 @@ void Mp3Context::showPlaying()
   rewind_img->setHeight(24);
   rewind_img->setSrc(REWIND_IMG);
   rewind_img->setBackColor(COLOR_MAIN_BACK);
-  rewind_img->setTranspColor(COLOR_TRANSPARENT);
+  rewind_img->setTransparency(true);
   rewind_img->setPos(_play_btn->getXPos() - 32 - 24, _play_btn->getYPos() + 4);
 
   //
@@ -189,7 +189,7 @@ void Mp3Context::showPlaying()
   volume_img->setHeight(16);
   volume_img->setSrc(SPEAKER_IMG);
   volume_img->setBackColor(COLOR_MAIN_BACK);
-  volume_img->setTranspColor(COLOR_TRANSPARENT);
+  volume_img->setTransparency(true);
   volume_img->setPos(getCenterX(volume_img) - volume_img->getWidth() / 2, _volume_lbl->getYPos());
 
   _mode = MODE_AUDIO_PLAY;
@@ -245,7 +245,7 @@ void Mp3Context::showPlaylistsTmpl()
     MenuItem* cont_item = creator.getMenuItem(ID_CONT_ITEM);
     _playlists_list->addItem(cont_item);
 
-    Label* cont_lbl = creator.getItemLabel(STR_CONTINUE, font_unifont, 2);
+    Label* cont_lbl = creator.getItemLabel(STR_CONTINUE, font_10x20, 2);
     cont_item->setLbl(cont_lbl);
   }
 
@@ -285,7 +285,7 @@ void Mp3Context::makeMenuPlaylistsItems(std::vector<MenuItem*>& items)
     Label* lbl = new Label(1);
     item->setLbl(lbl);
     lbl->setAutoscrollInFocus(true);
-
+    lbl->setFont(font_10x20);
     lbl->setText(_playlists[i].getName());
   }
 }
@@ -334,6 +334,7 @@ void Mp3Context::makeMenuTracksItems(std::vector<MenuItem*>& items, uint16_t fil
     Label* lbl = new Label(1);
     item->setLbl(lbl);
     lbl->setAutoscrollInFocus(true);
+    lbl->setFont(font_10x20);
 
     lbl->setText(_tracks[i].getName());
   }
@@ -359,7 +360,7 @@ void Mp3Context::showPlMenu()
     MenuItem* del_item = creator.getMenuItem(ID_ITEM_DEL);
     _context_menu->addItem(del_item);
 
-    Label* upd_lbl = creator.getItemLabel(STR_DELETE, font_unifont, 2);
+    Label* upd_lbl = creator.getItemLabel(STR_DELETE);
     del_item->setLbl(upd_lbl);
   }
 

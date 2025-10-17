@@ -3,6 +3,8 @@
 
 #include <esp32-hal-ledc.h>
 
+#include <cmath>
+
 #include "pixeler/util/img/BmpUtil.h"
 
 namespace pixeler
@@ -115,10 +117,49 @@ namespace pixeler
     _is_buff_changed = true;
   }
 
-  void DisplayWrapper::drawBitmapTransp(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h, uint16_t transparent_color)
+  void DisplayWrapper::drawBitmapTransp(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h)
   {
-    _canvas.draw16bitRGBBitmapWithTranColor(x, y, bitmap, transparent_color, w, h);
+    _canvas.draw16bitRGBBitmapWithTranColor(x, y, bitmap, COLOR_TRANSPARENT, w, h);
     _is_buff_changed = true;
+  }
+
+  void DisplayWrapper::drawBitmapRotated(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h, int16_t piv_x, int16_t piv_y, float angle)
+  {
+    float rad = angle * M_PI / 180.0f;
+    float cos_a = cosf(rad);
+    float sin_a = sinf(rad);
+
+    uint16_t* rotated = static_cast<uint16_t*>(ps_malloc(w * h * sizeof(uint16_t)));
+    if (!rotated)
+    {
+      log_e("Помилка виділення пам'яті для повернутого зображення");
+      esp_restart();
+    }
+
+    std::fill(rotated, rotated + w * h, COLOR_TRANSPARENT);
+
+    for (int16_t dy = 0; dy < h; dy++)
+    {
+      for (int16_t dx = 0; dx < w; dx++)
+      {
+        float rel_x = dx - piv_x;
+        float rel_y = dy - piv_y;
+
+        float orig_x = rel_x * cos_a + rel_y * sin_a + piv_x;
+        float orig_y = -rel_x * sin_a + rel_y * cos_a + piv_y;
+
+        // Отримуємо піксель з оригінального зображення (білінійна інтерполяція)
+        int16_t ix = static_cast<int16_t>(orig_x);
+        int16_t iy = static_cast<int16_t>(orig_y);
+
+        // Проста вибірка найближчого пікселя
+        if (ix >= 0 && ix < w && iy >= 0 && iy < h)
+          rotated[dy * w + dx] = bitmap[iy * w + ix];
+      }
+    }
+
+    _canvas.draw16bitRGBBitmapWithTranColor(x, y, rotated, COLOR_TRANSPARENT, w, h);
+    free(rotated);
   }
 
   uint16_t DisplayWrapper::getWidth()

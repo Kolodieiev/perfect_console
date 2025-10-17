@@ -6,16 +6,9 @@ namespace pixeler
 {
   Image::Image(uint16_t widget_ID) : IWidget(widget_ID, TYPE_ID_IMAGE) {}
 
-  void Image::setTranspColor(uint16_t color)
+  void Image::setTransparency(bool state)
   {
-    _has_transp_color = true;
-    _transparent_color = color;
-    _is_changed = true;
-  }
-
-  void Image::clearTransparency()
-  {
-    _has_transp_color = false;
+    _has_transparency = state;
     _is_changed = true;
   }
 
@@ -31,8 +24,7 @@ namespace pixeler
       cln->_border_color = _border_color;
       cln->_corner_radius = _corner_radius;
       cln->_is_transparent = _is_transparent;
-      cln->_has_transp_color = _has_transp_color;
-      cln->_transparent_color = _transparent_color;
+      cln->_has_transparency = _has_transparency;
       cln->_visibility = _visibility;
       cln->_has_focus = _has_focus;
       cln->_old_border_state = _old_border_state;
@@ -93,10 +85,10 @@ namespace pixeler
 
     if (_img_ptr)
     {
-      if (!_has_transp_color)
+      if (!_has_transparency)
         _display.drawBitmap(_x_pos + x_offset, _y_pos + y_offset, _img_ptr, _width, _height);
       else
-        _display.drawBitmapTransp(_x_pos + x_offset, _y_pos + y_offset, _img_ptr, _width, _height, _transparent_color);
+        _display.drawBitmapTransp(_x_pos + x_offset, _y_pos + y_offset, _img_ptr, _width, _height);
     }
     else
     {

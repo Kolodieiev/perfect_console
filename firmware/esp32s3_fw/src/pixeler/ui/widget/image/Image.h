@@ -41,17 +41,13 @@ namespace pixeler
     }
 
     /**
-     * @brief Встановлює колір, з яким пікселі не будуть відображатися.
+     * @brief Встановлює прапор, який змінює поведінку виводу зображення на дисплей.
      *
-     * @param color
+     * @param state Якщо true зображення буде виводитися з ігноруванням кольору COLOR_TRANSPARENT. 
+     * Інакше буде виводитись, як є.
      */
-    void setTranspColor(uint16_t color);
+    void setTransparency(bool state);
 
-    /**
-     * @brief Видаляє прозорість у зображення.
-     *
-     */
-    void clearTransparency();
     /**
      * @brief Встановлює вказівник на буффер із зображенням.
      * Буфер не буде видалено разом із віджетом.
@@ -62,9 +58,7 @@ namespace pixeler
 
   private:
     const uint16_t* _img_ptr{nullptr};
-    uint16_t _transparent_color{COLOR_TRANSPARENT};
-
-    bool _has_transp_color{false};
+    bool _has_transparency{false};
   };
 
 }  // namespace pixeler
