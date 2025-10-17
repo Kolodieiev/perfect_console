@@ -38,6 +38,8 @@ namespace sokoban
     ScrollBar* _scrollbar{nullptr};
     IGameScene* _scene{nullptr};
 
+    uint8_t _prev_lvl{1};
+
     bool _is_game_started{false};
   };
 }  // namespace sokoban

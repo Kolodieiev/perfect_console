@@ -69,9 +69,9 @@ namespace sokoban
       else if (_input.isReleased(BtnID::BTN_OK))
       {
         _input.lock(BtnID::BTN_OK, CLICK_LOCK);
-        uint8_t next_lvl = _lvl_menu->getCurrItemID();
+        _prev_lvl = _lvl_menu->getCurrItemID();
         getLayout()->delWidgets();
-        _scene = new SokobanScene(_stored_objs, false, next_lvl);
+        _scene = new SokobanScene(_stored_objs, false, _prev_lvl);
         _is_game_started = true;
       }
     }
@@ -106,8 +106,15 @@ namespace sokoban
 
       Label* lvl_lbl = creator.getItemLabel(lbl.c_str());
       lvl_item->setLbl(lvl_lbl);
+      lvl_lbl->setFont(font_10x20);
     }
 
     _scrollbar->setMax(_lvl_menu->getSize());
+
+    if (_prev_lvl > _lvl_menu->getSize())
+      _prev_lvl = _lvl_menu->getSize();
+
+    _lvl_menu->setCurrFocusPos(_prev_lvl - 1);
+    _scrollbar->setValue(_prev_lvl - 1);
   }
 }  // namespace sokoban
