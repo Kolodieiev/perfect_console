@@ -280,7 +280,7 @@ void CodecSetsContext::showContextMenuTmpl()
 
   Label* save_sets_lbl = creator.getItemLabel(STR_SAVE_SETS);
   save_sets_item->setLbl(save_sets_lbl);
-  save_sets_lbl->setHPaddings(1);
+  save_sets_lbl->setHPadding(1);
 
   // Тест аудіо
   ToggleItem* test_audio_item = new ToggleItem(ID_TEST_AUDIO_ITEM);

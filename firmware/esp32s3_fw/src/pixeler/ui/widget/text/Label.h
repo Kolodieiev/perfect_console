@@ -120,7 +120,7 @@ namespace pixeler
      *
      * @param padding Значення відступу.
      */
-    void setHPaddings(uint8_t padding);
+    void setHPadding(uint8_t padding);
 
     /**
      * @brief Повертає кількість символів, що зберігається в данному віджеті.

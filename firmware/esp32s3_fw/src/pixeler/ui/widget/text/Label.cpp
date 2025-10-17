@@ -195,7 +195,7 @@ namespace pixeler
     _is_changed = true;
   }
 
-  void Label::setHPaddings(uint8_t padding)
+  void Label::setHPadding(uint8_t padding)
   {
     _h_padding = padding;
     _is_changed = true;

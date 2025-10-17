@@ -23,7 +23,7 @@ namespace pixeler
     //
     _title_lbl->setAutoscroll(true);
     _msg_lbl->setMultiline(true);
-    _msg_lbl->setHPaddings(5);
+    _msg_lbl->setHPadding(5);
     //
     uint16_t title_padding = 8;
     //

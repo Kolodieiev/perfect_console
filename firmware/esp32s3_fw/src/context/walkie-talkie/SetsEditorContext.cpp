@@ -239,7 +239,7 @@ void SetsEditorContext::showNameDialogTmpl()
 
   _dialog_txt = new TextBox(ID_DIALOG_TXT);
   layout->addWidget(_dialog_txt);
-  _dialog_txt->setHPaddings(5);
+  _dialog_txt->setHPadding(5);
   _dialog_txt->setWidth(TFT_WIDTH - 10);
   _dialog_txt->setHeight(40);
   _dialog_txt->setBackColor(COLOR_WHITE);

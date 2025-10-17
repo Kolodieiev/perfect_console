@@ -26,7 +26,7 @@ Label* WidgetCreator::getItemLabel(const char* text, const uint8_t* font_ptr, ui
     item->setFont(font_ptr);
     item->setTextSize(text_size);
     item->setGravity(IWidget::GRAVITY_CENTER);
-    item->setHPaddings(3);
+    item->setHPadding(3);
     item->setAutoscrollInFocus(true);
     return item;
   }

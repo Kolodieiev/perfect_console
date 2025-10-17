@@ -44,7 +44,7 @@ void PrefFileServerContext::showMainTmpl()
   _ssid_txt = new TextBox(ID_TXT_SSID);
   layout->addWidget(_ssid_txt);
   _ssid_txt->setText(_ssid_str);
-  _ssid_txt->setHPaddings(5);
+  _ssid_txt->setHPadding(5);
   _ssid_txt->setFocusBorderColor(COLOR_ORANGE);
   _ssid_txt->setChangingBorder(true);
   _ssid_txt->setTextSize(2);
@@ -97,7 +97,7 @@ void PrefFileServerContext::showDialogTmpl()
 
   _dialog_txt = new TextBox(ID_TXT_DIALOG);
   layout->addWidget(_dialog_txt);
-  _dialog_txt->setHPaddings(5);
+  _dialog_txt->setHPadding(5);
   _dialog_txt->setWidth(TFT_WIDTH - 10);
   _dialog_txt->setHeight(40);
   _dialog_txt->setBackColor(COLOR_WHITE);
