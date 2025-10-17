@@ -167,10 +167,7 @@ namespace pixeler
   void Label::setFont(const uint8_t* font_ptr)
   {
     if (!font_ptr)
-    {
-      log_e("Шрифт не може бути null");
-      esp_restart();
-    }
+      font_ptr = font_unifont;
 
     _font_ptr = font_ptr;
     _is_changed = true;
