@@ -258,7 +258,7 @@ namespace pixeler
 
     unsigned long _last_autoscroll_ts{0};
     Image* _back_img{nullptr};
-    const uint8_t* _font_ptr{u8g2_font_unifont_t_cyrillic};
+    const uint8_t* _font_ptr{font_unifont};
 
     uint16_t _text_color{0xFFFF};
     uint16_t _text_len{0};

@@ -26,7 +26,7 @@ class WidgetCreator
 {
 public:
   EmptyLayout* getEmptyLayout();
-  Label* getItemLabel(const char* text, const uint8_t* font_ptr = u8g2_font_unifont_t_cyrillic, uint8_t text_size = 1);
+  Label* getItemLabel(const char* text, const uint8_t* font_ptr = font_unifont, uint8_t text_size = 1);
   MenuItem* getMenuItem(uint16_t id = 1);
   DynamicMenu* getDynamicMenu(uint16_t id);
   Label* getStatusMsgLable(uint16_t id, const char* text, uint8_t text_size = 1);

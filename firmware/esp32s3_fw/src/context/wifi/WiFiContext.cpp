@@ -130,7 +130,7 @@ void WiFiContext::showMainTmpl()
   wifi_state_item->setChangingBorder(true);
   wifi_state_item->setChangingBack(true);
 
-  Label* wifi_state_lbl = creator.getItemLabel(STR_TRANSMITTER_STATE, u8g2_font_unifont_t_cyrillic, 2);
+  Label* wifi_state_lbl = creator.getItemLabel(STR_TRANSMITTER_STATE, font_unifont, 2);
   wifi_state_item->setLbl(wifi_state_lbl);
 
   ToggleSwitch* wifi_state_toggle = new ToggleSwitch(1);
@@ -192,7 +192,7 @@ void WiFiContext::addCurrNetItem()
   conn_ico->setTranspColor(COLOR_TRANSPARENT);
   conn_ico->setSrc(ICO_CONNECT);
 
-  Label* conn_lbl = creator.getItemLabel(ssid_name.c_str(), u8g2_font_unifont_t_cyrillic, 2);
+  Label* conn_lbl = creator.getItemLabel(ssid_name.c_str(), font_unifont, 2);
   cur_net_item->setLbl(conn_lbl);
   conn_lbl->setAutoscrollInFocus(true);
 }

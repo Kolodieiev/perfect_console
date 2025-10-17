@@ -54,7 +54,7 @@ void ReaderContext::showContextMenuTmpl()
     MenuItem* del_item = creator.getMenuItem(ID_ITEM_DEL);
     _context_menu->addItem(del_item);
 
-    Label* upd_lbl = creator.getItemLabel(STR_DELETE, u8g2_font_unifont_t_cyrillic, 2);
+    Label* upd_lbl = creator.getItemLabel(STR_DELETE, font_unifont, 2);
     del_item->setLbl(upd_lbl);
   }
 
@@ -92,7 +92,7 @@ void ReaderContext::showBookDirsTmpl()
     MenuItem* cont_item = creator.getMenuItem(ID_CONT_ITEM);
     _book_dirs_menu->addItem(cont_item);
 
-    Label* cont_lbl = creator.getItemLabel(STR_CONTINUE, u8g2_font_unifont_t_cyrillic, 2);
+    Label* cont_lbl = creator.getItemLabel(STR_CONTINUE, font_unifont, 2);
     cont_item->setLbl(cont_lbl);
   }
 

@@ -274,7 +274,7 @@ void FilesContext::showContextMenu()
     MenuItem* paste_item = creator.getMenuItem(ID_ITEM_PASTE);
     _context_menu->addItem(paste_item);
 
-    Label* paste_lbl = creator.getItemLabel(STR_PASTE, u8g2_font_unifont_t_cyrillic);
+    Label* paste_lbl = creator.getItemLabel(STR_PASTE, font_unifont);
     paste_item->setLbl(paste_lbl);
     paste_lbl->setHPadding(1);
   }
@@ -283,7 +283,7 @@ void FilesContext::showContextMenu()
   MenuItem* new_dir_item = creator.getMenuItem(ID_ITEM_NEW_DIR);
   _context_menu->addItem(new_dir_item);
 
-  Label* new_dir_lbl = creator.getItemLabel(STR_NEW_DIR, u8g2_font_unifont_t_cyrillic);
+  Label* new_dir_lbl = creator.getItemLabel(STR_NEW_DIR, font_unifont);
   new_dir_item->setLbl(new_dir_lbl);
   new_dir_lbl->setHPadding(1);
 
@@ -300,7 +300,7 @@ void FilesContext::showContextMenu()
         MenuItem* exec_item = creator.getMenuItem(ID_ITEM_EXECUTE);
         _context_menu->addItem(exec_item);
 
-        Label* exec_lbl = creator.getItemLabel(STR_EXECUTE, u8g2_font_unifont_t_cyrillic);
+        Label* exec_lbl = creator.getItemLabel(STR_EXECUTE, font_unifont);
         exec_item->setLbl(exec_lbl);
         exec_lbl->setHPadding(1);
       }
@@ -319,7 +319,7 @@ void FilesContext::showContextMenu()
             MenuItem* set_wall_item = creator.getMenuItem(ID_ITEM_SET_WALLPP);
             _context_menu->addItem(set_wall_item);
 
-            Label* set_wall_lbl = creator.getItemLabel(STR_SET_WALLPP, u8g2_font_unifont_t_cyrillic);
+            Label* set_wall_lbl = creator.getItemLabel(STR_SET_WALLPP, font_unifont);
             set_wall_item->setLbl(set_wall_lbl);
             set_wall_lbl->setHPadding(1);
           }
@@ -331,7 +331,7 @@ void FilesContext::showContextMenu()
       MenuItem* copy_item = creator.getMenuItem(ID_ITEM_COPY);
       _context_menu->addItem(copy_item);
 
-      Label* copy_lbl = creator.getItemLabel(STR_COPY, u8g2_font_unifont_t_cyrillic);
+      Label* copy_lbl = creator.getItemLabel(STR_COPY, font_unifont);
       copy_item->setLbl(copy_lbl);
       copy_lbl->setHPadding(1);
     }
@@ -340,7 +340,7 @@ void FilesContext::showContextMenu()
     MenuItem* rename_item = creator.getMenuItem(ID_ITEM_RENAME);
     _context_menu->addItem(rename_item);
 
-    Label* rename_lbl = creator.getItemLabel(STR_RENAME, u8g2_font_unifont_t_cyrillic);
+    Label* rename_lbl = creator.getItemLabel(STR_RENAME, font_unifont);
     rename_item->setLbl(rename_lbl);
     rename_lbl->setHPadding(1);
 
@@ -348,7 +348,7 @@ void FilesContext::showContextMenu()
     MenuItem* move_item = creator.getMenuItem(ID_ITEM_MOVE);
     _context_menu->addItem(move_item);
 
-    Label* move_lbl = creator.getItemLabel(STR_MOVE, u8g2_font_unifont_t_cyrillic);
+    Label* move_lbl = creator.getItemLabel(STR_MOVE, font_unifont);
     move_item->setLbl(move_lbl);
     move_lbl->setHPadding(1);
 
@@ -356,7 +356,7 @@ void FilesContext::showContextMenu()
     MenuItem* delete_item = creator.getMenuItem(ID_ITEM_REMOVE);
     _context_menu->addItem(delete_item);
 
-    Label* delete_lbl = creator.getItemLabel(STR_DELETE, u8g2_font_unifont_t_cyrillic);
+    Label* delete_lbl = creator.getItemLabel(STR_DELETE, font_unifont);
     delete_item->setLbl(delete_lbl);
     delete_lbl->setHPadding(1);
   }
@@ -365,7 +365,7 @@ void FilesContext::showContextMenu()
   MenuItem* import_item = creator.getMenuItem(ID_ITEM_IMPORT);
   _context_menu->addItem(import_item);
 
-  Label* import_lbl = creator.getItemLabel(STR_GET, u8g2_font_unifont_t_cyrillic);
+  Label* import_lbl = creator.getItemLabel(STR_GET, font_unifont);
   import_item->setLbl(import_lbl);
   import_lbl->setHPadding(1);
 
@@ -373,7 +373,7 @@ void FilesContext::showContextMenu()
   MenuItem* export_item = creator.getMenuItem(ID_ITEM_EXPORT);
   _context_menu->addItem(export_item);
 
-  Label* export_lbl = creator.getItemLabel(STR_SHARE, u8g2_font_unifont_t_cyrillic);
+  Label* export_lbl = creator.getItemLabel(STR_SHARE, font_unifont);
   export_item->setLbl(export_lbl);
   export_lbl->setHPadding(1);
 
@@ -381,7 +381,7 @@ void FilesContext::showContextMenu()
   MenuItem* upd_item = creator.getMenuItem(ID_ITEM_UPDATE);
   _context_menu->addItem(upd_item);
 
-  Label* upd_lbl = creator.getItemLabel(STR_UPDATE, u8g2_font_unifont_t_cyrillic);
+  Label* upd_lbl = creator.getItemLabel(STR_UPDATE, font_unifont);
   upd_item->setLbl(upd_lbl);
   upd_lbl->setHPadding(1);
 

@@ -224,7 +224,7 @@ void LoraSetsContext::showContextMenuTmpl()
   MenuItem* create_item = creator.getMenuItem(ID_CREATE_ITEM);
   _context_menu->addItem(create_item);
 
-  Label* create_lbl = creator.getItemLabel(STR_CREATE, u8g2_font_unifont_t_cyrillic);
+  Label* create_lbl = creator.getItemLabel(STR_CREATE, font_unifont);
   create_item->setLbl(create_lbl);
   create_lbl->setHPadding(1);
 

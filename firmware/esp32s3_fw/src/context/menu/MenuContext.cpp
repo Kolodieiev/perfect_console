@@ -59,7 +59,7 @@ MenuContext::MenuContext()
   files_img->setHeight(ICO_WH);
   files_img->setSrc(SD_IMG);
 
-  Label* files_lbl = creator.getItemLabel(STR_FILES_ITEM, u8g2_font_unifont_t_cyrillic, 2);
+  Label* files_lbl = creator.getItemLabel(STR_FILES_ITEM, font_unifont, 2);
   files_item->setLbl(files_lbl);
 
   // Музика
@@ -73,7 +73,7 @@ MenuContext::MenuContext()
   mp3_img->setHeight(ICO_WH);
   mp3_img->setSrc(HEADPHONES_IMG);
 
-  Label* mp3_lbl = creator.getItemLabel(STR_MUSIC_ITEM, u8g2_font_unifont_t_cyrillic, 2);
+  Label* mp3_lbl = creator.getItemLabel(STR_MUSIC_ITEM, font_unifont, 2);
   mp3_item->setLbl(mp3_lbl);
 
   // Ігри
@@ -87,7 +87,7 @@ MenuContext::MenuContext()
   game_img->setHeight(ICO_WH);
   game_img->setSrc(JOYSTICK_IMG);
 
-  Label* game_lbl = creator.getItemLabel(STR_GAME_ITEM, u8g2_font_unifont_t_cyrillic, 2);
+  Label* game_lbl = creator.getItemLabel(STR_GAME_ITEM, font_unifont, 2);
   game_item->setLbl(game_lbl);
 
   // Читалка
@@ -101,7 +101,7 @@ MenuContext::MenuContext()
   read_img->setHeight(ICO_WH);
   read_img->setSrc(BOOK_IMG);
 
-  Label* read_lbl = creator.getItemLabel(STR_READER_ITEM, u8g2_font_unifont_t_cyrillic, 2);
+  Label* read_lbl = creator.getItemLabel(STR_READER_ITEM, font_unifont, 2);
   read_item->setLbl(read_lbl);
 
   // WiFi
@@ -115,7 +115,7 @@ MenuContext::MenuContext()
   wifi_img->setHeight(ICO_WH);
   wifi_img->setSrc(WIFI_IMG);
 
-  Label* wifi_lbl = creator.getItemLabel(STR_WIFI_ITEM, u8g2_font_unifont_t_cyrillic, 2);
+  Label* wifi_lbl = creator.getItemLabel(STR_WIFI_ITEM, font_unifont, 2);
   wifi_item->setLbl(wifi_lbl);
 
   // Рація
@@ -130,7 +130,7 @@ MenuContext::MenuContext()
 
   w_talkie_img->setSrc(WALKIE_TALKIE_IMG);
 
-  Label* w_talkie_lbl = creator.getItemLabel(STR_W_TALKIE_ITEM, u8g2_font_unifont_t_cyrillic, 2);
+  Label* w_talkie_lbl = creator.getItemLabel(STR_W_TALKIE_ITEM, font_unifont, 2);
   w_talkie_item->setLbl(w_talkie_lbl);
 
   // Налаштування
@@ -144,7 +144,7 @@ MenuContext::MenuContext()
   pref_img->setHeight(ICO_WH);
   pref_img->setSrc(SETTINGS_IMG);
 
-  Label* pref_lbl = creator.getItemLabel(STR_PREFERENCES, u8g2_font_unifont_t_cyrillic, 2);
+  Label* pref_lbl = creator.getItemLabel(STR_PREFERENCES, font_unifont, 2);
   pref_item->setLbl(pref_lbl);
 
   // Прошивка
@@ -158,7 +158,7 @@ MenuContext::MenuContext()
   firm_img->setHeight(ICO_WH);
   firm_img->setSrc(CHIP_IMG);
 
-  Label* firm_lbl = creator.getItemLabel(STR_FIRMWARE_ITEM, u8g2_font_unifont_t_cyrillic, 2);
+  Label* firm_lbl = creator.getItemLabel(STR_FIRMWARE_ITEM, font_unifont, 2);
   firm_item->setLbl(firm_lbl);
   //
   // Зображення не видаляються віджетами автоматично задля можливості превикористання.

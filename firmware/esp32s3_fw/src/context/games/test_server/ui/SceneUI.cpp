@@ -15,7 +15,7 @@ namespace test_server
 
     _display.setTextColor(COLOR_CYAN);
     _display.setTextSize(2);
-    _display.setFont(u8g2_font_unifont_t_cyrillic);
+    _display.setFont(font_unifont);
     _display.setCursor(25, 100);
     _display.print(STR_WAIT_CLIENTS);
   }

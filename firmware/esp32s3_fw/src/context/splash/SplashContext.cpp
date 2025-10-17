@@ -44,7 +44,7 @@ SplashContext::SplashContext()
 
   addLabel(OFFSET_LBL_RESULT, y_pos, "Ініціалізація SD", COLOR_WHITE);
 
-  y_pos += _display.getFontHeight(u8g2_font_unifont_t_cyrillic) + 3;
+  y_pos += _display.getFontHeight(font_unifont) + 3;
 
   // PSRAM
   bool psram_ok = psramInit();

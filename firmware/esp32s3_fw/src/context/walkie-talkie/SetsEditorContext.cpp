@@ -132,7 +132,7 @@ void SetsEditorContext::showMainTmpl()
   enc_toggle_item->setChangingBorder(true);
   enc_toggle_item->setChangingBack(true);
 
-  Label* enc_toggle_lbl = creator.getItemLabel(STR_ENCRYPT_TITLE, u8g2_font_unifont_t_cyrillic, 2);
+  Label* enc_toggle_lbl = creator.getItemLabel(STR_ENCRYPT_TITLE, font_unifont, 2);
   enc_toggle_item->setLbl(enc_toggle_lbl);
 
   ToggleSwitch* toggle_agc_in = new ToggleSwitch(1);
@@ -150,7 +150,7 @@ void SetsEditorContext::showMainTmpl()
   chann_spin_item->setChangingBorder(true);
   chann_spin_item->setChangingBack(true);
 
-  Label* chann_spin_lbl = creator.getItemLabel(STR_CHANN_TITLE, u8g2_font_unifont_t_cyrillic, 2);
+  Label* chann_spin_lbl = creator.getItemLabel(STR_CHANN_TITLE, font_unifont, 2);
   chann_spin_item->setLbl(chann_spin_lbl);
 
   SpinBox* chann_spin = chann_spin_item->getSpin();
@@ -171,7 +171,7 @@ void SetsEditorContext::showMainTmpl()
   power_item->setFocusBackColor(COLOR_FOCUS_BACK);
   power_item->setChangingBorder(true);
   power_item->setChangingBack(true);
-  Label* power_lbl = creator.getItemLabel(emptyString.c_str(), u8g2_font_unifont_t_cyrillic, 2);
+  Label* power_lbl = creator.getItemLabel(emptyString.c_str(), font_unifont, 2);
   power_item->setLbl(power_lbl);
 
   std::vector<String> vec(POWER_VALUES, POWER_VALUES + 4);

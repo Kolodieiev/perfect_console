@@ -223,7 +223,7 @@ namespace pixeler
       String fps_str = String(_frame_counter);
 
       _canvas.setTextSize(1);
-      _canvas.setFont(u8g2_font_unifont_t_cyrillic);
+      _canvas.setFont(font_unifont);
       _canvas.setTextColor(COLOR_RED);
 
       int16_t x{0};
