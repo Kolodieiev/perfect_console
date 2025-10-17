@@ -712,7 +712,7 @@ typedef int16_t u8g2_long_t; /* introduced for ellipse calculation */
   /*==========================================*/
 
   /* start font list */
-  extern const uint8_t font_4x6[] U8G2_FONT_SECTION("font_4x6"); // TODO
+  extern const uint8_t font_4x6[] U8G2_FONT_SECTION("font_4x6");
   extern const uint8_t font_5x7[] U8G2_FONT_SECTION("font_5x7");
   extern const uint8_t font_5x8[] U8G2_FONT_SECTION("font_5x8");
   extern const uint8_t font_6x12[] U8G2_FONT_SECTION("font_6x12");
