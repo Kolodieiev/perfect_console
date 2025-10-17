@@ -116,11 +116,11 @@ namespace pixeler
     void setAlign(const Alignment alignment);
 
     /**
-     * @brief Встановлює зміщення позиції тексту (в пікселях) вправо від початку віджета.
+     * @brief Встановлює горизонтальні відступи для тексту (в пікселях).
      *
-     * @param offset Значення зміщення тексту.
+     * @param padding Значення відступу.
      */
-    void setTextOffset(uint8_t offset);
+    void setHPaddings(uint8_t padding);
 
     /**
      * @brief Повертає кількість символів, що зберігається в данному віджеті.
@@ -251,7 +251,7 @@ namespace pixeler
     String getSubStr(const String& str, uint16_t start, uint16_t length) const;
     uint32_t utf8ToUnicode(const uint8_t* buf, uint16_t& byte_pos, uint16_t remaining) const;
     uint16_t charPosToByte(const uint8_t* buf, uint16_t char_pos) const;
-    void updateCharHeight();
+    void updateHeight();
 
   protected:
     String _text{""};
@@ -268,7 +268,7 @@ namespace pixeler
     uint16_t _char_hgt{0};
 
     uint8_t _text_size{1};
-    uint8_t _text_offset{0};
+    uint8_t _h_padding{0};
     //
     Gravity _text_gravity{GRAVITY_TOP};
     Alignment _text_alignment{ALIGN_START};

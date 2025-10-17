@@ -26,7 +26,7 @@ Label* WidgetCreator::getItemLabel(const char* text, const uint8_t* font_ptr, ui
     item->setFont(font_ptr);
     item->setTextSize(text_size);
     item->setGravity(IWidget::GRAVITY_CENTER);
-    item->setTextOffset(3);
+    item->setHPaddings(3);
     item->setAutoscrollInFocus(true);
     return item;
   }
@@ -118,7 +118,6 @@ Keyboard* WidgetCreator::getStandardEnKeyboard(uint16_t id)
 
   Label* q = new Label(ID_KBTN_Q);
   q->setText("q");
-  q->setFont(u8g2_font_unifont_t_cyrillic);
   q->setGravity(IWidget::GRAVITY_CENTER);
   q->setAlign(IWidget::ALIGN_CENTER);
   q->setFocusBorderColor(COLOR_LIME);
@@ -326,7 +325,6 @@ Keyboard* WidgetCreator::getCapsdEnKeyboard(uint16_t id)
 
   Label* q = new Label(ID_KBTN_Q);
   q->setText("Q");
-  q->setFont(u8g2_font_unifont_t_cyrillic);
   q->setGravity(IWidget::GRAVITY_CENTER);
   q->setAlign(IWidget::ALIGN_CENTER);
   q->setFocusBorderColor(COLOR_LIME);

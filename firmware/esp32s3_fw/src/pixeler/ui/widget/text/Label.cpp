@@ -4,7 +4,7 @@ namespace pixeler
 {
   Label::Label(uint16_t widget_ID, IWidget::TypeID type_ID) : IWidget(widget_ID, type_ID)
   {
-    updateCharHeight();
+    updateHeight();
   }
 
   Label* Label::clone(uint16_t id) const
@@ -39,7 +39,7 @@ namespace pixeler
       cln->_text_color = _text_color;
       cln->_font_ptr = _font_ptr;
       cln->_char_hgt = _char_hgt;
-      cln->_text_offset = _text_offset;
+      cln->_h_padding = _h_padding;
       cln->_text_gravity = _text_gravity;
       cln->_text_alignment = _text_alignment;
       cln->_has_autoscroll = _has_autoscroll;
@@ -65,7 +65,7 @@ namespace pixeler
   void Label::initWidthToFit(uint16_t add_width_value)
   {
     _width = calcTextPixels();
-    _width += 2 + add_width_value + _text_offset;
+    _width += 2 + add_width_value + _h_padding * 2;
 
     _is_changed = true;
   }
@@ -73,7 +73,7 @@ namespace pixeler
   void Label::updateWidthToFit(uint16_t add_width_value)
   {
     _temp_width = calcTextPixels();
-    _temp_width += 2 + add_width_value + _text_offset;
+    _temp_width += 2 + add_width_value + _h_padding * 2;
 
     _is_changed = true;
   }
@@ -110,7 +110,7 @@ namespace pixeler
 
     _text_size = size;
     _is_changed = true;
-    updateCharHeight();
+    updateHeight();
   }
 
   void Label::setTextColor(uint16_t textColor)
@@ -175,7 +175,7 @@ namespace pixeler
     _font_ptr = font_ptr;
     _is_changed = true;
 
-    updateCharHeight();
+    updateHeight();
   }
 
   const uint8_t* Label::getFont() const
@@ -195,9 +195,9 @@ namespace pixeler
     _is_changed = true;
   }
 
-  void Label::setTextOffset(uint8_t offset)
+  void Label::setHPaddings(uint8_t padding)
   {
-    _text_offset = offset;
+    _h_padding = padding;
     _is_changed = true;
   }
 
@@ -211,21 +211,32 @@ namespace pixeler
 
   uint16_t Label::calcXStrOffset(uint16_t str_pix_num) const
   {
-    if (_width > str_pix_num + _text_offset)
+    if (_width > str_pix_num + _h_padding)
     {
       if (_has_autoscroll)
-        return _text_offset;
+        return _h_padding;
 
       switch (_text_alignment)
       {
         case ALIGN_START:
-          return _text_offset;
-
+        {
+          return _h_padding;
+        }
         case ALIGN_CENTER:
-          return (float)(_width - str_pix_num) / 2 + _text_offset;
+        {
+          uint16_t x_offset = static_cast<uint16_t>((static_cast<float>(_width - str_pix_num)) / 2);
 
+          if (x_offset < _h_padding)
+            x_offset = _h_padding;
+          return x_offset;
+        }
         case ALIGN_END:
-          return _width - str_pix_num + _text_offset;
+        {
+          uint16_t x_offset = _width - str_pix_num + _h_padding;
+          if (x_offset < _h_padding)
+            x_offset = _h_padding;
+          return x_offset;
+        }
       }
     }
 
@@ -309,13 +320,16 @@ namespace pixeler
     return i;
   }
 
-  void Label::updateCharHeight()
+  void Label::updateHeight()
   {
     int16_t x1, y1;
     uint16_t w;
     _display.setTextSize(_text_size);
     _display.setFont(_font_ptr);
     _display.calcTextBounds("I", 0, 0, x1, y1, w, _char_hgt);
+
+    if (_char_hgt > _height)
+      _height = _char_hgt;
   }
 
   uint32_t Label::utf8ToUnicode(const uint8_t* buf, uint16_t& byte_pos, uint16_t remaining) const
@@ -399,7 +413,7 @@ namespace pixeler
       new_str = _text.substring(start_byte_pos, cur_byte_pos);
       _display.calcTextBounds(new_str.c_str(), 0, 0, x1, y1, w, h);
 
-      if (w < _width - _text_offset - 2)
+      if (w < _width - _h_padding * 2 - 2)
       {
         pix_sum = w;
         ++chars_counter;
@@ -516,7 +530,7 @@ namespace pixeler
       _back_img->forcedDraw();
     }
 
-    if (str_pix_num + _text_offset < _width)
+    if (str_pix_num + _h_padding * 2 - 2 < _width)
     {
       _has_autoscroll = false;
       _has_autoscroll_in_focus = false;
@@ -550,7 +564,7 @@ namespace pixeler
             {
               if (!_is_reverse_autoscroll)
               {
-                if (sub_str_pix_num + _text_offset > (_width * 3) >> 2)  // 3/4 від ширини
+                if (sub_str_pix_num + _h_padding > (_width * 3) >> 2)  // 3/4 від ширини
                   ++_first_draw_char_pos;
                 else
                   _is_reverse_autoscroll = true;

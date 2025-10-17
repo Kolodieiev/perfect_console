@@ -160,7 +160,7 @@ void WiFiContext::showEnterPwdTmpl()
 
   _pwd_txt = new TextBox(ID_PWD_TXT);
   layout->addWidget(_pwd_txt);
-  _pwd_txt->setTextOffset(5);
+  _pwd_txt->setHPaddings(5);
   _pwd_txt->setWidth(TFT_WIDTH - 10);
   _pwd_txt->setHeight(40);
   _pwd_txt->setBackColor(COLOR_WHITE);

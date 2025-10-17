@@ -384,7 +384,7 @@ void WTContext::showContextMenuTmpl()
 
   Label* lora_sets_lbl = creator.getItemLabel(STR_LORA_SETS);
   lora_sets_item->setLbl(lora_sets_lbl);
-  lora_sets_lbl->setTextOffset(1);
+  lora_sets_lbl->setHPaddings(1);
 
   // Налаштування кодеку
   MenuItem* pref_item = creator.getMenuItem(ID_ITEM_CODEC_SETS);
@@ -392,7 +392,7 @@ void WTContext::showContextMenuTmpl()
 
   Label* pref_lbl = creator.getItemLabel(STR_CODEC_SETS);
   pref_item->setLbl(pref_lbl);
-  pref_lbl->setTextOffset(1);
+  pref_lbl->setHPaddings(1);
 
   _context_menu->setHeight(_context_menu->getSize() * _context_menu->getItemHeight() + 4);
   _context_menu->setPos(TFT_WIDTH - _context_menu->getWidth() - DISPLAY_PADDING,

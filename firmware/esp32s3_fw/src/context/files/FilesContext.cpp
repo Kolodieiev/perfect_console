@@ -219,7 +219,7 @@ void FilesContext::showFilesTmpl()
   size_title_lbl->setText(STR_SIZE);
   size_title_lbl->setTextColor(COLOR_WHITE);
   size_title_lbl->initWidthToFit();
-  size_title_lbl->setPos(0, TFT_HEIGHT - size_title_lbl->getHeight() * 2 - 4);
+  size_title_lbl->setPos(0, TFT_HEIGHT - size_title_lbl->getHeight() * 2 - 7);
 
   _file_size_lbl = new Label(ID_SIZE_LBL);
   layout->addWidget(_file_size_lbl);
@@ -276,7 +276,7 @@ void FilesContext::showContextMenu()
 
     Label* paste_lbl = creator.getItemLabel(STR_PASTE, u8g2_font_unifont_t_cyrillic);
     paste_item->setLbl(paste_lbl);
-    paste_lbl->setTextOffset(1);
+    paste_lbl->setHPaddings(1);
   }
 
   // новий каталог
@@ -285,7 +285,7 @@ void FilesContext::showContextMenu()
 
   Label* new_dir_lbl = creator.getItemLabel(STR_NEW_DIR, u8g2_font_unifont_t_cyrillic);
   new_dir_item->setLbl(new_dir_lbl);
-  new_dir_lbl->setTextOffset(1);
+  new_dir_lbl->setHPaddings(1);
 
   // контекст для вибраного файлу
   uint16_t id = _files_list->getCurrItemID();
@@ -302,7 +302,7 @@ void FilesContext::showContextMenu()
 
         Label* exec_lbl = creator.getItemLabel(STR_EXECUTE, u8g2_font_unifont_t_cyrillic);
         exec_item->setLbl(exec_lbl);
-        exec_lbl->setTextOffset(1);
+        exec_lbl->setHPaddings(1);
       }
       else if (_files[id - 1].nameEndsWith(STR_BMP_EXT))
       {
@@ -321,7 +321,7 @@ void FilesContext::showContextMenu()
 
             Label* set_wall_lbl = creator.getItemLabel(STR_SET_WALLPP, u8g2_font_unifont_t_cyrillic);
             set_wall_item->setLbl(set_wall_lbl);
-            set_wall_lbl->setTextOffset(1);
+            set_wall_lbl->setHPaddings(1);
           }
           _fs.closeFile(bmp_file);
         }
@@ -333,7 +333,7 @@ void FilesContext::showContextMenu()
 
       Label* copy_lbl = creator.getItemLabel(STR_COPY, u8g2_font_unifont_t_cyrillic);
       copy_item->setLbl(copy_lbl);
-      copy_lbl->setTextOffset(1);
+      copy_lbl->setHPaddings(1);
     }
 
     // перейменувати
@@ -342,7 +342,7 @@ void FilesContext::showContextMenu()
 
     Label* rename_lbl = creator.getItemLabel(STR_RENAME, u8g2_font_unifont_t_cyrillic);
     rename_item->setLbl(rename_lbl);
-    rename_lbl->setTextOffset(1);
+    rename_lbl->setHPaddings(1);
 
     // перемістити
     MenuItem* move_item = creator.getMenuItem(ID_ITEM_MOVE);
@@ -350,7 +350,7 @@ void FilesContext::showContextMenu()
 
     Label* move_lbl = creator.getItemLabel(STR_MOVE, u8g2_font_unifont_t_cyrillic);
     move_item->setLbl(move_lbl);
-    move_lbl->setTextOffset(1);
+    move_lbl->setHPaddings(1);
 
     // видалити
     MenuItem* delete_item = creator.getMenuItem(ID_ITEM_REMOVE);
@@ -358,7 +358,7 @@ void FilesContext::showContextMenu()
 
     Label* delete_lbl = creator.getItemLabel(STR_DELETE, u8g2_font_unifont_t_cyrillic);
     delete_item->setLbl(delete_lbl);
-    delete_lbl->setTextOffset(1);
+    delete_lbl->setHPaddings(1);
   }
 
   // імпорт
@@ -367,7 +367,7 @@ void FilesContext::showContextMenu()
 
   Label* import_lbl = creator.getItemLabel(STR_GET, u8g2_font_unifont_t_cyrillic);
   import_item->setLbl(import_lbl);
-  import_lbl->setTextOffset(1);
+  import_lbl->setHPaddings(1);
 
   // експорт
   MenuItem* export_item = creator.getMenuItem(ID_ITEM_EXPORT);
@@ -375,7 +375,7 @@ void FilesContext::showContextMenu()
 
   Label* export_lbl = creator.getItemLabel(STR_SHARE, u8g2_font_unifont_t_cyrillic);
   export_item->setLbl(export_lbl);
-  export_lbl->setTextOffset(1);
+  export_lbl->setHPaddings(1);
 
   // оновити
   MenuItem* upd_item = creator.getMenuItem(ID_ITEM_UPDATE);
@@ -383,7 +383,7 @@ void FilesContext::showContextMenu()
 
   Label* upd_lbl = creator.getItemLabel(STR_UPDATE, u8g2_font_unifont_t_cyrillic);
   upd_item->setLbl(upd_lbl);
-  upd_lbl->setTextOffset(1);
+  upd_lbl->setHPaddings(1);
 
   //
   _context_menu->setHeight(_context_menu->getSize() * _context_menu->getItemHeight() + 4);
@@ -406,12 +406,11 @@ void FilesContext::showDialog(Mode mode)
   IWidgetContainer* layout = creator.getEmptyLayout();
 
   _dialog_txt = new TextBox(ID_DIALOG_TXT);
-  _dialog_txt->setTextOffset(5);
+  _dialog_txt->setHPaddings(5);
   _dialog_txt->setWidth(TFT_WIDTH - 10);
   _dialog_txt->setHeight(40);
   _dialog_txt->setBackColor(COLOR_WHITE);
   _dialog_txt->setTextColor(COLOR_BLACK);
-  _dialog_txt->setFont(u8g2_font_unifont_t_cyrillic);
   _dialog_txt->setTextSize(2);
   _dialog_txt->setPos(5, 0);
   _dialog_txt->setCornerRadius(3);

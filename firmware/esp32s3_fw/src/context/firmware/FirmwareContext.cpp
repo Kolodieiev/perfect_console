@@ -22,23 +22,17 @@ FirmwareContext::FirmwareContext()
   title->setGravity(IWidget::GRAVITY_CENTER);
   title->setAlign(IWidget::ALIGN_CENTER);
   title->setBackColor(COLOR_BLACK);
-  title->setTextSize(2);
-  title->setFont(u8g2_font_unifont_t_cyrillic);
 
   Label* author = title->clone(ID_AUTHOR);
   layout->addWidget(author);
   author->setText(STR_AUTHOR);
   author->setPos(0, getCenterY(author));
   author->setBackColor(COLOR_MAIN_BACK);
-  author->setTextSize(2);
-  author->setFont(u8g2_font_unifont_t_cyrillic);
 
   Label* version = author->clone(ID_VERSION);
   layout->addWidget(version);
   version->setText(STR_FIRM_VER);
   version->setPos(0, author->getYPos() + author->getHeight() + 10);
-  version->setTextSize(1);
-  version->setFont(u8g2_font_unifont_t_cyrillic);
 }
 
 bool FirmwareContext::loop()

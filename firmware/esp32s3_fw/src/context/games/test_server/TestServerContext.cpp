@@ -127,7 +127,7 @@ namespace test_server
     _dialog_txt = new TextBox(ID_PWD_TXT);
     layout->addWidget(_dialog_txt);
     _dialog_txt->setText(start_txt);
-    _dialog_txt->setTextOffset(5);
+    _dialog_txt->setHPaddings(5);
     _dialog_txt->setWidth(TFT_WIDTH - 10);
     _dialog_txt->setHeight(40);
     _dialog_txt->setBackColor(COLOR_WHITE);
@@ -682,7 +682,7 @@ namespace test_server
 
         Label* new_lbl = creator.getItemLabel(it->second->getName());
         new_item->setLbl(new_lbl);
-        new_lbl->setTextOffset(3);
+        new_lbl->setHPaddings(3);
       }
     }
 
@@ -760,7 +760,7 @@ namespace test_server
 
       Label* disconn_lbl = creator.getItemLabel(STR_CONT_DISC_CLIENT);
       disconn_item->setLbl(disconn_lbl);
-      disconn_lbl->setTextOffset(1);
+      disconn_lbl->setHPaddings(1);
     }
 
     if (_server.isOpen())
@@ -771,7 +771,7 @@ namespace test_server
 
       Label* close_lbl = creator.getItemLabel(STR_CONT_CLOSE_LOBBY);
       close_item->setLbl(close_lbl);
-      close_lbl->setTextOffset(1);
+      close_lbl->setHPaddings(1);
     }
     else
     {
@@ -781,7 +781,7 @@ namespace test_server
 
       Label* open_lbl = creator.getItemLabel(STR_CONT_OPEN_LOBBY);
       open_item->setLbl(open_lbl);
-      open_lbl->setTextOffset(1);
+      open_lbl->setHPaddings(1);
     }
 
     // Завершити гру
@@ -790,7 +790,7 @@ namespace test_server
 
     Label* end_lbl = creator.getItemLabel(STR_CONT_GAME_EXIT);
     end_item->setLbl(end_lbl);
-    end_lbl->setTextOffset(1);
+    end_lbl->setHPaddings(1);
 
     // Розпочати гру
     MenuItem* start_item = creator.getMenuItem(ID_ITEM_START_GAME);
@@ -798,7 +798,7 @@ namespace test_server
 
     Label* start_lbl = creator.getItemLabel(STR_CONT_GAME_START);
     start_item->setLbl(start_lbl);
-    start_lbl->setTextOffset(1);
+    start_lbl->setHPaddings(1);
 
     _lobby_context_menu->setHeight(_lobby_context_menu->getSize() * _lobby_context_menu->getItemHeight() + 4);
     _lobby_context_menu->setPos(TFT_WIDTH - _lobby_context_menu->getWidth() - 2,

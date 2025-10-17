@@ -1,7 +1,7 @@
 #pragma once
 
 #define GRAPHICS_ENABLED    // Увімкнути підтримку графічного драйвера. Закоментуй, якщо в проєкті не використовується дисплей.
-#define UI_UPDATE_DELAY 20  // Затримка (мс) між фреймами
+#define UI_UPDATE_DELAY 25  // Затримка (мс) між фреймами
 #define DISPLAY_ROTATION 0  // Стартова орієнтація екрану
 #define DOUBLE_BUFFERRING   // Подвійна буферизація. Працює тільки за наявності PSRAM. Інакше буде викликано рестарт МК
 // #define SHOW_FPS             // Відображати значення FPS на дисплеї

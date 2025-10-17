@@ -105,7 +105,7 @@ namespace pixeler
 
   void DisplayWrapper::fillRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t radius, uint16_t color)
   {
-    _canvas.drawRoundRect(x, y, w, h, radius, color);
+    _canvas.fillRoundRect(x, y, w, h, radius, color);
     _is_buff_changed = true;
   }
 

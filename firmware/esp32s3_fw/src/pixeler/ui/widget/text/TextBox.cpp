@@ -42,7 +42,7 @@ namespace pixeler
       cln->_text_color = _text_color;
       cln->_font_ptr = _font_ptr;
       cln->_char_hgt = _char_hgt;
-      cln->_text_offset = _text_offset;
+      cln->_h_padding = _h_padding;
       cln->_text_gravity = _text_gravity;
       cln->_text_alignment = _text_alignment;
       cln->_temp_width = _temp_width;
@@ -92,7 +92,7 @@ namespace pixeler
     {
       uint16_t pix_num = calcTextPixels(first_char_pos);
 
-      if (pix_num < _width)
+      if (pix_num < _width - _h_padding * 2 - 2) // TODO
       {
         ret_str = getSubStr(ch_str, first_char_pos, calcRealStrLen(ch_str) - 1);
         return pix_num;
@@ -129,7 +129,7 @@ namespace pixeler
       y_offset = _parent->getYPos();
     }
 
-    if (str_pix_num + _text_offset < _width)
+    if (str_pix_num + _h_padding * 2 - 2 < _width)
     {
       uint16_t txt_x_pos = calcXStrOffset(str_pix_num);
 

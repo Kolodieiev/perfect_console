@@ -121,7 +121,7 @@ namespace pixeler
     _toast_label->setBorder(true);
     _toast_label->setBorderColor(COLOR_ORANGE);
     _toast_label->setHeight(25);
-    _toast_label->setTextOffset(4);
+    _toast_label->setHPaddings(4);
 
     if (TFT_WIDTH < 120)
       _toast_label->setWidth(TFT_WIDTH - 6);

@@ -42,7 +42,7 @@ namespace pixeler
       cln->_text_color = _text_color;
       cln->_font_ptr = _font_ptr;
       cln->_char_hgt = _char_hgt;
-      cln->_text_offset = _text_offset;
+      cln->_h_padding = _h_padding;
       cln->_temp_width = _temp_width;
 
       if (_back_img)

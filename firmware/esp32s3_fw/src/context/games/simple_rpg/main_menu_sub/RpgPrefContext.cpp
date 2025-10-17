@@ -260,7 +260,7 @@ namespace simple_rpg
     _dialog_txt = new TextBox(ID_PWD_TXT);
     layout->addWidget(_dialog_txt);
     _dialog_txt->setText(start_txt);
-    _dialog_txt->setTextOffset(5);
+    _dialog_txt->setHPaddings(5);
     _dialog_txt->setWidth(TFT_WIDTH - 10);
     _dialog_txt->setHeight(40);
     _dialog_txt->setBackColor(COLOR_WHITE);
