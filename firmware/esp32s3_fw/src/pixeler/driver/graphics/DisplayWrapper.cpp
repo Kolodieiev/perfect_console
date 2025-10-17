@@ -129,7 +129,13 @@ namespace pixeler
     float cos_a = cosf(rad);
     float sin_a = sinf(rad);
 
-    uint16_t* rotated = static_cast<uint16_t*>(ps_malloc(w * h * sizeof(uint16_t)));
+    uint16_t* rotated{nullptr};
+
+    if (psramInit())
+      rotated = static_cast<uint16_t*>(ps_malloc(w * h * sizeof(uint16_t)));
+    else
+      rotated = static_cast<uint16_t*>(malloc(w * h * sizeof(uint16_t)));
+
     if (!rotated)
     {
       log_e("Помилка виділення пам'яті для повернутого зображення");
