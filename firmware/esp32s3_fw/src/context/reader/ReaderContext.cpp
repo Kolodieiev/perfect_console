@@ -231,7 +231,6 @@ void ReaderContext::showReadTmpl()
   layout->addWidget(_progress_lbl);
   _progress_lbl->setText("0000/0000");
   _progress_lbl->setTextColor(COLOR_WHITE);
-  _progress_lbl->setFont(u8g2_font_unifont_t_cyrillic);
   _progress_lbl->initWidthToFit();
   _progress_lbl->setPos(5, TFT_HEIGHT - _progress_lbl->getHeight());
 

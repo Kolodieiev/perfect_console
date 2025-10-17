@@ -102,7 +102,6 @@ void PrefFileServerContext::showDialogTmpl()
   _dialog_txt->setHeight(40);
   _dialog_txt->setBackColor(COLOR_WHITE);
   _dialog_txt->setTextColor(COLOR_BLACK);
-  _dialog_txt->setFont(u8g2_font_unifont_t_cyrillic);
   _dialog_txt->setTextSize(2);
   _dialog_txt->setPos(5, 5);
   _dialog_txt->setCornerRadius(3);

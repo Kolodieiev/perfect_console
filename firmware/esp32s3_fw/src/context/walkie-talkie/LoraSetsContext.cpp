@@ -298,7 +298,6 @@ void LoraSetsContext::fillSetsList()
 
     Label* lbl = new Label(1);
     item->setLbl(lbl);
-    lbl->setFont(u8g2_font_unifont_t_cyrillic);
     lbl->setTextSize(2);
     lbl->setAutoscrollInFocus(true);
 

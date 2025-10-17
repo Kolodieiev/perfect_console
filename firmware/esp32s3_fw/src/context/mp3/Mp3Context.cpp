@@ -106,7 +106,6 @@ void Mp3Context::showPlaying()
   _track_name_lbl = new Label(ID_TRACK_NAME);
   layout->addWidget(_track_name_lbl);
   _track_name_lbl->setText(_track_name);
-  _track_name_lbl->setFont(u8g2_font_unifont_t_cyrillic);
   _track_name_lbl->setAlign(IWidget::ALIGN_CENTER);
   _track_name_lbl->setGravity(IWidget::GRAVITY_CENTER);
   _track_name_lbl->setBackColor(COLOR_BLACK);

@@ -227,7 +227,6 @@ void WTContext::showMainTmpl()
   ctx_header_lbl->setGravity(IWidget::GRAVITY_CENTER);
   ctx_header_lbl->setTextColor(COLOR_RED);
   ctx_header_lbl->setTextSize(2);
-  ctx_header_lbl->setFont(u8g2_font_unifont_t_cyrillic);
   ctx_header_lbl->setAutoscroll(true);
 
   if (_lora_set_name.isEmpty())
@@ -248,7 +247,6 @@ void WTContext::showMainTmpl()
   layout->addWidget(lbl_title_chnl);
   lbl_title_chnl->setText(STR_CHANN_TITLE);
   lbl_title_chnl->setPos(DISPLAY_PADDING, ctx_header_lbl->getYPos() + ctx_header_lbl->getHeight() + DISPLAY_PADDING);
-  lbl_title_chnl->setFont(u8g2_font_unifont_t_cyrillic);
   lbl_title_chnl->setTextSize(2);
   lbl_title_chnl->setTextColor(COLOR_GREEN);
   lbl_title_chnl->initWidthToFit();

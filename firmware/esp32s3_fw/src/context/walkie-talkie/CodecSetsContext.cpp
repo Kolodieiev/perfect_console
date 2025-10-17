@@ -158,7 +158,6 @@ void CodecSetsContext::showMainTmpl()
   volume_spin->setStep(1);
   volume_spin->setValue(_codec_sets.volume);
   volume_spin->setWidth(50);
-  volume_spin->setFont(u8g2_font_unifont_t_cyrillic);
   volume_spin->setTextSize(2);
   volume_spin->setBackColor(COLOR_WHITE);
   volume_spin->setTextColor(COLOR_BLACK);
