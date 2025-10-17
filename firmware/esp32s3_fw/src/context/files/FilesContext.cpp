@@ -52,10 +52,10 @@ bool FilesContext::loop()
   return true;
 }
 
-FilesContext::FilesContext()
+FilesContext::FilesContext() : _sync_task_mutex{xSemaphoreCreateMutex()}
 {
   _dir_img = new Image(1);
-  _dir_img->setTranspColor(COLOR_TRANSPARENT);
+  _dir_img->setTransparency(true);
   _dir_img->setWidth(16);
   _dir_img->setHeight(16);
   _dir_img->setSrc(FOLDER_IMG);
@@ -89,6 +89,7 @@ FilesContext::~FilesContext()
   delete _lua_img;
   delete _lua_context;
   delete _notification;
+  vSemaphoreDelete(_sync_task_mutex);
 }
 
 //-------------------------------------------------------------------------------------------
@@ -168,15 +169,14 @@ void FilesContext::showCopyingTmpl()
 
 void FilesContext::showRemovingTmpl()
 {
+  _mode = MODE_REMOVING;
+
   WidgetCreator creator;
   IWidgetContainer* layout = creator.getEmptyLayout();
+  setLayout(layout);
 
   _msg_lbl = creator.getStatusMsgLable(ID_MSG_LBL, STR_REMOVING, 2);
   layout->addWidget(_msg_lbl);
-
-  _mode = MODE_REMOVING;
-
-  setLayout(layout);
 }
 
 void FilesContext::showCancelingTmpl()
@@ -633,39 +633,46 @@ void FilesContext::update()
 
   if (_fs.isWorking())
   {
-    if ((millis() - _upd_msg_time) > UPD_TRACK_INF_INTERVAL)
+    xSemaphoreTake(_sync_task_mutex, portMAX_DELAY);
+
+    if (_fs.isWorking())
     {
-      String upd_txt;
-      String upd_progress;
-
-      if (_upd_counter > 2)
-        _upd_counter = 0;
-      else
-        ++_upd_counter;
-
-      for (uint8_t i{0}; i < _upd_counter; ++i)
-        upd_progress += ".";
-
-      if (_mode == MODE_CANCELING)
+      if ((millis() - _upd_msg_time) > UPD_TRACK_INF_INTERVAL)
       {
-        upd_txt = STR_CANCELING;
-        upd_txt += upd_progress;
-        _msg_lbl->setText(upd_txt);
-      }
-      else if (_mode == MODE_COPYING)
-      {
-        _task_progress->setProgress(_fs.getCopyProgress());
+        String upd_txt;
+        String upd_progress;
+
+        if (_upd_counter > 2)
+          _upd_counter = 0;
+        else
+          ++_upd_counter;
+
+        for (uint8_t i{0}; i < _upd_counter; ++i)
+          upd_progress += ".";
+
+        if (_mode == MODE_CANCELING)
+        {
+          upd_txt = STR_CANCELING;
+          upd_txt += upd_progress;
+          _msg_lbl->setText(upd_txt);
+        }
+        else if (_mode == MODE_COPYING)
+        {
+          _task_progress->setProgress(_fs.getCopyProgress());
+          _upd_msg_time = millis();
+        }
+        else if (_mode == MODE_REMOVING)
+        {
+          upd_txt = STR_REMOVING;
+          upd_txt += upd_progress;
+          _msg_lbl->setText(upd_txt);
+        }
+
         _upd_msg_time = millis();
       }
-      else if (_mode == MODE_REMOVING)
-      {
-        upd_txt = STR_REMOVING;
-        upd_txt += upd_progress;
-        _msg_lbl->setText(upd_txt);
-      }
-
-      _upd_msg_time = millis();
     }
+
+    xSemaphoreGive(_sync_task_mutex);
   }
 }
 
@@ -895,11 +902,13 @@ void FilesContext::stopFileServer()
 
 void FilesContext::taskDoneHandler(bool result)
 {
+  xSemaphoreTake(_sync_task_mutex, portMAX_DELAY);
   showResultToast(result);
 
   indexCurDir();
   showFilesTmpl();
   fillFilesTmpl();
+  xSemaphoreGive(_sync_task_mutex);
 }
 
 void FilesContext::taskDone(bool result, void* arg)
@@ -934,6 +943,7 @@ void FilesContext::makeMenuFilesItems(std::vector<MenuItem*>& items, uint16_t fi
     Label* lbl = new Label(1);
     item->setLbl(lbl);
     lbl->setAutoscrollInFocus(true);
+    lbl->setFont(font_10x20);
 
     if (_files[i].isDir())
       item->setImg(_dir_img);

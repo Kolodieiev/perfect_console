@@ -142,6 +142,8 @@ private:
   std::vector<FileInfo> _files;
   std::vector<String> _breadcrumbs;
 
+  volatile xSemaphoreHandle _sync_task_mutex{nullptr};
+
   LuaContext* _lua_context{nullptr};
   Notification* _notification{nullptr};
   Image* _lua_img{nullptr};
