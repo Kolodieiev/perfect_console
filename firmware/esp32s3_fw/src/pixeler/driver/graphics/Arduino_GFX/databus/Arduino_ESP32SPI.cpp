@@ -116,22 +116,6 @@ Arduino_ESP32SPI::Arduino_ESP32SPI(
 #endif
 }
 
-static void _on_apb_change(void* arg, apb_change_ev_t ev_type, uint32_t old_apb, uint32_t new_apb)
-{
-  spi_t* _spi = (spi_t*)arg;
-  if (ev_type == APB_BEFORE_CHANGE)
-  {
-    SPI_MUTEX_LOCK();
-    while (_spi->dev->cmd.usr)
-      ;
-  }
-  else
-  {
-    _spi->dev->clock.val = spiFrequencyToClockDiv(old_apb / ((_spi->dev->clock.clkdiv_pre + 1) * (_spi->dev->clock.clkcnt_n + 1)));
-    SPI_MUTEX_UNLOCK();
-  }
-}
-
 static void spiInitBus(spi_t* spi)
 {
 #if CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32
@@ -357,8 +341,6 @@ bool Arduino_ESP32SPI::begin(int32_t speed, int8_t dataMode)
   spiSetDataMode(_spi, _dataMode);
   spiSetBitOrder(_spi, _bitOrder);
   spiSetClockDiv(_spi, _div);
-
-  addApbChangeCallback(_spi, _on_apb_change);
 
   spiAttachSCK(_spi, _sck);
 
