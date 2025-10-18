@@ -84,6 +84,7 @@ public:
     return m_f_running;
   }
   void loop();
+  void deinit();
   uint32_t stopSong();
   void forceMono(bool m);
   void setBalance(int8_t bal = 0);
