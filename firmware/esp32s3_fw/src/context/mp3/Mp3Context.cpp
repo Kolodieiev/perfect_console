@@ -249,7 +249,7 @@ void Mp3Context::showPlaylistsTmpl()
     MenuItem* cont_item = creator.getMenuItem(ID_CONT_ITEM);
     _playlists_list->addItem(cont_item);
 
-    Label* cont_lbl = creator.getItemLabel(STR_CONTINUE, font_10x20, 2);
+    Label* cont_lbl = creator.getItemLabel(STR_CONTINUE, font_10x20);
     cont_item->setLbl(cont_lbl);
   }
 
