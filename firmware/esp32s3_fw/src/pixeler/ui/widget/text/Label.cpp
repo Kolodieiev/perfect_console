@@ -208,36 +208,23 @@ namespace pixeler
 
   uint16_t Label::calcXStrOffset(uint16_t str_pix_num) const
   {
-    if (_width > str_pix_num + _h_padding)
+    if (_width - 3 <= str_pix_num + _h_padding * 2)
+      return 0;
+
+    if (_has_autoscroll)
+      return _h_padding + 1;
+
+    switch (_text_alignment)
     {
-      if (_has_autoscroll)
-        return _h_padding;
-
-      switch (_text_alignment)
-      {
-        case ALIGN_START:
-        {
-          return _h_padding;
-        }
-        case ALIGN_CENTER:
-        {
-          uint16_t x_offset = static_cast<uint16_t>((static_cast<float>(_width - str_pix_num)) / 2);
-
-          if (x_offset < _h_padding)
-            x_offset = _h_padding;
-          return x_offset;
-        }
-        case ALIGN_END:
-        {
-          uint16_t x_offset = _width - str_pix_num + _h_padding;
-          if (x_offset < _h_padding)
-            x_offset = _h_padding;
-          return x_offset;
-        }
-      }
+      case ALIGN_START:
+        return _h_padding + 1;
+      case ALIGN_CENTER:
+        return static_cast<uint16_t>((static_cast<float>(_width - str_pix_num)) / 2);
+      case ALIGN_END:
+        return _width - str_pix_num - _h_padding - 3;
+      default:
+        return 0;
     }
-
-    return 0;
   }
 
   uint16_t Label::calcYStrOffset() const
