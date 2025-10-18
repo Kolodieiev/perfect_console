@@ -1,5 +1,7 @@
 #include "Pixeler.h"
 
+#include <pixeler_setup/cpu_setup.h>
+
 #include "pixeler/manager/ContextManager.h"
 
 namespace pixeler
@@ -11,6 +13,8 @@ namespace pixeler
 
   void Pixeler::pixelerContextTask(void* params)
   {
+    setCpuFrequencyMhz(BASE_CPU_FREQ_MHZ);
+
     ContextManager context_manager;
     context_manager.run();
   }

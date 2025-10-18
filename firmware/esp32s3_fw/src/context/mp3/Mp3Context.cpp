@@ -47,6 +47,7 @@ void Mp3Context::savePref()
 
 Mp3Context::Mp3Context()
 {
+  setCpuFrequencyMhz(BALANCED_CPU_FREQ_MHZ);
   WidgetCreator creator;
   EmptyLayout* layout = creator.getEmptyLayout();
   setLayout(layout);
@@ -90,8 +91,11 @@ Mp3Context::Mp3Context()
 
 Mp3Context::~Mp3Context()
 {
+  _audio.deinit();
   uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_OFF, CH_PIN_SPK_PWR};
   _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+
+  setCpuFrequencyMhz(BASE_CPU_FREQ_MHZ);
 }
 
 //-------------------------------------------------------------------------------------------
@@ -886,7 +890,6 @@ void Mp3Context::changeBackLight()
 {
   if (_is_locked)
   {
-    setCpuFrequencyMhz(240);
     _display.setBrightness(_brightness);
     _gui_enabled = true;
 
@@ -922,8 +925,6 @@ void Mp3Context::changeBackLight()
 
     ccpu_cmd_data[1] = BtnID::BTN_RIGHT;
     _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data));
-
-    setCpuFrequencyMhz(160);
   }
 
   _is_locked = !_is_locked;

@@ -18,6 +18,7 @@ namespace simple_rpg
 {
   SimpleRpgContext::SimpleRpgContext()
   {
+    setCpuFrequencyMhz(MAX_CPU_FREQ_MHZ);
     showMainMenuTmpl();  // В момент створення контексту, першим шаблоном в нього буде додано головне меню гри
   }
 
@@ -28,6 +29,7 @@ namespace simple_rpg
     // задля збереження можливості перевикористання.
     delete _img_back_normal;
     delete _img_back_hover;
+    setCpuFrequencyMhz(BASE_CPU_FREQ_MHZ);
   }
 
   bool SimpleRpgContext::loop()

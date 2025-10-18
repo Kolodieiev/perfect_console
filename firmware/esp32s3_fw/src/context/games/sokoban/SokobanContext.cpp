@@ -13,10 +13,16 @@ namespace sokoban
 {
   SokobanContext::SokobanContext()
   {
+    setCpuFrequencyMhz(MAX_CPU_FREQ_MHZ);
     WidgetCreator creator;
     EmptyLayout* layout = creator.getEmptyLayout();
     setLayout(layout);
     showLvlMenu();
+  }
+
+  SokobanContext::~SokobanContext()
+  {
+    setCpuFrequencyMhz(BASE_CPU_FREQ_MHZ);
   }
 
   bool SokobanContext::loop()

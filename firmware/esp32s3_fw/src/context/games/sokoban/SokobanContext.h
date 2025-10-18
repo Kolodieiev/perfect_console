@@ -16,7 +16,7 @@ namespace sokoban
   {
   public:
     SokobanContext();
-    virtual ~SokobanContext() {}
+    virtual ~SokobanContext();
 
   protected:
     virtual bool loop() override;
