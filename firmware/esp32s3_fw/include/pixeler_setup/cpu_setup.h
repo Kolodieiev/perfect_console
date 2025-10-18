@@ -1,0 +1,5 @@
+#pragma once
+
+#define BASE_CPU_FREQ_MHZ 80
+#define BALANCED_CPU_FREQ_MHZ 160
+#define MAX_CPU_FREQ_MHZ 240
