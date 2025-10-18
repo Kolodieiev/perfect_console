@@ -54,6 +54,7 @@ bool FilesContext::loop()
 
 FilesContext::FilesContext() : _sync_task_mutex{xSemaphoreCreateMutex()}
 {
+  setCpuFrequencyMhz(MAX_CPU_FREQ_MHZ);
   _dir_img = new Image(1);
   _dir_img->setTransparency(true);
   _dir_img->setWidth(16);
@@ -78,8 +79,8 @@ FilesContext::FilesContext() : _sync_task_mutex{xSemaphoreCreateMutex()}
 
   _fs.setTaskDoneHandler(taskDone, this);
 
-  showFilesTmpl();
   indexCurDir();
+  showFilesTmpl();
   fillFilesTmpl();
 }
 
@@ -90,6 +91,7 @@ FilesContext::~FilesContext()
   delete _lua_context;
   delete _notification;
   vSemaphoreDelete(_sync_task_mutex);
+  setCpuFrequencyMhz(BASE_CPU_FREQ_MHZ);
 }
 
 //-------------------------------------------------------------------------------------------
