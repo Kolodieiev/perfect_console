@@ -31,6 +31,7 @@ const char STR_BAT_VOLT_TITLE[] = "Напруга:";
 
 WTContext::WTContext()
 {
+  setCpuFrequencyMhz(MAX_CPU_FREQ_MHZ);
   WidgetCreator creator;
   EmptyLayout* layout = creator.getEmptyLayout();
   setLayout(layout);
@@ -53,14 +54,15 @@ WTContext::WTContext()
   if (!_lora.init())
   {
     showLoraErrTmpl();
-    return;
   }
+  else
+  {
+    loadSettings();
+    showMainTmpl();
 
-  loadSettings();
-  showMainTmpl();
-
-  _sync_write_mutex = xSemaphoreCreateMutex();
-  xTaskCreatePinnedToCore(packSenderTask, "pst", 20 * 512, this, 10, &_pack_sender_handle, 0);
+    _sync_write_mutex = xSemaphoreCreateMutex();
+    xTaskCreatePinnedToCore(packSenderTask, "pst", 20 * 512, this, 10, &_pack_sender_handle, 0);
+  }
 }
 
 void WTContext::loadSettings()
@@ -164,9 +166,12 @@ void WTContext::toggleBL()
 
 WTContext::~WTContext()
 {
-  vTaskDelete(_pack_sender_handle);
-  vSemaphoreDelete(_sync_write_mutex);
-  _lora.end();
+  if (_lora.isInited())
+  {
+    vTaskDelete(_pack_sender_handle);
+    vSemaphoreDelete(_sync_write_mutex);
+    _lora.end();
+  }
 
   uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_OFF, CH_PIN_LORA_PWR};
   _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
@@ -175,7 +180,7 @@ WTContext::~WTContext()
   _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
 
   ccpu_cmd_data[1] = CH_PIN_MIC_PWR;
-  _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data));
+  _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
 
   _i2s_in.deinit();
   _i2s_out.deinit();
@@ -183,6 +188,7 @@ WTContext::~WTContext()
   codec2_destroy(_codec);
   free(_samples_8k_buf);
   free(_samples_16k_buf);
+  setCpuFrequencyMhz(BASE_CPU_FREQ_MHZ);
 }
 
 void WTContext::showLoraErrTmpl()
@@ -412,7 +418,7 @@ void WTContext::packSenderTask(void* params)
       xSemaphoreGive(self._sync_write_mutex);
     }
 
-    if (millis() - ts > 2000)
+    if (millis() - ts > 1000)
     {
       ts = millis();
       vTaskDelay(1 / portTICK_PERIOD_MS);
@@ -422,6 +428,9 @@ void WTContext::packSenderTask(void* params)
 
 bool WTContext::loop()
 {
+  if (_mode == MODE_SD_UNCONN || _mode == MODE_LORA_UNCONN)
+    return true;
+
   if (_mode == MODE_SUBCONTEXT)
   {
     if (!_sub_context->isReleased())
