@@ -2,6 +2,7 @@
 #pragma GCC optimize("O3")
 
 #include <Arduino.h>
+#include <pixeler_setup/cpu_setup.h>
 
 #include "../../driver/graphics/DisplayWrapper.h"
 #include "../../driver/input/Input.h"
@@ -95,9 +96,9 @@ namespace pixeler
      * @brief Встановлює стан поточного контексту в такий, що повинен бути звільнений.
      * Також встановлює ідентифікатор контексту, в який повинен виконатися перехід.
      *
-     * @param screen_ID
+     * @param context_ID
      */
-    void openContextByID(ContextID screen_ID);
+    void openContextByID(ContextID context_ID);
 
     /**
      * @brief Встановлює стан поточного контексту в такий, що повинен бути звільнений.

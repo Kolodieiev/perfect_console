@@ -80,10 +80,10 @@ namespace pixeler
     xSemaphoreGive(_layout_mutex);
   }
 
-  void IContext::openContextByID(ContextID screen_ID)
+  void IContext::openContextByID(ContextID context_ID)
   {
     _input.reset();
-    _next_context_ID = screen_ID;
+    _next_context_ID = context_ID;
     _is_released = true;
   }
 
