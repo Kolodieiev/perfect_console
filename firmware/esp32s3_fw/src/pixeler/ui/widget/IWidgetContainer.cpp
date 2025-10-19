@@ -98,32 +98,6 @@ namespace pixeler
     return result;
   }
 
-  IWidget* IWidgetContainer::getWidgetByCoords(uint16_t x, uint16_t y)
-  {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
-    for (const auto& widget : _widgets)
-    {
-      if (widget->hasIntersectWithCoords(x, y))
-      {
-        if (widget->isContainer())
-        {
-          IWidgetContainer* container = static_cast<IWidgetContainer*>(widget);
-          xSemaphoreGive(_widg_mutex);
-          return container->getWidgetByCoords(x, y);
-        }
-        else
-        {
-          xSemaphoreGive(_widg_mutex);
-          return widget;
-        }
-      }
-    }
-
-    xSemaphoreGive(_widg_mutex);
-    return this;
-  }
-
   void IWidgetContainer::delWidgets()
   {
     xSemaphoreTake(_widg_mutex, portMAX_DELAY);

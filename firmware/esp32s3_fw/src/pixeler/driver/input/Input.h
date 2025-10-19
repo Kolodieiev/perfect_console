@@ -6,7 +6,6 @@
 #include <unordered_map>
 
 #include "Button.h"
-#include "ITouchscreen.h"
 #include "external_input/ExtInput.h"
 #include "pixeler_setup/input_setup.h"
 
