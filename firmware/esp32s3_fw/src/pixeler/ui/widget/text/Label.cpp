@@ -133,6 +133,10 @@ namespace pixeler
   void Label::setMultiline(bool state)
   {
     _is_multiline = state;
+
+    if (_is_multiline)
+      _width = TFT_WIDTH;
+
     _is_changed = true;
   }
 
@@ -524,12 +528,12 @@ namespace pixeler
     }
     else
     {
-      String sub_str;
-      uint16_t sub_str_pix_num;
-      uint16_t txt_x_pos;
-
       if (!_is_multiline)
       {
+        String sub_str;
+        uint16_t sub_str_pix_num;
+        uint16_t txt_x_pos;
+
         sub_str_pix_num = getFitStr(sub_str, _first_draw_char_pos);
         txt_x_pos = calcXStrOffset(sub_str_pix_num);
 
@@ -571,44 +575,15 @@ namespace pixeler
       }
       else
       {
-        uint8_t line_spacing = static_cast<float>(_char_hgt) * _text_size * 0.15;
-
         _first_draw_char_pos = 0;
         _has_autoscroll = false;
         _has_autoscroll_in_focus = false;
 
-        if (_char_hgt * 2 + line_spacing < _height - 2)  // Якщо можна помістити більше ніж один рядок тексту
-        {
-          uint16_t y_pos{0};
-
-          while (y_pos + _char_hgt + line_spacing < _height - 2)
-          {
-            sub_str_pix_num = getFitStr(sub_str, _first_draw_char_pos);
-
-            if (sub_str_pix_num > 0)
-            {
-              txt_x_pos = calcXStrOffset(sub_str_pix_num);
-
-              _display.setCursor(_x_pos + x_offset + txt_x_pos, _y_pos + y_offset + y_pos + _char_hgt);
-              _display.print(sub_str.c_str());
-
-              y_pos += _char_hgt + line_spacing;
-              _first_draw_char_pos += calcRealStrLen(sub_str);
-            }
-            else
-              break;
-          }
-        }
-        else
-        {
-          sub_str_pix_num = getFitStr(sub_str, _first_draw_char_pos);
-          txt_x_pos = calcXStrOffset(sub_str_pix_num);
-
-          _display.setCursor(_x_pos + x_offset + txt_x_pos, _y_pos + y_offset + txtYPos + _char_hgt);
-          _display.print(sub_str.c_str());
-        }
+        _display.setTextWrap(true);
+        _display.setCursor(0, _y_pos + y_offset + _char_hgt);
+        _display.print(_text.c_str());
+        _display.setTextWrap(false);
       }
     }
   }
-
 }  // namespace pixeler

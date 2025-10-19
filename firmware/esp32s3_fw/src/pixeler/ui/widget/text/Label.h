@@ -7,8 +7,6 @@
 
 namespace pixeler
 {
-  // TODO додати перенесення рядків по /n
-
   class Label : public IWidget
   {
   public:
@@ -282,5 +280,4 @@ namespace pixeler
     bool _has_full_autoscroll{true};
     bool _is_reverse_autoscroll{false};
   };
-
 }  // namespace pixeler
