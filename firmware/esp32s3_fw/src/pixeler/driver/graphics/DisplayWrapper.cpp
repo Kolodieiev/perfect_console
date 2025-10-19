@@ -31,6 +31,11 @@ namespace pixeler
     _canvas.setCursor(x, y);
   }
 
+  void DisplayWrapper::setTextWrap(bool state)
+  {
+    _canvas.setTextWrap(state);
+  }
+
   size_t DisplayWrapper::print(const char* str)
   {
     return _canvas.print(str);
@@ -229,24 +234,36 @@ namespace pixeler
   }
 #endif  // ENABLE_SCREENSHOTER
 
-#ifdef HAS_BL_PWM
+#ifdef BACKLIGHT_PIN
   void DisplayWrapper::enableBackLight()
   {
     pinMode(BACKLIGHT_PIN, OUTPUT);
     digitalWrite(BACKLIGHT_PIN, HIGH);
+#ifdef HAS_BL_PWM
+    ledcAttach(BACKLIGHT_PIN, PWM_FREQ, PWM_RESOLUTION);
+#endif  // HAS_BL_PWM
   }
 
   void DisplayWrapper::disableBackLight()
   {
+#ifdef HAS_BL_PWM
+    ledcDetach(BACKLIGHT_PIN);
+#endif  // HAS_BL_PWM
     digitalWrite(BACKLIGHT_PIN, LOW);
   }
 
+#ifdef HAS_BL_PWM
   void DisplayWrapper::setBrightness(uint8_t value)
   {
     _cur_brightness = value;
-    ledcAttach(BACKLIGHT_PIN, PWM_FREQ, PWM_RESOLUTION);
     ledcWrite(BACKLIGHT_PIN, value);
   }
+
+  uint8_t DisplayWrapper::getBrightness() const
+  {
+    return _cur_brightness;
+  }
+#endif  // HAS_BL_PWM
 #endif  // BACKLIGHT_PIN
 
   void DisplayWrapper::__flush()

@@ -6,6 +6,8 @@
 
 #include "pixeler/driver/graphics/Arduino_GFX/Arduino_GFX_Library.h"
 
+#define WDT_GUARD_TIME 1000UL
+
 namespace pixeler
 {
 #ifdef GRAPHICS_ENABLED
@@ -23,6 +25,7 @@ namespace pixeler
     void setTextSize(uint8_t size);
     void setTextColor(uint16_t color);
     void setCursor(int16_t x, int16_t y);
+    void setTextWrap(bool state);
     size_t print(const char* str);
 
     void calcTextBounds(const char* str, int16_t x, int16_t y, int16_t& x_out, int16_t& y_out, uint16_t& w_out, uint16_t& h_out);
@@ -56,7 +59,7 @@ namespace pixeler
     void takeScreenshot();
 #endif  // ENABLE_SCREENSHOTER
 
-#ifdef HAS_BL_PWM
+#ifdef BACKLIGHT_PIN
     /**
      * @brief Вмикає підсвітку дисплея зі 100% яскравістю.
      *
@@ -69,6 +72,7 @@ namespace pixeler
      */
     void disableBackLight();
 
+#ifdef HAS_BL_PWM
     /**
      * @brief Встановлює яскравість підсвітки дисплея.
      * Де 0 - підсвітка вимкнена, а 255 - рівень яскравості максимальний.
@@ -82,14 +86,11 @@ namespace pixeler
      *
      * @return uint8_t
      */
-    uint8_t getBrightness() const
-    {
-      return _cur_brightness;
-    }
+    uint8_t getBrightness() const;
+#endif  // HAS_BL_PWM
 #endif  // BACKLIGHT_PIN
 
   private:
-    
 #ifdef DOUBLE_BUFFERRING
     static void displayRendererTask(void* params);
 #endif  // DOUBLE_BUFFERRING
