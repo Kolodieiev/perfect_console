@@ -7,8 +7,6 @@
 #include "pixeler_setup/display_setup.h"
 #include "pixeler_setup/ui_setup.h"
 
-#define WD_GUARD_TIME 1000UL
-
 namespace pixeler
 {
   void ContextManager::run()
@@ -45,7 +43,7 @@ namespace pixeler
         }
       }
 
-      if (millis() - ts > WD_GUARD_TIME)
+      if (millis() - ts > WDT_GUARD_TIME)
       {
         vTaskDelay(1 / portTICK_PERIOD_MS);
         ts = millis();
