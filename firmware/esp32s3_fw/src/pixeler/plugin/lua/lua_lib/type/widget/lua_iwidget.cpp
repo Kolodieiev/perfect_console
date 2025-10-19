@@ -81,6 +81,7 @@ const char STR_COLOR_BLACK[] = "COLOR_BLACK";
 const char STR_COLOR_WHITE[] = "COLOR_WHITE";
 const char STR_COLOR_RED[] = "COLOR_RED";
 const char STR_COLOR_GREEN[] = "COLOR_GREEN";
+const char STR_COLOR_GREY[] = "COLOR_GREY";
 const char STR_COLOR_BLUE[] = "TFT_BLUE";
 const char STR_COLOR_YELLOW[] = "TFT_YELLOW";
 const char STR_COLOR_ORANGE[] = "COLOR_ORANGE";
@@ -100,7 +101,10 @@ void init_color_constants(lua_State* L)
   lua_setglobal(L, STR_COLOR_RED);
 
   lua_pushinteger(L, COLOR_GREEN);
-  lua_setglobal(L, STR_COLOR_GREEN);
+  lua_setglobal(L, STR_COLOR_GREEN); 
+  
+  lua_pushinteger(L, COLOR_GREY);
+  lua_setglobal(L, STR_COLOR_GREY);
 
   lua_pushinteger(L, COLOR_BLUE);
   lua_setglobal(L, STR_COLOR_BLUE);
@@ -125,6 +129,9 @@ void deinit_color_constants(lua_State* L)
 
   lua_pushnil(L);
   lua_setglobal(L, STR_COLOR_GREEN);
+  
+  lua_pushnil(L);
+  lua_setglobal(L, STR_COLOR_GREY);
 
   lua_pushnil(L);
   lua_setglobal(L, STR_COLOR_BLUE);
