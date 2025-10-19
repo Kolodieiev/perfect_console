@@ -137,7 +137,7 @@ int lua_sd_read_from_file(lua_State* L)
   if (!buffer)
     return luaL_error(L, STR_MEM_ALLOC_ERR);
 
-  bool successfull = pixeler::_fs.readFromFile(f, buffer, len, seek_pos);
+  bool successfull = pixeler::_fs.readChunkFromFile(f, buffer, len, seek_pos);
 
   if (!successfull)
   {

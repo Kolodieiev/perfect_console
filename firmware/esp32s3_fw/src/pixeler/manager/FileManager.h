@@ -288,10 +288,10 @@ namespace pixeler
      * @param seek_pos Позиція від початку бінарного файла у байтах, з якої необхідно розпочати читання.
      * @return size_t - кількість успішно прочитаних байтів. 0 - Якщо операція завершилася невдачею за будь-якої причини.
      */
-    size_t readFile(const char* path, void* out_buffer, size_t len, int32_t seek_pos = 0);
+    size_t readFile(const char* path, void* out_buffer, size_t len = 1, int32_t seek_pos = 0);
 
     /**
-     * @brief Читає вказану кількість байтів з відкритого бінарного файла.
+     * @brief Читає вказану кількість байтів з відкритого бінарного файла за одну операцію.
      *
      * @param file Вказівник на відкрити бінарний файл.
      * @param out_buffer Вихідний буфер, куди будуть записані прочитані байти.
@@ -301,7 +301,18 @@ namespace pixeler
      * @return true - якщо операція виконана успішно.
      * @return false - якщо операція завершилася невдачею.
      */
-    bool readFromFile(FILE* file, void* out_buffer, size_t len = 1, int32_t seek_pos = 0);
+    bool readChunkFromFile(FILE* file, void* out_buffer, size_t len = 1, size_t seek_pos = 0);
+
+    /**
+     * @brief Читає вказану кількість байтів з відкритого бінарного файла побайтово.
+     *
+     * @param file Вказівник на відкрити бінарний файл.
+     * @param out_buffer Вихідний буфер, куди будуть записані прочитані байти.
+     * @param len Кількість байтів, які повинні бути прочитані.
+     * @param seek_pos Позиція від початку бінарного файла у байтах, з якої необхідно розпочати читання.
+     * @return size_t - Кількість успішно прочитаних байтів.
+     */
+    size_t readFromFile(FILE* file, void* out_buffer, size_t len = 1, size_t seek_pos = 0);
 
     /**
      * @brief Створює або перезаписує бінарний файл, та записує до нього вказану кількість байтів із буфера.

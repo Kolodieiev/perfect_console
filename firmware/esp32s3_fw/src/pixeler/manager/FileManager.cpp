@@ -130,7 +130,7 @@ namespace pixeler
 
     if (!f)
     {
-      log_e("Помилка відркиття файлу: %s", path);
+      log_e("Помилка відкриття файлу: %s", path);
       return 0;
     }
 
@@ -150,7 +150,7 @@ namespace pixeler
     return bytes_read;
   }
 
-  bool FileManager::readFromFile(FILE* file, void* out_buffer, size_t len, int32_t seek_pos)
+  bool FileManager::readChunkFromFile(FILE* file, void* out_buffer, size_t len, size_t seek_pos)
   {
     if (len == 0)
       return false;
@@ -176,6 +176,28 @@ namespace pixeler
     }
 
     return true;
+  }
+
+  size_t FileManager::readFromFile(FILE* file, void* out_buffer, size_t len, size_t seek_pos)
+  {
+    if (!file)
+    {
+      log_e("FILE* не повинен бути null");
+      return 0;
+    }
+
+    if (len == 0)
+      return 0;
+
+    if (seek_pos > 0 && fseek(file, seek_pos, SEEK_SET))
+      return 0;
+
+    size_t bytes_read = fread(out_buffer, 1, len, file);
+
+    if (bytes_read != len)
+      log_e("Прочитано: [ %zu ]  Очікувалося: [ %zu ]", bytes_read, len);
+
+    return bytes_read;
   }
 
   size_t FileManager::writeFile(const char* path, const void* buffer, size_t len)
