@@ -1,12 +1,12 @@
 #pragma once
 #include <Arduino.h>
-#include "meow/game/IGameScene.h"
+#include "pixeler/game/IGameScene.h"
 #include "../SceneID.h"              // Заголовковий файл, що містить ідентифіктаори сцен
 #include "../obj/hero/HeroObj.h"     // Клас персонажа
 #include "../obj/portal/PortalObj.h" // Клас порталу
 #include "../ui/BaseUI.h"            // Клас кастомного UI
 
-using namespace meow;
+using namespace pixeler;
 
 namespace simple_rpg
 {

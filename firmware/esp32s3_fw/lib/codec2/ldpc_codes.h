@@ -19,9 +19,8 @@ extern "C"
   int ldpc_codes_num(void);
   void ldpc_codes_list();
   int ldpc_codes_find(const char name[]);
-  void ldpc_codes_setup(struct LDPC *ldpc, const char name[]);
+  void ldpc_codes_setup(struct LDPC* ldpc, const char name[]);
 
 #ifdef __cplusplus
 }
 #endif
-

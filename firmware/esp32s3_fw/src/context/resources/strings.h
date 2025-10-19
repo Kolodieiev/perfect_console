@@ -51,6 +51,7 @@ const char STR_DISABLED[] = "Вимкнено";
 const char STR_CREATE[] = "Створити";
 const char STR_APPLY[] = "Застосувати";
 const char STR_EDIT[] = "Редагувати";
+const char STR_LOADING[] = "Завантаження";
 
 //
 
@@ -67,7 +68,7 @@ const char STR_SD_ERR[] = "SD не примонтовано";
 const char STR_AP_NAME[] = "SSID:";
 const char STR_AP_PWD[] = "PWD:";
 const char STR_REM_IP[] = "192.168.4.1";
-const char STR_DEF_SSID[] = "meow";
+const char STR_DEF_SSID[] = "pixeler";
 const char STR_DEF_PWD[] = "12345678";
 
 //

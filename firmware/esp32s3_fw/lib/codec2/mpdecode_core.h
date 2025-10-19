@@ -15,7 +15,8 @@
 
 #include "comp.h"
 
-struct LDPC {
+struct LDPC
+{
   char name[32];
   int max_iter;
   int dec_type;
@@ -27,8 +28,8 @@ struct LDPC {
   int max_row_weight;
   int max_col_weight;
 
-  uint16_t *H_rows;
-  uint16_t *H_cols;
+  uint16_t* H_rows;
+  uint16_t* H_cols;
 
   /* these two are fixed to code params */
   int ldpc_data_bits_per_frame;
@@ -41,21 +42,16 @@ struct LDPC {
   int coded_bits_per_frame;
 };
 
-void encode(struct LDPC *ldpc, unsigned char ibits[], unsigned char pbits[]);
+void encode(struct LDPC* ldpc, unsigned char ibits[], unsigned char pbits[]);
 
-int run_ldpc_decoder(struct LDPC *ldpc, uint8_t out_char[], float input[],
-                     int *parityCheckCount);
+int run_ldpc_decoder(struct LDPC* ldpc, uint8_t out_char[], float input[], int* parityCheckCount);
 
 void sd_to_llr(float llr[], float sd[], int n);
-void Demod2D(float symbol_likelihood[], COMP r[], COMP S_matrix[], float EsNo,
-             float fading[], float mean_amp, int number_symbols);
-void Somap(float bit_likelihood[], float symbol_likelihood[], int M, int bps,
-           int number_symbols);
-void symbols_to_llrs(float llr[], COMP rx_qpsk_symbols[], float rx_amps[],
-                     float EsNo, float mean_amp, int nsyms);
-void fsk_rx_filt_to_llrs(float llr[], float rx_filt[], float v_est,
-                         float SNRest, int M, int nsyms);
+void Demod2D(float symbol_likelihood[], COMP r[], COMP S_matrix[], float EsNo, float fading[], float mean_amp, int number_symbols);
+void Somap(float bit_likelihood[], float symbol_likelihood[], int M, int bps, int number_symbols);
+void symbols_to_llrs(float llr[], COMP rx_qpsk_symbols[], float rx_amps[], float EsNo, float mean_amp, int nsyms);
+void fsk_rx_filt_to_llrs(float llr[], float rx_filt[], float v_est, float SNRest, int M, int nsyms);
 
-void ldpc_print_info(struct LDPC *ldpc);
+void ldpc_print_info(struct LDPC* ldpc);
 
 #endif

@@ -1,9 +1,10 @@
 *
 
-!partitions.csv
+!partitions-s3.csv
 !platformio.ini
 
 !.gitignore
+!.clang-format
 !README.md
 !LICENSE
 
@@ -14,16 +15,16 @@
 !cppcheck/**
 
 !src/
-!src/meow/
-!src/meow/**
+!src/pixeler/
+!src/pixeler/**
 !src/main.cpp
 
 !src/context/
 !src/context/**
 
 !include/
-!include/meowui_setup/
-!include/meowui_setup/**
+!include/pixeler_setup/
+!include/pixeler_setup/**
 !include/modules_setup/
 !include/modules_setup/**
 

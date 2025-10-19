@@ -34,22 +34,24 @@ typedef kiss_fft_cfg codec2_fft_cfg;
 typedef kiss_fft_scalar codec2_fft_scalar;
 #else
 typedef float32_t codec2_fft_scalar;
-typedef struct {
+typedef struct
+{
   arm_rfft_fast_instance_f32* instance;
   int inverse;
 } codec2_fftr_struct;
 
 typedef codec2_fftr_struct* codec2_fftr_cfg;
 
-typedef struct {
+typedef struct
+{
   const arm_cfft_instance_f32* instance;
   int inverse;
 } codec2_fft_struct;
 typedef codec2_fft_struct* codec2_fft_cfg;
 #endif
 
-static inline void codec2_fftr(codec2_fftr_cfg cfg, codec2_fft_scalar* in,
-                               codec2_fft_cpx* out) {
+static inline void codec2_fftr(codec2_fftr_cfg cfg, codec2_fft_scalar* in, codec2_fft_cpx* out)
+{
 #ifdef USE_KISS_FFT
   kiss_fftr(cfg, in, (kiss_fft_cpx*)out);
 #else
@@ -58,8 +60,8 @@ static inline void codec2_fftr(codec2_fftr_cfg cfg, codec2_fft_scalar* in,
 #endif
 }
 
-static inline void codec2_fftri(codec2_fftr_cfg cfg, codec2_fft_cpx* in,
-                                codec2_fft_scalar* out) {
+static inline void codec2_fftri(codec2_fftr_cfg cfg, codec2_fft_cpx* in, codec2_fft_scalar* out)
+{
 #ifdef USE_KISS_FFT
   kiss_fftri(cfg, (kiss_fft_cpx*)in, out);
 #else
@@ -68,15 +70,13 @@ static inline void codec2_fftri(codec2_fftr_cfg cfg, codec2_fft_cpx* in,
 #endif
 }
 
-codec2_fft_cfg codec2_fft_alloc(int nfft, int inverse_fft, void* mem,
-                                size_t* lenmem);
-codec2_fftr_cfg codec2_fftr_alloc(int nfft, int inverse_fft, void* mem,
-                                  size_t* lenmem);
+codec2_fft_cfg codec2_fft_alloc(int nfft, int inverse_fft, void* mem, size_t* lenmem);
+codec2_fftr_cfg codec2_fftr_alloc(int nfft, int inverse_fft, void* mem, size_t* lenmem);
 void codec2_fft_free(codec2_fft_cfg cfg);
 void codec2_fftr_free(codec2_fftr_cfg cfg);
 
-static inline void codec2_fft(codec2_fft_cfg cfg, codec2_fft_cpx* in,
-                              codec2_fft_cpx* out) {
+static inline void codec2_fft(codec2_fft_cfg cfg, codec2_fft_cpx* in, codec2_fft_cpx* out)
+{
 #ifdef USE_KISS_FFT
   kiss_fft(cfg, (kiss_fft_cpx*)in, (kiss_fft_cpx*)out);
 #else
@@ -87,9 +87,9 @@ static inline void codec2_fft(codec2_fft_cfg cfg, codec2_fft_cpx* in,
   // we should convert to an in place interface
   // on PC like platforms the overhead of using the "inplace" kiss_fft calls
   // is neglectable compared to the gain in memory usage on STM32 platforms
-  if (cfg->inverse) {
-    arm_scale_f32((float*)out, cfg->instance->fftLen, (float*)out,
-                  cfg->instance->fftLen * 2);
+  if (cfg->inverse)
+  {
+    arm_scale_f32((float*)out, cfg->instance->fftLen, (float*)out, cfg->instance->fftLen * 2);
   }
 #endif
 }

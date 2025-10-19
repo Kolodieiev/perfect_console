@@ -99,8 +99,8 @@ extern "C"
     int bad_uw_errors;
     int ftwindowwidth;
     int edge_pilots;
-    const char *state_machine;  /* name of sync state machine used for this mode */
-    const char *codename;       /* name of LDPC code used with this mode */
+    const char* state_machine;  /* name of sync state machine used for this mode */
+    const char* codename;       /* name of LDPC code used with this mode */
     uint8_t tx_uw[MAX_UW_BITS]; /* user defined unique word */
     int amp_est_mode;
     bool tx_bpf_en;    /* default tx (mod) hilbert clipper BPF enable */
@@ -114,7 +114,7 @@ extern "C"
                           control peak level */
     bool clip_en;
     char mode[16]; /* OFDM mode in string form */
-    const char *data_mode;
+    const char* data_mode;
     float fmin;
     float fmax;
   };
@@ -162,7 +162,7 @@ extern "C"
     int uw_fails;          /* number of times we exceeded bad_uw_errors and dropped sync */
     int edge_pilots;       /* insert pilots at 1 and Nc+2, to support low bandwidth
                               phase est */
-    const char *data_mode; /* "", "streaming", "burst"  */
+    const char* data_mode; /* "", "streaming", "burst"  */
     int packetsperburst;   /* for OFDM data modes, how many packets before we reset
                               state machine */
     int amp_est_mode;      /* amplitude estimtor algorithm */
@@ -188,24 +188,24 @@ extern "C"
 
     // Pointers
 
-    struct quisk_cfFilter *tx_bpf;
-    struct quisk_cfFilter *rx_bpf;
+    struct quisk_cfFilter* tx_bpf;
+    struct quisk_cfFilter* rx_bpf;
 
-    complex float *pilot_samples;
-    complex float *rxbuf;
-    complex float *pilots;
-    complex float **rx_sym;
-    complex float *rx_np;
-    complex float *tx_uw_syms;
-    COMP *tx_preamble;
-    COMP *tx_postamble;
+    complex float* pilot_samples;
+    complex float* rxbuf;
+    complex float* pilots;
+    complex float** rx_sym;
+    complex float* rx_np;
+    complex float* tx_uw_syms;
+    COMP* tx_preamble;
+    COMP* tx_postamble;
 
-    float *rx_amp;
-    float *aphase_est_pilot_log;
+    float* rx_amp;
+    float* aphase_est_pilot_log;
 
     uint8_t tx_uw[MAX_UW_BITS];
-    int *uw_ind;
-    int *uw_ind_sym;
+    int* uw_ind;
+    int* uw_ind_sym;
 
     // State enums
     State sync_state;
@@ -257,42 +257,39 @@ extern "C"
     bool postambledetectoren; /* allows us to optionally disable the postamble
                                  detector */
 
-    const char *codename;
-    const char *state_machine;
+    const char* codename;
+    const char* state_machine;
   };
 
   /* Prototypes */
 
-  complex float qpsk_mod(int *);
-  complex float qam16_mod(int *);
-  void qpsk_demod(complex float, int *);
-  void qam16_demod(complex float, int *);
-  void ofdm_txframe(struct OFDM *, complex float *, complex float[]);
-  void ofdm_assemble_qpsk_modem_packet(struct OFDM *, uint8_t[], uint8_t[],
-                                       uint8_t[]);
-  void ofdm_assemble_qpsk_modem_packet_symbols(struct OFDM *, complex float[],
-                                               COMP[], uint8_t[]);
-  void ofdm_disassemble_qpsk_modem_packet(struct OFDM *, complex float rx_syms[],
-                                          float rx_amps[], COMP[], float[],
-                                          short[]);
-  void ofdm_disassemble_qpsk_modem_packet_with_text_amps(struct OFDM *,
+  complex float qpsk_mod(int*);
+  complex float qam16_mod(int*);
+  void qpsk_demod(complex float, int*);
+  void qam16_demod(complex float, int*);
+  void ofdm_txframe(struct OFDM*, complex float*, complex float[]);
+  void ofdm_assemble_qpsk_modem_packet(struct OFDM*, uint8_t[], uint8_t[], uint8_t[]);
+  void ofdm_assemble_qpsk_modem_packet_symbols(struct OFDM*, complex float[], COMP[], uint8_t[]);
+  void ofdm_disassemble_qpsk_modem_packet(struct OFDM*, complex float rx_syms[], float rx_amps[], COMP[], float[], short[]);
+  void ofdm_disassemble_qpsk_modem_packet_with_text_amps(struct OFDM*,
                                                          complex float rx_syms[],
-                                                         float rx_amps[], COMP[],
-                                                         float[], short[], int *);
-  void ofdm_extract_uw(struct OFDM *ofdm, complex float rx_syms[],
-                       float rx_amps[], uint8_t rx_uw[]);
+                                                         float rx_amps[],
+                                                         COMP[],
+                                                         float[],
+                                                         short[],
+                                                         int*);
+  void ofdm_extract_uw(struct OFDM* ofdm, complex float rx_syms[], float rx_amps[], uint8_t rx_uw[]);
   void ofdm_rand(uint16_t[], int);
   void ofdm_rand_seed(uint16_t r[], int n, uint64_t seed);
   void ofdm_generate_payload_data_bits(uint8_t data_bits[], int n);
-  void ofdm_generate_preamble(struct OFDM *ofdm, COMP *tx_preamble, int seed);
-  int ofdm_get_phase_est_bandwidth_mode(struct OFDM *);
-  void ofdm_set_phase_est_bandwidth_mode(struct OFDM *, int);
+  void ofdm_generate_preamble(struct OFDM* ofdm, COMP* tx_preamble, int seed);
+  int ofdm_get_phase_est_bandwidth_mode(struct OFDM*);
+  void ofdm_set_phase_est_bandwidth_mode(struct OFDM*, int);
   void ofdm_clip(complex float tx[], float clip_thresh, int n);
-  void ofdm_hilbert_clipper(struct OFDM *ofdm, complex float *tx, size_t n);
-  float ofdm_esno_est_calc(complex float *rx_sym, int nsym);
-  float ofdm_snr_from_esno(struct OFDM *ofdm, float EsNodB);
-  void ofdm_get_demod_stats(struct OFDM *ofdm, struct MODEM_STATS *stats,
-                            complex float *rx_syms, int Nsymsperpacket);
+  void ofdm_hilbert_clipper(struct OFDM* ofdm, complex float* tx, size_t n);
+  float ofdm_esno_est_calc(complex float* rx_sym, int nsym);
+  float ofdm_snr_from_esno(struct OFDM* ofdm, float EsNodB);
+  void ofdm_get_demod_stats(struct OFDM* ofdm, struct MODEM_STATS* stats, complex float* rx_syms, int Nsymsperpacket);
 
 #ifdef __cplusplus
 }

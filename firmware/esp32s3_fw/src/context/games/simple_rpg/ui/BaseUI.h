@@ -1,23 +1,26 @@
 #pragma once
 #include <Arduino.h>
 
-#include "meow/game/IGameUI.h"
-#include "meow/ui/widget/text/Label.h"
+#include "pixeler/game/IGameUI.h"
+#include "pixeler/ui/widget/text/Label.h"
 
-using namespace meow;
+using namespace pixeler;
 
 namespace simple_rpg
 {
-    class BaseUI : public IGameUI
+  class BaseUI : public IGameUI
+  {
+  public:
+    BaseUI();
+    virtual ~BaseUI()
     {
-    public:
-        BaseUI();
-        virtual ~BaseUI() { delete _bunny_counter_lbl; }
+      delete _bunny_counter_lbl;
+    }
 
-        virtual void onDraw() override;
-        void updBunnyNum(uint16_t value);
+    virtual void onDraw() override;
+    void updBunnyNum(uint16_t value);
 
-    private:
-        Label *_bunny_counter_lbl{nullptr};
-    };
-}
+  private:
+    Label* _bunny_counter_lbl{nullptr};
+  };
+}  // namespace simple_rpg

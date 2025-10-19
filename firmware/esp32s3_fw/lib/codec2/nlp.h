@@ -31,9 +31,8 @@
 #include "comp.h"
 #include "defines.h"
 
-void *nlp_create(C2CONST *c2const);
-void nlp_destroy(void *nlp_state);
-float nlp(void *nlp_state, float Sn[], int n, float *pitch_samples, COMP Sw[],
-          float W[], float *prev_f0);
+void* nlp_create(C2CONST* c2const);
+void nlp_destroy(void* nlp_state);
+float nlp(void* nlp_state, float Sn[], int n, float* pitch_samples, COMP Sw[], float W[], float* prev_f0);
 
 #endif

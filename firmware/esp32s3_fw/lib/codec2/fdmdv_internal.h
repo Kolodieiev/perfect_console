@@ -42,13 +42,13 @@
 #ifndef PI
 #define PI 3.141592654
 #endif
-#define FS 8000            /* sample rate in Hz */
-#define FS_VOICE_8K 8000   /* speech sample rate, 8000 Hz */
-#define FS_VOICE_16K 16000 /* speech sample rate, 16000 Hz */
-#define T (1.0 / FS)       /* sample period in seconds */
-#define RS 50              /* symbol rate in Hz */
-#define NC 20 /* max number of data carriers (plus one pilot in the centre) */
-#define NB 2  /* Bits/symbol for QPSK modulation */
+#define FS 8000                /* sample rate in Hz */
+#define FS_VOICE_8K 8000       /* speech sample rate, 8000 Hz */
+#define FS_VOICE_16K 16000     /* speech sample rate, 16000 Hz */
+#define T (1.0 / FS)           /* sample period in seconds */
+#define RS 50                  /* symbol rate in Hz */
+#define NC 20                  /* max number of data carriers (plus one pilot in the centre) */
+#define NB 2                   /* Bits/symbol for QPSK modulation */
 #define RB (NC * RS * NB)      /* bit rate */
 #define M_FAC (FS / RS)        /* oversampling factor */
 #define NSYM 6                 /* number of symbols to filter over */
@@ -87,7 +87,8 @@
 
 \*---------------------------------------------------------------------------*/
 
-struct FDMDV {
+struct FDMDV
+{
   int Nc;
   float fsep;
 
@@ -95,7 +96,7 @@ struct FDMDV {
 
   int ntest_bits;
   int current_test_bit;
-  int *rx_test_bits_mem;
+  int* rx_test_bits_mem;
 
   /* Modulator */
 
@@ -169,45 +170,22 @@ struct FDMDV {
 
 \*---------------------------------------------------------------------------*/
 
-void bits_to_dqpsk_symbols(COMP tx_symbols[], int Nc, COMP prev_tx_symbols[],
-                           int tx_bits[], int *pilot_bit, int old_qpsk_mapping);
-void tx_filter(COMP tx_baseband[NC + 1][M_FAC], int Nc, COMP tx_symbols[],
-               COMP tx_filter_memory[NC + 1][NSYM]);
-void fdm_upconvert(COMP tx_fdm[], int Nc, COMP tx_baseband[NC + 1][M_FAC],
-                   COMP phase_tx[], COMP freq_tx[], COMP *fbb_phase,
-                   COMP fbb_rect);
-void tx_filter_and_upconvert(COMP tx_fdm[], int Nc, COMP tx_symbols[],
-                             COMP tx_filter_memory[NC + 1][NSYM],
-                             COMP phase_tx[], COMP freq[], COMP *fbb_phase,
-                             COMP fbb_rect);
-void generate_pilot_fdm(COMP *pilot_fdm, int *bit, float *symbol,
-                        float *filter_mem, COMP *phase, COMP *freq);
-void generate_pilot_lut(COMP pilot_lut[], COMP *pilot_freq);
-float rx_est_freq_offset(struct FDMDV *f, COMP rx_fdm[], int nin, int do_fft);
-void lpf_peak_pick(float *foff, float *max, COMP pilot_baseband[],
-                   COMP pilot_lpf[], codec2_fft_cfg fft_pilot_cfg, COMP S[],
-                   int nin, int do_fft);
-void fdm_downconvert(COMP rx_baseband[NC + 1][M_FAC + M_FAC / P], int Nc,
-                     COMP rx_fdm[], COMP phase_rx[], COMP freq[], int nin);
-void rxdec_filter(COMP rx_fdm_filter[], COMP rx_fdm[], COMP rxdec_lpf_mem[],
-                  int nin);
-void rx_filter(COMP rx_filt[][P + 1], int Nc,
-               COMP rx_baseband[][M_FAC + M_FAC / P],
-               COMP rx_filter_memory[][NFILTER], int nin);
-void down_convert_and_rx_filter(COMP rx_filt[NC + 1][P + 1], int Nc,
-                                COMP rx_fdm[], COMP rx_fdm_mem[],
-                                COMP phase_rx[], COMP freq[], float freq_pol[],
-                                int nin, int dec_rate);
-float rx_est_timing(COMP rx_symbols[], int Nc, COMP rx_filt[][P + 1],
-                    COMP rx_filter_mem_timing[][NT * P], float env[], int nin,
-                    int m);
-float qpsk_to_bits(int rx_bits[], int *sync_bit, int Nc,
-                   COMP phase_difference[], COMP prev_rx_symbols[],
-                   COMP rx_symbols[], int old_qpsk_mapping);
-void snr_update(float sig_est[], float noise_est[], int Nc,
-                COMP phase_difference[]);
-int freq_state(int *reliable_sync_bit, int sync_bit, int *state, int *timer,
-               int *sync_mem);
+void bits_to_dqpsk_symbols(COMP tx_symbols[], int Nc, COMP prev_tx_symbols[], int tx_bits[], int* pilot_bit, int old_qpsk_mapping);
+void tx_filter(COMP tx_baseband[NC + 1][M_FAC], int Nc, COMP tx_symbols[], COMP tx_filter_memory[NC + 1][NSYM]);
+void fdm_upconvert(COMP tx_fdm[], int Nc, COMP tx_baseband[NC + 1][M_FAC], COMP phase_tx[], COMP freq_tx[], COMP* fbb_phase, COMP fbb_rect);
+void tx_filter_and_upconvert(COMP tx_fdm[], int Nc, COMP tx_symbols[], COMP tx_filter_memory[NC + 1][NSYM], COMP phase_tx[], COMP freq[], COMP* fbb_phase, COMP fbb_rect);
+void generate_pilot_fdm(COMP* pilot_fdm, int* bit, float* symbol, float* filter_mem, COMP* phase, COMP* freq);
+void generate_pilot_lut(COMP pilot_lut[], COMP* pilot_freq);
+float rx_est_freq_offset(struct FDMDV* f, COMP rx_fdm[], int nin, int do_fft);
+void lpf_peak_pick(float* foff, float* max, COMP pilot_baseband[], COMP pilot_lpf[], codec2_fft_cfg fft_pilot_cfg, COMP S[], int nin, int do_fft);
+void fdm_downconvert(COMP rx_baseband[NC + 1][M_FAC + M_FAC / P], int Nc, COMP rx_fdm[], COMP phase_rx[], COMP freq[], int nin);
+void rxdec_filter(COMP rx_fdm_filter[], COMP rx_fdm[], COMP rxdec_lpf_mem[], int nin);
+void rx_filter(COMP rx_filt[][P + 1], int Nc, COMP rx_baseband[][M_FAC + M_FAC / P], COMP rx_filter_memory[][NFILTER], int nin);
+void down_convert_and_rx_filter(COMP rx_filt[NC + 1][P + 1], int Nc, COMP rx_fdm[], COMP rx_fdm_mem[], COMP phase_rx[], COMP freq[], float freq_pol[], int nin, int dec_rate);
+float rx_est_timing(COMP rx_symbols[], int Nc, COMP rx_filt[][P + 1], COMP rx_filter_mem_timing[][NT * P], float env[], int nin, int m);
+float qpsk_to_bits(int rx_bits[], int* sync_bit, int Nc, COMP phase_difference[], COMP prev_rx_symbols[], COMP rx_symbols[], int old_qpsk_mapping);
+void snr_update(float sig_est[], float noise_est[], int Nc, COMP phase_difference[]);
+int freq_state(int* reliable_sync_bit, int sync_bit, int* state, int* timer, int* sync_mem);
 float calc_snr(int Nc, float sig_est[], float noise_est[]);
 
 #endif

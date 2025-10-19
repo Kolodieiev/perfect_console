@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include "./IBaseScene.h"
 
-using namespace meow;
+using namespace pixeler;
 
 namespace simple_rpg
 {

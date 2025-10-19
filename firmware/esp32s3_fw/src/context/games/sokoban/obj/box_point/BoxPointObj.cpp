@@ -6,33 +6,31 @@
 
 namespace sokoban
 {
-    void BoxPointObj::init()
-    {
-        _type_ID = ClassID::CLASS_BOX_POINT;
-        _sprite.img_ptr = SPRITE_BOX_POIN;
-        _sprite.has_img = true;
-        _sprite.width = 32;
-        _sprite.height = 32;
+  void BoxPointObj::init()
+  {
+    _type_ID = ClassID::CLASS_BOX_POINT;
+    _sprite.img_ptr = SPRITE_BOX_POIN;
+    _sprite.has_img = true;
+    _sprite.width = 32;
+    _sprite.height = 32;
 
-        _sprite.is_rigid = false;
+    _sprite.is_rigid = false;
+  }
 
-        initSprite();
-    }
+  void BoxPointObj::update()
+  {
+  }
 
-    void BoxPointObj::update()
-    {
-    }
+  void BoxPointObj::serialize(DataStream& ds)
+  {
+  }
 
-    void BoxPointObj::serialize(DataStream &ds)
-    {
-    }
+  void BoxPointObj::deserialize(DataStream& ds)
+  {
+  }
 
-    void BoxPointObj::deserialize(DataStream &ds)
-    {
-    }
-
-    size_t BoxPointObj::getDataSize() const
-    {
-        return 0;
-    }
-}
+  size_t BoxPointObj::getDataSize() const
+  {
+    return 0;
+  }
+}  // namespace sokoban

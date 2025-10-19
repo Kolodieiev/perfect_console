@@ -36,7 +36,8 @@
 
 \*---------------------------------------------------------------------------*/
 
-inline static COMP cneg(COMP a) {
+inline static COMP cneg(COMP a)
+{
   COMP res;
 
   res.real = -a.real;
@@ -45,7 +46,8 @@ inline static COMP cneg(COMP a) {
   return res;
 }
 
-inline static COMP cconj(COMP a) {
+inline static COMP cconj(COMP a)
+{
   COMP res;
 
   res.real = a.real;
@@ -54,7 +56,8 @@ inline static COMP cconj(COMP a) {
   return res;
 }
 
-inline static COMP cmult(COMP a, COMP b) {
+inline static COMP cmult(COMP a, COMP b)
+{
   COMP res;
 
   res.real = a.real * b.real - a.imag * b.imag;
@@ -63,7 +66,8 @@ inline static COMP cmult(COMP a, COMP b) {
   return res;
 }
 
-inline static COMP fcmult(float a, COMP b) {
+inline static COMP fcmult(float a, COMP b)
+{
   COMP res;
 
   res.real = a * b.real;
@@ -72,7 +76,8 @@ inline static COMP fcmult(float a, COMP b) {
   return res;
 }
 
-inline static COMP cadd(COMP a, COMP b) {
+inline static COMP cadd(COMP a, COMP b)
+{
   COMP res;
 
   res.real = a.real + b.real;
@@ -81,14 +86,16 @@ inline static COMP cadd(COMP a, COMP b) {
   return res;
 }
 
-inline static float cabsolute(COMP a) {
+inline static float cabsolute(COMP a)
+{
   return sqrtf((a.real * a.real) + (a.imag * a.imag));
 }
 
 /*
  * Euler's formula in a new convenient function
  */
-inline static COMP comp_exp_j(float phi) {
+inline static COMP comp_exp_j(float phi)
+{
   COMP res;
   res.real = cosf(phi);
   res.imag = sinf(phi);
@@ -98,7 +105,8 @@ inline static COMP comp_exp_j(float phi) {
 /*
  * Quick and easy complex 0
  */
-inline static COMP comp0() {
+inline static COMP comp0()
+{
   COMP res;
   res.real = 0;
   res.imag = 0;
@@ -108,7 +116,8 @@ inline static COMP comp0() {
 /*
  * Quick and easy complex subtract
  */
-inline static COMP csub(COMP a, COMP b) {
+inline static COMP csub(COMP a, COMP b)
+{
   COMP res;
   res.real = a.real - b.real;
   res.imag = a.imag - b.imag;
@@ -119,15 +128,17 @@ inline static COMP csub(COMP a, COMP b) {
  * Compare the magnitude of a and b. if |a|>|b|, return true, otw false.
  * This needs no square roots
  */
-inline static int comp_mag_gt(COMP a, COMP b) {
+inline static int comp_mag_gt(COMP a, COMP b)
+{
   return ((a.real * a.real) + (a.imag * a.imag)) >
-         ((b.real * b.real) + (b.imag * b.imag));
+      ((b.real * b.real) + (b.imag * b.imag));
 }
 
 /*
  * Normalize a complex number's magnitude to 1
  */
-inline static COMP comp_normalize(COMP a) {
+inline static COMP comp_normalize(COMP a)
+{
   COMP b;
   float av = cabsolute(a);
   b.real = a.real / av;

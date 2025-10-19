@@ -30,7 +30,8 @@
 
 /* Complex number */
 
-typedef struct {
+typedef struct
+{
   float real;
   float imag;
 } COMP;

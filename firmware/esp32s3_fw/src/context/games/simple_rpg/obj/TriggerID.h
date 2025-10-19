@@ -5,9 +5,9 @@
 
 namespace simple_rpg
 {
-    enum TriggerID : int16_t
-    {
-        TRIGG_PORTAL_USED = 0,
-        TRIGG_GAME_FINISHED,
-    };
+  enum TriggerID : int16_t
+  {
+    TRIGG_PORTAL_USED = 0,
+    TRIGG_GAME_FINISHED,
+  };
 }

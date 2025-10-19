@@ -34,7 +34,8 @@
 #include "newamp1.h"
 #include "newamp2.h"
 
-struct CODEC2 {
+struct CODEC2
+{
   int mode;
   C2CONST c2const;
   int Fs;
@@ -42,17 +43,17 @@ struct CODEC2 {
   int m_pitch;
   codec2_fft_cfg fft_fwd_cfg;   /* forward FFT config                        */
   codec2_fftr_cfg fftr_fwd_cfg; /* forward real FFT config                   */
-  float *w;                     /* [m_pitch] time domain hamming window      */
+  float* w;                     /* [m_pitch] time domain hamming window      */
   float W[FFT_ENC];             /* DFT of w[]                                */
-  float *Pn;                    /* [2*n_samp] trapezoidal synthesis window   */
-  float *bpf_buf;               /* buffer for band pass filter               */
-  float *Sn;                    /* [m_pitch] input speech                    */
+  float* Pn;                    /* [2*n_samp] trapezoidal synthesis window   */
+  float* bpf_buf;               /* buffer for band pass filter               */
+  float* Sn;                    /* [m_pitch] input speech                    */
   float hpf_states[2];          /* high pass filter states                   */
-  void *nlp;                    /* pitch predictor states                    */
+  void* nlp;                    /* pitch predictor states                    */
   int gray;                     /* non-zero for gray encoding                */
 
   codec2_fftr_cfg fftr_inv_cfg; /* inverse FFT config                        */
-  float *Sn_;                   /* [2*n_samp] synthesised output speech      */
+  float* Sn_;                   /* [2*n_samp] synthesised output speech      */
   float ex_phase;               /* excitation model phase track              */
   float bg_est;                 /* background noise estimate for post filter */
   float prev_f0_enc;            /* previous frame's f0    estimate           */
@@ -69,7 +70,7 @@ struct CODEC2 {
   float xq_dec[2];
 
   int smoothing;  /* enable smoothing for channels with errors */
-  float *softdec; /* optional soft decn bits from demod        */
+  float* softdec; /* optional soft decn bits from demod        */
 
   /* newamp1 states */
 
@@ -81,7 +82,7 @@ struct CODEC2 {
   codec2_fft_cfg phase_fft_inv_cfg;
   float se;                        /* running sum of squared error */
   unsigned int nse;                /* number of terms in sum       */
-  float *user_rate_K_vec_no_mean_; /* optional, user supplied vector for
+  float* user_rate_K_vec_no_mean_; /* optional, user supplied vector for
                                       quantisation experiments */
   bool post_filter_en;
   float eq[NEWAMP1_K]; /* optional equaliser */
@@ -98,14 +99,12 @@ struct CODEC2 {
   FILE *fmlfeat, *fmlmodel;
 
   /* encode/decode function pointers for the selected mode */
-  void (*encode)(struct CODEC2 *c2, unsigned char *bits, short speech[]);
-  void (*decode)(struct CODEC2 *c2, short speech[], const unsigned char *bits);
-  void (*decode_ber)(struct CODEC2 *c2, short speech[],
-                     const unsigned char *bits, float ber_est);
+  void (*encode)(struct CODEC2* c2, unsigned char* bits, short speech[]);
+  void (*decode)(struct CODEC2* c2, short speech[], const unsigned char* bits);
+  void (*decode_ber)(struct CODEC2* c2, short speech[], const unsigned char* bits, float ber_est);
 };
 
 // test and debug
-void analyse_one_frame(struct CODEC2 *c2, MODEL *model, short speech[]);
-void synthesise_one_frame(struct CODEC2 *c2, short speech[], MODEL *model,
-                          COMP Aw[], float gain);
+void analyse_one_frame(struct CODEC2* c2, MODEL* model, short speech[]);
+void synthesise_one_frame(struct CODEC2* c2, short speech[], MODEL* model, COMP Aw[], float gain);
 #endif

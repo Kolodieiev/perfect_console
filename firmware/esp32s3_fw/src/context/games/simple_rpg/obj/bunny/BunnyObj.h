@@ -1,37 +1,41 @@
 #pragma once
 #include <Arduino.h>
-#include "meow/game/object/IGameObject.h"
 
-using namespace meow;
+#include "pixeler/game/object/IGameObject.h"
+
+using namespace pixeler;
 
 namespace simple_rpg
 {
-    class BunnyObj : public IGameObject
+  class BunnyObj : public IGameObject
+  {
+  public:
+    BunnyObj(ResManager& res,
+             WavManager& audio,
+             TerrainManager& terrain,
+             std::unordered_map<uint32_t, IGameObject*>& game_objs) : IGameObject(res, audio, terrain, game_objs) {}
+    virtual ~BunnyObj() {}
+
+    virtual void init() override;
+    virtual void update() override;
+    //
+    virtual void serialize(DataStream& ds) override {}
+    virtual void deserialize(DataStream& ds) override {}
+    virtual size_t getDataSize() const override
     {
-    public:
-        BunnyObj(ResManager &res,
-                 WavManager &audio,
-                 TerrainManager &terrain,
-                 std::unordered_map<uint32_t, IGameObject *> &game_objs) : IGameObject(res, audio, terrain, game_objs) {}
-        virtual ~BunnyObj() {}
+      return 0;
+    }
 
-        virtual void init() override;
-        virtual void update() override;
-        //
-        virtual void serialize(DataStream &ds) override {}
-        virtual void deserialize(DataStream &ds) override {}
-        virtual size_t getDataSize() const override { return 0; }
+  private:
+    void initAnimVectors();
+    void disableAnimation();
 
-    private:
-        void initAnimVectors();
-        void disableAnimation();
+  private:
+    std::vector<const uint16_t*> move_up_anim;
+    std::vector<const uint16_t*> move_down_anim;
+    std::vector<const uint16_t*> move_right_anim;
+    std::vector<const uint16_t*> move_left_anim;
 
-    private:
-        std::vector<const uint16_t *> move_up_anim;
-        std::vector<const uint16_t *> move_down_anim;
-        std::vector<const uint16_t *> move_right_anim;
-        std::vector<const uint16_t *> move_left_anim;
-
-        MovingDirection _prev_direction{DIRECTION_NONE};
-    };
-}
+    MovingDirection _prev_direction{DIRECTION_NONE};
+  };
+}  // namespace simple_rpg
