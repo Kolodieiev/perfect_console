@@ -1,10 +1,10 @@
 -- Скрипт демонструє обробку стану кнопок.
 
 -- Номера пінів кнопок, як вказано в прошивці Pixeler.
-BTN_UP = 38
-BTN_LEFT = 39
-BTN_RIGHT = 40
-BTN_EXIT = 0
+BTN_UP = 5
+BTN_LEFT = 3
+BTN_RIGHT = 4
+BTN_EXIT = 2 
 
 function update() -- Функція викликається автоматично контекстом кожен кадр.
 	if input.is_pressed(BTN_EXIT) then 

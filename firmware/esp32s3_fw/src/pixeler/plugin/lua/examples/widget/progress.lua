@@ -1,6 +1,4 @@
-BTN_EXIT = 0 
-
-COLOR_GREY = 0x3186
+BTN_EXIT = 2
 
 initType("IWidgetContainer")
 initType("ProgressBar")
