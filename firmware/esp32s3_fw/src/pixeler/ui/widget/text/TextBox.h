@@ -95,6 +95,7 @@ namespace pixeler
     using Label::setAutoscrollDelay;
     using Label::setAutoscrollInFocus;
     using Label::setGravity;
+    using Label::setMultiline;
     using Label::updateWidthToFit;
 
     uint16_t getFitStr(String& ret_str) const;
