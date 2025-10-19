@@ -51,6 +51,7 @@ const char STR_DISABLED[] = "Вимкнено";
 const char STR_CREATE[] = "Створити";
 const char STR_APPLY[] = "Застосувати";
 const char STR_EDIT[] = "Редагувати";
+const char STR_LOADING[] = "Завантаження";
 
 //
 

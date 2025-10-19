@@ -5,13 +5,11 @@
 
 const char STR_BOOK_DIR_PREF[] = "book_dir";
 const char STR_BOOK_NAME_PREF[] = "book_name";
-const char STR_READ_POS_PREF[] = "read_pos";
+const char STR_READ_BOOK_PAGE[] = "book_page";
 const char STR_BOOK_BRIGHT_PREF[] = "book_bright";
 
-const uint8_t BOOK_DIR_ITEMS_NUM{7};
-const uint8_t BOOKS_ITEMS_NUM{7};
-const uint16_t LAT_NUM_BYTES_TO_READ{540};
-const uint16_t KIR_NUM_NYTES_TO_READ{940};
+#define BOOK_DIR_ITEMS_NUM 7
+#define BOOKS_ITEMS_NUM 7
 
 const char ROOT_PATH[] = "/books";
 const char BOOK_EXT[] = ".txt";
@@ -25,7 +23,8 @@ void ReaderContext::savePref()
 {
   SettingsManager::set(STR_BOOK_DIR_PREF, _dirname.c_str());
   SettingsManager::set(STR_BOOK_NAME_PREF, _book_name.c_str());
-  SettingsManager::set(STR_READ_POS_PREF, String(_read_pos).c_str());
+  SettingsManager::set(STR_READ_BOOK_PAGE, String(_cur_book_page).c_str());
+  SettingsManager::set(STR_BOOK_BRIGHT_PREF, String(_brightness).c_str());
 }
 
 //-------------------------------------------------------------------------------------------
@@ -54,7 +53,7 @@ void ReaderContext::showContextMenuTmpl()
     MenuItem* del_item = creator.getMenuItem(ID_ITEM_DEL);
     _context_menu->addItem(del_item);
 
-    Label* upd_lbl = creator.getItemLabel(STR_DELETE, font_unifont, 2);
+    Label* upd_lbl = creator.getItemLabel(STR_DELETE);
     del_item->setLbl(upd_lbl);
   }
 
@@ -71,8 +70,11 @@ void ReaderContext::hideContextMenu()
 
 void ReaderContext::showBookDirsTmpl()
 {
+  _mode = MODE_BOOK_DIR_SEL;
+
   WidgetCreator creator;
   IWidgetContainer* layout = creator.getEmptyLayout();
+  setLayout(layout);
 
   _book_dirs_menu = new FixedMenu(ID_F_MENU);
   layout->addWidget(_book_dirs_menu);
@@ -92,13 +94,9 @@ void ReaderContext::showBookDirsTmpl()
     MenuItem* cont_item = creator.getMenuItem(ID_CONT_ITEM);
     _book_dirs_menu->addItem(cont_item);
 
-    Label* cont_lbl = creator.getItemLabel(STR_CONTINUE, font_unifont, 2);
+    Label* cont_lbl = creator.getItemLabel(STR_CONTINUE, font_10x20);
     cont_item->setLbl(cont_lbl);
   }
-
-  _mode = MODE_BOOK_DIR_SEL;
-
-  setLayout(layout);
 }
 
 void ReaderContext::fillBookDirs()
@@ -132,15 +130,17 @@ void ReaderContext::makeBookDirsItems(std::vector<MenuItem*>& items)
     Label* lbl = new Label(1);
     item->setLbl(lbl);
     lbl->setAutoscrollInFocus(true);
-
+    lbl->setFont(font_10x20);
     lbl->setText(_dirs[i].getName());
   }
 }
 
 void ReaderContext::showBooksListTmpl()
 {
+  _mode = MODE_BOOK_SEL;
   WidgetCreator creator;
   IWidgetContainer* layout = creator.getEmptyLayout();
+  setLayout(layout);
 
   _books_list_menu = creator.getDynamicMenu(ID_D_MENU);
   layout->addWidget(_books_list_menu);
@@ -156,10 +156,6 @@ void ReaderContext::showBooksListTmpl()
   _scrollbar->setWidth(SCROLLBAR_WIDTH);
   _scrollbar->setHeight(TFT_HEIGHT);
   _scrollbar->setPos(TFT_WIDTH - SCROLLBAR_WIDTH, 0);
-
-  _mode = MODE_BOOK_SEL;
-
-  setLayout(layout);
 }
 
 void ReaderContext::fillBooks(uint16_t pos)
@@ -206,223 +202,49 @@ void ReaderContext::makeBooksItems(std::vector<MenuItem*>& items, uint16_t file_
     Label* lbl = new Label(1);
     item->setLbl(lbl);
     lbl->setAutoscrollInFocus(true);
-
+    lbl->setFont(font_10x20);
     lbl->setText(_books[i].getName());
   }
 }
 
 void ReaderContext::showReadTmpl()
 {
+  _mode = MODE_BOOK_READ;
+
   WidgetCreator creator;
   IWidgetContainer* layout = creator.getEmptyLayout();
+  setLayout(layout);
 
   layout->setBackColor(COLOR_BLACK);
 
   _page = new Label(ID_PAGE_LBL);
   layout->addWidget(_page);
   _page->setMultiline(true);
-  _page->setWidth(TFT_WIDTH - 10);
+  _page->setWidth(TFT_WIDTH);
   _page->setHeight(TFT_HEIGHT - 16);
   _page->setBackColor(COLOR_BLACK);
   _page->setTextColor(COLOR_WHITE);
-  _page->setPos(5, 0);
 
   _progress_lbl = new Label(ID_PROGRESS_LBL);
   layout->addWidget(_progress_lbl);
   _progress_lbl->setText("0000/0000");
   _progress_lbl->setTextColor(COLOR_WHITE);
-  _progress_lbl->initWidthToFit();
-  _progress_lbl->setPos(5, TFT_HEIGHT - _progress_lbl->getHeight());
+  _progress_lbl->initWidthToFit(5);
+  _progress_lbl->setPos(0, TFT_HEIGHT - _progress_lbl->getHeight());
 
-  _mode = MODE_BOOK_READ;
-
-  setLayout(layout);
+  _display.setBrightness(_brightness);
 }
 
 void ReaderContext::showSDErrTmpl()
 {
+  _mode = MODE_SD_UNCONN;
+
   WidgetCreator creator;
   IWidgetContainer* layout = creator.getEmptyLayout();
+  setLayout(layout);
 
   Label* msg_lbl = creator.getStatusMsgLable(ID_MSG_LBL, STR_SD_ERR);
   layout->addWidget(msg_lbl);
-
-  _mode = MODE_SD_UNCONN;
-
-  setLayout(layout);
-}
-
-//-------------------------------------------------------------------------------------------
-
-ReaderContext::ReaderContext()
-{
-  WidgetCreator creator;
-  EmptyLayout* layout = creator.getEmptyLayout();
-  setLayout(layout);
-
-  if (!_sd.isMounted())
-  {
-    showSDErrTmpl();
-    return;
-  }
-
-  _old_brightness = atoi(SettingsManager::get(STR_PREF_BRIGHT).c_str());
-
-  if (_old_brightness == 0)
-    _old_brightness = 100;
-
-  String book_br = SettingsManager::get(STR_BOOK_BRIGHT_PREF);
-
-  if (book_br.isEmpty())
-    _brightness = _old_brightness;
-  else
-    _brightness = atoi(book_br.c_str());
-
-  _dirname = SettingsManager::get(STR_BOOK_DIR_PREF);
-  _book_name = SettingsManager::get(STR_BOOK_NAME_PREF);
-  _read_pos = atoi(SettingsManager::get(STR_READ_POS_PREF).c_str());
-
-  showBookDirsTmpl();
-  indexDirs();
-  fillBookDirs();
-}
-
-void ReaderContext::update()
-{
-  if (_mode == MODE_SD_UNCONN)
-  {
-    if (_input.isReleased(BtnID::BTN_BACK))
-    {
-      _input.lock(BtnID::BTN_BACK, CLICK_LOCK);
-      setCpuFrequencyMhz(240);
-      openContextByID(ID_CONTEXT_MENU);
-    }
-
-    return;
-  }
-
-  if (_input.isPressed(BtnID::BTN_OK))
-  {
-    _input.lock(BtnID::BTN_OK, PRESS_LOCK);
-    if (_mode == MODE_BOOK_SEL)
-      showContextMenuTmpl();
-  }
-  else if (_input.isPressed(BtnID::BTN_BACK))
-  {
-    _input.lock(BtnID::BTN_BACK, PRESS_LOCK);
-    backPressed();
-  }
-  else if (_input.isHolded(BtnID::BTN_UP))
-  {
-    _input.lock(BtnID::BTN_UP, HOLD_LOCK);
-    up();
-  }
-  else if (_input.isHolded(BtnID::BTN_DOWN))
-  {
-    _input.lock(BtnID::BTN_DOWN, HOLD_LOCK);
-    down();
-  }
-  else if (_input.isReleased(BtnID::BTN_RIGHT))
-  {
-    _input.lock(BtnID::BTN_RIGHT, CLICK_LOCK);
-    right();
-  }
-  else if (_input.isReleased(BtnID::BTN_LEFT))
-  {
-    _input.lock(BtnID::BTN_LEFT, CLICK_LOCK);
-    left();
-  }
-  else if (_input.isReleased(BtnID::BTN_OK))
-  {
-    _input.lock(BtnID::BTN_OK, CLICK_LOCK);
-    ok();
-  }
-  else if (_input.isReleased(BtnID::BTN_BACK))
-  {
-    _input.lock(BtnID::BTN_BACK, CLICK_LOCK);
-    back();
-  }
-}
-
-void ReaderContext::ok()
-{
-  if (_mode == MODE_BOOK_DIR_SEL)
-  {
-    uint16_t item_ID = _book_dirs_menu->getCurrItemID();
-
-    if (item_ID == ID_CONT_ITEM)
-    {
-      indexBooks();
-      openBook(true);
-    }
-    else
-    {
-      _dirname = _book_dirs_menu->getCurrItemText();
-      _book_pos = 0;
-      indexBooks();
-      showBooksListTmpl();
-      fillBooks(_book_pos);
-    }
-  }
-  else if (_mode == MODE_BOOK_SEL)
-  {
-    if (_books_list_menu->getSize() > 0)
-      openBook(false);
-  }
-  else if (_mode == MODE_CONTEXT_MENU)
-  {
-    uint16_t id = _context_menu->getCurrItemID();
-
-    if (id == ID_ITEM_DEL)
-    {
-      _book_name = _books_list_menu->getCurrItemText();
-      if (_book_name.isEmpty())
-        return;
-
-      String book_path = getBookPath(_dirname.c_str(), _book_name.c_str());
-
-      if (_fs.rmFile(book_path.c_str(), true))
-      {
-        if (_books_list_menu->getCurrItemID() - 2 > -1)
-          _book_pos = _books_list_menu->getCurrItemID() - 2;
-        else
-          _book_pos = 0;
-
-        hideContextMenu();
-        indexBooks();
-        updateBookPos();
-        fillBooks(_book_pos);
-      }
-    }
-  }
-  else if (_mode == MODE_BOOK_READ)
-  {
-    _brightness_edit_en = !_brightness_edit_en;
-
-    if (_brightness_edit_en)
-    {
-      _input.enableBtn(BtnID::BTN_UP);
-      _input.enableBtn(BtnID::BTN_DOWN);
-      _input.enableBtn(BtnID::BTN_BACK);
-      _progress_lbl->setVisibility(IWidget::VISIBLE);
-    }
-    else
-    {
-      _input.disableBtn(BtnID::BTN_UP);
-      _input.disableBtn(BtnID::BTN_DOWN);
-      _input.disableBtn(BtnID::BTN_BACK);
-      _progress_lbl->setVisibility(IWidget::INVISIBLE);
-    }
-  }
-}
-
-void ReaderContext::updateBookPos()
-{
-  if (_book_pos > 0)
-  {
-    if (_book_pos >= _books.size())
-      _book_pos = _books.size() - 1;
-  }
 }
 
 void ReaderContext::indexDirs()
@@ -479,8 +301,6 @@ void ReaderContext::onPrevItemsLoad(std::vector<MenuItem*>& items, uint8_t size,
   ReaderContext* self = static_cast<ReaderContext*>(arg);
   self->handlePrevItemsLoad(items, size, cur_id);
 }
-
-//-------------------------------------------------------------------------------------------
 
 void ReaderContext::up()
 {
@@ -543,13 +363,13 @@ void ReaderContext::down()
 void ReaderContext::left()
 {
   if (_mode == MODE_BOOK_READ)
-    loadPrevTxt();
+    loadBookPage(true);
 }
 
 void ReaderContext::right()
 {
   if (_mode == MODE_BOOK_READ)
-    loadNextTxt();
+    loadBookPage();
 }
 
 void ReaderContext::back()
@@ -568,14 +388,18 @@ void ReaderContext::back()
   {
     hideContextMenu();
   }
+  else if (_mode == MODE_BOOK_LOAD && _is_book_loading)
+  {
+    _mode = MODE_TASK_CANCELING;
+    _need_load_book = false;
+    cancelBookLoad();
+  }
 }
 
 void ReaderContext::backPressed()
 {
   if (_mode == MODE_BOOK_READ)
   {
-    setCpuFrequencyMhz(240);
-
     if (!_brightness_edit_en)
     {
       _input.enableBtn(BtnID::BTN_UP);
@@ -587,8 +411,29 @@ void ReaderContext::backPressed()
 
     savePref();
     showBooksListTmpl();
+    if (_is_cont_read)
+      indexBooks();
     fillBooks(_book_pos);
   }
+}
+
+void ReaderContext::showLoadBookTmpl()
+{
+  _mode = MODE_BOOK_LOAD;
+  WidgetCreator creator;
+  IWidgetContainer* layout = creator.getEmptyLayout();
+  setLayout(layout);
+  layout->setBackColor(COLOR_BLACK);
+
+  Label* load_msg = new Label(1);
+  layout->addWidget(load_msg);
+  load_msg->setText(STR_LOADING);
+  load_msg->setWidth(TFT_WIDTH);
+  load_msg->setFont(font_10x20);
+  load_msg->setTextSize(2);
+  load_msg->setAlign(IWidget::ALIGN_CENTER);
+  load_msg->setGravity(IWidget::GRAVITY_CENTER);
+  load_msg->setPos(0, getCenterY(load_msg));
 }
 
 void ReaderContext::openBook(bool contn)
@@ -602,80 +447,17 @@ void ReaderContext::openBook(bool contn)
   {
     _book_name = _books_list_menu->getCurrItemText();
     _book_pos = _books_list_menu->getCurrItemID() - 1;
-    _read_pos = 0;
+    _cur_book_page = 0;
   }
 
-  String book_path = getBookPath(_dirname.c_str(), _book_name.c_str());
+  _is_cont_read = contn;
 
-  _book_size = _fs.getFileSize(book_path.c_str());
+  _need_load_book = true;
+  _is_book_loading = true;
 
-  if (containCyrillic(_dirname.c_str(), _book_name.c_str()))
-    _num_char_to_read = KIR_NUM_NYTES_TO_READ;
-  else
-    _num_char_to_read = LAT_NUM_BYTES_TO_READ;
-
-  if (_book_size > 0)
-  {
-    showReadTmpl();
-    loadNextTxt();
-    updateReadProgress();
-  }
+  xTaskCreatePinnedToCore(createBookPagesTask, "cbpt", 5 * 512, this, 10, NULL, 0);
+  showLoadBookTmpl();
 }
-
-void ReaderContext::loadNextTxt()
-{
-  setCpuFrequencyMhz(240);
-
-  String txt;
-  readText(txt, _dirname.c_str(), _book_name.c_str(), _num_char_to_read, _read_pos);
-
-  if (!txt.isEmpty())
-  {
-    _read_pos += txt.length();
-
-    _page->setText(txt);
-    updateReadProgress();
-  }
-
-  setCpuFrequencyMhz(80);
-}
-
-void ReaderContext::loadPrevTxt()
-{
-  if (_read_pos == 0)
-    return;
-
-  setCpuFrequencyMhz(240);
-
-  if (_read_pos > _num_char_to_read)
-    _read_pos -= _num_char_to_read;
-  else
-    _read_pos = 0;
-
-  String txt;
-  readText(txt, _dirname.c_str(), _book_name.c_str(), _num_char_to_read, _read_pos);
-
-  if (!txt.isEmpty())
-  {
-    _page->setText(txt);
-    updateReadProgress();
-  }
-
-  setCpuFrequencyMhz(80);
-}
-
-void ReaderContext::updateReadProgress()
-{
-  String prog_txt;
-  prog_txt += _read_pos / _num_char_to_read;
-  prog_txt += "/";
-  prog_txt += _book_size / _num_char_to_read;
-
-  _progress_lbl->setText(prog_txt);
-  _progress_lbl->updateWidthToFit();
-}
-
-//--------------------------------------------------------------------------------------------------------------------------------------------------------
 
 String ReaderContext::getBookPath(const char* dirname, const char* book_name)
 {
@@ -687,87 +469,345 @@ String ReaderContext::getBookPath(const char* dirname, const char* book_name)
   return book_path;
 }
 
-bool ReaderContext::isCyrillic(char ch)
+//-------------------------------------------------------------------------------------------
+
+ReaderContext::ReaderContext()
 {
-  unsigned char uc = static_cast<unsigned char>(ch);
-  return (uc >= 0xC0 && uc <= 0xFF) || (uc >= 0x80 && uc <= 0xBF);
-}
+  WidgetCreator creator;
+  EmptyLayout* layout = creator.getEmptyLayout();
+  setLayout(layout);
 
-bool ReaderContext::containCyrillic(const char* dirname, const char* book_name)
-{
-  String path = getBookPath(dirname, book_name);
-
-  const uint8_t ARR_SIZE = 160;
-  char ch_arr[ARR_SIZE];
-
-  size_t read_bytes = _fs.readFile(path.c_str(), ch_arr, ARR_SIZE);
-
-  for (size_t i{0}; i < read_bytes; ++i)
+  if (!_sd.isMounted())
   {
-    if (isCyrillic(ch_arr[i]))
-      return true;
+    showSDErrTmpl();
+    return;
   }
 
-  return false;
-}
+  _old_brightness = _display.getBrightness();
 
-bool ReaderContext::readText(String& out_str, const char* dirname, const char* book_name, size_t len, size_t pos)
-{
-  char* buffer;
-  if (psramInit())
-    buffer = static_cast<char*>(ps_malloc(len + 1));
+  String book_br = SettingsManager::get(STR_BOOK_BRIGHT_PREF);
+
+  if (book_br.isEmpty())
+    _brightness = _old_brightness;
   else
-    buffer = static_cast<char*>(malloc(len + 1));
+    _brightness = atoi(book_br.c_str());
 
-  if (!buffer)
+  _dirname = SettingsManager::get(STR_BOOK_DIR_PREF);
+  _book_name = SettingsManager::get(STR_BOOK_NAME_PREF);
+  _cur_book_page = atoi(SettingsManager::get(STR_READ_BOOK_PAGE).c_str());
+
+  showBookDirsTmpl();
+  indexDirs();
+  fillBookDirs();
+}
+
+ReaderContext::~ReaderContext()
+{
+  setCpuFrequencyMhz(BASE_CPU_FREQ_MHZ);
+}
+
+void ReaderContext::update()
+{
+  if (_mode == MODE_SD_UNCONN)
   {
-    log_e("alloc error: %zu b", len + 1);
-    out_str = "";
-    return false;
+    if (_input.isReleased(BtnID::BTN_BACK))
+    {
+      _input.lock(BtnID::BTN_BACK, CLICK_LOCK);
+      openContextByID(ID_CONTEXT_MENU);
+    }
+
+    return;
   }
 
-  String book_path = getBookPath(dirname, book_name);
-
-  size_t bytes_read = _fs.readFile(book_path.c_str(), buffer, len, pos);
-  buffer[bytes_read] = '\0';
-
-  bool is_oef = false;
-
-  if (bytes_read != len)
-    is_oef = true;
-
-  if (bytes_read > 2 && (buffer[bytes_read - 1] & 0x80) != 0)
+  if (_mode == MODE_BOOK_LOAD)
   {
-    size_t correct_char_pos{0};
-
-    for (size_t i{bytes_read - 2}; i > 0; --i)
+    if (_input.isReleased(BtnID::BTN_BACK))
     {
-      if ((buffer[i] & 0x80) == 0)
+      _input.lock(BtnID::BTN_BACK, CLICK_LOCK);
+      back();
+    }
+    else if (!_is_book_loading)
+    {
+      showReadTmpl();
+      loadBookPage(false, true);
+    }
+    return;
+  }
+
+  if (_input.isPressed(BtnID::BTN_OK))
+  {
+    _input.lock(BtnID::BTN_OK, PRESS_LOCK);
+    if (_mode == MODE_BOOK_SEL)
+      showContextMenuTmpl();
+  }
+  else if (_input.isPressed(BtnID::BTN_BACK))
+  {
+    _input.lock(BtnID::BTN_BACK, PRESS_LOCK);
+    backPressed();
+  }
+  else if (_input.isHolded(BtnID::BTN_UP))
+  {
+    _input.lock(BtnID::BTN_UP, HOLD_LOCK);
+    up();
+  }
+  else if (_input.isHolded(BtnID::BTN_DOWN))
+  {
+    _input.lock(BtnID::BTN_DOWN, HOLD_LOCK);
+    down();
+  }
+  else if (_input.isReleased(BtnID::BTN_RIGHT))
+  {
+    _input.lock(BtnID::BTN_RIGHT, CLICK_LOCK);
+    right();
+  }
+  else if (_input.isReleased(BtnID::BTN_LEFT))
+  {
+    _input.lock(BtnID::BTN_LEFT, CLICK_LOCK);
+    left();
+  }
+  else if (_input.isReleased(BtnID::BTN_OK))
+  {
+    _input.lock(BtnID::BTN_OK, CLICK_LOCK);
+    ok();
+  }
+  else if (_input.isReleased(BtnID::BTN_BACK))
+  {
+    _input.lock(BtnID::BTN_BACK, CLICK_LOCK);
+    back();
+  }
+}
+
+void ReaderContext::ok()
+{
+  if (_mode == MODE_BOOK_DIR_SEL)
+  {
+    uint16_t item_ID = _book_dirs_menu->getCurrItemID();
+
+    if (item_ID == ID_CONT_ITEM)
+    {
+      openBook(true);
+    }
+    else
+    {
+      _dirname = _book_dirs_menu->getCurrItemText();
+      _book_pos = 0;
+      indexBooks();
+      showBooksListTmpl();
+      fillBooks(_book_pos);
+    }
+  }
+  else if (_mode == MODE_BOOK_SEL)
+  {
+    if (_books_list_menu->getSize() > 0)
+    {
+      openBook(false);
+    }
+  }
+  else if (_mode == MODE_CONTEXT_MENU)
+  {
+    uint16_t id = _context_menu->getCurrItemID();
+
+    if (id == ID_ITEM_DEL)
+    {
+      _book_name = _books_list_menu->getCurrItemText();
+      if (_book_name.isEmpty())
+        return;
+
+      String book_path = getBookPath(_dirname.c_str(), _book_name.c_str());
+
+      if (_fs.rmFile(book_path.c_str(), true))
       {
-        correct_char_pos = i;
+        if (_books_list_menu->getCurrItemID() - 2 > -1)
+          _book_pos = _books_list_menu->getCurrItemID() - 2;
+        else
+          _book_pos = 0;
+
+        hideContextMenu();
+        indexBooks();
+        updateBookPos();
+        fillBooks(_book_pos);
+      }
+    }
+  }
+  else if (_mode == MODE_BOOK_READ)
+  {
+    _brightness_edit_en = !_brightness_edit_en;
+
+    if (_brightness_edit_en)
+    {
+      _input.enableBtn(BtnID::BTN_UP);
+      _input.enableBtn(BtnID::BTN_DOWN);
+      _input.enableBtn(BtnID::BTN_BACK);
+      _progress_lbl->setVisibility(IWidget::VISIBLE);
+    }
+    else
+    {
+      _input.disableBtn(BtnID::BTN_UP);
+      _input.disableBtn(BtnID::BTN_DOWN);
+      _input.disableBtn(BtnID::BTN_BACK);
+      _progress_lbl->setVisibility(IWidget::INVISIBLE);
+    }
+  }
+}
+
+void ReaderContext::updateBookPos()
+{
+  if (_book_pos > 0)
+  {
+    if (_book_pos >= _books.size())
+      _book_pos = _books.size() - 1;
+  }
+}
+
+void ReaderContext::updateReadProgress()
+{
+  String prog_txt;
+  prog_txt += _cur_book_page + 1;
+  prog_txt += "/";
+  prog_txt += _pages.size();
+
+  _progress_lbl->setText(prog_txt);
+  _progress_lbl->updateWidthToFit();
+}
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void ReaderContext::loadBookPage(bool is_back_read, bool is_first_read)
+{
+  setCpuFrequencyMhz(MAX_CPU_FREQ_MHZ);
+  String book_path = getBookPath(_dirname.c_str(), _book_name.c_str());
+
+  if (!is_back_read)
+  {
+    if (!is_first_read)
+    {
+      if (_cur_book_page == _pages.size() - 1)
+        return;
+
+      ++_cur_book_page;
+    }
+  }
+  else if (_cur_book_page > 0)
+  {
+    --_cur_book_page;
+  }
+  else
+  {
+    return;
+  }
+
+  size_t bytes_read = _fs.readFile(book_path.c_str(), _bytes_buff, _pages[_cur_book_page].bytes_to_read, _pages[_cur_book_page].start_seek_pos);
+  _bytes_buff[bytes_read] = '\0';
+
+  _page->setText(_bytes_buff);
+  updateReadProgress();
+  setCpuFrequencyMhz(BASE_CPU_FREQ_MHZ);
+}
+
+void ReaderContext::createBookPagesTask(void* params)
+{
+  ReaderContext* self = static_cast<ReaderContext*>(params);
+
+  setCpuFrequencyMhz(MAX_CPU_FREQ_MHZ);
+
+  self->_pages.clear();
+  self->_pages.reserve(200);
+
+  String book_path = self->getBookPath(self->_dirname.c_str(), self->_book_name.c_str());
+  size_t bytes_read{0};
+  size_t seek_pos{0};
+  size_t bytes_placed{0};
+
+  unsigned long ts = millis();
+
+  FILE* file = _fs.openFile(book_path.c_str(), "r");
+
+  while (self->_need_load_book)
+  {
+    bytes_read = _fs.readFromFile(file, self->_bytes_buff, NUM_BYTES_TO_READ, seek_pos);
+
+    if (bytes_read == 0)
+      break;
+
+    self->_bytes_buff[bytes_read] = '\0';
+    bytes_placed = self->placeUniMultiline(self->_bytes_buff, ROWS_PER_PAGE, CHARS_PER_LINE);
+
+    self->_pages.emplace_back(seek_pos, bytes_placed);
+
+    seek_pos += bytes_placed;
+
+    if (millis() - ts > WDT_GUARD_TIME)
+    {
+      vTaskDelay(1 / portTICK_PERIOD_MS);
+      ts = millis();
+    }
+  }
+
+  _fs.closeFile(file);
+  self->_pages.shrink_to_fit();
+
+  setCpuFrequencyMhz(BASE_CPU_FREQ_MHZ);
+  self->_is_book_loading = false;
+  vTaskDelete(NULL);
+}
+
+size_t ReaderContext::placeUniMultiline(const char* str, uint16_t rows, uint16_t chars_per_line)
+{
+  size_t placed_bytes = 0;
+  uint16_t current_row = 1;
+  uint16_t current_col = 0;
+
+  const unsigned char* p = reinterpret_cast<const unsigned char*>(str);
+  size_t char_len{0};
+
+  while (*p && current_row <= rows)
+  {
+    if ((*p & 0xE0) == 0xC0)
+      char_len = 2;
+    else
+      char_len = 1;
+
+    if (*p == '\n')
+    {
+      if (current_row < rows)
+      {
+        placed_bytes += 1;
+        ++p;
+        ++current_row;
+        current_col = 0;
+        continue;
+      }
+      else
+      {
         break;
       }
     }
 
-    if (correct_char_pos > 0)
+    if (current_col >= chars_per_line)
     {
-      char* temp_buff = static_cast<char*>(malloc(correct_char_pos + 2));
-      if (temp_buff)
-      {
-        memcpy(temp_buff, buffer, correct_char_pos + 1);
-        temp_buff[correct_char_pos + 1] = '\0';
-        out_str = String(temp_buff, correct_char_pos);
-        free(temp_buff);
-      }
-      else
-        log_e("Помилка створення temp буферу на %zu байт", len);
+      ++current_row;
+      current_col = 0;
+      if (current_row > rows)
+        break;
     }
+
+    placed_bytes += char_len;
+    p += char_len;
+    ++current_col;
+  }
+  return placed_bytes;
+}
+
+void ReaderContext::cancelBookLoad()
+{
+  if (!_is_cont_read)
+  {
+    showBooksListTmpl();
+    fillBooks(_book_pos);
   }
   else
   {
-    out_str = String(buffer, bytes_read);
+    showBookDirsTmpl();
+    fillBookDirs();
   }
-
-  free(buffer);
-  return !is_oef;
 }
