@@ -17,7 +17,6 @@
 #include "context/pref/PrefSelectContext.h"
 #include "context/reader/ReaderContext.h"
 #include "context/splash/SplashContext.h"
-#include "context/walkie-talkie/WTContext.h"
 #include "context/wifi/WiFiContext.h"
 // Ігрові контексти
 #include "context/games/simple_rpg/SimpleRpgContext.h"
@@ -54,8 +53,6 @@ namespace pixeler
        { return new simple_rpg::SimpleRpgContext(); }},
       {ContextID::ID_CONTEXT_WIFI, []()
        { return new WiFiContext(); }},
-      {ContextID::ID_CONTEXT_W_TALKIE, []()
-       { return new WTContext(); }},
   };
 }  // namespace pixeler
 

@@ -9,7 +9,6 @@
 #include "./res/lua_ico.h"
 #include "./res/sd.h"
 #include "./res/settings.h"
-#include "./res/walkie-talkie_ico.h"
 #include "./res/wifi_ico.h"
 #include "pixeler/ui/widget/layout/EmptyLayout.h"
 #include "pixeler/ui/widget/menu/item/MenuItem.h"
@@ -117,21 +116,6 @@ MenuContext::MenuContext()
 
   Label* wifi_lbl = creator.getItemLabel(STR_WIFI_ITEM, font_10x20);
   wifi_item->setLbl(wifi_lbl);
-
-  // Рація
-  MenuItem* w_talkie_item = creator.getMenuItem(ID_CONTEXT_W_TALKIE);
-  _menu->addItem(w_talkie_item);
-
-  Image* w_talkie_img = new Image(1);
-  w_talkie_item->setImg(w_talkie_img);
-  w_talkie_img->setTransparency(true);
-  w_talkie_img->setWidth(ICO_WH);
-  w_talkie_img->setHeight(ICO_WH);
-
-  w_talkie_img->setSrc(WALKIE_TALKIE_IMG);
-
-  Label* w_talkie_lbl = creator.getItemLabel(STR_W_TALKIE_ITEM, font_10x20);
-  w_talkie_item->setLbl(w_talkie_lbl);
 
   // Налаштування
   MenuItem* pref_item = creator.getMenuItem(ID_CONTEXT_PREF_SEL);
