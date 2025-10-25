@@ -255,6 +255,9 @@ namespace pixeler
 #ifdef HAS_BL_PWM
   void DisplayWrapper::setBrightness(uint8_t value)
   {
+    if (value == 0)
+      fillScreen(COLOR_BLACK);
+
     _cur_brightness = value;
     ledcWrite(BACKLIGHT_PIN, value);
   }
