@@ -73,8 +73,11 @@ namespace pixeler
     _is_changed = true;
   }
 
-  void IWidget::clear()
+  void IWidget::clear(bool keep_border)
   {
+    if (_is_transparent)
+      return;
+
     uint16_t x_offset{0};
     uint16_t y_offset{0};
 
@@ -88,14 +91,14 @@ namespace pixeler
     {
       _display.fillRect(_x_pos + x_offset, _y_pos + y_offset, _width, _height, _back_color);
 
-      if (_has_border)
+      if (keep_border && _has_border)
         _display.drawRect(_x_pos + x_offset, _y_pos + y_offset, _width, _height, _border_color);
     }
     else
     {
       _display.fillRoundRect(_x_pos + x_offset, _y_pos + y_offset, _width, _height, _corner_radius, _back_color);
 
-      if (_has_border)
+      if (keep_border && _has_border)
       {
         _display.drawRoundRect(_x_pos + x_offset, _y_pos + y_offset, _width, _height, _corner_radius, _border_color);
       }
@@ -109,6 +112,9 @@ namespace pixeler
 
   void IWidget::hide()
   {
+    if (_is_transparent)
+      return;
+
     uint16_t back_color{0};
     uint16_t x_offset{0};
     uint16_t y_offset{0};
