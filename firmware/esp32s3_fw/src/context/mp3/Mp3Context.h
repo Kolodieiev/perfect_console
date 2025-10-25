@@ -149,4 +149,5 @@ private:
   bool _is_new_track{true};
   bool _is_playing{false};
   bool _is_locked{false};
+  bool _is_audio_amp_en{false};
 };

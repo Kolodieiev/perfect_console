@@ -77,7 +77,21 @@ void PrefSelectContext::showMainTmpl()
     toggle_mono->setOn(false);
   else
     toggle_mono->setOn(true);
+
   //
+
+  ToggleItem* audio_amp_item = mono_item->clone(ITEM_ID_AUDIO_AMP);
+  _menu->addItem(audio_amp_item);
+  audio_amp_item->getLbl()->setText(STR_AUDIO_AMP);
+
+  String audio_amp_str = SettingsManager::get(STR_PREF_AUDIO_AMP);
+  if (audio_amp_str.equals("") || audio_amp_str.equals("0"))
+    audio_amp_item->getToggle()->setOn(false);
+  else
+    audio_amp_item->getToggle()->setOn(true);
+
+  //
+
   MenuItem* file_server_item = creator.getMenuItem(ITEM_ID_FILE_SERVER);
   _menu->addItem(file_server_item);
   Label* file_server_lbl = creator.getItemLabel(STR_FILE_SERVER, font_10x20);
@@ -166,6 +180,21 @@ void PrefSelectContext::ok()
     else
     {
       if (SettingsManager::set(STR_PREF_MONO_AUDIO, "1"))
+        toggle->setOn(true);
+    }
+  }
+  else if (id == ITEM_ID_AUDIO_AMP)
+  {
+    ToggleItem* toggle = _menu->getCurrItem()->castTo<ToggleItem>();
+
+    if (toggle->isOn())
+    {
+      if (SettingsManager::set(STR_PREF_AUDIO_AMP, "0"))
+        toggle->setOn(false);
+    }
+    else
+    {
+      if (SettingsManager::set(STR_PREF_AUDIO_AMP, "1"))
         toggle->setOn(true);
     }
   }

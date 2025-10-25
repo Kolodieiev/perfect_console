@@ -30,6 +30,7 @@ private:
   {
     ITEM_ID_BRIGHT = 1,
     ITEM_ID_AUDIO_MONO,
+    ITEM_ID_AUDIO_AMP,
     ITEM_ID_WATCH,
     ITEM_ID_FILE_SERVER,
   };

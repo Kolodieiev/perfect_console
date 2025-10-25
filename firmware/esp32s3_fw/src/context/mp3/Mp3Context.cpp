@@ -84,6 +84,14 @@ Mp3Context::Mp3Context()
   if (mono_mode.equals("1"))
     _audio.forceMono(true);
 
+  String audio_amp = SettingsManager::get(STR_PREF_AUDIO_AMP);
+  if (audio_amp.equals("1"))
+  {
+    _is_audio_amp_en = true;
+    ccpu_cmd_data[1] = CH_PIN_LORA_PWR;
+    _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+  }
+
   indexPlaylists();
   showPlaylistsTmpl();
   fillPlaylists();
@@ -94,6 +102,12 @@ Mp3Context::~Mp3Context()
   _audio.deinit();
   uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_OFF, CH_PIN_SPK_PWR};
   _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+
+  if (_is_audio_amp_en)
+  {
+    ccpu_cmd_data[1] = CH_PIN_LORA_PWR;
+    _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+  }
 
   setCpuFrequencyMhz(BASE_CPU_FREQ_MHZ);
 }
