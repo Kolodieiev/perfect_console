@@ -196,14 +196,12 @@ namespace pixeler
 
       if (_visibility == INVISIBLE)
       {
-        if (!_is_transparent)
-          hide();
+        hide();
         xSemaphoreGive(_widg_mutex);
         return;
       }
 
-      if (!_is_transparent)
-        clear();
+      clear();
 
       if (_first_drawing && !_has_manual_settings)
       {

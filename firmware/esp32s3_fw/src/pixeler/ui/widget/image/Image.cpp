@@ -69,8 +69,7 @@ namespace pixeler
 
     if (_visibility == INVISIBLE)
     {
-      if (!_is_transparent)
-        hide();
+      hide();
       return;
     }
 

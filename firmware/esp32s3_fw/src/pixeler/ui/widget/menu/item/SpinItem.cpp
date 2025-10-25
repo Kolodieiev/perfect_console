@@ -26,8 +26,7 @@ namespace pixeler
 
     _is_changed = false;
 
-    if (!_is_transparent)
-      clear();
+    clear();
 
     uint8_t img_width{0};
     if (_img)

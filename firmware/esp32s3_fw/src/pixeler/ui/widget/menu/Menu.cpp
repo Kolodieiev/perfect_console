@@ -98,16 +98,14 @@ namespace pixeler
 
     if (_visibility == INVISIBLE)
     {
-      if (!_is_transparent)
-        hide();
+      hide();
       xSemaphoreGive(_widg_mutex);
       return;
     }
 
     if (_widgets.empty())
     {
-      if (!_is_transparent)
-        clear();
+      clear();
       xSemaphoreGive(_widg_mutex);
       return;
     }
@@ -130,8 +128,7 @@ namespace pixeler
 
   void Menu::drawItems(uint16_t start, uint16_t count)
   {
-    if (!_is_transparent)
-      clear();
+    clear();
 
     if (_widgets.empty())
       return;

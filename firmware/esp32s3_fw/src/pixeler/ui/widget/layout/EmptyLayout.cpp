@@ -26,14 +26,12 @@ namespace pixeler
 
       if (_visibility == INVISIBLE)
       {
-        if (!_is_transparent)
-          hide();
+        hide();
         xSemaphoreGive(_widg_mutex);
         return;
       }
 
-      if (!_is_transparent)
-        clear();
+      clear();
 
       for (size_t i{0}; i < _widgets.size(); ++i)
         _widgets[i]->forcedDraw();
