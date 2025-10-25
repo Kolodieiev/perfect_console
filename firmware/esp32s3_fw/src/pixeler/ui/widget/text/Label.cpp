@@ -314,10 +314,10 @@ namespace pixeler
     uint16_t w;
     _display.setTextSize(_text_size);
     _display.setFont(_font_ptr);
-    _display.calcTextBounds("I", 0, 0, x1, y1, w, _char_hgt);
+    _display.calcTextBounds("Ґg", 0, 0, x1, y1, w, _char_hgt);
 
     if (_char_hgt > _height)
-      _height = _char_hgt;
+      _height = _char_hgt + 2;
   }
 
   uint32_t Label::utf8ToUnicode(const uint8_t* buf, uint16_t& byte_pos, uint16_t remaining) const

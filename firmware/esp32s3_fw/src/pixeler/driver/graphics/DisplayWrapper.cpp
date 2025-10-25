@@ -189,7 +189,7 @@ namespace pixeler
     uint16_t w, h;
     _display.setTextSize(size);
     _display.setFont(font);
-    _display.calcTextBounds("I", 0, 0, x1, y1, w, h);
+    _display.calcTextBounds("Ґg", 0, 0, x1, y1, w, h);
     return h;
   }
 
