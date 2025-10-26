@@ -9,7 +9,10 @@ namespace pixeler
   bool SD_Manager::isMounted() const
   {
     if (_pdrv == 0xFF)
+    {
+      log_e("Карту пам'яті не примонтовано");
       return false;
+    }
 
     String path_to_root = SD_MOUNTPOINT;
     path_to_root += "/";
