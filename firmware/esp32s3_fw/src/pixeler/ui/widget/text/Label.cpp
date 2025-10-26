@@ -1,5 +1,9 @@
 #pragma GCC optimize("O3")
 #include "Label.h"
+
+#define RESERVE_PIX_WIDTH 7
+#define RESERVE_PIX_HEIGHT 4
+
 namespace pixeler
 {
   Label::Label(uint16_t widget_ID, IWidget::TypeID type_ID) : IWidget(widget_ID, type_ID)
@@ -65,7 +69,7 @@ namespace pixeler
   void Label::initWidthToFit(uint16_t add_width_value)
   {
     _width = calcTextPixels();
-    _width += 2 + add_width_value + _h_padding * 2;
+    _width += RESERVE_PIX_WIDTH + add_width_value + _h_padding * 2;
 
     _is_changed = true;
   }
@@ -73,7 +77,10 @@ namespace pixeler
   void Label::updateWidthToFit(uint16_t add_width_value)
   {
     _temp_width = calcTextPixels();
-    _temp_width += 2 + add_width_value + _h_padding * 2;
+    _temp_width += RESERVE_PIX_WIDTH + add_width_value + _h_padding * 2;
+
+    if (_temp_width == _width)
+      _temp_width = 0;
 
     _is_changed = true;
   }
@@ -212,8 +219,8 @@ namespace pixeler
 
   uint16_t Label::calcXStrOffset(uint16_t str_pix_num) const
   {
-    if (_width - 3 <= str_pix_num + _h_padding * 2)
-      return 0;
+    if (_width - RESERVE_PIX_WIDTH <= str_pix_num + _h_padding * 2)
+      return 1;
 
     if (_has_autoscroll)
       return _h_padding + 1;
@@ -225,9 +232,9 @@ namespace pixeler
       case ALIGN_CENTER:
         return static_cast<uint16_t>((static_cast<float>(_width - str_pix_num)) / 2);
       case ALIGN_END:
-        return _width - str_pix_num - _h_padding - 3;
+        return _width - str_pix_num - _h_padding - RESERVE_PIX_WIDTH / 2;
       default:
-        return 0;
+        return 1;
     }
   }
 
@@ -266,8 +273,10 @@ namespace pixeler
 
   uint16_t Label::calcTextPixels(uint16_t char_pos) const
   {
-    int16_t x1, y1;
-    uint16_t w, h;
+    int16_t x1{0};
+    int16_t y1{0};
+    uint16_t w{0};
+    uint16_t h{0};
 
     uint32_t byte_pos{0};
     if (char_pos > 0)
@@ -276,6 +285,8 @@ namespace pixeler
       byte_pos = charPosToByte(ch_str_p8, char_pos);
     }
 
+    _display.setFont(_font_ptr);
+    _display.setTextSize(_text_size);
     _display.calcTextBounds(_text.c_str() + byte_pos, 0, 0, x1, y1, w, h);
 
     return w;
@@ -314,10 +325,10 @@ namespace pixeler
     uint16_t w;
     _display.setTextSize(_text_size);
     _display.setFont(_font_ptr);
-    _display.calcTextBounds("Ґg", 0, 0, x1, y1, w, _char_hgt);
+    _display.calcTextBounds("I", 0, 0, x1, y1, w, _char_hgt);
 
-    if (_char_hgt > _height)
-      _height = _char_hgt + 2;
+    if (_char_hgt + RESERVE_PIX_HEIGHT > _height)
+      _height = _char_hgt + RESERVE_PIX_HEIGHT;
   }
 
   uint32_t Label::utf8ToUnicode(const uint8_t* buf, uint16_t& byte_pos, uint16_t remaining) const
@@ -479,25 +490,36 @@ namespace pixeler
 
     if (_visibility == INVISIBLE)
     {
-      if (!_is_transparent)
-        hide();
+      hide();
       return;
     }
 
     if (_has_autoscroll_in_focus && !_has_focus)
       _first_draw_char_pos = 0;
 
-    if (!_is_transparent)
-      clear();
-
     if (_temp_width > 0)
     {
-      _width = _temp_width;
+      if (_temp_width > _width)
+      {
+        _width = _temp_width;
+        clear();
+      }
+      else
+      {
+        clear(false);
+        _width = _temp_width;
+
+        if (_has_border)
+          clear();
+      }
+
       _temp_width = 0;
     }
+    else
+    {
+      clear();
+    }
 
-    _display.setFont(_font_ptr);
-    _display.setTextSize(_text_size);
     _display.setTextColor(_text_color);
 
     uint16_t txtYPos = calcYStrOffset();
