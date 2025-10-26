@@ -15,22 +15,21 @@ HomeContext::HomeContext()
   EmptyLayout* layout = creator.getEmptyLayout();
   setLayout(layout);
 
-  Image* wallpp_img = new Image(ID_WALLPAPER);
-
   String walpp_path = SettingsManager::get(STR_WALLPP_FILENAME);
 
-  if (walpp_path.isEmpty())
-    walpp_path = "/wall/wallpaper.bmp";
-
-  ImgData bmp = BmpUtil::loadBmp(walpp_path.c_str());
-
-  if (bmp.data_ptr)
+  if (!walpp_path.isEmpty())
   {
-    _wallpaper_ptr = bmp.data_ptr;
-    wallpp_img->setWidth(bmp.width);
-    wallpp_img->setHeight(bmp.height);
-    wallpp_img->setSrc(_wallpaper_ptr);
-    layout->addWidget(wallpp_img);
+    ImgData bmp = BmpUtil::loadBmp(walpp_path.c_str());
+
+    if (bmp.data_ptr)
+    {
+      Image* wallpp_img = new Image(ID_WALLPAPER);
+      layout->addWidget(wallpp_img);
+      _wallpaper_ptr = bmp.data_ptr;
+      wallpp_img->setWidth(bmp.width);
+      wallpp_img->setHeight(bmp.height);
+      wallpp_img->setSrc(_wallpaper_ptr);
+    }
   }
 
   _batt_volt_lbl = new Label(ID_BAT_LVL);
