@@ -92,6 +92,18 @@ void PrefSelectContext::showMainTmpl()
 
   //
 
+  ToggleItem* led_greet_item = mono_item->clone(ITEM_ID_LED_GREET);
+  _menu->addItem(led_greet_item);
+  led_greet_item->getLbl()->setText(STR_LED_GREET);
+
+  String led_greet_str = SettingsManager::get(STR_PREF_LED_GREET);
+  if (led_greet_str.equals("") || led_greet_str.equals("0"))
+    led_greet_item->getToggle()->setOn(false);
+  else
+    led_greet_item->getToggle()->setOn(true);
+
+  //
+
   MenuItem* file_server_item = creator.getMenuItem(ITEM_ID_FILE_SERVER);
   _menu->addItem(file_server_item);
   Label* file_server_lbl = creator.getItemLabel(STR_FILE_SERVER, font_10x20);
@@ -180,6 +192,21 @@ void PrefSelectContext::ok()
     else
     {
       if (SettingsManager::set(STR_PREF_MONO_AUDIO, "1"))
+        toggle->setOn(true);
+    }
+  }
+  else if (id == ITEM_ID_LED_GREET)
+  {
+    ToggleItem* toggle = _menu->getCurrItem()->castTo<ToggleItem>();
+
+    if (toggle->isOn())
+    {
+      if (SettingsManager::set(STR_PREF_LED_GREET, "0"))
+        toggle->setOn(false);
+    }
+    else
+    {
+      if (SettingsManager::set(STR_PREF_LED_GREET, "1"))
         toggle->setOn(true);
     }
   }

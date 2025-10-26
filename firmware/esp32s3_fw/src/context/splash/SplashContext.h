@@ -17,6 +17,7 @@ protected:
   //
 private:
   void addLabel(uint16_t x_pos, uint16_t y_pos, const char* str, uint16_t color);
+  void blinkLED();
 
 private:
   unsigned long _start_time;
