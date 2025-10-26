@@ -237,10 +237,12 @@ namespace pixeler
 #ifdef BACKLIGHT_PIN
   void DisplayWrapper::enableBackLight()
   {
-    pinMode(BACKLIGHT_PIN, OUTPUT);
-    digitalWrite(BACKLIGHT_PIN, HIGH);
 #ifdef HAS_BL_PWM
     ledcAttach(BACKLIGHT_PIN, PWM_FREQ, PWM_RESOLUTION);
+    ledcWrite(BACKLIGHT_PIN, _cur_brightness);
+#else
+    pinMode(BACKLIGHT_PIN, OUTPUT);
+    digitalWrite(BACKLIGHT_PIN, HIGH);
 #endif  // HAS_BL_PWM
   }
 
