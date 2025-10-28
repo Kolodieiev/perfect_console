@@ -340,10 +340,6 @@ namespace pixeler
         self._has_frame = false;
         self._canvas.flushSecondBuff();
 
-#ifdef ENABLE_SCREENSHOTER
-        if (self._take_screenshot)
-          takeScreenshot(&self);
-#endif  // ENABLE_SCREENSHOTER
         xSemaphoreGive(self._sync_mutex);
       }
       vTaskDelay(1 / portTICK_PERIOD_MS);
