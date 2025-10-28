@@ -317,13 +317,12 @@ namespace pixeler
       xSemaphoreGive(_sync_mutex);
 #else
       _canvas.flushMainBuff();
+#endif  // DOUBLE_BUFFERRING
 
 #ifdef ENABLE_SCREENSHOTER
       if (_take_screenshot)
-        takeScreenShot(this);
+        takeScreenshot(this);
 #endif  // ENABLE_SCREENSHOTER
-
-#endif  // DOUBLE_BUFFERRING
     }
   }
 
@@ -343,7 +342,7 @@ namespace pixeler
 
 #ifdef ENABLE_SCREENSHOTER
         if (self._take_screenshot)
-          takeScreenShot(&self);
+          takeScreenshot(&self);
 #endif  // ENABLE_SCREENSHOTER
         xSemaphoreGive(self._sync_mutex);
       }
@@ -353,7 +352,7 @@ namespace pixeler
 #endif  // DOUBLE_BUFFERRING
 
 #ifdef ENABLE_SCREENSHOTER
-  void DisplayWrapper::takeScreenShot(DisplayWrapper* self)
+  void DisplayWrapper::takeScreenshot(DisplayWrapper* self)
   {
     self->_take_screenshot = false;
 
@@ -365,22 +364,13 @@ namespace pixeler
     path_to_bmp += millis();
     path_to_bmp += ".bmp";
 
-    bool res{false};
-
-#ifdef DOUBLE_BUFFERRING
-    res = BmpUtil::saveBmp(header,
-                           self->_canvas.getDupFramebuffer(),
-                           path_to_bmp.c_str(),
-                           true);
-#else
-    res = BmpUtil::saveBmp(header,
-                           self->_canvas.getFramebuffer(),
-                           path_to_bmp.c_str(),
-                           true);
-#endif  // DOUBLE_BUFFERRING
+    bool res = BmpUtil::saveBmp(header,
+                                self->_canvas.getFramebuffer(),
+                                path_to_bmp.c_str(),
+                                true);
 
     if (res)
-      log_i("Скріншот успішно збережено");
+      log_i("Скріншот %s успішно збережено", path_to_bmp.c_str());
     else
       log_e("Помилка створення скріншоту");
   }

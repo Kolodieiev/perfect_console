@@ -96,7 +96,7 @@ namespace pixeler
 #endif  // DOUBLE_BUFFERRING
 
 #ifdef ENABLE_SCREENSHOTER
-    static void takeScreenShot(DisplayWrapper* self);
+    static void takeScreenshot(DisplayWrapper* self);
 #endif  // ENABLE_SCREENSHOTER
 
   private:
