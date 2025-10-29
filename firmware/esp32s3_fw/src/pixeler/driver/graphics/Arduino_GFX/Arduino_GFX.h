@@ -20,7 +20,7 @@
 #endif
 
 #define U8G2_FONT_SUPPORT
-#include "U8g2/U8g2lib.h"
+#include "U8g2/u8g2.h"
 
 // Default color definitions
 #define COLOR_BLACK 0x0000
