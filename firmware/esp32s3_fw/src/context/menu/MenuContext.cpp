@@ -2,11 +2,9 @@
 //
 #include "../WidgetCreator.h"
 #include "./res/book.h"
-#include "./res/calc.h"
 #include "./res/chip.h"
 #include "./res/headphones.h"
 #include "./res/joystick.h"
-#include "./res/lua_ico.h"
 #include "./res/sd.h"
 #include "./res/settings.h"
 #include "./res/wifi_ico.h"
