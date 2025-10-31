@@ -7,8 +7,7 @@ namespace pixeler
   /**
    * @brief Обрізає розширення файлу в рядку.
    *
-   * @param out_str Рядок, в якому потрібно видалити розширення.
-   * @param ext Розширення.
+   * @param filename Рядок, в якому потрібно видалити розширення.
    */
-  void rmFilenameExt(String& out_str, const char* ext);
+  void rmFilenameExt(String& filename);
 }  // namespace pixeler

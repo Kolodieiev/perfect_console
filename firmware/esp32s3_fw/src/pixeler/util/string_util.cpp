@@ -3,10 +3,10 @@
 
 namespace pixeler
 {
-  void rmFilenameExt(String& out_str, const char* ext)
+  void rmFilenameExt(String& filename)
   {
-    int pos = out_str.indexOf(ext);
+    int pos = filename.lastIndexOf(".");
     if (pos != -1)
-      out_str.remove(pos);
+      filename.remove(pos);
   }
 }  // namespace pixeler
