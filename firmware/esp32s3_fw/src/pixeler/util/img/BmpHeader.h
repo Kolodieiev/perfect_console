@@ -1,5 +1,5 @@
 #pragma once
-#include <Arduino.h>
+#include <stdint.h>
 
 #define BMP_HEADER_SIZE 54
 #define BMP_HEADER_MASKS_SIZE 12

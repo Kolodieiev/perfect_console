@@ -4,7 +4,6 @@
  */
 
 #pragma once
-#include <Arduino.h>
 
 #include "pixeler/driver/graphics/DisplayWrapper.h"
 #include "pixeler/ui/widget/image/Image.h"

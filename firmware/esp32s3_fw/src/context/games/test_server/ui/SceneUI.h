@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 
 #include "pixeler/game/IGameUI.h"
 #include "pixeler/game/object/IGameObject.h"

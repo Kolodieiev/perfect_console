@@ -1,8 +1,6 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-#include <Arduino.h>
-
 #include "Menu.h"
 
 namespace pixeler

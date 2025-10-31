@@ -1,7 +1,6 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-#include <Arduino.h>
 
 #include "./MenuItem.h"
 #include "pixeler/ui/widget/toggle/ToggleSwitch.h"

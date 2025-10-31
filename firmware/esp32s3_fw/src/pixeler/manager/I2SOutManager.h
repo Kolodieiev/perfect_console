@@ -1,6 +1,7 @@
 #pragma once
-#include <Arduino.h>
 #include <driver/i2s_std.h>
+
+#include "../defines.h"
 
 namespace pixeler
 {

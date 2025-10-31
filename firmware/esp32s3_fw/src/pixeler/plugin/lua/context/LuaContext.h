@@ -1,6 +1,5 @@
 #pragma GCC optimize("O3")
 #pragma once
-#include <Arduino.h>
 
 #include "../lua.h"
 #include "pixeler/ui/context/IContext.h"

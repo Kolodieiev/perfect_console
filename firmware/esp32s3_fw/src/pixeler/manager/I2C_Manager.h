@@ -1,6 +1,5 @@
 #pragma once
-#include <Arduino.h>
-
+#include "../defines.h"
 #include "pixeler_setup/i2c_setup.h"
 
 namespace pixeler

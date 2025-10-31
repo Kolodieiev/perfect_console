@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 
 #include "pixeler/ui/context/IContext.h"
 #include "pixeler/ui/widget/menu/FixedMenu.h"

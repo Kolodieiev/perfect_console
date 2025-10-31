@@ -1,7 +1,7 @@
 #pragma GCC optimize("O3")
 #include "lua_gl.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 #include <cstring>
 

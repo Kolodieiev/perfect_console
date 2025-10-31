@@ -14,7 +14,7 @@
 
 #pragma once
 #pragma GCC optimize("O3")
-#include <Arduino.h>
+#include "../../../defines.h"
 #include <libb64/cencode.h>
 
 #include <vector>

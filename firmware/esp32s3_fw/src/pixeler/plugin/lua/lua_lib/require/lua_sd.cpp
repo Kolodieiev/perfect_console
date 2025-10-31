@@ -1,7 +1,7 @@
 #pragma GCC optimize("O3")
 #include "lua_sd.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 #include "pixeler/manager/FileManager.h"
 #include "pixeler/plugin/lua/res/lua_strs.h"

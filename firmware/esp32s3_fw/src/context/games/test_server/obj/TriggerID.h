@@ -1,7 +1,7 @@
 // Перечислення ідентифікаторів тригерів, які можуть бути викорастані в сценах
 
 #pragma once
-#include <Arduino.h>
+#include <stdint.h>
 
 namespace test_server
 {

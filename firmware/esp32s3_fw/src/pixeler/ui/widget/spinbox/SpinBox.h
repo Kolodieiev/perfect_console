@@ -1,6 +1,5 @@
 #pragma once
-#include <Arduino.h>
-
+#pragma GCC optimize("O3")
 #include "../text/Label.h"
 
 namespace pixeler

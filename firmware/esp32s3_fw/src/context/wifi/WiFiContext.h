@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 
 #include "pixeler/manager/WiFiManager.h"
 #include "pixeler/ui/context/IContext.h"

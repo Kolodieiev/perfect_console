@@ -1,6 +1,6 @@
 #pragma once
 #pragma GCC optimize("O3")
-#include <Arduino.h>
+#include "../defines.h"
 //
 #include <unordered_map>
 #include <vector>

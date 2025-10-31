@@ -1,5 +1,5 @@
 #pragma once
-#include <Arduino.h>
+#include <stdint.h>
 
 const uint8_t ICO_BATTERY_HEIGHT = 25;
 const uint8_t ICO_BATTERY_WIDTH = 40;

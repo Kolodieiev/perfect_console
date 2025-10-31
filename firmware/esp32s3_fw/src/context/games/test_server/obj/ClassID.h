@@ -1,6 +1,6 @@
 // Перечислення, в якому зберігаються ідентифікатори типів ігрових об'єктів
 #pragma once
-#include <Arduino.h>
+#include <stdint.h>
 
 namespace test_server
 {

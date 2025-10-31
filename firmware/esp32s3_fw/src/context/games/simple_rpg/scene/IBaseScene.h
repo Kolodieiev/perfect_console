@@ -1,5 +1,5 @@
 #pragma once
-#include <Arduino.h>
+#include <stdint.h>
 
 #include "../SceneID.h"               // Заголовковий файл, що містить ідентифіктаори сцен
 #include "../obj/hero/HeroObj.h"      // Клас персонажа

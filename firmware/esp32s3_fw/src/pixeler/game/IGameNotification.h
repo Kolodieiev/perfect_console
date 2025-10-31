@@ -1,6 +1,5 @@
 #pragma once
-#include <Arduino.h>
-
+#include "../defines.h"
 #include "../driver/graphics/DisplayWrapper.h"
 #include "../ui/widget/notification/Notification.h"
 

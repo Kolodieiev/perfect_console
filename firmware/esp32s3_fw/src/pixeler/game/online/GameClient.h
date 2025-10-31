@@ -1,8 +1,8 @@
 #pragma once
 #pragma GCC optimize("O3")
-#include <Arduino.h>
 #include <AsyncUDP.h>
 
+#include "../../defines.h"
 #include "UdpPacket.h"
 
 namespace pixeler

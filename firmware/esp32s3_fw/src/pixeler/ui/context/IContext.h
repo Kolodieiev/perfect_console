@@ -1,11 +1,11 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-#include <Arduino.h>
 #include <pixeler_setup/cpu_setup.h>
 
 #include "../../driver/graphics/DisplayWrapper.h"
 #include "../../driver/input/Input.h"
+#include "../../defines.h"
 #include "../widget/IWidgetContainer.h"
 #include "../widget/notification/Notification.h"
 #include "../widget/text/Label.h"

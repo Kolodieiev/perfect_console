@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 
 #include "../obj/ghost/GhostObj.h"
 #include "../obj/sokoban/SokobanObj.h"

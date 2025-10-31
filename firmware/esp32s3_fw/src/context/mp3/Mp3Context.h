@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 
 #include "pixeler/lib/audio/mp3/Audio.h"
 #include "pixeler/manager/SettingsManager.h"

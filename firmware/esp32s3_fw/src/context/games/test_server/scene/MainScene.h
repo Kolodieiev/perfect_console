@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 
 #include "../obj/BallObj.h"
 #include "../obj/ClassID.h"

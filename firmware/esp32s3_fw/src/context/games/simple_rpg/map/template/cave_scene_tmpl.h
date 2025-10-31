@@ -1,5 +1,5 @@
 #pragma once
-#include <Arduino.h>
+#include <stdint.h>
 
 const uint16_t CAVE_SCENE_TMPL[10 * 10] = {
     0,

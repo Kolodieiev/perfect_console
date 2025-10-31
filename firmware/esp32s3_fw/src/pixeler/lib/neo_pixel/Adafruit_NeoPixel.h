@@ -37,7 +37,7 @@
 #define ADAFRUIT_NEOPIXEL_H
 
 #ifdef ARDUINO
-#include <Arduino.h>
+#include "../../defines.h"
 
 #ifdef USE_TINYUSB // For Serial when selecting TinyUSB
 #include <Adafruit_TinyUSB.h>

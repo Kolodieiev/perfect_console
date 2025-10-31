@@ -1,5 +1,5 @@
 #pragma once
-#include <Arduino.h>
+#include "../../defines.h"
 
 #include "./DS3231ComnConst.h"
 #include "./DS3231DateTime.h"

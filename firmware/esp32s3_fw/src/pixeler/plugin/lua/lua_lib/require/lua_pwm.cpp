@@ -1,7 +1,7 @@
 #pragma GCC optimize("O3")
 #include "lua_pwm.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 #include "esp32-hal-ledc.h"
 #include "pixeler/plugin/lua/lua_lib/helper/lua_helper.h"

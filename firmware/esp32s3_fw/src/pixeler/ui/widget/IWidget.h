@@ -1,8 +1,7 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-#include <Arduino.h>
-
+#include "../../defines.h"
 #include "../../driver/graphics/DisplayWrapper.h"
 
 namespace pixeler

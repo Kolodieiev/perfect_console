@@ -1,7 +1,7 @@
 #pragma GCC optimize("O3")
 #include "lua_pin.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 const char STR_LIB_NAME_PIN[] = "pin";
 //

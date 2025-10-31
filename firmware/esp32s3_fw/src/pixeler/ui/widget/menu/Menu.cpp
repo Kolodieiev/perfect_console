@@ -1,5 +1,5 @@
-#include "Menu.h"
 #pragma GCC optimize("O3")
+#include "Menu.h"
 
 namespace pixeler
 {

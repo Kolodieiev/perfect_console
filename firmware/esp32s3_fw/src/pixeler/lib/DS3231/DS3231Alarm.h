@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Arduino.h>
-
 #include "DS3231.h"
 
 namespace pixeler

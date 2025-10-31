@@ -1,6 +1,6 @@
 #pragma once
 #pragma GCC optimize("O3")
-#include <Arduino.h>
+#include "../defines.h"
 #include <esp_system.h>
 #include <mbedtls/gcm.h>
 

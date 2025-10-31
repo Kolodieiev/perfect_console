@@ -1,6 +1,6 @@
 #include "DS3231Util.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 
 namespace pixeler
 {

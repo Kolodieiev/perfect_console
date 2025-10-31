@@ -1,10 +1,8 @@
 #pragma once
 #pragma GCC optimize("O3")
-#include <Arduino.h>
 #include <IPAddress.h>
 
-#include <cstring>
-
+#include "../../defines.h"
 #include "UdpPacket.h"
 
 namespace pixeler

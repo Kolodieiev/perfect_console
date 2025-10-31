@@ -1,10 +1,10 @@
 #pragma once
 #pragma GCC optimize("O3")
-#include <Arduino.h>
 #include <AsyncUDP.h>
 
 #include <unordered_map>
 
+#include "../../defines.h"
 #include "ClientWrapper.h"
 #include "UdpPacket.h"
 

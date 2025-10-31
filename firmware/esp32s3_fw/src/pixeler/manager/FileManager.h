@@ -1,6 +1,5 @@
 #pragma once
 #pragma GCC optimize("O3")
-#include <Arduino.h>
 #include <Stream.h>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -8,6 +7,7 @@
 #include <cstring>
 #include <vector>
 
+#include "../defines.h"
 #include "SD_Manager.h"
 
 namespace pixeler

@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 
 // 16, // Height of image
 // 16, // Width of image

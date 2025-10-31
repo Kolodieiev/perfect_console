@@ -1,6 +1,6 @@
 #pragma once
 #pragma GCC optimize("O3")
-#include <Arduino.h>
+#include <stdint.h>
 
 #include "./AudioData.h"
 #include "./WavHeader.h"

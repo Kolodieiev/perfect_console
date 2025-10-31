@@ -1,5 +1,5 @@
 #pragma once
-#include <Arduino.h>
+#include <stdint.h>
 
 // Розмір масиву вказувати не обов'язково. Проте краще додати, щоб не забути розмір рівня.
 const uint16_t MAIN_SCENE_TMPL[30 * 20] = {

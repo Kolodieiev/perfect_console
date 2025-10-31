@@ -1,5 +1,5 @@
 #pragma once
-#include <Arduino.h>
+#include "defines.h"
 
 namespace pixeler
 {

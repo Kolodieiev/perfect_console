@@ -1,7 +1,6 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-#include <Arduino.h>
 
 #include "pixeler/ui/widget/image/Image.h"
 #include "pixeler/ui/widget/text/Label.h"

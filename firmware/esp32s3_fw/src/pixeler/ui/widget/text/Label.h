@@ -1,6 +1,5 @@
 #pragma once
 #pragma GCC optimize("O3")
-#include <Arduino.h>
 
 #include "../IWidget.h"
 #include "../image/Image.h"

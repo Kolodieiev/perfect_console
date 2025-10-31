@@ -1,7 +1,8 @@
 #pragma once
-#include <Arduino.h>
 #include <SPI.h>
 #include <pixeler_setup/sd_setup.h>
+
+#include "../defines.h"
 
 namespace pixeler
 {

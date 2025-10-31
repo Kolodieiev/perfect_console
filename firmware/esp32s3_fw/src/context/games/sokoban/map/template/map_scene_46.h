@@ -1,5 +1,5 @@
 #pragma once
-#include <Arduino.h>
+#include <stdint.h>
 
 const uint16_t MAP_SCENE_46[] = {
     1,

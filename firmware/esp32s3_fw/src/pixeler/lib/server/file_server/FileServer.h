@@ -1,7 +1,7 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-#include <Arduino.h>
+#include <stdint.h>
 #include <WebServer.h>
 
 namespace pixeler

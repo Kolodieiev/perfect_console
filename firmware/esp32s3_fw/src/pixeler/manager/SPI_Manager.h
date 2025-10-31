@@ -1,8 +1,9 @@
 #pragma once
-#include <Arduino.h>
 #include <SPI.h>
 
 #include <unordered_map>
+
+#include "../defines.h"
 
 namespace pixeler
 {

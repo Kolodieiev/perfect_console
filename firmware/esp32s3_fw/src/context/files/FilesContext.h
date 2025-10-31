@@ -1,6 +1,5 @@
 #pragma once
 #pragma GCC optimize("O3")
-#include <Arduino.h>
 
 #include "pixeler/lib/server/file_server/FileServer.h"
 #include "pixeler/manager/FileManager.h"

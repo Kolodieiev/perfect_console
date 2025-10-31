@@ -1,7 +1,7 @@
 #pragma GCC optimize("O3")
 #include "custom_searcher.h"
 
-#include <Arduino.h>
+#include <stdint.h>
 //
 #include "./require/lua_i2c.h"
 #include "./require/lua_net.h"

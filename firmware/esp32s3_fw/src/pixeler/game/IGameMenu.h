@@ -1,6 +1,5 @@
 #pragma once
-#include <Arduino.h>
-
+#include "../defines.h"
 #include "../ui/widget/layout/EmptyLayout.h"
 #include "../ui/widget/menu/FixedMenu.h"
 

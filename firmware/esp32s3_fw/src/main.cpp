@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "context/resources/ch32_pins_def.h"
 #include "pixeler/Pixeler.h"
 #include "pixeler/manager/CoprocessorManager.h"

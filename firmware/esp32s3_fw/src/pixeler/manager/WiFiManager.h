@@ -1,8 +1,9 @@
 #pragma once
-#include <Arduino.h>
 #include <WiFi.h>
 
 #include <vector>
+
+#include "../defines.h"
 
 namespace pixeler
 {

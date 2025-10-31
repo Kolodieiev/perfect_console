@@ -1,10 +1,9 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-#include <Arduino.h>
-
 #include <unordered_map>
 
+#include "../../defines.h"
 #include "Button.h"
 #include "external_input/ExtInput.h"
 #include "pixeler_setup/input_setup.h"

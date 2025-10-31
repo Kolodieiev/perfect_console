@@ -16,7 +16,7 @@ namespace pixeler
     if (!name)
       return false;
 
-    return std::strcmp(_name.c_str(), name) == 0;
+    return strcmp(_name.c_str(), name) == 0;
   }
 
   bool ClientWrapper::is(const ClientWrapper* cl_wrap) const

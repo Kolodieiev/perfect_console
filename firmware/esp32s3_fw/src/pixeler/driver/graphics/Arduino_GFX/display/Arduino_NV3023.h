@@ -2,7 +2,7 @@
 #ifndef _ARDUINO_NV3023_H_
 #define _ARDUINO_NV3023_H_
 
-#include <Arduino.h>
+#include <stdint.h>
 #include <Print.h>
 
 #include "../Arduino_GFX.h"

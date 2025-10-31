@@ -1,8 +1,8 @@
 #pragma once
 #pragma GCC optimize("O3")
-#include <Arduino.h>
-
 #include <unordered_map>
+
+#include "../../defines.h"
 //
 #include "pixeler/driver/graphics/DisplayWrapper.h"
 #include "pixeler/manager/ResManager.h"

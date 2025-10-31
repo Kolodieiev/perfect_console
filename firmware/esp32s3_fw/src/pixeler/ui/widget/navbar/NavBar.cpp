@@ -1,3 +1,4 @@
+#pragma GCC optimize("O3")
 #include "NavBar.h"
 
 namespace pixeler

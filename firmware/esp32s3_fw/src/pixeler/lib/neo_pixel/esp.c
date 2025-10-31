@@ -19,7 +19,7 @@
 
 #if defined(ESP32)
 
-#include <Arduino.h>
+#include "../../defines.h"
 
 #if defined(ESP_IDF_VERSION)
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4, 0, 0)

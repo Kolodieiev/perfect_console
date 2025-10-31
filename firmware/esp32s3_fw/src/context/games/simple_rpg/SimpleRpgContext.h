@@ -1,5 +1,5 @@
 #pragma once
-#include <Arduino.h>
+#include <stdint.h>
 
 #include "pixeler/game/DataStream.h"           // Необхідний для передавання серіалізованих об'єктів між ігровими рівнями
 #include "pixeler/game/IGameScene.h"           //

@@ -6,7 +6,7 @@
 #ifndef _ARDUINO_DATABUS_H_
 #define _ARDUINO_DATABUS_H_
 
-#include <Arduino.h>
+#include "../../../defines.h"
 
 #define GFX_SKIP_DATABUS_UNDERLAYING_BEGIN -4
 #define GFX_SKIP_DATABUS_BEGIN -3

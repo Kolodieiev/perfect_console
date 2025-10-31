@@ -1,8 +1,7 @@
 #pragma once
-#include <Arduino.h>
-
 #include <unordered_map>
 
+#include "../defines.h"
 #include "pixeler/util/audio/AudioData.h"
 #include "pixeler/util/img/ImgData.h"
 
