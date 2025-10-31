@@ -8,8 +8,6 @@ namespace pixeler
 
   Keyboard* Keyboard::clone(uint16_t id) const
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     try
     {
       Keyboard* cln = new Keyboard(id);
@@ -37,7 +35,6 @@ namespace pixeler
       for (const IWidget* widget_ptr : _widgets)
         cln->addWidget(widget_ptr->clone(widget_ptr->getID()));
 
-      xSemaphoreGive(_widg_mutex);
       return cln;
     }
     catch (const std::bad_alloc& e)
@@ -49,24 +46,18 @@ namespace pixeler
 
   uint16_t Keyboard::getCurrBtnID() const
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
     uint16_t id = getFocusRow()->getCurrBtnID();
-    xSemaphoreGive(_widg_mutex);
     return id;
   }
 
   String Keyboard::getCurrBtnTxt() const
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
     const KeyboardRow* row = getFocusRow();
-    xSemaphoreGive(_widg_mutex);
     return row->getCurrBtnTxt();
   }
 
   void Keyboard::focusUp()
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     KeyboardRow* row = getFocusRow();
 
     uint16_t focusPos = row->getCurFocusPos();
@@ -80,14 +71,10 @@ namespace pixeler
 
     row = getFocusRow();
     row->setFocus(focusPos);
-
-    xSemaphoreGive(_widg_mutex);
   }
 
   void Keyboard::focusDown()
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     KeyboardRow* row = getFocusRow();
     uint16_t focusPos = row->getCurFocusPos();
     row->removeFocus();
@@ -99,14 +86,10 @@ namespace pixeler
 
     row = getFocusRow();
     row->setFocus(focusPos);
-
-    xSemaphoreGive(_widg_mutex);
   }
 
   void Keyboard::focusLeft()
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     KeyboardRow* row = getFocusRow();
 
     if (!row->focusUp())
@@ -114,14 +97,10 @@ namespace pixeler
       row->removeFocus();
       row->setFocus(row->getSize() - 1);
     }
-
-    xSemaphoreGive(_widg_mutex);
   }
 
   void Keyboard::focusRight()
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     KeyboardRow* row = getFocusRow();
 
     if (!row->focusDown())
@@ -129,8 +108,6 @@ namespace pixeler
       row->removeFocus();
       row->setFocus(0);
     }
-
-    xSemaphoreGive(_widg_mutex);
   }
 
   uint16_t Keyboard::getFocusXPos() const
@@ -142,8 +119,6 @@ namespace pixeler
   {
     if (_widgets.empty())
       return;
-
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
 
     _has_manual_settings = true;
 
@@ -157,8 +132,6 @@ namespace pixeler
 
     row = getFocusRow();
     row->setFocus(x);
-
-    xSemaphoreGive(_widg_mutex);
   }
 
   KeyboardRow* Keyboard::getFocusRow() const
@@ -182,8 +155,6 @@ namespace pixeler
 
   void Keyboard::onDraw()
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     if (!_is_changed)
     {
       if (_visibility != INVISIBLE && _is_enabled)
@@ -197,7 +168,6 @@ namespace pixeler
       if (_visibility == INVISIBLE)
       {
         hide();
-        xSemaphoreGive(_widg_mutex);
         return;
       }
 
@@ -222,7 +192,5 @@ namespace pixeler
         y += _widgets[i]->getHeight();
       }
     }
-
-    xSemaphoreGive(_widg_mutex);
   }
 }  // namespace pixeler

@@ -127,7 +127,6 @@ namespace pixeler
 
   protected:
     std::vector<IWidget*> _widgets;
-    SemaphoreHandle_t _widg_mutex{nullptr};
     bool _is_enabled{true};
   };
 }  // namespace pixeler

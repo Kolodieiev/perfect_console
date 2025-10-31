@@ -11,8 +11,6 @@ namespace pixeler
     if (_widgets.empty())
       return false;
 
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     IWidget* item = _widgets[_cur_focus_pos];
     item->removeFocus();
     uint16_t cycles_count = getCyclesCount();
@@ -47,8 +45,6 @@ namespace pixeler
 
     if (need_redraw)
       drawItems(_first_item_index, cycles_count);
-
-    xSemaphoreGive(_widg_mutex);
     return true;
   }
 
@@ -57,7 +53,6 @@ namespace pixeler
     if (_widgets.empty())
       return false;
 
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
     IWidget* item = _widgets[_cur_focus_pos];
     item->removeFocus();
     uint16_t cycles_count = getCyclesCount();
@@ -88,7 +83,6 @@ namespace pixeler
     if (need_redraw)
       drawItems(_first_item_index, cycles_count);
 
-    xSemaphoreGive(_widg_mutex);
     return true;
   }
 
@@ -97,7 +91,6 @@ namespace pixeler
     if (_widgets.size() < 2 || _cur_focus_pos == focus_pos || focus_pos >= _widgets.size())
       return;
 
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
     IWidget* item = _widgets[_cur_focus_pos];
     item->removeFocus();
 
@@ -122,13 +115,10 @@ namespace pixeler
     item->setFocus();
 
     drawItems(_first_item_index, cycles_count);
-    xSemaphoreGive(_widg_mutex);
   }
 
   FixedMenu* FixedMenu::clone(uint16_t id) const
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     try
     {
       FixedMenu* cln = new FixedMenu(id);
@@ -161,7 +151,6 @@ namespace pixeler
       for (const IWidget* widget_ptr : _widgets)
         cln->addWidget(widget_ptr->clone(widget_ptr->getID()));
 
-      xSemaphoreGive(_widg_mutex);
       return cln;
     }
     catch (const std::bad_alloc& e)

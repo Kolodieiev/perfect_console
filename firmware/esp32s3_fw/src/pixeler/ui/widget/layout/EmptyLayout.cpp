@@ -12,8 +12,6 @@ namespace pixeler
 
   void EmptyLayout::onDraw()
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     if (!_is_changed)
     {
       if (_visibility != INVISIBLE && _is_enabled)
@@ -27,7 +25,6 @@ namespace pixeler
       if (_visibility == INVISIBLE)
       {
         hide();
-        xSemaphoreGive(_widg_mutex);
         return;
       }
 
@@ -37,13 +34,10 @@ namespace pixeler
         _widgets[i]->forcedDraw();
     }
 
-    xSemaphoreGive(_widg_mutex);
   }
 
   EmptyLayout* EmptyLayout::clone(uint16_t id) const
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     try
     {
       EmptyLayout* cln = new EmptyLayout(id);
@@ -71,7 +65,6 @@ namespace pixeler
       for (const IWidget* widget_ptr : _widgets)  // cppcheck-suppress constVariableReference
         cln->addWidget(widget_ptr->clone(widget_ptr->getID()));
 
-      xSemaphoreGive(_widg_mutex);
       return cln;
     }
     catch (const std::bad_alloc& e)

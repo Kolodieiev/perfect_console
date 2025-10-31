@@ -10,8 +10,6 @@ namespace pixeler
 
   KeyboardRow* KeyboardRow::clone(uint16_t id) const
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     try
     {
       KeyboardRow* cln = new KeyboardRow(id);
@@ -41,7 +39,6 @@ namespace pixeler
       for (const IWidget* widget_ptr : _widgets)
         cln->addWidget(widget_ptr->clone(widget_ptr->getID()));
 
-      xSemaphoreGive(_widg_mutex);
       return cln;
     }
     catch (const std::bad_alloc& e)
@@ -53,24 +50,18 @@ namespace pixeler
 
   uint16_t KeyboardRow::getCurrBtnID() const
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
     uint16_t id = getFocusBtn()->getID();
-    xSemaphoreGive(_widg_mutex);
     return id;
   }
 
   String KeyboardRow::getCurrBtnTxt() const
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
     const Label* lbl = getFocusBtn()->castTo<Label>();
-    xSemaphoreGive(_widg_mutex);
     return lbl->getText();
   }
 
   bool KeyboardRow::focusUp()
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     if (_cur_focus_pos > 0)
     {
       IWidget* btn = getFocusBtn();
@@ -79,18 +70,14 @@ namespace pixeler
       btn = getFocusBtn();
       btn->setFocus();
 
-      xSemaphoreGive(_widg_mutex);
       return true;
     }
 
-    xSemaphoreGive(_widg_mutex);
     return false;
   }
 
   bool KeyboardRow::focusDown()
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     if (!_widgets.empty() && _cur_focus_pos < _widgets.size() - 1)
     {
       IWidget* btn = getFocusBtn();
@@ -99,11 +86,9 @@ namespace pixeler
       btn = getFocusBtn();
       btn->setFocus();
 
-      xSemaphoreGive(_widg_mutex);
       return true;
     }
 
-    xSemaphoreGive(_widg_mutex);
     return false;
   }
 
@@ -111,8 +96,6 @@ namespace pixeler
   {
     if (_widgets.empty())
       return;
-
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
 
     IWidget* btn = getFocusBtn();
     btn->removeFocus();
@@ -124,18 +107,12 @@ namespace pixeler
 
     btn = getFocusBtn();
     btn->setFocus();
-
-    xSemaphoreGive(_widg_mutex);
   }
 
   void KeyboardRow::removeFocus()
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     getFocusBtn()->removeFocus();
     _cur_focus_pos = 0;
-
-    xSemaphoreGive(_widg_mutex);
   }
 
   IWidget* KeyboardRow::getFocusBtn() const
@@ -159,8 +136,6 @@ namespace pixeler
 
   void KeyboardRow::onDraw()
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     if (!_is_changed)
     {
       if (_visibility != INVISIBLE && _is_enabled)
@@ -174,7 +149,6 @@ namespace pixeler
       if (_visibility == INVISIBLE)
       {
         hide();
-        xSemaphoreGive(_widg_mutex);
         return;
       }
 
@@ -182,7 +156,6 @@ namespace pixeler
 
       if (_widgets.empty())
       {
-        xSemaphoreGive(_widg_mutex);
         return;
       }
 
@@ -204,7 +177,5 @@ namespace pixeler
         x += _btn_width + step;
       }
     }
-
-    xSemaphoreGive(_widg_mutex);
   }
 }  // namespace pixeler

@@ -79,8 +79,6 @@ namespace pixeler
 
   void Menu::onDraw()
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     if (!_is_changed)
     {
       if (_visibility != INVISIBLE && _is_enabled)
@@ -90,7 +88,6 @@ namespace pixeler
           _widgets[i]->onDraw();
       }
 
-      xSemaphoreGive(_widg_mutex);
       return;
     }
 
@@ -99,14 +96,12 @@ namespace pixeler
     if (_visibility == INVISIBLE)
     {
       hide();
-      xSemaphoreGive(_widg_mutex);
       return;
     }
 
     if (_widgets.empty())
     {
       clear();
-      xSemaphoreGive(_widg_mutex);
       return;
     }
 
@@ -122,8 +117,6 @@ namespace pixeler
     item->setFocus();
 
     drawItems(_first_item_index, cyclesCount);
-
-    xSemaphoreGive(_widg_mutex);
   }
 
   void Menu::drawItems(uint16_t start, uint16_t count)

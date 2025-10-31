@@ -4,12 +4,11 @@
 
 namespace pixeler
 {
-  IWidgetContainer::IWidgetContainer(uint16_t widget_ID, IWidget::TypeID type_ID) : IWidget(widget_ID, type_ID, true), _widg_mutex{xSemaphoreCreateMutex()} {}
+  IWidgetContainer::IWidgetContainer(uint16_t widget_ID, IWidget::TypeID type_ID) : IWidget(widget_ID, type_ID, true) {}
 
   IWidgetContainer::~IWidgetContainer()
   {
     delWidgets();
-    vSemaphoreDelete(_widg_mutex);
   }
 
   void IWidgetContainer::addWidget(IWidget* widget_ptr)
@@ -28,9 +27,6 @@ namespace pixeler
       esp_restart();
     }
 
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
-    // cppcheck-suppress constVariableReference
     for (const IWidget* widget : _widgets)
     {
       if (widget->getID() == search_ID)
@@ -43,14 +39,10 @@ namespace pixeler
     widget_ptr->setParent(this);
     _widgets.push_back(widget_ptr);
     _is_changed = true;
-
-    xSemaphoreGive(_widg_mutex);
   }
 
   bool IWidgetContainer::delWidgetByID(uint16_t widget_ID)
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     for (auto i_b = _widgets.begin(), i_e = _widgets.end(); i_b < i_e; ++i_b)
     {
       if ((*i_b)->getID() == widget_ID)
@@ -59,30 +51,23 @@ namespace pixeler
         _widgets.erase(i_b);
         _is_changed = true;
 
-        xSemaphoreGive(_widg_mutex);
         return true;
       }
     }
 
-    xSemaphoreGive(_widg_mutex);
     return false;
   }
 
   IWidget* IWidgetContainer::getWidgetByID(uint16_t widget_ID) const
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
-    // cppcheck-suppress useStlAlgorithm
     for (const auto& widget_ptr : _widgets)
     {
       if (widget_ptr->getID() == widget_ID)
       {
-        xSemaphoreGive(_widg_mutex);
         return widget_ptr;
       }
     }
 
-    xSemaphoreGive(_widg_mutex);
     return nullptr;
   }
 
@@ -90,25 +75,19 @@ namespace pixeler
   {
     IWidget* result{nullptr};
 
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
     if (_widgets.size() > widget_indx)
       result = _widgets[widget_indx];
-    xSemaphoreGive(_widg_mutex);
 
     return result;
   }
 
   void IWidgetContainer::delWidgets()
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     for (auto* widget_ptr : _widgets)
       delete widget_ptr;
 
     _widgets.clear();
 
     _is_changed = true;
-
-    xSemaphoreGive(_widg_mutex);
   }
 }  // namespace pixeler

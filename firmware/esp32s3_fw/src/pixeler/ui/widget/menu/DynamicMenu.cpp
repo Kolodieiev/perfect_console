@@ -11,8 +11,6 @@ namespace pixeler
     if (_widgets.empty())
       return false;
 
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     if (_cur_focus_pos > 0)
     {
       IWidget* item = _widgets[_cur_focus_pos];
@@ -31,7 +29,6 @@ namespace pixeler
       item = _widgets[_cur_focus_pos];
       item->setFocus();
 
-      xSemaphoreGive(_widg_mutex);
       return true;
     }
     else if (_prev_items_load_handler)
@@ -41,9 +38,7 @@ namespace pixeler
 
       if (!temp_vec.empty())
       {
-        xSemaphoreGive(_widg_mutex);
         delWidgets();
-        xSemaphoreTake(_widg_mutex, portMAX_DELAY);
 
         _widgets.reserve(temp_vec.size());
         for (size_t i{0}; i < temp_vec.size(); ++i)
@@ -57,12 +52,9 @@ namespace pixeler
 
         _widgets[_cur_focus_pos]->setFocus();
 
-        xSemaphoreGive(_widg_mutex);
         return true;
       }
     }
-
-    xSemaphoreGive(_widg_mutex);
     return false;
   }
 
@@ -70,8 +62,6 @@ namespace pixeler
   {
     if (_widgets.empty())
       return false;
-
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
 
     if (_cur_focus_pos < _widgets.size() - 1)
     {
@@ -92,7 +82,6 @@ namespace pixeler
       item = _widgets[_cur_focus_pos];
       item->setFocus();
 
-      xSemaphoreGive(_widg_mutex);
       return true;
     }
     else if (_next_items_load_handler)
@@ -102,9 +91,7 @@ namespace pixeler
 
       if (!temp_vec.empty())
       {
-        xSemaphoreGive(_widg_mutex);
         delWidgets();
-        xSemaphoreTake(_widg_mutex, portMAX_DELAY);
 
         _widgets.reserve(temp_vec.size());
         for (size_t i{0}; i < temp_vec.size(); ++i)
@@ -118,19 +105,15 @@ namespace pixeler
 
         _widgets[_cur_focus_pos]->setFocus();
 
-        xSemaphoreGive(_widg_mutex);
         return true;
       }
     }
 
-    xSemaphoreGive(_widg_mutex);
     return false;
   }
 
   DynamicMenu* DynamicMenu::clone(uint16_t id) const
   {
-    xSemaphoreTake(_widg_mutex, portMAX_DELAY);
-
     try
     {
       DynamicMenu* cln = new DynamicMenu(id);
@@ -162,7 +145,6 @@ namespace pixeler
       for (const IWidget* widget_ptr : _widgets)
         cln->addWidget(widget_ptr->clone(widget_ptr->getID()));
 
-      xSemaphoreGive(_widg_mutex);
       return cln;
     }
     catch (const std::bad_alloc& e)
