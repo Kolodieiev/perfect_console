@@ -1,10 +1,7 @@
 #pragma once
 #pragma GCC optimize("O3")
-
-#include <stdint.h>
-
 #include "../IWidgetContainer.h"
-#include "./KeyboardRow.h"
+#include "KeyboardRow.h"
 
 namespace pixeler
 {

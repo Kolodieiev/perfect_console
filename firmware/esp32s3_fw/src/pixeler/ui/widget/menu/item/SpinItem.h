@@ -1,8 +1,7 @@
 #pragma once
 #pragma GCC optimize("O3")
-
-#include "./MenuItem.h"
-#include "pixeler/ui/widget/spinbox/SpinBox.h"
+#include "../../spinbox/SpinBox.h"
+#include "MenuItem.h"
 
 namespace pixeler
 {

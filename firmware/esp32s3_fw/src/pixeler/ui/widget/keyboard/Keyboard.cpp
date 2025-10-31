@@ -1,5 +1,4 @@
 #pragma GCC optimize("O3")
-
 #include "Keyboard.h"
 
 namespace pixeler

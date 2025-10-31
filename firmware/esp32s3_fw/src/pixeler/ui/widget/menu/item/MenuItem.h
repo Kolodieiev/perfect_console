@@ -1,9 +1,8 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-
-#include "pixeler/ui/widget/image/Image.h"
-#include "pixeler/ui/widget/text/Label.h"
+#include "../../image/Image.h"
+#include "../../text/Label.h"
 
 namespace pixeler
 {

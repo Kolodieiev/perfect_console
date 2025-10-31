@@ -1,5 +1,4 @@
 #pragma GCC optimize("O3")
-
 #include "Image.h"
 
 namespace pixeler

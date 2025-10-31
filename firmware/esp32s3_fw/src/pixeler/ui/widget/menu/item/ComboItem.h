@@ -1,7 +1,6 @@
 #pragma once
 #pragma GCC optimize("O3")
-
-#include "./MenuItem.h"
+#include "MenuItem.h"
 
 namespace pixeler
 {
