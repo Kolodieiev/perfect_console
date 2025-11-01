@@ -34,6 +34,8 @@ target_link_libraries(main PRIVATE SFML::Graphics)
 # project(CMakeSFMLProject LANGUAGES CXX C)
 
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+# set(SFML_STATIC_LIBRARIES ON) #Закоментуй для динамічного лінкування
 # find_package(SFML 3.0.2 REQUIRED COMPONENTS Graphics)
 # file(GLOB_RECURSE CPP_SOURCES
 #     "src/*.cpp"
@@ -41,7 +43,7 @@ target_link_libraries(main PRIVATE SFML::Graphics)
 # )
 
 # set(C_SOURCES
-#     "src/graphics/U8g2/u8g2_fonts.c"
+#     "src/pixeler/driver/graphics/U8g2/u8g2_fonts.c"
 #     "src/pixeler/String/stdlib_noniso.c"
 # )
 
