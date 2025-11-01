@@ -18,7 +18,7 @@ int lua_mcu_millis(lua_State* L)
 int lua_mcu_sleep(lua_State* L)
 {
   float ms = luaL_checknumber(L, 1);
-  vTaskDelay(ms / portTICK_PERIOD_MS);
+  delay(ms);
   return 0;
 }
 

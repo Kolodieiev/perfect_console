@@ -181,7 +181,7 @@ namespace pixeler
     _connDoneHandler = nullptr;
     _scanDoneHandler = nullptr;
     WiFi.disconnect();
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    delay(100);
   }
 
   bool WiFiManager::isEnabled() const
@@ -192,7 +192,7 @@ namespace pixeler
   bool WiFiManager::enable()
   {
     bool result = WiFi.mode(WIFI_MODE_STA);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    delay(100);
     if (!result)
       log_e("Помилка увімкнення WiFi модуля");
     return result;
@@ -273,7 +273,7 @@ namespace pixeler
         {
           long unsigned got_ip_time = millis();
           while (millis() - got_ip_time < 2000 && WiFi.status() != WL_CONNECTED)
-            vTaskDelay(50 / portTICK_PERIOD_MS);
+            delay(50);
         }
         _wifi._is_busy = false;
         _wifi.callConnDoneHandler();

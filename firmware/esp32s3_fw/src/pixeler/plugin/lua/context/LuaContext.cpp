@@ -174,7 +174,7 @@ namespace pixeler
     if (_self->_hook_counter > 12)
     {
       _self->_hook_counter = 0;
-      vTaskDelay(1 / portTICK_PERIOD_MS);
+      delay(1);
     }
 
     ++_self->_hook_counter;

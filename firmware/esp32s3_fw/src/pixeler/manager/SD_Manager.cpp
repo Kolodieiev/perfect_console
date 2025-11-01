@@ -53,7 +53,7 @@ namespace pixeler
       return false;
     }
 
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    delay(10);
     log_i("Карту пам'яті примонтовано");
     return true;
   }
@@ -63,7 +63,7 @@ namespace pixeler
     sdcard_unmount(_pdrv);
     sdcard_uninit(_pdrv);
     _pdrv = 0xFF;
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    delay(10);
   }
 
   SD_Manager _sd;

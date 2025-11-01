@@ -136,7 +136,7 @@ namespace pixeler
     while (_must_work)
     {
       _server->handleClient();
-      vTaskDelay(1 / portTICK_PERIOD_MS);
+      delay(1);
     }
 
     _is_working = false;
@@ -277,7 +277,7 @@ namespace pixeler
       _fs.writeToFile(in_file, static_cast<const void*>(uploadfile.buf), uploadfile.currentSize);
       if (millis() - _last_delay_ts > 1000)
       {
-        vTaskDelay(1 / portTICK_PERIOD_MS);
+        delay(1);
         _last_delay_ts = millis();
       }
     }

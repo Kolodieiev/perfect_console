@@ -65,7 +65,7 @@ namespace pixeler
   void DisplayWrapper::setRotation(uint8_t rotation)
   {
     _output->setRotation(rotation);
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    delay(10);
   }
 
   void DisplayWrapper::drawPixel(int16_t x, int16_t y, uint16_t color)
@@ -342,7 +342,7 @@ namespace pixeler
 
         xSemaphoreGive(self._sync_mutex);
       }
-      vTaskDelay(1 / portTICK_PERIOD_MS);
+      delay(1);
     }
   }
 #endif  // DOUBLE_BUFFERRING

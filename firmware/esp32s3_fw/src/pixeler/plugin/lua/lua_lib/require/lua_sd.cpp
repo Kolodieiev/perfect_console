@@ -186,7 +186,7 @@ int lua_sd_copy_file(lua_State* L)
   if (pixeler::_fs.startCopyFile(from_path, to_path))
   {
     while (pixeler::_fs.isWorking())
-      vTaskDelay(2 / portTICK_PERIOD_MS);
+      delay(2);
 
     result = pixeler::_fs.lastTaskResult();
   }
@@ -204,7 +204,7 @@ int lua_sd_remove(lua_State* L)
   if (pixeler::_fs.startRemoving(path))
   {
     while (pixeler::_fs.isWorking())
-      vTaskDelay(2 / portTICK_PERIOD_MS);
+      delay(2);
 
     result = pixeler::_fs.lastTaskResult();
   }

@@ -257,7 +257,7 @@ namespace pixeler
       total_written += fwrite(static_cast<const uint8_t*>(buffer) + total_written, opt_size, 1, file) * opt_size;
       if (millis() - ts > IDLE_WD_GUARD_TIME)
       {
-        vTaskDelay(1 / portTICK_PERIOD_MS);
+        delay(1);
         ts = millis();
       }
     }
@@ -429,7 +429,7 @@ namespace pixeler
         goto exit;
       }
 
-      vTaskDelay(1 / portTICK_PERIOD_MS);
+      delay(1);
     }
 
   exit:
@@ -588,7 +588,7 @@ namespace pixeler
     else
     {
       _copy_progress = 100;
-      vTaskDelay(50 / portTICK_PERIOD_MS);
+      delay(50);
     }
 
     free(buffer);
@@ -720,7 +720,7 @@ namespace pixeler
 
       if (millis() - ts > IDLE_WD_GUARD_TIME)
       {
-        vTaskDelay(1 / portTICK_PERIOD_MS);
+        delay(1);
         ts = millis();
       }
     }

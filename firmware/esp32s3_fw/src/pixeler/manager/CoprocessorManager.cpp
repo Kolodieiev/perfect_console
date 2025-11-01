@@ -41,8 +41,7 @@ namespace pixeler
       log_e("Копроцесор не відповідає");
       return false;
     }
-
-    vTaskDelay(resp_delay / portTICK_PERIOD_MS);
+    delay(resp_delay);
     return true;
   }
 

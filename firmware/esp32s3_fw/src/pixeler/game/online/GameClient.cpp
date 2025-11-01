@@ -217,7 +217,7 @@ namespace pixeler
           packet = nullptr;
         }
       }
-      vTaskDelay(1 / portTICK_PERIOD_MS);
+      delay(1);
     }
   }
 
@@ -316,7 +316,7 @@ namespace pixeler
     while (1)
     {
       self->handleCheckConnect();
-      vTaskDelay(2000 / portTICK_PERIOD_MS);
+      delay(2000);
     }
   }
 

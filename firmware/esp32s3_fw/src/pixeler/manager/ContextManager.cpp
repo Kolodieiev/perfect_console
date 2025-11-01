@@ -45,7 +45,7 @@ namespace pixeler
 
       if (millis() - ts > WDT_GUARD_TIME)
       {
-        vTaskDelay(1 / portTICK_PERIOD_MS);
+        delay(1);
         ts = millis();
       }
     }

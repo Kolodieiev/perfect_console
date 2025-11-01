@@ -106,7 +106,7 @@ namespace pixeler
       if (cycles_counter > 50u)
       {
         cycles_counter = 0;
-        vTaskDelay(1 / portTICK_PERIOD_MS);
+        delay(1);
       }
     }
 

@@ -466,7 +466,7 @@ namespace pixeler
           packet = nullptr;
         }
       }
-      vTaskDelay(1 / portTICK_PERIOD_MS);
+      delay(1);
     }
   }
 
@@ -531,7 +531,7 @@ namespace pixeler
     while (1)
     {
       self->handlePingClient();
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
+      delay(1000);
     }
   }
 
