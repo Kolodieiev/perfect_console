@@ -88,7 +88,7 @@ String::String(int value, unsigned char base)
 {
   init();
   char buf[2 + 8 * sizeof(int)];
-  itoa(value, buf, base);
+  ltoa((long)value, buf, base);
   *this = buf;
 }
 
@@ -436,10 +436,9 @@ bool String::concat(unsigned char num)
 bool String::concat(int num)
 {
   char buf[2 + 3 * sizeof(int)];
-  itoa(num, buf, 10);
+  ltoa((long)num, buf, 10);
   return concat(buf, strlen(buf));
 }
-
 bool String::concat(unsigned int num)
 {
   char buf[1 + 3 * sizeof(unsigned int)];
