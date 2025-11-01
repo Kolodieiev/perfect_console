@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include "pixeler/manager/CoprocessorManager.h"
-#include "pixeler_setup/input_setup.h"
+#include "../../../manager/CoprocessorManager.h"
+#include "../../../setup/input_setup.h"
 
 #ifdef EXT_INPUT
 #if !defined(EXT_INPUT_B_NUM) || (EXT_INPUT_B_NUM < 1)

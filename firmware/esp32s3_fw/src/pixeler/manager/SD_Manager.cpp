@@ -1,3 +1,4 @@
+#pragma GCC optimize("O3")
 #include "SD_Manager.h"
 
 #include <dirent.h>

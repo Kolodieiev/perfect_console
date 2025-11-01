@@ -6,8 +6,8 @@
 
 #include <cctype>
 
+#include "../setup/sd_setup.h"
 #include "esp_task_wdt.h"
-#include "pixeler_setup/sd_setup.h"
 
 #define IDLE_WD_GUARD_TIME 250U
 

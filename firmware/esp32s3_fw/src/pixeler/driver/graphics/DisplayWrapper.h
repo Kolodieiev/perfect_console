@@ -1,10 +1,10 @@
 #pragma once
 #pragma GCC optimize("O3")
 #include <stdint.h>
-#include <pixeler_setup/display_setup.h>
-#include <pixeler_setup/graphics_setup.h>
 
-#include "pixeler/driver/graphics/Arduino_GFX/Arduino_GFX_Library.h"
+#include "../../setup/display_setup.h"
+#include "../../setup/graphics_setup.h"
+#include "Arduino_GFX/Arduino_GFX_Library.h"
 
 #define WDT_GUARD_TIME 1000UL
 

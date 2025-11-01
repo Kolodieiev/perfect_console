@@ -3,9 +3,10 @@
 
 #include "pixeler/manager/SPI_Manager.h"
 #include "pixeler/ui/context/IContext.h"
-#include "pixeler_setup/context_id.h"
-#include "pixeler_setup/display_setup.h"
-#include "pixeler_setup/ui_setup.h"
+#include "../setup/context_id_setup.h"
+#include "../setup/display_setup.h"
+#include "../setup/ui_setup.h"
+
 
 namespace pixeler
 {

@@ -1,4 +1,5 @@
 #pragma once
+#pragma GCC optimize("O3")
 #include <SPI.h>
 
 #include <unordered_map>

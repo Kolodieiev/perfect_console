@@ -4,9 +4,8 @@
 
 #define U8G2_FONT_SUPPORT
 
-#include <pixeler_setup/display_setup.h>
-#include <pixeler_setup/graphics_setup.h>
-
+#include "../../../setup/display_setup.h"
+#include "../../../setup/graphics_setup.h"
 #include "Arduino_DataBus.h"
 #include "Arduino_GFX.h"  // Core graphics library
 #include "databus/Arduino_ESP32DSIPanel.h"

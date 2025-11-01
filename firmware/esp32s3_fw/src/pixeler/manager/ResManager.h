@@ -1,9 +1,10 @@
 #pragma once
+#pragma GCC optimize("O3")
 #include <unordered_map>
 
 #include "../defines.h"
-#include "pixeler/util/audio/AudioData.h"
-#include "pixeler/util/img/ImgData.h"
+#include "../util/audio/AudioData.h"
+#include "../util/img/ImgData.h"
 
 namespace pixeler
 {

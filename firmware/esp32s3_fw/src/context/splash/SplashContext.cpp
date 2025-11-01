@@ -6,7 +6,7 @@
 #include "pixeler/manager/SD_Manager.h"
 #include "pixeler/manager/SPI_Manager.h"
 #include "pixeler/manager/SettingsManager.h"
-#include "pixeler_setup/sd_setup.h"
+#include "pixeler/setup/sd_setup.h"
 
 #define OFFSET_LBL_INFO 0
 #define OFFSET_LBL_RESULT 70

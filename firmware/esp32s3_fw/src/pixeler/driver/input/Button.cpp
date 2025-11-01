@@ -6,7 +6,7 @@
 
 #include "esp32-hal-touch.h"
 #include "hal/gpio_hal.h"
-#include "pixeler_setup/input_setup.h"
+#include "../../setup/input_setup.h"
 
 namespace pixeler
 {

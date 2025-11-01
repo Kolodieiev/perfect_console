@@ -1,6 +1,7 @@
+#pragma GCC optimize("O3")
 #include "CoprocessorManager.h"
 
-#include "pixeler/manager/I2C_Manager.h"
+#include "../manager/I2C_Manager.h"
 
 namespace pixeler
 {

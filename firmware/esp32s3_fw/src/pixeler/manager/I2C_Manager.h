@@ -1,6 +1,7 @@
 #pragma once
+#pragma GCC optimize("O3")
 #include "../defines.h"
-#include "pixeler_setup/i2c_setup.h"
+#include "../setup/i2c_setup.h"
 
 namespace pixeler
 {

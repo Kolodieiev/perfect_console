@@ -1,3 +1,4 @@
+#pragma GCC optimize("O3")
 #include "SPI_Manager.h"
 
 namespace pixeler

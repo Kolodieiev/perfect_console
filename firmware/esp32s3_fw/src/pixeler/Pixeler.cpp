@@ -1,8 +1,7 @@
 #include "Pixeler.h"
 
-#include <pixeler_setup/cpu_setup.h>
-
-#include "pixeler/manager/ContextManager.h"
+#include "manager/ContextManager.h"
+#include "setup/cpu_setup.h"
 
 namespace pixeler
 {

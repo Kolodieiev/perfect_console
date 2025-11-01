@@ -1,4 +1,5 @@
 #pragma once
+#pragma GCC optimize("O3")
 #include <driver/i2s_std.h>
 
 #include "../defines.h"

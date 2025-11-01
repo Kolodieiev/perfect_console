@@ -1,6 +1,6 @@
 #pragma once
 #include "../defines.h"
-#include <pixeler_setup/battery_setup.h>
+#include "../setup/battery_setup.h"
 
 namespace pixeler
 {

@@ -1,5 +1,4 @@
 #pragma GCC optimize("O3")
-
 #include "I2C_Manager.h"
 
 #include <Wire.h>

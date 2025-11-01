@@ -1,7 +1,8 @@
-#include "./ResManager.h"
+#pragma GCC optimize("O3")
+#include "ResManager.h"
 
-#include "pixeler/util/audio/WavUtil.h"
-#include "pixeler/util/img/BmpUtil.h"
+#include "../util/audio/WavUtil.h"
+#include "../util/img/BmpUtil.h"
 
 namespace pixeler
 {

@@ -1,3 +1,4 @@
+#pragma GCC optimize("O3")
 #include "WiFiManager.h"
 
 const char STR_ERR_WIFI_BUSY[] = "WiFi-модуль зайнятий";

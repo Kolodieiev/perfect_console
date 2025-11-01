@@ -1,7 +1,6 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-#include <pixeler_setup/cpu_setup.h>
 
 #include "../../driver/graphics/DisplayWrapper.h"
 #include "../../driver/input/Input.h"
@@ -9,7 +8,9 @@
 #include "../widget/IWidgetContainer.h"
 #include "../widget/notification/Notification.h"
 #include "../widget/text/Label.h"
-#include "pixeler_setup/context_id.h"
+
+#include "../../setup/cpu_setup.h"
+#include "../../setup/context_id_setup.h"
 
 namespace pixeler
 {

@@ -1,5 +1,6 @@
 #pragma once
-#include "pixeler/driver/graphics/DisplayWrapper.h"
+#pragma GCC optimize("O3")
+#include "../driver/graphics/DisplayWrapper.h"
 
 namespace pixeler
 {

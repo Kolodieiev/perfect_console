@@ -9,8 +9,8 @@
 #include "Arduino_GFX.h"
 
 #include <pgmspace.h>
-#include <pixeler_setup/display_setup.h>
-#include <pixeler_setup/graphics_setup.h>
+#include "../../../setup/display_setup.h"
+#include "../../../setup/graphics_setup.h"
 
 #include "Arduino_DataBus.h"
 #include "float.h"

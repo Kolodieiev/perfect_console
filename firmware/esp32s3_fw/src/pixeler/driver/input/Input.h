@@ -4,9 +4,9 @@
 #include <unordered_map>
 
 #include "../../defines.h"
+#include "../../setup/input_setup.h"
 #include "Button.h"
 #include "external_input/ExtInput.h"
-#include "pixeler_setup/input_setup.h"
 
 namespace pixeler
 {

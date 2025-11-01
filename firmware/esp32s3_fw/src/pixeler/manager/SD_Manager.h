@@ -1,8 +1,9 @@
 #pragma once
+#pragma GCC optimize("O3")
 #include <SPI.h>
-#include <pixeler_setup/sd_setup.h>
 
 #include "../defines.h"
+#include "../setup/sd_setup.h"
 
 namespace pixeler
 {
