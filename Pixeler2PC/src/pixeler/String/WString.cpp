@@ -20,7 +20,7 @@
  License along with this library; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
+#pragma GCC optimize("O3")
 #include "WString.h"
 /*********************************************/
 /*  Constructors                             */
@@ -88,7 +88,7 @@ String::String(int value, unsigned char base)
 {
   init();
   char buf[2 + 8 * sizeof(int)];
-  ltoa((long)value, buf, base);
+  ltoa(value, buf, base);
   *this = buf;
 }
 
@@ -436,7 +436,7 @@ bool String::concat(unsigned char num)
 bool String::concat(int num)
 {
   char buf[2 + 3 * sizeof(int)];
-  ltoa((long)num, buf, 10);
+  ltoa(num, buf, 10);
   return concat(buf, strlen(buf));
 }
 bool String::concat(unsigned int num)
