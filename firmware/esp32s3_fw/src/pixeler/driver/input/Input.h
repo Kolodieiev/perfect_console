@@ -102,42 +102,6 @@ namespace pixeler
      */
     void __printPinMode(BtnID pin_id);
 
-#ifdef TOUCHSCREEN_SUPPORT
-    bool isHolded() const
-    {
-      return _touchscreen->isHolded();
-    }
-    bool isPressed() const
-    {
-      return _touchscreen->isPressed();
-    }
-    bool isReleased() const
-    {
-      return _touchscreen->isReleased();
-    }
-    bool isSwiped() const
-    {
-      return _touchscreen->isSwiped();
-    }
-    void lock(unsigned long lock_duration)
-    {
-      _touchscreen->lock(lock_duration);
-    }
-
-    ITouchscreen::Swipe getSwipe()
-    {
-      return _touchscreen->getSwipe();
-    }
-    uint16_t getX() const
-    {
-      return _touchscreen->getX();
-    }
-    uint16_t getY() const
-    {
-      return _touchscreen->getY();
-    }
-#endif
-
   private:
     std::unordered_map<BtnID, Button*> _buttons;
 
@@ -145,9 +109,6 @@ namespace pixeler
     ExtInput _ext_input;
 #endif
 
-#ifdef TOUCHSCREEN_SUPPORT
-    ITouchscreen* _touchscreen{nullptr};
-#endif
   };
 
   extern Input _input;

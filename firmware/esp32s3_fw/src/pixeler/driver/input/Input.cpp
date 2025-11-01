@@ -9,10 +9,6 @@
 #include "soc/gpio_struct.h"
 #include "soc/io_mux_reg.h"
 
-#ifdef GT911_DRIVER
-#include "./touchscreen_driver/GT911.h"
-#endif
-
 const char STR_UNKNOWN_PIN[] = "Незареєстрована віртуальна кнопка";
 
 namespace pixeler
@@ -21,15 +17,6 @@ namespace pixeler
 
   void Input::__init()
   {
-#ifdef TOUCHSCREEN_SUPPORT
-#ifdef GT911_DRIVER
-    GT911* gt = new GT911();
-    gt->setRotation(TOUCH_ROTATION);
-    gt->begin(TOUCH_SDA_PIN, TOUCH_SCL_PIN, TOUCH_INT_PIN, TOUCH_RST_PIN, TOUCH_WIDTH, TOUCH_HEIGHT);
-    _touchscreen = gt;
-#endif  // GT911_DRIVER
-#endif  // TOUCHSCREEN_SUPPORT
-
 #ifdef EXT_INPUT
     _ext_input.init();
 #endif  // EXT_INPUT
@@ -39,10 +26,6 @@ namespace pixeler
 
   void Input::__update()
   {
-#ifdef TOUCHSCREEN_SUPPORT
-    _touchscreen->update();
-#endif  // TOUCHSCREEN_SUPPORT
-
 #ifdef EXT_INPUT
     _ext_input.update();
 
@@ -56,10 +39,6 @@ namespace pixeler
 
   void Input::reset()
   {
-#ifdef TOUCHSCREEN_SUPPORT
-    _touchscreen->reset();
-#endif  // TOUCHSCREEN_SUPPORT
-
     for (auto&& btn : _buttons)
       btn.second->reset();
   }
