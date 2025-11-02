@@ -170,14 +170,6 @@ int lua_label_set_autoscroll_delay(lua_State* L)
   return 0;
 }
 
-int lua_label_set_h_padding(lua_State* L)
-{
-  Label* label = *(Label**)lua_touserdata(L, 1);
-  int h_padding = luaL_checkinteger(L, 2);
-  label->setHPadding(h_padding);
-  return 0;
-}
-
 const struct luaL_Reg TYPE_METH_LABEL[] = {
     {"initWidthToFit", lua_label_init_width_to_fit},
     {"updateWidthToFit", lua_label_update_width_to_fit},
@@ -195,7 +187,6 @@ const struct luaL_Reg TYPE_METH_LABEL[] = {
     {"setAutoscrollDelay", lua_label_set_autoscroll_delay},
     {"setBackImg", lua_label_set_back_img},
     {"setMultiline", lua_label_set_multiline},
-    {"setHPadding", lua_label_set_h_padding},
     {STR_LUA_WIDGET_CLONE, lua_label_clone},
     {nullptr, nullptr},
 };
