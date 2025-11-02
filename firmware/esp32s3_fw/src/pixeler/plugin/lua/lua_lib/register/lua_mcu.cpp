@@ -17,7 +17,7 @@ int lua_mcu_millis(lua_State* L)
 
 int lua_mcu_sleep(lua_State* L)
 {
-  float ms = luaL_checknumber(L, 1);
+  int ms = luaL_checkinteger(L, 1);
   delay(ms);
   return 0;
 }
