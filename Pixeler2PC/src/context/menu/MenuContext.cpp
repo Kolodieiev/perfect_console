@@ -1,5 +1,8 @@
 #include "MenuContext.h"
 //
+#include "../../pixeler/manager/FileManager.h"
+#include "../../pixeler/ui/widget/layout/EmptyLayout.h"
+#include "../../pixeler/ui/widget/menu/item/MenuItem.h"
 #include "../WidgetCreator.h"
 #include "./res/book.h"
 #include "./res/chip.h"
@@ -8,8 +11,6 @@
 #include "./res/sd.h"
 #include "./res/settings.h"
 #include "./res/wifi_ico.h"
-#include "../../pixeler/ui/widget/layout/EmptyLayout.h"
-#include "../../pixeler/ui/widget/menu/item/MenuItem.h"
 
 #define ICO_WH 35
 
@@ -209,8 +210,24 @@ void MenuContext::down()
 
 void MenuContext::ok()
 {
-  log_i("Не реалізовано");
-  // uint16_t id = _menu->getCurrItemID();
-  // _last_sel_item_pos = _menu->getCurrFocusPos();
+  uint16_t id = _menu->getCurrItemID();
+  _last_sel_item_pos = _menu->getCurrFocusPos();
+
+  if (id == ID_CONTEXT_FILES)
+  {
+    std::vector<FileInfo> _files;
+
+    String dir_path;
+    _fs.indexAll(_files, dir_path.c_str());
+
+    for (auto it = _files.begin(), last_it = _files.end(); it != last_it; ++it)
+    {
+      log_i("%s", it->getName());
+    }
+  }
+  else
+  {
+    log_i("Не реалізовано");
+  }
   // openContextByID((ContextID)id);
 }
