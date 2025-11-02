@@ -13,6 +13,52 @@
 
 namespace pixeler
 {
+#ifdef _WIN32
+#include <windows.h>
+
+  static String ansiToUtf8(const char* ansi_str)
+  {
+    if (!ansi_str)
+      return {};
+
+    int wide_len = MultiByteToWideChar(CP_ACP, 0, ansi_str, -1, nullptr, 0);
+    if (wide_len <= 0)
+      return {};
+
+    std::wstring wide_str(wide_len - 1, 0);
+    MultiByteToWideChar(CP_ACP, 0, ansi_str, -1, wide_str.data(), wide_len);
+
+    int utf8_len = WideCharToMultiByte(CP_UTF8, 0, wide_str.c_str(), wide_len - 1, nullptr, 0, nullptr, nullptr);
+    if (utf8_len <= 0)
+      return {};
+
+    std::string utf8_str(utf8_len, 0);
+    WideCharToMultiByte(CP_UTF8, 0, wide_str.c_str(), wide_len - 1, utf8_str.data(), utf8_len, nullptr, nullptr);
+
+    return String(utf8_str.c_str());
+  }
+
+  static String utf8ToAnsi(const char* utf8_str)
+  {
+    if (!utf8_str)
+      return {};
+
+    int wide_len = MultiByteToWideChar(CP_UTF8, 0, utf8_str, -1, nullptr, 0);
+    if (wide_len <= 0)
+      return {};
+    std::wstring wide_str(wide_len - 1, 0);
+    MultiByteToWideChar(CP_UTF8, 0, utf8_str, -1, wide_str.data(), wide_len);
+
+    int ansi_len = WideCharToMultiByte(CP_ACP, 0, wide_str.c_str(), wide_len - 1, nullptr, 0, nullptr, nullptr);
+    if (ansi_len <= 0)
+      return {};
+    std::string ansi_str(ansi_len, 0);
+    WideCharToMultiByte(CP_ACP, 0, wide_str.c_str(), wide_len - 1, ansi_str.data(), ansi_len, nullptr, nullptr);
+
+    return String(ansi_str.c_str());
+  }
+#endif
+
   void FileManager::makeFullPath(String& out_path, const char* path)
   {
     out_path = "";
@@ -22,12 +68,22 @@ namespace pixeler
 
   uint8_t FileManager::getEntryType(const char* path, dirent* entry)
   {
-#if !defined(_WIN32)
+    struct stat st;
+
+#ifdef _WIN32
+    String ansi_str = utf8ToAnsi(path);
+
+    if (stat(ansi_str.c_str(), &st) == 0)
+    {
+      if (S_ISREG(st.st_mode))
+        return DT_REG;
+      if (S_ISDIR(st.st_mode))
+        return DT_DIR;
+    }
+#else
     if (entry && entry->d_type != DT_UNKNOWN)
       return entry->d_type;
-#endif
 
-    struct stat st;
     if (stat(path, &st) == 0)
     {
       if (S_ISREG(st.st_mode))
@@ -35,6 +91,8 @@ namespace pixeler
       if (S_ISDIR(st.st_mode))
         return DT_DIR;
     }
+#endif
+
     return DT_UNKNOWN;
   }
 
@@ -44,8 +102,15 @@ namespace pixeler
     makeFullPath(full_path, path);
 
     struct stat st;
+
+#ifdef _WIN32
+    String ansi_str = utf8ToAnsi(full_path.c_str());
+    if (stat(ansi_str.c_str(), &st) != 0 || !S_ISREG(st.st_mode))
+      return 0;
+#else
     if (stat(full_path.c_str(), &st) != 0 || !S_ISREG(st.st_mode))
       return 0;
+#endif
 
     return static_cast<size_t>(st.st_size);
   }
@@ -55,8 +120,14 @@ namespace pixeler
     String full_path;
     makeFullPath(full_path, path);
 
+#ifdef _WIN32
+    String ansi_str = utf8ToAnsi(full_path.c_str());
+    if (stat(ansi_str.c_str(), &out_stat) != 0)
+      return false;
+#else
     if (stat(full_path.c_str(), &out_stat) != 0)
       return false;
+#endif
 
     return true;
   }
@@ -111,7 +182,8 @@ namespace pixeler
     bool result = false;
 
 #ifdef _WIN32
-    result = !mkdir(full_path.c_str());
+    String ansi_str = utf8ToAnsi(full_path.c_str());
+    result = !mkdir(ansi_str.c_str());
 #else
     result = !mkdir(full_path.c_str(), 0777);
 #endif
@@ -131,7 +203,12 @@ namespace pixeler
     String full_path;
     makeFullPath(full_path, path);
 
+#ifdef _WIN32
+    String ansi_str = utf8ToAnsi(full_path.c_str());
+    FILE* f = fopen(ansi_str.c_str(), "rb");
+#else
     FILE* f = fopen(full_path.c_str(), "rb");
+#endif
 
     if (!f)
     {
@@ -219,7 +296,12 @@ namespace pixeler
     String full_path;
     makeFullPath(full_path, path);
 
+#ifdef _WIN32
+    String ansi_str = utf8ToAnsi(full_path.c_str());
+    FILE* f = fopen(ansi_str.c_str(), "wb");
+#else
     FILE* f = fopen(full_path.c_str(), "wb");
+#endif
 
     if (!f)
     {
@@ -283,7 +365,12 @@ namespace pixeler
     String full_path;
     makeFullPath(full_path, path);
 
+#ifdef _WIN32
+    String ansi_str = utf8ToAnsi(full_path.c_str());
+    FILE* f = fopen(ansi_str.c_str(), mode);
+#else
     FILE* f = fopen(full_path.c_str(), mode);
+#endif
 
     if (!f)
       log_e("Помилка взяття дескриптора для %s", full_path.c_str());
@@ -362,10 +449,23 @@ namespace pixeler
     {
       String full_path;
       makeFullPath(full_path, path);
+
+#ifdef _WIN32
+      String ansi_str = utf8ToAnsi(full_path.c_str());
+      result = !remove(ansi_str.c_str());
+#else
       result = !remove(full_path.c_str());
+#endif
     }
     else
+    {
+#ifdef _WIN32
+      String ansi_str = utf8ToAnsi(path);
+      result = !remove(ansi_str.c_str());
+#else
       result = !remove(path);
+#endif
+    }
 
     if (!result)
       log_e("Помилка видалення файлу: %s", path);
@@ -384,11 +484,22 @@ namespace pixeler
     {
       String full_path;
       makeFullPath(full_path, path);
+
+#ifdef _WIN32
+      String ansi_str = utf8ToAnsi(full_path.c_str());
+      dir = opendir(ansi_str.c_str());
+#else
       dir = opendir(full_path.c_str());
+#endif
     }
     else
     {
+#ifdef _WIN32
+      String ansi_str = utf8ToAnsi(path);
+      dir = opendir(ansi_str.c_str());
+#else
       dir = opendir(path);
+#endif
     }
 
     if (!dir)
@@ -502,7 +613,13 @@ namespace pixeler
       return false;
     }
 
+#ifdef _WIN32
+    String old_ansi_str = utf8ToAnsi(old_n.c_str());
+    String new_ansi_str = utf8ToAnsi(new_n.c_str());
+    return !::rename(old_ansi_str.c_str(), new_ansi_str.c_str());
+#else
     return !::rename(old_n.c_str(), new_n.c_str());
+#endif
   }
 
   void FileManager::copyFile()
@@ -525,7 +642,12 @@ namespace pixeler
     makeFullPath(from, _copy_from_path.c_str());
     makeFullPath(to, _copy_to_path.c_str());
 
+#ifdef _WIN32
+    String to_ansi_str = utf8ToAnsi(to.c_str());
+    FILE* n_f = fopen(to_ansi_str.c_str(), "a");
+#else
     FILE* n_f = fopen(to.c_str(), "a");
+#endif
 
     if (!n_f)
     {
@@ -534,7 +656,12 @@ namespace pixeler
       return;
     }
 
+#ifdef _WIN32
+    String from_ansi_str = utf8ToAnsi(from.c_str());
+    FILE* o_f = fopen(from_ansi_str.c_str(), "r");
+#else
     FILE* o_f = fopen(from.c_str(), "r");
+#endif
 
     if (!o_f)
     {
@@ -687,7 +814,11 @@ namespace pixeler
       if (!dir_entry)
         break;
 
+#ifdef _WIN32
+      filename = ansiToUtf8(dir_entry->d_name);
+#else
       filename = dir_entry->d_name;
+#endif
 
       if (filename.equals(".") || filename.equals(".."))
         continue;
