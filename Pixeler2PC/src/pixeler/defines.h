@@ -17,6 +17,37 @@
 
 //--------------------------------------------------------------------------
 
+#ifdef _WIN32
+inline uint16_t __bswap16(uint16_t x)
+{
+  return (x >> 8) | (x << 8);
+}
+#endif
+
+//--------------------------------------------------------------------------
+
+#ifdef _WIN32
+#ifndef DT_UNKNOWN
+#define DT_UNKNOWN 0
+#define DT_REG 1
+#define DT_DIR 2
+#endif
+#endif
+
+//--------------------------------------------------------------------------
+
+inline bool psramInit()
+{
+  return true;
+}
+
+inline void* ps_malloc(size_t _Size)
+{
+  return malloc(_Size);
+}
+
+//--------------------------------------------------------------------------
+
 using SemaphoreHandle_t = std::mutex*;
 constexpr unsigned long portMAX_DELAY = (unsigned long)-1;
 
