@@ -215,19 +215,10 @@ void MenuContext::ok()
 
   if (id == ID_CONTEXT_FILES)
   {
-    std::vector<FileInfo> _files;
-
-    String dir_path;
-    _fs.indexAll(_files, dir_path.c_str());
-
-    for (auto it = _files.begin(), last_it = _files.end(); it != last_it; ++it)
-    {
-      log_i("%s", it->getName());
-    }
+    openContextByID(ID_CONTEXT_FILES);
   }
   else
   {
     log_i("Не реалізовано");
   }
-  // openContextByID((ContextID)id);
 }

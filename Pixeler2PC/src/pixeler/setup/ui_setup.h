@@ -8,8 +8,9 @@
 #include "context_id_setup.h"
 
 // -------------------------------- Підключи нижче заголовкові файли контекстів першого рівня
-#include "../../context/home/HomeContext.h"
-#include "../../context/menu/MenuContext.h"
+#include "context/files/FilesContext.h"
+#include "context/home/HomeContext.h"
+#include "context/menu/MenuContext.h"
 
 namespace pixeler
 {
@@ -19,6 +20,8 @@ namespace pixeler
        { return new HomeContext(); }},
       {ContextID::ID_CONTEXT_MENU, []()
        { return new MenuContext(); }},
+      {ContextID::ID_CONTEXT_FILES, []()
+       { return new FilesContext(); }},
   };
 }  // namespace pixeler
 
