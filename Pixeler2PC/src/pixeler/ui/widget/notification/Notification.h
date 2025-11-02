@@ -156,17 +156,6 @@ namespace pixeler
     void setMsgTextSize(uint16_t size);
 
     /**
-     * @brief Встановлює відступ для віджета від країв дисплею по горизонталі.
-     * Значення не коригується автоматично, якщо відступ перевищує ширину дисплею.
-     *
-     * @param margin
-     */
-    void setWMargin(uint16_t margin)
-    {
-      _w_margin = margin;
-    }
-
-    /**
      * @brief Встановлює відступ для віджета від країв дисплею по вертикалі.
      * Значення не коригується автоматично, якщо відступ перевищує висоту дисплею.
      *
@@ -192,7 +181,6 @@ namespace pixeler
     Label* _left_lbl{nullptr};
     Label* _right_lbl{nullptr};
 
-    uint16_t _w_margin{30};
     uint16_t _h_margin{30};
   };
 }  // namespace pixeler
