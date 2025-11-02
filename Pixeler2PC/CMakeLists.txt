@@ -17,9 +17,9 @@ file(GLOB_RECURSE CPP_SOURCES
     "src/**/*.cpp"
 )
 
-set(C_SOURCES
-    "src/pixeler/driver/graphics/U8g2/u8g2_fonts.c"
-    "src/pixeler/String/stdlib_noniso.c"
+file(GLOB_RECURSE C_SOURCES
+    "src/*.c"
+    "src/**/*.c"
 )
 
 add_executable(main ${CPP_SOURCES} ${C_SOURCES}) 
@@ -42,9 +42,9 @@ target_link_libraries(main PRIVATE SFML::Graphics)
 #     "src/**/*.cpp"
 # )
 
-# set(C_SOURCES
-#     "src/pixeler/driver/graphics/U8g2/u8g2_fonts.c"
-#     "src/pixeler/String/stdlib_noniso.c"
+# file(GLOB_RECURSE C_SOURCES
+#     "src/*.c"
+#     "src/**/*.c"
 # )
 
 # add_executable(main ${CPP_SOURCES} ${C_SOURCES}) 
