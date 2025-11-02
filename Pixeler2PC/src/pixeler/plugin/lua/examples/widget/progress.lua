@@ -1,4 +1,4 @@
-BTN_EXIT = 2
+BTN_EXIT = 1
 
 initType("IWidgetContainer")
 initType("ProgressBar")
