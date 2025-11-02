@@ -1,10 +1,6 @@
 #pragma GCC optimize("O3")
 #include "BmpUtil.h"
 
-#ifdef __unix__
-#include <byteswap.h>
-#endif
-
 #include "pixeler/manager/FileManager.h"
 
 namespace pixeler
@@ -154,13 +150,7 @@ namespace pixeler
     {
       uint16_t* data_p16 = reinterpret_cast<uint16_t*>(data + header.data_offset);
       for (int i = 0; i < buf_size; ++i)
-      {
-#ifdef __unix__
         data_p16[i] = __bswap_16(buff[i]);
-#else
-        data_p16[i] = __bswap16(buff[i]);
-#endif
-      }
     }
 
     size_t written_bytes = _fs.writeFile(path_to_bmp, data, header.file_size);
