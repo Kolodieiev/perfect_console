@@ -4,6 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
+#pragma GCC optimize("O3")
+
 #ifndef ltable_h
 #define ltable_h
 

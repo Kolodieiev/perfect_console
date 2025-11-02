@@ -8,6 +8,8 @@
 ** systems.
 */
 
+#pragma GCC optimize("O3")
+
 #define loadlib_c
 #define LUA_LIB
 

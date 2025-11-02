@@ -2,7 +2,6 @@
 #include "pixeler/Pixeler.h"
 #include "pixeler/manager/CoprocessorManager.h"
 #include "pixeler/setup/input_setup.h"
-
 using namespace pixeler;
 
 void setup()

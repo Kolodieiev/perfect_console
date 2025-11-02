@@ -4,6 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
+#pragma GCC optimize("O3")
+
 #if !defined(lopnames_h)
 #define lopnames_h
 

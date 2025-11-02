@@ -5,6 +5,8 @@
 ** See Copyright Notice at the end of this file
 */
 
+#pragma GCC optimize("O3")
+
 #ifndef lua_h
 #define lua_h
 
