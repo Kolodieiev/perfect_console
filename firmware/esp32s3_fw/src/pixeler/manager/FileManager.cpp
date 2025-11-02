@@ -687,7 +687,11 @@ namespace pixeler
       if (filename.equals(".") || filename.equals(".."))
         continue;
 
-      uint8_t entr_type = getEntryType(full_path.c_str(), dir_entry);
+      String full_name{full_path};
+      full_name += "/";
+      full_name += filename;
+
+      uint8_t entr_type = getEntryType(full_name.c_str(), dir_entry);
 
       if (entr_type == DT_REG)
         is_dir = false;

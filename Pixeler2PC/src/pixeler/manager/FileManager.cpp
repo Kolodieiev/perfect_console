@@ -21,21 +21,12 @@ namespace pixeler
     out_path += path;
   }
 
-  uint8_t FileManager::getEntryType(const char* path, dirent* entry)
+  uint8_t FileManager::getEntryType(const char* path, dirent* entry)  // TODO
   {
-#if defined(_WIN32)
-    struct stat st;
-    if (stat(path, &st) == 0)
-    {
-      if (S_ISREG(st.st_mode))
-        return DT_REG;
-      if (S_ISDIR(st.st_mode))
-        return DT_DIR;
-    }
-    return DT_UNKNOWN;
-#else
+#if !defined(_WIN32)
     if (entry && entry->d_type != DT_UNKNOWN)
       return entry->d_type;
+#endif
 
     struct stat st;
     if (stat(path, &st) == 0)
@@ -46,7 +37,6 @@ namespace pixeler
         return DT_DIR;
     }
     return DT_UNKNOWN;
-#endif
   }
 
   size_t FileManager::getFileSize(const char* path)
@@ -664,7 +654,11 @@ namespace pixeler
       if (filename.equals(".") || filename.equals(".."))
         continue;
 
-      uint8_t entr_type = getEntryType(full_path.c_str(), dir_entry);
+      String full_name{full_path};
+      full_name += "/";
+      full_name += filename;
+
+      uint8_t entr_type = getEntryType(full_name.c_str(), dir_entry);
 
       if (entr_type == DT_REG)
         is_dir = false;
