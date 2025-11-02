@@ -23,6 +23,11 @@ file(GLOB_RECURSE C_SOURCES
 )
 
 add_executable(main ${CPP_SOURCES} ${C_SOURCES}) 
+
+target_include_directories(main PUBLIC 
+    ${CMAKE_SOURCE_DIR}/src  
+)
+
 set_source_files_properties(${C_SOURCES} PROPERTIES LANGUAGE C)
 
 target_compile_features(main PRIVATE cxx_std_17)
@@ -48,6 +53,11 @@ target_link_libraries(main PRIVATE SFML::Graphics)
 # )
 
 # add_executable(main ${CPP_SOURCES} ${C_SOURCES}) 
+
+# target_include_directories(main PUBLIC 
+#     ${CMAKE_SOURCE_DIR}/src  
+# )
+
 # set_source_files_properties(${C_SOURCES} PROPERTIES LANGUAGE C)
 
 # target_compile_features(main PRIVATE cxx_std_17)
