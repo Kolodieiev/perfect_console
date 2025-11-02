@@ -21,7 +21,7 @@ namespace pixeler
     out_path += path;
   }
 
-  uint8_t FileManager::getEntryType(const char* path, dirent* entry)  // TODO
+  uint8_t FileManager::getEntryType(const char* path, dirent* entry)
   {
 #if !defined(_WIN32)
     if (entry && entry->d_type != DT_UNKNOWN)
