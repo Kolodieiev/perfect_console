@@ -457,7 +457,6 @@ namespace pixeler
     String _copy_from_path;
     String _copy_to_path;
 
-    TaskHandle_t _task_handler{nullptr};
     void* _doneArg{nullptr};
 
     const uint32_t TASK_SIZE{(1024 / 2) * 30};

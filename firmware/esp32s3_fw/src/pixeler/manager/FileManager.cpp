@@ -453,7 +453,7 @@ namespace pixeler
 
   bool FileManager::startRemoving(const char* path)
   {
-    if (_task_handler)
+    if (_is_working)
     {
       log_e("Вже працює інша задача");
       return false;
@@ -465,7 +465,7 @@ namespace pixeler
     _rm_path = path;
     _is_canceled = false;
 
-    BaseType_t result = xTaskCreatePinnedToCore(rmTask, "rmTask", TASK_SIZE, this, 10, &_task_handler, 0);
+    BaseType_t result = xTaskCreatePinnedToCore(rmTask, "rmTask", TASK_SIZE, this, 10, nullptr, 0);
 
     if (result == pdPASS)
     {
@@ -622,7 +622,7 @@ namespace pixeler
       return false;
     }
 
-    if (_task_handler)
+    if (_is_working)
     {
       log_e("Вже працює інша задача");
       return false;
@@ -637,7 +637,7 @@ namespace pixeler
     _is_canceled = false;
     _copy_progress = 0;
 
-    BaseType_t result = xTaskCreatePinnedToCore(copyFileTask, "copyFileTask", TASK_SIZE, this, 10, &_task_handler, 0);
+    BaseType_t result = xTaskCreatePinnedToCore(copyFileTask, "copyFileTask", TASK_SIZE, this, 10, nullptr, 0);
 
     if (result == pdPASS)
     {
@@ -765,12 +765,7 @@ namespace pixeler
     if (_doneHandler)
       _doneHandler(result, _doneArg);
 
-    if (_task_handler)
-    {
-      TaskHandle_t temp_handler = _task_handler;
-      _task_handler = nullptr;
-      vTaskDelete(temp_handler);
-    }
+    vTaskDelete(NULL);
   }
 
   void FileManager::cancel()
