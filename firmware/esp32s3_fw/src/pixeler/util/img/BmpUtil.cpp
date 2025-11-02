@@ -136,7 +136,7 @@ namespace pixeler
     uint8_t* data = static_cast<uint8_t*>(ps_malloc(header.file_size));
     if (!data)
     {
-      log_e("Помилка виділення %lu байт PSRAM", header.file_size);
+      log_e("Помилка виділення %u байт PSRAM", header.file_size);
       return false;
     }
 

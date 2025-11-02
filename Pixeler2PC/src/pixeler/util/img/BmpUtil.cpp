@@ -1,7 +1,7 @@
 #pragma GCC optimize("O3")
 #include "BmpUtil.h"
 
-#ifndef _WIN32
+#ifdef __unix__
 #include <byteswap.h>
 #endif
 
@@ -140,7 +140,7 @@ namespace pixeler
     uint8_t* data = static_cast<uint8_t*>(ps_malloc(header.file_size));
     if (!data)
     {
-      log_e("Помилка виділення %lu байт PSRAM", header.file_size);
+      log_e("Помилка виділення %u байт PSRAM", header.file_size);
       return false;
     }
 
@@ -154,7 +154,13 @@ namespace pixeler
     {
       uint16_t* data_p16 = reinterpret_cast<uint16_t*>(data + header.data_offset);
       for (int i = 0; i < buf_size; ++i)
+      {
+#ifdef __unix__
+        data_p16[i] = __bswap_16(buff[i]);
+#else
         data_p16[i] = __bswap16(buff[i]);
+#endif
+      }
     }
 
     size_t written_bytes = _fs.writeFile(path_to_bmp, data, header.file_size);

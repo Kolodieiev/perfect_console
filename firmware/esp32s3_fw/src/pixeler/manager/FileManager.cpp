@@ -163,7 +163,7 @@ namespace pixeler
 
     if (seek_pos > 0 && fseek(file, seek_pos, SEEK_SET))
     {
-      log_e("Помилка встановлення позиції: %d", seek_pos);
+      log_e("Помилка встановлення позиції: %zu", seek_pos);
       return false;
     }
 
