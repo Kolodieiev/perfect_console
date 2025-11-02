@@ -5,13 +5,13 @@
 #include <byteswap.h>
 #endif
 
-#include "../../manager/FileManager.h"
+#include "pixeler/manager/FileManager.h"
 
 namespace pixeler
 {
   bool BmpUtil::checkBmpFile(FILE* bmp_file, BmpHeader& out_bmp_header)
   {
-    if (!_fs.readChunkFromFile(bmp_file, &out_bmp_header, sizeof(BmpHeader)))
+    if (!_fs.readFromFile(bmp_file, &out_bmp_header, sizeof(BmpHeader)))
       return false;
 
     if (!validateHeader(out_bmp_header))
@@ -64,7 +64,7 @@ namespace pixeler
       return empty_bmp_data;
     }
 
-    if (!_fs.readChunkFromFile(bmp_file, data, data_size, bmp_header.data_offset))
+    if (!_fs.readFromFile(bmp_file, data, data_size, bmp_header.data_offset))
     {
       log_e("Помилка читання файлу: %s", path_to_bmp);
       free(data);
