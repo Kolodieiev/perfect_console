@@ -1,7 +1,6 @@
 #pragma GCC optimize("O3")
 #include "FileManager.h"
 
-#include <dirent.h>
 #include <errno.h>
 #include <sys/stat.h>
 
@@ -342,8 +341,6 @@ namespace pixeler
     String full_path;
     makeFullPath(full_path, _rm_path.c_str());
 
-    log_i("Розпочато видалення: %s", full_path.c_str());
-
     bool is_dir = dirExist(_rm_path.c_str(), true);
 
     if (!is_dir)
@@ -452,17 +449,39 @@ namespace pixeler
     return result;
   }
 
+  void FileManager::rmTask(void* params)
+  {
+    FileManager* instance = static_cast<FileManager*>(params);
+    instance->_is_working = true;
+    instance->rm();
+  }
+
   bool FileManager::startRemoving(const char* path)
   {
+    if (_is_working)
+    {
+      log_e("Вже працює інша задача");
+      return false;
+    }
+
     if (!exists(path))
       return false;
 
     _rm_path = path;
     _is_canceled = false;
 
-    rm();
+    BaseType_t result = xTaskCreatePinnedToCore(rmTask, "rmTask", TASK_SIZE, this, 10, nullptr, 0);
 
-    return true;
+    if (result == pdPASS)
+    {
+      log_i("rmTask is working now");
+      return true;
+    }
+    else
+    {
+      log_e("rmTask was not running");
+      return false;
+    }
   }
 
   bool FileManager::rename(const char* old_name, const char* new_name)
@@ -476,8 +495,7 @@ namespace pixeler
     makeFullPath(new_n, new_name);
 
     if (new_n.length() >= old_n.length() &&
-        (new_n.c_str()[old_n.length()] == '/' ||
-         new_n.c_str()[old_n.length()] == '\0') &&
+        (new_n.c_str()[old_n.length()] == '/' || new_n.c_str()[old_n.length()] == '\0') &&
         strncmp(old_n.c_str(), new_n.c_str(), old_n.length()) == 0)
     {
       log_e("Старе і нове ім'я збігаються або спроба переміщення каталогу до самого себе");
@@ -506,8 +524,6 @@ namespace pixeler
 
     makeFullPath(from, _copy_from_path.c_str());
     makeFullPath(to, _copy_to_path.c_str());
-
-    log_i("Розпочато копіювання файлу з %s до %s", from.c_str(), to.c_str());
 
     FILE* n_f = fopen(to.c_str(), "a");
 
@@ -596,11 +612,24 @@ namespace pixeler
     }
   }
 
+  void FileManager::copyFileTask(void* params)
+  {
+    FileManager* instance = static_cast<FileManager*>(params);
+    instance->_is_working = true;
+    instance->copyFile();
+  }
+
   bool FileManager::startCopyFile(const char* from, const char* to)
   {
     if (!from || !to)
     {
       log_e("Bad arguments");
+      return false;
+    }
+
+    if (_is_working)
+    {
+      log_e("Вже працює інша задача");
       return false;
     }
 
@@ -613,9 +642,18 @@ namespace pixeler
     _is_canceled = false;
     _copy_progress = 0;
 
-    copyFile();
+    BaseType_t result = xTaskCreatePinnedToCore(copyFileTask, "copyFileTask", TASK_SIZE, this, 10, nullptr, 0);
 
-    return true;
+    if (result == pdPASS)
+    {
+      log_i("copyFileTask is working now");
+      return true;
+    }
+    else
+    {
+      log_e("copyFileTask was not running");
+      return false;
+    }
   }
 
   void FileManager::startIndex(std::vector<FileInfo>& out_vec, const char* dir_path, IndexMode mode, const char* file_ext)
@@ -726,12 +764,22 @@ namespace pixeler
   void FileManager::taskDone(bool result)
   {
     _is_working = false;
+
     _last_task_result = result;
+
+    if (_doneHandler)
+      _doneHandler(result, _doneArg);
   }
 
   void FileManager::cancel()
   {
     _is_canceled = true;
+  }
+
+  void FileManager::setTaskDoneHandler(TaskDoneHandler handler, void* arg)
+  {
+    _doneHandler = handler;
+    _doneArg = arg;
   }
 
   //------------------------------------------------------------------------------------------------------------------------

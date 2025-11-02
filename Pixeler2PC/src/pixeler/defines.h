@@ -61,6 +61,33 @@ inline void* ps_realloc(void* _Memory, size_t _NewSize)
 
 //--------------------------------------------------------------------------
 
+using TaskFunction_t = void (*)(void*);
+using BaseType_t = int;
+
+constexpr BaseType_t pdPASS = 1;
+constexpr BaseType_t pdFAIL = 0;
+
+inline BaseType_t xTaskCreatePinnedToCore(
+    TaskFunction_t pvTaskCode,
+    const char* pcName,
+    uint32_t usStackDepth,
+    void* pvParameters,
+    uint32_t uxPriority,
+    void* pxCreatedTask,
+    int xCoreID)
+{
+  try
+  {
+    std::thread t(pvTaskCode, pvParameters);
+    t.detach();
+    return pdPASS;
+  }
+  catch (...)
+  {
+    return pdFAIL;
+  }
+}
+
 using SemaphoreHandle_t = std::mutex*;
 constexpr unsigned long portMAX_DELAY = (unsigned long)-1;
 

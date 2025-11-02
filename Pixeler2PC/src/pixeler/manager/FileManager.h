@@ -72,6 +72,8 @@ namespace pixeler
     bool _is_dir;
   };
 
+  typedef std::function<void(bool result, void* arg)> TaskDoneHandler;
+
   /**
    * @brief
    *
@@ -345,6 +347,14 @@ namespace pixeler
     }
 
     /**
+     * @brief Встановлює обробник події завершення будь-якої задачі.
+     *
+     * @param handler Обробник події завершення операції.
+     * @param arg Аргументи, які будуть повернуті до обробника.
+     */
+    void setTaskDoneHandler(TaskDoneHandler handler, void* arg);
+
+    /**
      * @brief Повертає стан прапору, який вказує на те, чи запущена в даний момент будь-яка із задач файлового менеджера.
      *
      * @return true - якщо будь-яка із задач файлового менеджера запущена на даний момент.
@@ -391,9 +401,14 @@ namespace pixeler
     //
     void taskDone(bool result);
     //
+    static void rmTask(void* params);
+    static void copyFileTask(void* params);
+    //
     size_t writeOptimal(FILE* file, const void* buffer, size_t len);
 
   private:
+    TaskDoneHandler _doneHandler{nullptr};
+
     String _rm_path;
     String _copy_from_path;
     String _copy_to_path;

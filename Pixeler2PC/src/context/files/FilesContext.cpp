@@ -1,12 +1,12 @@
 #pragma GCC optimize("O3")
 #include "FilesContext.h"
 
+#include "pixeler/manager/SettingsManager.h"
 #include "pixeler/util/img/BmpUtil.h"
 //
 #include "../WidgetCreator.h"
 #include "./res/folder.h"
 #include "./res/lua.h"
-#include "pixeler/manager/SettingsManager.h"
 #include "pixeler/ui/widget/menu/item/MenuItem.h"
 #include "pixeler/ui/widget/progress/ProgressBar.h"
 
@@ -51,7 +51,7 @@ bool FilesContext::loop()
   return true;
 }
 
-FilesContext::FilesContext()
+FilesContext::FilesContext() : _sync_task_mutex{xSemaphoreCreateMutex()}
 {
   _dir_img = new Image(1);
   _dir_img->setTransparency(true);
@@ -69,6 +69,8 @@ FilesContext::FilesContext()
 
   createNotificationObj();
 
+  _fs.setTaskDoneHandler(taskDone, this);
+
   indexCurDir();
   showFilesTmpl();
   fillFilesTmpl();
@@ -80,9 +82,60 @@ FilesContext::~FilesContext()
   delete _lua_img;
   delete _lua_context;
   delete _notification;
+  vSemaphoreDelete(_sync_task_mutex);
 }
 
 //-------------------------------------------------------------------------------------------
+
+void FilesContext::showCopyingTmpl()
+{
+  WidgetCreator creator;
+  IWidgetContainer* layout = creator.getEmptyLayout();
+
+  _msg_lbl = creator.getStatusMsgLable(ID_MSG_LBL, STR_COPYING, 2);
+  layout->addWidget(_msg_lbl);
+  _msg_lbl->setHeight(32);
+  _msg_lbl->setPos(0, TFT_HEIGHT / 2 - _msg_lbl->getHeight() - 2);
+
+  _task_progress = new ProgressBar(ID_PROGRESS);
+  layout->addWidget(_task_progress);
+  _task_progress->setBackColor(COLOR_BLACK);
+  _task_progress->setProgressColor(COLOR_ORANGE);
+  _task_progress->setBorderColor(COLOR_WHITE);
+  _task_progress->setMax(100);
+  _task_progress->setWidth(TFT_WIDTH - 5 * 8);
+  _task_progress->setHeight(20);
+  _task_progress->setProgress(0);
+  _task_progress->setPos((TFT_WIDTH - _task_progress->getWidth()) / 2, TFT_HEIGHT / 2 + 2);
+
+  _mode = MODE_COPYING;
+
+  setLayout(layout);
+}
+
+void FilesContext::showRemovingTmpl()
+{
+  _mode = MODE_REMOVING;
+
+  WidgetCreator creator;
+  IWidgetContainer* layout = creator.getEmptyLayout();
+  setLayout(layout);
+
+  _msg_lbl = creator.getStatusMsgLable(ID_MSG_LBL, STR_REMOVING, 2);
+  layout->addWidget(_msg_lbl);
+}
+
+void FilesContext::showCancelingTmpl()
+{
+  WidgetCreator creator;
+  IWidgetContainer* layout = creator.getEmptyLayout();
+
+  _msg_lbl = creator.getStatusMsgLable(ID_MSG_LBL, STR_CANCELING, 2);
+  layout->addWidget(_msg_lbl);
+
+  _mode = MODE_CANCELING;
+  setLayout(layout);
+}
 
 void FilesContext::showFilesTmpl()
 {
@@ -161,7 +214,7 @@ void FilesContext::showContextMenu()
   _context_menu->setBorderColor(COLOR_ORANGE);
   _context_menu->setLoopState(true);
 
-  if (_has_moving_file)
+  if (_has_moving_file || _has_copying_file)
   {
     // Якщо є файл для переміщення додати відповідний пункт меню
     MenuItem* paste_item = creator.getMenuItem(ID_ITEM_PASTE);
@@ -219,6 +272,14 @@ void FilesContext::showContextMenu()
           _fs.closeFile(bmp_file);
         }
       }
+
+      // копіювати
+      MenuItem* copy_item = creator.getMenuItem(ID_ITEM_COPY);
+      _context_menu->addItem(copy_item);
+
+      Label* copy_lbl = creator.getItemLabel(STR_COPY, font_unifont);
+      copy_item->setLbl(copy_lbl);
+      copy_lbl->setHPadding(1);
     }
 
     // перейменувати
@@ -358,6 +419,18 @@ void FilesContext::prepareFileMoving()
   _name_from = _files_list->getCurrItemText();
 
   _has_moving_file = true;
+  _has_copying_file = false;
+
+  hideContextMenu();
+}
+
+void FilesContext::prepareFileCopying()
+{
+  _path_from = makePathFromBreadcrumbs();
+  _name_from = _files_list->getCurrItemText();
+
+  _has_moving_file = false;
+  _has_copying_file = true;
 
   hideContextMenu();
 }
@@ -384,8 +457,30 @@ void FilesContext::pasteFile()
     else
       showResultToast(false);
   }
+  else if (_has_copying_file)
+  {
+    if (!_fs.fileExist(old_file_path.c_str()) || !_fs.startCopyFile(old_file_path.c_str(), new_file_path.c_str()))
+    {
+      showResultToast(false);
+    }
+    else
+    {
+      if (old_file_path.equals(new_file_path))
+      {
+        new_file_path += "_copy";
+
+        while (_fs.fileExist(new_file_path.c_str(), true))
+          new_file_path += "_copy";
+      }
+
+      _copy_to_path = new_file_path;
+
+      showCopyingTmpl();
+    }
+  }
 
   _has_moving_file = false;
+  _has_copying_file = false;
 
   _path_from = "";
   _name_from = "";
@@ -398,18 +493,7 @@ void FilesContext::removeFile()
   filename += _files_list->getCurrItemText();
 
   if (_fs.startRemoving(filename.c_str()))
-  {
-    if (_fs.lastTaskResult())
-    {
-      indexCurDir();
-      showFilesTmpl();
-      fillFilesTmpl();
-      showResultToast(true);
-      return;
-    }
-  }
-
-  showResultToast(false);
+    showRemovingTmpl();
 }
 
 //-------------------------------------------------------------------------------------------
@@ -465,6 +549,50 @@ void FilesContext::update()
     _input.lock(BtnID::BTN_BACK, CLICK_LOCK);
     back();
   }
+
+  if (_fs.isWorking())
+  {
+    xSemaphoreTake(_sync_task_mutex, portMAX_DELAY);
+
+    if (_fs.isWorking())
+    {
+      if ((millis() - _upd_msg_time) > UPD_TRACK_INF_INTERVAL)
+      {
+        String upd_txt;
+        String upd_progress;
+
+        if (_upd_counter > 2)
+          _upd_counter = 0;
+        else
+          ++_upd_counter;
+
+        for (uint8_t i{0}; i < _upd_counter; ++i)
+          upd_progress += ".";
+
+        if (_mode == MODE_CANCELING)
+        {
+          upd_txt = STR_CANCELING;
+          upd_txt += upd_progress;
+          _msg_lbl->setText(upd_txt);
+        }
+        else if (_mode == MODE_COPYING)
+        {
+          _task_progress->setProgress(_fs.getCopyProgress());
+          _upd_msg_time = millis();
+        }
+        else if (_mode == MODE_REMOVING)
+        {
+          upd_txt = STR_REMOVING;
+          upd_txt += upd_progress;
+          _msg_lbl->setText(upd_txt);
+        }
+
+        _upd_msg_time = millis();
+      }
+    }
+
+    xSemaphoreGive(_sync_task_mutex);
+  }
 }
 
 void FilesContext::ok()
@@ -487,6 +615,8 @@ void FilesContext::ok()
       removeFile();
     else if (id == ID_ITEM_MOVE)
       prepareFileMoving();
+    else if (id == ID_ITEM_COPY)
+      prepareFileCopying();
     else if (id == ID_ITEM_PASTE)
       pasteFile();
     else if (id == ID_ITEM_NEW_DIR)
@@ -512,7 +642,12 @@ void FilesContext::ok()
 
 void FilesContext::back()
 {
-  if (_mode == MODE_CONTEXT_MENU)
+  if (_fs.isWorking() && _mode != MODE_CANCELING)
+  {
+    showCancelingTmpl();
+    _fs.cancel();
+  }
+  else if (_mode == MODE_CONTEXT_MENU)
     hideContextMenu();
   else if (_mode == MODE_NAVIGATION)
     openPrevlevel();
@@ -640,6 +775,23 @@ void FilesContext::fillFilesTmpl()
   _scrollbar->setMax(_files.size());
 
   updateFileInfo();
+}
+
+void FilesContext::taskDoneHandler(bool result)
+{
+  xSemaphoreTake(_sync_task_mutex, portMAX_DELAY);
+  showResultToast(result);
+
+  indexCurDir();
+  showFilesTmpl();
+  fillFilesTmpl();
+  xSemaphoreGive(_sync_task_mutex);
+}
+
+void FilesContext::taskDone(bool result, void* arg)
+{
+  FilesContext* self = static_cast<FilesContext*>(arg);
+  self->taskDoneHandler(result);
 }
 
 //-------------------------------------------------------------------------------------------

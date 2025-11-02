@@ -49,6 +49,7 @@ private:
     ID_ITEM_UPDATE = 1,
     ID_ITEM_PASTE,
     ID_ITEM_MOVE,
+    ID_ITEM_COPY,
     ID_ITEM_REMOVE,
     ID_ITEM_NEW_DIR,
     ID_ITEM_EXECUTE,
@@ -67,11 +68,15 @@ private:
     MODE_CONTEXT_MENU,
     MODE_NEW_DIR_DIALOG,
     MODE_RENAME_DIALOG,
+    MODE_CANCELING,
   };
   //
   String makePathFromBreadcrumbs() const;
   //
   void showFilesTmpl();
+  void showCopyingTmpl();
+  void showRemovingTmpl();
+  void showCancelingTmpl();
   //
   void showContextMenu();
   void hideContextMenu();
@@ -81,6 +86,7 @@ private:
   void hideDialog();
   //
   void prepareFileMoving();
+  void prepareFileCopying();
   void pasteFile();
   void removeFile();
   //
@@ -98,6 +104,9 @@ private:
   void saveDialogResult();
 
   void makeMenuFilesItems(std::vector<MenuItem*>& items, uint16_t file_pos, uint8_t size);
+  //
+  void taskDoneHandler(bool result);
+  static void taskDone(bool result, void* arg);
   //
   void handleNextItemsLoad(std::vector<MenuItem*>& items, uint8_t size, uint16_t cur_id);
   static void onNextItemsLoad(std::vector<MenuItem*>& items, uint8_t size, uint16_t cur_id, void* arg);
@@ -120,6 +129,8 @@ private:
   std::vector<FileInfo> _files;
   std::vector<String> _breadcrumbs;
 
+  volatile SemaphoreHandle_t _sync_task_mutex{nullptr};
+
   LuaContext* _lua_context{nullptr};
   Notification* _notification{nullptr};
   Image* _lua_img{nullptr};
@@ -135,10 +146,12 @@ private:
   Label* _file_pos_lbl{nullptr};
 
   unsigned long _upd_msg_time{0};
+  uint16_t _qr_width{0};
 
   Mode _mode{MODE_NAVIGATION};
   uint8_t _upd_counter{0};
   bool _is_dir{false};
   bool _has_moving_file{false};
+  bool _has_copying_file{false};
   bool _dialog_success_res{false};
 };
