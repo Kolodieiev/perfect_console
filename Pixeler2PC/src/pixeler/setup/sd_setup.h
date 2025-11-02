@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 #ifdef _WIN32
-    #define SD_MOUNTPOINT "D:"
+    #define SD_MOUNTPOINT "D:/"
 #else
     #define SD_MOUNTPOINT "/sd"
 #endif
