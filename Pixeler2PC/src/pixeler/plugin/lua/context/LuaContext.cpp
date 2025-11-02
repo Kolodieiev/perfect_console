@@ -5,9 +5,9 @@
 #include "../lua_lib/custom_searcher.h"
 #include "../lua_lib/custom_type_initializer.h"
 #include "../lua_lib/type/widget/lua_iwidget_cont.h"
-#include "../../../manager/ResManager.h"
-#include "../../../plugin/lua/lua_lib/helper/lua_helper.h"
-#include "../../../ui/widget/layout/EmptyLayout.h"
+#include "pixeler/manager/ResManager.h"
+#include "pixeler/plugin/lua/lua_lib/helper/lua_helper.h"
+#include "pixeler/ui/widget/layout/EmptyLayout.h"
 
 const char STR_NOTIFICATION[] = "Повідомлення";
 const char STR_OK[] = "OK";

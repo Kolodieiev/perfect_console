@@ -2,7 +2,7 @@
 #pragma once
 
 #include "../lua.h"
-#include "../../../ui/context/IContext.h"
+#include "pixeler/ui/context/IContext.h"
 
 namespace pixeler
 {

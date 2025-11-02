@@ -1,10 +1,10 @@
 #pragma GCC optimize("O3")
 #include "lua_image.h"
 
-#include "../../../../../manager/ResManager.h"
-#include "../../../../../ui/widget/image/Image.h"
-#include "../../../res/lua_strs.h"
 #include "./lua_iwidget.h"
+#include "pixeler/manager/ResManager.h"
+#include "pixeler/plugin/lua/res/lua_strs.h"
+#include "pixeler/ui/widget/image/Image.h"
 
 using namespace pixeler;
 

@@ -1,7 +1,7 @@
 // TODO
 //  #pragma GCC optimize("O3")
 //  #pragma once
-// #include "../../../lua.h"
+//  #include "pixeler/plugin/lua/lua.h"
 
 // const char STR_TYPE_NAME_SPIN_ITEM[] = "SpinItem";
 

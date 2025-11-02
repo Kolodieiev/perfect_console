@@ -2,10 +2,10 @@
 #include "lua_label.h"
 
 #include "./lua_iwidget.h"
-#include "../../../lua_lib/helper/lua_helper.h"
-#include "../../../res/lua_strs.h"
-#include "../../../../../ui/widget/image/Image.h"
-#include "../../../../../ui/widget/text/Label.h"
+#include "pixeler/plugin/lua/lua_lib/helper/lua_helper.h"
+#include "pixeler/plugin/lua/res/lua_strs.h"
+#include "pixeler/ui/widget/image/Image.h"
+#include "pixeler/ui/widget/text/Label.h"
 
 using namespace pixeler;
 

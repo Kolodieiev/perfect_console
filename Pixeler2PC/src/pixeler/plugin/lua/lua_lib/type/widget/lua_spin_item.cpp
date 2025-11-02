@@ -2,8 +2,8 @@
 // #include "lua_toggle_item.h"
 // #include "./lua_menu_item.h"
 // #include "./lua_toggle_switch.h"
-// #include "../../../res/lua_strs.h"
-// #include "../../../../../ui/widget/spinbox/SpinBox.h"
+// #include "pixeler/plugin/lua/res/lua_strs.h"
+// #include "pixeler/ui/widget/spinbox/SpinBox.h"
 
 // using namespace pixeler;
 

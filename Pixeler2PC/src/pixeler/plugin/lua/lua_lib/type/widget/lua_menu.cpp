@@ -2,8 +2,8 @@
 #include "lua_menu.h"
 
 #include "./lua_iwidget_cont.h"
-#include "../../../res/lua_strs.h"
-#include "../../../../../ui/widget/menu/FixedMenu.h"
+#include "pixeler/plugin/lua/res/lua_strs.h"
+#include "pixeler/ui/widget/menu/FixedMenu.h"
 
 using namespace pixeler;
 

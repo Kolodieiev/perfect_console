@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include "../../../../manager/FileManager.h"
-#include "../../../../plugin/lua/res/lua_strs.h"
+#include "pixeler/manager/FileManager.h"
+#include "pixeler/plugin/lua/res/lua_strs.h"
 
 const char STR_FILE_TYPE[] = "FILE*";
 //

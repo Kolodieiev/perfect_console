@@ -2,8 +2,8 @@
 #include "lua_iwidget_cont.h"
 
 #include "./lua_iwidget.h"
-#include "../../../res/lua_strs.h"
-#include "../../../../../ui/widget/IWidgetContainer.h"
+#include "pixeler/plugin/lua/res/lua_strs.h"
+#include "pixeler/ui/widget/IWidgetContainer.h"
 #include "vector"
 
 using namespace pixeler;

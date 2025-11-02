@@ -3,9 +3,9 @@
 
 #include "./lua_menu_item.h"
 #include "./lua_toggle_switch.h"
-#include "../../../res/lua_strs.h"
-#include "../../../../../ui/widget/menu/item/ToggleItem.h"
-#include "../../../../../ui/widget/toggle/ToggleSwitch.h"
+#include "pixeler/plugin/lua/res/lua_strs.h"
+#include "pixeler/ui/widget/menu/item/ToggleItem.h"
+#include "pixeler/ui/widget/toggle/ToggleSwitch.h"
 
 using namespace pixeler;
 

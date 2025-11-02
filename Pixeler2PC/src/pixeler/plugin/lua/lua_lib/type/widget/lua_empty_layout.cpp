@@ -1,9 +1,9 @@
 #pragma GCC optimize("O3")
 #include "lua_empty_layout.h"
 
-#include "../../../../../ui/widget/layout/EmptyLayout.h"
-#include "../../../res/lua_strs.h"
 #include "./lua_iwidget_cont.h"
+#include "pixeler/plugin/lua/res/lua_strs.h"
+#include "pixeler/ui/widget/layout/EmptyLayout.h"
 
 using namespace pixeler;
 

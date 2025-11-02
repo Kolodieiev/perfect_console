@@ -1,8 +1,8 @@
 #pragma GCC optimize("O3")
 #include "lua_iwidget.h"
 
-#include "../../../res/lua_strs.h"
-#include "../../../../../ui/widget/IWidget.h"
+#include "pixeler/plugin/lua/res/lua_strs.h"
+#include "pixeler/ui/widget/IWidget.h"
 
 using namespace pixeler;
 //

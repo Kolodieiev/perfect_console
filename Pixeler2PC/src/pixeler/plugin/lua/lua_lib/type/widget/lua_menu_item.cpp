@@ -4,11 +4,11 @@
 #include "./lua_image.h"
 #include "./lua_iwidget.h"
 #include "./lua_label.h"
-#include "../../../res/lua_strs.h"
-#include "../../../../../ui/widget/IWidget.h"
-#include "../../../../../ui/widget/image/Image.h"
-#include "../../../../../ui/widget/menu/item/MenuItem.h"
-#include "../../../../../ui/widget/text/Label.h"
+#include "pixeler/plugin/lua/res/lua_strs.h"
+#include "pixeler/ui/widget/IWidget.h"
+#include "pixeler/ui/widget/image/Image.h"
+#include "pixeler/ui/widget/menu/item/MenuItem.h"
+#include "pixeler/ui/widget/text/Label.h"
 
 using namespace pixeler;
 

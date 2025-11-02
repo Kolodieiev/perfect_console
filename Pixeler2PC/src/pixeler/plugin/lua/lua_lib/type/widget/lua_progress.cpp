@@ -2,8 +2,8 @@
 #include "lua_progress.h"
 
 #include "./lua_iwidget.h"
-#include "../../../res/lua_strs.h"
-#include "../../../../../ui/widget/progress/ProgressBar.h"
+#include "pixeler/plugin/lua/res/lua_strs.h"
+#include "pixeler/ui/widget/progress/ProgressBar.h"
 
 using namespace pixeler;
 
