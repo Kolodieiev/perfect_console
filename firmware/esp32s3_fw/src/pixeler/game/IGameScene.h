@@ -5,10 +5,10 @@
 #include <unordered_map>
 #include <vector>
 //
-#include "pixeler/driver/graphics/DisplayWrapper.h"
-#include "pixeler/driver/input/Input.h"
-#include "pixeler/manager/ResManager.h"
-#include "pixeler/manager/WavManager.h"
+#include "../driver/graphics/DisplayWrapper.h"
+#include "../driver/input/Input.h"
+#include "../manager/ResManager.h"
+#include "../manager/WavManager.h"
 
 //
 #include "./IGameMenu.h"

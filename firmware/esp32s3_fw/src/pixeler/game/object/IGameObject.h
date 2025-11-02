@@ -4,9 +4,9 @@
 
 #include "../../defines.h"
 //
-#include "pixeler/driver/graphics/DisplayWrapper.h"
-#include "pixeler/manager/ResManager.h"
-#include "pixeler/manager/WavManager.h"
+#include "../../driver/graphics/DisplayWrapper.h"
+#include "../../manager/WavManager.h"
+#include "../../manager/ResManager.h"
 //
 #include "../DataStream.h"
 //
