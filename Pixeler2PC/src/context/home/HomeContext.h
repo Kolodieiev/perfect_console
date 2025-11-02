@@ -19,10 +19,8 @@ private:
   enum Widget_ID : uint8_t
   {
     ID_WALLPAPER = 1,
-    ID_BAT_LVL,
-    ID_TIME_LBL,
-    ID_DATE_LBL,
-    ID_DAY_LBL,
+    ID_MESSAGE_LBL,
   };
 
+  uint16_t* _wallpaper_ptr{nullptr};
 };
