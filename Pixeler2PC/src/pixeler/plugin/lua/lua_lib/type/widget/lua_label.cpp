@@ -129,7 +129,7 @@ int lua_label_get_text_len(lua_State* L)
   return 1;
 }
 
-int lua_label_set_ticker(lua_State* L)
+int lua_label_set_autoscroll(lua_State* L)
 {
   Label* label = *(Label**)lua_touserdata(L, 1);
   bool state = lua_toboolean(L, 2);
@@ -137,7 +137,7 @@ int lua_label_set_ticker(lua_State* L)
   return 0;
 }
 
-int lua_label_set_ticker_in_focus(lua_State* L)
+int lua_label_set_autoscroll_in_focus(lua_State* L)
 {
   Label* label = *(Label**)lua_touserdata(L, 1);
   bool state = lua_toboolean(L, 2);
@@ -170,6 +170,14 @@ int lua_label_set_autoscroll_delay(lua_State* L)
   return 0;
 }
 
+int lua_label_set_h_padding(lua_State* L)
+{
+  Label* label = *(Label**)lua_touserdata(L, 1);
+  int h_padding = luaL_checkinteger(L, 2);
+  label->setHPadding(h_padding);
+  return 0;
+}
+
 const struct luaL_Reg TYPE_METH_LABEL[] = {
     {"initWidthToFit", lua_label_init_width_to_fit},
     {"updateWidthToFit", lua_label_update_width_to_fit},
@@ -182,11 +190,12 @@ const struct luaL_Reg TYPE_METH_LABEL[] = {
     {"setAlign", lua_label_set_align},
     {"setHPadding", lua_label_set_h_padding},
     {"getLen", lua_label_get_text_len},
-    {"setAutoscroll", lua_label_set_ticker},
-    {"setAutoscrollInFocus", lua_label_set_ticker_in_focus},
+    {"setAutoscroll", lua_label_set_autoscroll},
+    {"setAutoscrollInFocus", lua_label_set_autoscroll_in_focus},
     {"setAutoscrollDelay", lua_label_set_autoscroll_delay},
     {"setBackImg", lua_label_set_back_img},
     {"setMultiline", lua_label_set_multiline},
+    {"setHPadding", lua_label_set_h_padding},
     {STR_LUA_WIDGET_CLONE, lua_label_clone},
     {nullptr, nullptr},
 };
