@@ -221,7 +221,6 @@ namespace pixeler
         (y > MAX_Y)           // Outside bottom
     )
     {
-      printf("Некоректні аргументи в draw16bitRGBBitmap");
       return;
     }
     else
@@ -297,7 +296,6 @@ namespace pixeler
         (y > MAX_Y)           // Outside bottom
     )
     {
-      printf("Некоректні аргументи в draw16bitRGBBitmapWithTranColor");
       return;
     }
     else
