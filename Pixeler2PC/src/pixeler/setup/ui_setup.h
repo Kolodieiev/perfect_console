@@ -9,6 +9,8 @@
 
 // -------------------------------- Підключи нижче заголовкові файли контекстів першого рівня
 #include "context/files/FilesContext.h"
+#include "context/games/GameListContext.h"
+#include "context/games/sokoban/SokobanContext.h"
 #include "context/home/HomeContext.h"
 #include "context/menu/MenuContext.h"
 
@@ -22,6 +24,10 @@ namespace pixeler
        { return new MenuContext(); }},
       {ContextID::ID_CONTEXT_FILES, []()
        { return new FilesContext(); }},
+      {ContextID::ID_CONTEXT_GAMES, []()
+       { return new GameListContext(); }},
+      {ContextID::ID_CONTEXT_SOKOBAN, []()
+       { return new sokoban::SokobanContext(); }},
   };
 }  // namespace pixeler
 

@@ -210,12 +210,12 @@ void MenuContext::down()
 
 void MenuContext::ok()
 {
-  uint16_t id = _menu->getCurrItemID();
+  ContextID id = static_cast<ContextID>(_menu->getCurrItemID());
   _last_sel_item_pos = _menu->getCurrFocusPos();
 
-  if (id == ID_CONTEXT_FILES)
+  if (id == ID_CONTEXT_FILES || id == ID_CONTEXT_GAMES)
   {
-    openContextByID(ID_CONTEXT_FILES);
+    openContextByID(id);
   }
   else
   {
