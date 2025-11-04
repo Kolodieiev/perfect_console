@@ -175,11 +175,6 @@ namespace pixeler
       return;
 
     _canvas.setTextWrap(false);
-
-#ifdef DOUBLE_BUFFERRING
-    std::thread t(&DisplayWrapper::displayRendererTask, this);
-    t.detach();  // Рендерер працює до завершення програми
-#endif           // DOUBLE_BUFFERRING
   }
 
   void DisplayWrapper::__flush()
@@ -221,37 +216,9 @@ namespace pixeler
       _canvas.print(fps_str.c_str());
 #endif  // SHOW_FPS
 
-#ifdef DOUBLE_BUFFERRING
-      _renderer_mutex.lock();
-      _has_frame = true;
-      _canvas.duplicateMainBuff();
-      _renderer_mutex.unlock();
-#else
       _canvas.flushMainBuff();
-#endif  // DOUBLE_BUFFERRING
     }
   }
-
-#ifdef DOUBLE_BUFFERRING
-  void DisplayWrapper::displayRendererTask(void* params)
-  {
-    DisplayWrapper& self = *static_cast<DisplayWrapper*>(params);
-
-    while (1)
-    {
-      if (self._has_frame)
-      {
-        self._renderer_mutex.lock();
-
-        self._has_frame = false;
-        self._canvas.flushSecondBuff();
-
-        self._renderer_mutex.unlock();
-      }
-      std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
-  }
-#endif  // DOUBLE_BUFFERRING
 
   DisplayWrapper _display;
 #endif  // GRAPHICS_ENABLED
