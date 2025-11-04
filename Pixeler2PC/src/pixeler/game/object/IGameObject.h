@@ -301,8 +301,8 @@ namespace pixeler
 
   protected:
     ResManager& _res_manager;                                // Менеджер ресурсів
-    TerrainManager& _terrain;                                // Поверхня ігрового рівня
     WavManager& _audio;                                      // Менеджер аудіо
+    TerrainManager& _terrain;                                // Поверхня ігрового рівня
     std::unordered_map<uint32_t, IGameObject*>& _game_objs;  // Список ігрових об'єктів на сцені
     SpriteDescription _sprite{};                             // Об'єкт структури, яка описує спрайт об'єкта та його стани
 
