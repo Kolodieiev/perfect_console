@@ -57,8 +57,6 @@ else() # Cxxdroid
         sfml-system
         sfml-window
         sfml-graphics
-        sfml-network
-        sfml-audio
     )
 
 endif() # if(NOT EN_ANDROID_BUILD)
