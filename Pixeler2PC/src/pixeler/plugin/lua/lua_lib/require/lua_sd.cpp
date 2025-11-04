@@ -11,7 +11,6 @@ const char STR_FILE_TYPE[] = "FILE*";
 const char STR_MEM_ALLOC_ERR[] = "Помилка створення буфера";
 const char STR_FILE_READ_ERR[] = "Помилка читання файла";
 //
-const char STR_SD_IS_MOUNTED[] = "isMounted";
 const char STR_SD_FILE_EXIST[] = "fileExist";
 const char STR_SD_DIR_EXIST[] = "dirExist";
 const char STR_SD_OPEN_FILE[] = "open";
