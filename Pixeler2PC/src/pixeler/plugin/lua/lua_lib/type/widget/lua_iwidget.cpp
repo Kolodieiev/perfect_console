@@ -293,6 +293,7 @@ int lua_iwgt_set_visibility(lua_State* L)
     return luaL_error(L, "Invalid visibility value: %d", raw_value);
 
   IWidget::Visibility visibility = static_cast<IWidget::Visibility>(raw_value);
+  widget->setVisibility(visibility);
   return 0;
 }
 
