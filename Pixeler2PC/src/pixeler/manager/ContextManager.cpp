@@ -123,6 +123,7 @@ namespace pixeler
               break;
           }
         }
+      }
 #endif  // #if SFML_VERSION_MAJOR > 2
 
       if (!_cur_context->isReleased())
