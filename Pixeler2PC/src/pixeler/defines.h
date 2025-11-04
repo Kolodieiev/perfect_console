@@ -21,12 +21,18 @@
 
 //--------------------------------------------------------------------------
 
-#ifdef _WIN32
-#include <stdlib.h>
-#define __bswap_16(x) _byteswap_ushort(x)
+#if defined(_WIN32)
+    #include <stdlib.h>
+    #define __bswap_16(x) _byteswap_ushort(x)
+
+#elif defined(__ANDROID__)
+    static inline uint16_t __bswap_16(uint16_t x) {
+        return (uint16_t)((x >> 8) | (x << 8));
+    }
+
 #else
-#include <byteswap.h>
-#endif
+    #include <byteswap.h>
+#endif // #if defined(_WIN32)
 
 //--------------------------------------------------------------------------
 
