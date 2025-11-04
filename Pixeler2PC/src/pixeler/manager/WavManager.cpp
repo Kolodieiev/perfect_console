@@ -17,7 +17,6 @@ namespace pixeler
 
   void WavManager::removeFromMix(uint16_t id)
   {
-    _mix.erase(id);
   }
 
   void WavManager::startMix()
