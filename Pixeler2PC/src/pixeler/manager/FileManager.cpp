@@ -3,10 +3,10 @@
 
 #include <errno.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include <algorithm>
 #include <cctype>
-#include <unistd.h>
 
 #include "../setup/sd_setup.h"
 
@@ -916,7 +916,7 @@ namespace pixeler
 
   //------------------------------------------------------------------------------------------------------------------------
 
-  FileInfo::FileInfo(const String& name, bool is_dir) : _is_dir{is_dir}, _name_len{name.length()}
+  FileInfo::FileInfo(const String& name, bool is_dir) : _name_len{name.length()}, _is_dir{is_dir}
   {
     if (psramInit())
       _name = static_cast<char*>(ps_malloc(_name_len + 1));
