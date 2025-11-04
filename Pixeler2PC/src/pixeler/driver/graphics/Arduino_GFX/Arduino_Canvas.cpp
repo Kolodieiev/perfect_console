@@ -23,7 +23,10 @@
 
 namespace pixeler
 {
-  Arduino_Canvas::Arduino_Canvas(uint16_t width, uint16_t height) : BUFF_SIZE{TFT_WIDTH * TFT_HEIGHT * sizeof(uint16_t)},
+  Arduino_Canvas::Arduino_Canvas(uint16_t width, uint16_t height) : _framebuffer{new uint16_t[TFT_WIDTH * TFT_HEIGHT]},
+                                                                    _framebuffer2{new uint16_t[TFT_WIDTH * TFT_HEIGHT]},
+                                                                    _opengl_rgba_buff{new uint8_t[TFT_WIDTH * TFT_HEIGHT * 4]},
+                                                                    BUFF_SIZE{TFT_WIDTH * TFT_HEIGHT * sizeof(uint16_t)},
                                                                     MAX_X{TFT_WIDTH - 1},
                                                                     MAX_Y{TFT_HEIGHT - 1},
                                                                     _max_text_x{static_cast<int16_t>(MAX_X)},
@@ -33,6 +36,9 @@ namespace pixeler
 
   Arduino_Canvas::~Arduino_Canvas()
   {
+    delete[] _framebuffer;
+    delete[] _framebuffer2;
+    delete[] _opengl_rgba_buff;
   }
 
   bool Arduino_Canvas::begin(sf::RenderWindow* window)
@@ -45,7 +51,13 @@ namespace pixeler
     }
 
     _window = window;
-    _window->setFramerateLimit(SFML_FRAME_RATE_LIMIT);
+
+#if SFML_VERSION_MAJOR < 3
+    _image.create(TFT_WIDTH, TFT_HEIGHT, _opengl_rgba_buff);
+    _texture.loadFromImage(_image);
+    _sprite.setTexture(_texture);
+#endif
+
     _is_inited = true;
     printf("Canvas успішно ініціалізовано\n");
     return true;
@@ -1305,8 +1317,6 @@ namespace pixeler
 
   void Arduino_Canvas::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg)
   {
-    int16_t block_w, block_h, curX, curY, curW, curH;
-
     if (u8g2Font)
     {
       _u8g2_target_y = y - ((_u8g2_char_height + _u8g2_char_y) * textsize_y);
