@@ -12,22 +12,29 @@ namespace pixeler
   {
     _input.__init();
 
-    sf::RenderWindow _window{sf::VideoMode({TFT_WIDTH, TFT_HEIGHT}), WINDOW_TITLE};
-    _display.init(&_window);
+#if SFML_VERSION_MAJOR > 2
+    sf::RenderWindow window{sf::VideoMode({TFT_WIDTH, TFT_HEIGHT}), WINDOW_TITLE};
+
+#else
+    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), WINDOW_TITLE);
+
+#endif
+
+    _display.init(&window);
 
     IContext* _cur_context = new START_CONTEXT();
 
     unsigned long ts = millis();
 
-    while (_window.isOpen())
+    while (window.isOpen())
     {
 #if SFML_VERSION_MAJOR > 2
-      while (auto event = _window.pollEvent())
+      while (auto event = window.pollEvent())
       {
         if (event->is<sf::Event::Closed>())
         {
           log_i("Вікно було закрито. Вихід");
-          _window.close();
+          window.close();
           return;
         }
         else if (event->is<sf::Event::KeyPressed>())
@@ -63,12 +70,12 @@ namespace pixeler
       }
 #else
       sf::Event event;
-      while (_window.pollEvent(event))
+      while (window.pollEvent(event))
       {
         if (event.type == sf::Event::Closed)
         {
           log_i("Вікно було закрито. Вихід");
-          _window.close();
+          window.close();
           return;
         }
         else if (event.type == sf::Event::KeyPressed)
