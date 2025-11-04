@@ -64,8 +64,6 @@ namespace pixeler
 #endif  // SHOW_FPS
 
     bool _is_buff_changed{false};
-
-    std::mutex _renderer_mutex;
   };
 
   extern DisplayWrapper _display;
