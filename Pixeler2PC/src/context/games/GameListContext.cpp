@@ -6,8 +6,6 @@
 #include "pixeler/ui/widget/menu/item/MenuItem.h"
 
 const char STR_SOKOBAN_ITEM[] = "Комірник";
-const char STR_TEST_SERV_ITEM[] = "Тестовий сервер";
-const char STR_SIMPLE_RPG_ITEM[] = "Проста RPG";
 
 GameListContext::GameListContext()
 {
