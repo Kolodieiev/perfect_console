@@ -58,11 +58,8 @@ namespace pixeler
     bool begin(sf::RenderWindow* window);
 
     uint16_t* getFramebuffer();
-    uint16_t* getDupFramebuffer();
 
     void flushMainBuff();
-    void duplicateMainBuff();
-    void flushSecondBuff();
 
     void writePixelPreclipped(int16_t x, int16_t y, uint16_t color);
 
@@ -262,7 +259,6 @@ namespace pixeler
     void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg);
 
   protected:
-    void printDubleBuffInitErr();
     void convertToRGBA(const uint16_t* buf565, uint8_t* out_buf_rgba8, unsigned pixels);
     void renderWindow();
 
@@ -373,9 +369,8 @@ namespace pixeler
     int16_t getCursorY(void) const;
 
   protected:
-    uint16_t* _framebuffer;
-    uint16_t* _framebuffer2;
-    uint8_t* _opengl_rgba_buff;
+    uint16_t* _framebuffer{nullptr};
+    uint8_t* _opengl_rgba_buff{nullptr};
 
     sf::RenderWindow* _window{nullptr};
 
@@ -383,11 +378,13 @@ namespace pixeler
     sf::Image _image{{TFT_WIDTH, TFT_HEIGHT}, _opengl_rgba_buff};
     sf::Texture _texture{_image};
     sf::Sprite _sprite{_texture};
-#else
+
+#else  // SFML_VERSION_MAJOR < 3
     sf::Image _image;
     sf::Texture _texture;
     sf::Sprite _sprite;
-#endif // #if SFML_VERSION_MAJOR > 2
+
+#endif  // #if SFML_VERSION_MAJOR > 2
 
     const size_t BUFF_SIZE;
     const uint16_t MAX_X;

@@ -23,8 +23,8 @@
 
 namespace pixeler
 {
+#if SFML_VERSION_MAJOR > 2
   Arduino_Canvas::Arduino_Canvas(uint16_t width, uint16_t height) : _framebuffer{new uint16_t[TFT_WIDTH * TFT_HEIGHT]},
-                                                                    _framebuffer2{new uint16_t[TFT_WIDTH * TFT_HEIGHT]},
                                                                     _opengl_rgba_buff{new uint8_t[TFT_WIDTH * TFT_HEIGHT * 4]},
                                                                     BUFF_SIZE{TFT_WIDTH * TFT_HEIGHT * sizeof(uint16_t)},
                                                                     MAX_X{TFT_WIDTH - 1},
@@ -34,10 +34,20 @@ namespace pixeler
   {
   }
 
+#else  // SFML_VERSION_MAJOR < 3
+  Arduino_Canvas::Arduino_Canvas(uint16_t width, uint16_t height) : BUFF_SIZE{TFT_WIDTH * TFT_HEIGHT * sizeof(uint16_t)},
+                                                                    MAX_X{TFT_WIDTH - 1},
+                                                                    MAX_Y{TFT_HEIGHT - 1},
+                                                                    _max_text_x{static_cast<int16_t>(MAX_X)},
+                                                                    _max_text_y{static_cast<int16_t>(MAX_Y)}
+  {
+  }
+
+#endif  // #if SFML_VERSION_MAJOR > 2
+
   Arduino_Canvas::~Arduino_Canvas()
   {
     delete[] _framebuffer;
-    delete[] _framebuffer2;
     delete[] _opengl_rgba_buff;
   }
 
@@ -53,10 +63,18 @@ namespace pixeler
     _window = window;
 
 #if SFML_VERSION_MAJOR < 3
-    _image.create(TFT_WIDTH, TFT_HEIGHT, _opengl_rgba_buff);
+    sf::View view = window->getDefaultView();
+    uint32_t view_width = view.getSize().x;
+    uint32_t view_height = view.getSize().y;
+
+    _framebuffer = new uint16_t[view_width * view_height];
+    _opengl_rgba_buff = new uint8_t[view_width * view_height * 4];
+
+    _image.create(view_width, view_height, _opengl_rgba_buff);
     _texture.loadFromImage(_image);
     _sprite.setTexture(_texture);
-#endif
+
+#endif  // #if SFML_VERSION_MAJOR < 3
 
     _is_inited = true;
     printf("Canvas успішно ініціалізовано\n");
@@ -68,43 +86,10 @@ namespace pixeler
     return _framebuffer;
   }
 
-  uint16_t* Arduino_Canvas::getDupFramebuffer()
-  {
-#ifdef DOUBLE_BUFFERRING
-    return _framebuffer2;
-#else
-    return nullptr;
-#endif  // DOUBLE_BUFFERRING
-  }
-
   void Arduino_Canvas::flushMainBuff()
   {
     convertToRGBA(_framebuffer, _opengl_rgba_buff, TFT_WIDTH * TFT_HEIGHT);
     renderWindow();
-  }
-
-  void Arduino_Canvas::duplicateMainBuff()
-  {
-#ifdef DOUBLE_BUFFERRING
-    memcpy(_framebuffer2, _framebuffer, BUFF_SIZE);
-#else
-    printDubleBuffInitErr();
-#endif  // DOUBLE_BUFFERRING
-  }
-
-  void Arduino_Canvas::flushSecondBuff()
-  {
-#ifdef DOUBLE_BUFFERRING
-    convertToRGBA(_framebuffer2, _opengl_rgba_buff, TFT_WIDTH * TFT_HEIGHT);
-    renderWindow();
-#else
-    printDubleBuffInitErr();
-#endif  // DOUBLE_BUFFERRING
-  }
-
-  void Arduino_Canvas::printDubleBuffInitErr()
-  {
-    printf("Помилка. Подвійну буферизацію не було увімкнуто в налаштуваннях\n");
   }
 
   void Arduino_Canvas::convertToRGBA(const uint16_t* buf_rgb565, uint8_t* out_buf_rgba8, unsigned pixels)
