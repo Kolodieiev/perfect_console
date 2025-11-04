@@ -5,7 +5,10 @@ set(EN_GIT_BUILD ON) # GIT SFML 3.0.2
 set(EN_LOCAL_BUILD OFF) # Локальний SFML 3.0.2
 set(EN_ANDROID_BUILD OFF) # Android Сxxdroid SFML 2.5.1
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+if(NOT EN_ANDROID_BUILD) # PC
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+endif()
 
 if(EN_GIT_BUILD)
     include(FetchContent)
@@ -47,16 +50,16 @@ target_compile_features(main PRIVATE cxx_std_17)
 target_compile_options(main PRIVATE -Wno-unknown-pragmas)
 
 if(NOT EN_ANDROID_BUILD) # PC
-  target_link_libraries(main PRIVATE SFML::Graphics)
+    target_link_libraries(main PRIVATE SFML::Graphics)
 
 else() # Cxxdroid
-  target_link_libraries(main
-    sfml-system
-    sfml-window
-    sfml-graphics
-    sfml-network
-    sfml-audio
-  )
+    target_link_libraries(main
+        sfml-system
+        sfml-window
+        sfml-graphics
+        sfml-network
+        sfml-audio
+    )
 
 endif() # if(NOT EN_ANDROID_BUILD)
 
