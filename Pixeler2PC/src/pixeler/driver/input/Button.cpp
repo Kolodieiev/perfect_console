@@ -6,8 +6,7 @@
 
 namespace pixeler
 {
-  Button::Button(uint8_t btn_id, bool is_touch) : _btn_id{btn_id},
-                                                  _is_touch{is_touch}
+  Button::Button(uint8_t btn_id, bool is_touch) : _btn_id{btn_id}
   {
     enable();
   }
