@@ -7,10 +7,6 @@ set(EN_ANDROID_BUILD OFF) # Android Сxxdroid SFML 2.5.1
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_definitions(-DSFML_VERSION_MAJOR=${SFML_VERSION_MAJOR})
-add_definitions(-DSFML_VERSION_MINOR=${SFML_VERSION_MINOR})
-add_definitions(-DSFML_VERSION_PATCH=${SFML_VERSION_PATCH})
-
 if(EN_GIT_BUILD)
     include(FetchContent)
     FetchContent_Declare(SFML
@@ -44,13 +40,11 @@ file(GLOB_RECURSE C_SOURCES
 
 add_executable(main ${CPP_SOURCES} ${C_SOURCES}) 
 
-target_include_directories(main PUBLIC 
-    ${CMAKE_SOURCE_DIR}/src  
-)
-
 set_source_files_properties(${C_SOURCES} PROPERTIES LANGUAGE C)
 
+target_include_directories(main PUBLIC  ${CMAKE_SOURCE_DIR}/src)
 target_compile_features(main PRIVATE cxx_std_17)
+target_compile_options(main PRIVATE -Wno-unknown-pragmas)
 
 if(NOT EN_ANDROID_BUILD) # PC
   target_link_libraries(main PRIVATE SFML::Graphics)
