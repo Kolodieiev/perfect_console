@@ -480,7 +480,7 @@ namespace pixeler
   {
     if (!_is_changed)
     {
-      if (!_has_autoscroll && !(_has_autoscroll_in_focus && _has_focus) || _visibility == INVISIBLE)
+      if ((!_has_autoscroll && !(_has_autoscroll_in_focus && _has_focus)) || _visibility == INVISIBLE)
         return;
       else if ((millis() - _last_autoscroll_ts) < _autoscroll_update_delay)
         return;
