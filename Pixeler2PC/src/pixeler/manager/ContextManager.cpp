@@ -21,6 +21,7 @@ namespace pixeler
 
     while (_window.isOpen())
     {
+#if SFML_VERSION_MAJOR > 2
       while (auto event = _window.pollEvent())
       {
         if (event->is<sf::Event::Closed>())
@@ -60,6 +61,69 @@ namespace pixeler
             _input.__setState(BtnID::BTN_BACK, false);
         }
       }
+#else
+      sf::Event event;
+      while (_window.pollEvent(event))
+      {
+        if (event.type == sf::Event::Closed)
+        {
+          log_i("Вікно було закрито. Вихід");
+          _window.close();
+          return;
+        }
+        else if (event.type == sf::Event::KeyPressed)
+        {
+          switch (event.key.code)
+          {
+            case sf::Keyboard::Up:
+              _input.__setState(BtnID::BTN_UP, true);
+              break;
+            case sf::Keyboard::Down:
+              _input.__setState(BtnID::BTN_DOWN, true);
+              break;
+            case sf::Keyboard::Left:
+              _input.__setState(BtnID::BTN_LEFT, true);
+              break;
+            case sf::Keyboard::Right:
+              _input.__setState(BtnID::BTN_RIGHT, true);
+              break;
+            case sf::Keyboard::Return:
+              _input.__setState(BtnID::BTN_OK, true);
+              break;
+            case sf::Keyboard::BackSpace:
+              _input.__setState(BtnID::BTN_BACK, true);
+              break;
+            default:
+              break;
+          }
+        }
+        else if (event.type == sf::Event::KeyReleased)
+        {
+          switch (event.key.code)
+          {
+            case sf::Keyboard::Up:
+              _input.__setState(BtnID::BTN_UP, false);
+              break;
+            case sf::Keyboard::Down:
+              _input.__setState(BtnID::BTN_DOWN, false);
+              break;
+            case sf::Keyboard::Left:
+              _input.__setState(BtnID::BTN_LEFT, false);
+              break;
+            case sf::Keyboard::Right:
+              _input.__setState(BtnID::BTN_RIGHT, false);
+              break;
+            case sf::Keyboard::Return:
+              _input.__setState(BtnID::BTN_OK, false);
+              break;
+            case sf::Keyboard::BackSpace:
+              _input.__setState(BtnID::BTN_BACK, false);
+              break;
+            default:
+              break;
+          }
+        }
+#endif  // #if SFML_VERSION_MAJOR > 2
 
       if (!_cur_context->isReleased())
       {
