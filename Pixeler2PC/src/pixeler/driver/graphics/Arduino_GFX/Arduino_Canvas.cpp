@@ -23,7 +23,6 @@
 
 namespace pixeler
 {
-#if SFML_VERSION_MAJOR > 2
   Arduino_Canvas::Arduino_Canvas(uint16_t width, uint16_t height) : _framebuffer{new uint16_t[TFT_WIDTH * TFT_HEIGHT]},
                                                                     _opengl_rgba_buff{new uint8_t[TFT_WIDTH * TFT_HEIGHT * 4]},
                                                                     BUFF_SIZE{TFT_WIDTH * TFT_HEIGHT * sizeof(uint16_t)},
@@ -33,17 +32,6 @@ namespace pixeler
                                                                     _max_text_y{static_cast<int16_t>(MAX_Y)}
   {
   }
-
-#else  // SFML_VERSION_MAJOR < 3
-  Arduino_Canvas::Arduino_Canvas(uint16_t width, uint16_t height) : BUFF_SIZE{TFT_WIDTH * TFT_HEIGHT * sizeof(uint16_t)},
-                                                                    MAX_X{TFT_WIDTH - 1},
-                                                                    MAX_Y{TFT_HEIGHT - 1},
-                                                                    _max_text_x{static_cast<int16_t>(MAX_X)},
-                                                                    _max_text_y{static_cast<int16_t>(MAX_Y)}
-  {
-  }
-
-#endif  // #if SFML_VERSION_MAJOR > 2
 
   Arduino_Canvas::~Arduino_Canvas()
   {
@@ -63,14 +51,7 @@ namespace pixeler
     _window = window;
 
 #if SFML_VERSION_MAJOR < 3
-    sf::View view = window->getDefaultView();
-    uint32_t view_width = view.getSize().x;
-    uint32_t view_height = view.getSize().y;
-
-    _framebuffer = new uint16_t[view_width * view_height];
-    _opengl_rgba_buff = new uint8_t[view_width * view_height * 4];
-
-    _image.create(view_width, view_height, _opengl_rgba_buff);
+    _image.create(TFT_WIDTH, TFT_HEIGHT, _opengl_rgba_buff);
     _texture.loadFromImage(_image);
     _sprite.setTexture(_texture);
 
