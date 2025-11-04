@@ -72,7 +72,6 @@ namespace pixeler
     ImgData _empty_img;
 
     uint16_t _img_res_id_i{1};
-    uint16_t _audio_res_id_i{1};
   };
 
   /**

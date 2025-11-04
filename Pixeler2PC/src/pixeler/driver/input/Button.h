@@ -57,7 +57,6 @@ namespace pixeler
     //
     const uint8_t _btn_id;
     //
-    const bool _is_touch;
     bool _is_locked{false};
     bool _is_touched{false};
     bool _is_holded{false};

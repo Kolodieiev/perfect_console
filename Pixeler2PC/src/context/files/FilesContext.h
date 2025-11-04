@@ -146,11 +146,9 @@ private:
   Label* _file_pos_lbl{nullptr};
 
   unsigned long _upd_msg_time{0};
-  uint16_t _qr_width{0};
 
   Mode _mode{MODE_NAVIGATION};
   uint8_t _upd_counter{0};
-  bool _is_dir{false};
   bool _has_moving_file{false};
   bool _has_copying_file{false};
   bool _dialog_success_res{false};

@@ -16,7 +16,6 @@
 
 const char STR_MUSIC_ITEM[] = "Музика";
 const char STR_READER_ITEM[] = "Читалка";
-const char STR_W_TALKIE_ITEM[] = "Рація";
 const char STR_FILES_ITEM[] = "Файли";
 const char STR_GAME_ITEM[] = "Ігри";
 const char STR_WIFI_ITEM[] = "Підключення";
