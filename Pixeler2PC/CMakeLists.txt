@@ -3,7 +3,8 @@ project(Pixeler2PC LANGUAGES CXX C)
 
 set(EN_GIT_BUILD ON) # GIT SFML 3.0.2
 set(EN_LOCAL_BUILD OFF) # Локальний SFML 3.0.2
-set(EN_ANDROID_BUILD OFF) # Android Сxxdroid SFML 2.5.1
+set(EN_ANDROID_BUILD OFF) # Android Сxxdroid SFML 2.5.1 
+#TODO !!! На Android виклик new до on_create Activity спричиняє segfault. Необхідно переписати input. Можливо замінити динамічне створення кнопок на статичні значення.
 
 if(NOT EN_ANDROID_BUILD) # PC
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
