@@ -99,13 +99,13 @@ void Arduino_ST7789::invertDisplay(bool i)
 void Arduino_ST7789::displayOn(void)
 {
   _bus->sendCommand(ST7789_SLPOUT);
-  delay(ST7789_SLPOUT_DELAY);
+  delay(ST7789_SLP_DELAY);
 }
 
 void Arduino_ST7789::displayOff(void)
 {
   _bus->sendCommand(ST7789_SLPIN);
-  delay(ST7789_SLPIN_DELAY);
+  delay(ST7789_SLP_DELAY);
 }
 
 // Companion code to the above tables.  Reads and issues

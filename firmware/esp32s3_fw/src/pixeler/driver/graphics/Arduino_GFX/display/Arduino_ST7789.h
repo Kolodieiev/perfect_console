@@ -13,8 +13,7 @@
 #define ST7789_TFTHEIGHT 320
 
 #define ST7789_RST_DELAY 120     ///< delay ms wait for reset finish
-#define ST7789_SLPIN_DELAY 120   ///< delay ms wait for sleep in finish
-#define ST7789_SLPOUT_DELAY 120  ///< delay ms wait for sleep out finish
+#define ST7789_SLP_DELAY 120   ///< delay ms wait for sleep in finish
 
 #define ST7789_NOP 0x00
 #define ST7789_SWRESET 0x01
@@ -58,7 +57,7 @@ static const uint8_t st7789_init_operations[] = {
     END_WRITE,
 
     DELAY,
-    ST7789_SLPOUT_DELAY,
+    ST7789_SLP_DELAY,
 
     BEGIN_WRITE,
     WRITE_C8_D8,
