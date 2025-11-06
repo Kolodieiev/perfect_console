@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 project(Pixeler2PC LANGUAGES CXX C)
 
-set(EN_GIT_BUILD ON) # GIT SFML 3.0.2
-set(EN_LOCAL_BUILD OFF) # Локальний SFML 3.0.2
+set(EN_GIT_BUILD OFF) # GIT SFML 3.0.2
+set(EN_LOCAL_BUILD ON) # Локальний SFML 3.0.2
+set(EN_STATIC_SFML_LIB ON) # Локальний SFML 3.0.2. Якщо бібліотеки зібрані статично - ON. Інакше OFF.
 set(EN_ANDROID_BUILD OFF) # Android Сxxdroid SFML 2.5.1 
 #TODO !!! На Android виклик new до on_create Activity спричиняє segfault. Необхідно переписати input. Можливо замінити динамічне створення кнопок на статичні значення.
 
@@ -22,6 +23,10 @@ if(EN_GIT_BUILD)
     FetchContent_MakeAvailable(SFML)
 
 elseif(EN_LOCAL_BUILD)
+    if(EN_STATIC_SFML_LIB)
+        set(SFML_STATIC_LIBRARIES TRUE)
+
+    endif()
     find_package(SFML 3.0.2 REQUIRED COMPONENTS Graphics)
 
 elseif(EN_ANDROID_BUILD)
