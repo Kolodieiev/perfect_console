@@ -5,7 +5,6 @@ set(EN_GIT_BUILD OFF) # GIT SFML 3.0.2
 set(EN_LOCAL_BUILD ON) # Локальний SFML 3.0.2
 set(EN_STATIC_SFML_LIB ON) # Локальний SFML 3.0.2. Якщо бібліотеки зібрані статично - ON. Інакше OFF.
 set(EN_ANDROID_BUILD OFF) # Android Сxxdroid SFML 2.5.1 
-#TODO !!! На Android виклик new до on_create Activity спричиняє segfault. Необхідно переписати input. Можливо замінити динамічне створення кнопок на статичні значення.
 
 if(NOT EN_ANDROID_BUILD) # PC
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

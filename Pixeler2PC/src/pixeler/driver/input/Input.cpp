@@ -12,7 +12,6 @@ namespace pixeler
 
   void Input::__init()
   {
-    _buttons = BUTTONS;
   }
 
   void Input::__update()
@@ -23,14 +22,14 @@ namespace pixeler
   void Input::reset()
   {
     for (auto&& btn : _buttons)
-      btn.second->reset();
+      btn.second.reset();
   }
 
   void Input::enableBtn(BtnID btn_id)
   {
     try
     {
-      _buttons.at(btn_id)->enable();
+      _buttons.at(btn_id).enable();
     }
     catch (const std::out_of_range& ignored)
     {
@@ -42,7 +41,7 @@ namespace pixeler
   {
     try
     {
-      _buttons.at(btn_id)->disable();
+      _buttons.at(btn_id).disable();
     }
     catch (const std::out_of_range& ignored)
     {
@@ -54,7 +53,7 @@ namespace pixeler
   {
     try
     {
-      return _buttons.at(btn_id)->isHolded();
+      return _buttons.at(btn_id).isHolded();
     }
     catch (const std::out_of_range& ignored)
     {
@@ -67,7 +66,7 @@ namespace pixeler
   {
     try
     {
-      return _buttons.at(btn_id)->isPressed();
+      return _buttons.at(btn_id).isPressed();
     }
     catch (const std::out_of_range& ignored)
     {
@@ -80,7 +79,7 @@ namespace pixeler
   {
     try
     {
-      return _buttons.at(btn_id)->isReleased();
+      return _buttons.at(btn_id).isReleased();
     }
     catch (const std::out_of_range& ignored)
     {
@@ -93,7 +92,7 @@ namespace pixeler
   {
     try
     {
-      _buttons.at(btn_id)->lock(lock_duration);
+      _buttons.at(btn_id).lock(lock_duration);
     }
     catch (const std::out_of_range& ignored)
     {
@@ -105,7 +104,7 @@ namespace pixeler
   {
     try
     {
-      _buttons.at(btn_id)->__extUpdate(is_holded);
+      _buttons.at(btn_id).__extUpdate(is_holded);
     }
     catch (const std::out_of_range& ignored)
     {

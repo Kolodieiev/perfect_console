@@ -82,16 +82,16 @@ namespace pixeler
         {
           switch (event.key.code)
           {
-            case sf::Keyboard::Up:
+            case sf::Keyboard::W:
               _input.__setState(BtnID::BTN_UP, true);
               break;
-            case sf::Keyboard::Down:
+            case sf::Keyboard::S:
               _input.__setState(BtnID::BTN_DOWN, true);
               break;
-            case sf::Keyboard::Left:
+            case sf::Keyboard::A:
               _input.__setState(BtnID::BTN_LEFT, true);
               break;
-            case sf::Keyboard::Right:
+            case sf::Keyboard::D:
               _input.__setState(BtnID::BTN_RIGHT, true);
               break;
             case sf::Keyboard::Return:
@@ -108,16 +108,16 @@ namespace pixeler
         {
           switch (event.key.code)
           {
-            case sf::Keyboard::Up:
+            case sf::Keyboard::W:
               _input.__setState(BtnID::BTN_UP, false);
               break;
-            case sf::Keyboard::Down:
+            case sf::Keyboard::S:
               _input.__setState(BtnID::BTN_DOWN, false);
               break;
-            case sf::Keyboard::Left:
+            case sf::Keyboard::A:
               _input.__setState(BtnID::BTN_LEFT, false);
               break;
-            case sf::Keyboard::Right:
+            case sf::Keyboard::D:
               _input.__setState(BtnID::BTN_RIGHT, false);
               break;
             case sf::Keyboard::Return:

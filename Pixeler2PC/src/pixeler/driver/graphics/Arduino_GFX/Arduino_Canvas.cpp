@@ -55,6 +55,15 @@ namespace pixeler
     _texture.loadFromImage(_image);
     _sprite.setTexture(_texture);
 
+    sf::View view = _window->getDefaultView();
+    uint32_t view_w = view.getSize().x;
+    uint32_t view_h = view.getSize().y;
+
+    if (view_w > view_h)
+      _sprite.setPosition((view_w - TFT_WIDTH) / 2.0f, (view_h - TFT_HEIGHT) / 2.0f);
+    else
+      _sprite.setPosition((view_w - TFT_HEIGHT) / 2.0f, (view_h - view_w) / 2.0f);
+
 #endif  // #if SFML_VERSION_MAJOR < 3
 
     _is_inited = true;

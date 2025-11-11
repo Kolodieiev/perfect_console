@@ -55,7 +55,7 @@ namespace pixeler
     void init(sf::RenderWindow* window);
 
   private:
-    Arduino_Canvas _canvas;
+    Arduino_Canvas *_canvas;
 
 #ifdef SHOW_FPS
     uint64_t _frame_timer{0};

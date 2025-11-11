@@ -103,7 +103,7 @@ namespace pixeler
     void __setState(BtnID btn_id, bool is_holded);
 
   private:
-    std::unordered_map<BtnID, Button*> _buttons;
+    std::unordered_map<BtnID, Button> _buttons BUTTONS;
   };
 
   extern Input _input;
