@@ -20,7 +20,7 @@ namespace pixeler
     ID_CONTEXT_PREF_SEL,
     // Ігрові контексти
     ID_CONTEXT_SOKOBAN,
+    ID_CONTEXT_RPG,
     ID_CONTEXT_TEST_SERVER,
-    ID_CONTEXT_SIMPLE_RPG,
   };
 }

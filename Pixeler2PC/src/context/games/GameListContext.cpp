@@ -6,6 +6,7 @@
 #include "pixeler/ui/widget/menu/item/MenuItem.h"
 
 const char STR_SOKOBAN_ITEM[] = "Комірник";
+const char STR_RPG_ITEM[] = "RPG";
 
 GameListContext::GameListContext()
 {
@@ -28,7 +29,9 @@ GameListContext::GameListContext()
   _scrollbar->setWidth(SCROLLBAR_WIDTH);
   _scrollbar->setHeight(TFT_HEIGHT);
   _scrollbar->setPos(TFT_WIDTH - SCROLLBAR_WIDTH, 0);
+  
   //
+
   MenuItem* sokoban_item = creator.getMenuItem(ID_CONTEXT_SOKOBAN);
   _menu->addItem(sokoban_item);
 
@@ -43,6 +46,17 @@ GameListContext::GameListContext()
   Label* soko_lbl = creator.getItemLabel(STR_SOKOBAN_ITEM, font_10x20);
   sokoban_item->setLbl(soko_lbl);
   soko_lbl->setAutoscrollInFocus(true);
+
+  //
+
+  MenuItem* rpg_item = creator.getMenuItem(ID_CONTEXT_RPG);
+  _menu->addItem(rpg_item);
+
+  Label* rpg_lbl = creator.getItemLabel(STR_RPG_ITEM, font_10x20);
+  rpg_item->setLbl(rpg_lbl);
+  rpg_lbl->setAutoscrollInFocus(true);
+
+  //
 
   _bin.reserve(_menu->getSize());
   _bin.push_back(soko_img);
