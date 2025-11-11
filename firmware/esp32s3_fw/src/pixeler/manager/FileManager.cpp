@@ -15,7 +15,6 @@ namespace pixeler
 {
   void FileManager::makeFullPath(String& out_path, const char* path)
   {
-    out_path = "";
     out_path = SD_MOUNTPOINT;
     out_path += path;
   }
@@ -113,7 +112,7 @@ namespace pixeler
 
     if (!result)
     {
-      log_e("Помилка створення директорії: %s", path);
+      log_e("Помилка створення директорії: %s", full_path.c_str());
       if (errno == EEXIST)
         log_e("Директорія існує");
     }
