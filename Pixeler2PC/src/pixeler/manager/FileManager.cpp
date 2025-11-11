@@ -1,3 +1,5 @@
+// TODO На лінукс не працює створення каталогів
+
 #pragma GCC optimize("O3")
 #include "FileManager.h"
 
