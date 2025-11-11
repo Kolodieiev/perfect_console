@@ -12,6 +12,10 @@
 
 #include "../setup/sd_setup.h"
 
+#ifdef __linux__
+#include <unistd.h>
+#endif
+
 #define IDLE_WD_GUARD_TIME 250U
 
 namespace pixeler
@@ -64,8 +68,11 @@ namespace pixeler
 
   void FileManager::makeFullPath(String& out_path, const char* path)
   {
-    out_path = "";
     out_path = SD_MOUNTPOINT;
+#ifdef __linux__
+    out_path += "/";
+    out_path += getlogin();
+#endif
     out_path += path;
   }
 
@@ -193,7 +200,7 @@ namespace pixeler
 
     if (!result)
     {
-      log_e("Помилка створення директорії: %s", path);
+      log_e("Помилка створення директорії: %s", full_path.c_str());
       if (errno == EEXIST)
         log_e("Директорія існує");
     }
