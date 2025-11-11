@@ -26,15 +26,15 @@ namespace pixeler
 
 // -------------------------------- Макрос з ініціалізацією пінів. Між фігурними дужками потрібно додати ініціалізацію пінів, як показано нижче
 // -------------------------------- Де Button(uint8_t key_id, bool is_touch)
-#define BUTTONS                                  \
-  {                                              \
-      {BTN_PTT, new Button(BTN_PTT, false)},     \
-      {BTN_OK, new Button(BTN_OK, false)},       \
-      {BTN_BACK, new Button(BTN_BACK, false)},   \
-      {BTN_LEFT, new Button(BTN_LEFT, false)},   \
-      {BTN_RIGHT, new Button(BTN_RIGHT, false)}, \
-      {BTN_UP, new Button(BTN_UP, false)},       \
-      {BTN_DOWN, new Button(BTN_DOWN, false)},   \
+#define BUTTONS_TMPL                         \
+  {                                          \
+      {BTN_PTT, Button(BTN_PTT, false)},     \
+      {BTN_OK, Button(BTN_OK, false)},       \
+      {BTN_BACK, Button(BTN_BACK, false)},   \
+      {BTN_LEFT, Button(BTN_LEFT, false)},   \
+      {BTN_RIGHT, Button(BTN_RIGHT, false)}, \
+      {BTN_UP, Button(BTN_UP, false)},       \
+      {BTN_DOWN, Button(BTN_DOWN, false)},   \
   }
 
 // -------------------------------- Налаштування чутливості сенсорних кнопок

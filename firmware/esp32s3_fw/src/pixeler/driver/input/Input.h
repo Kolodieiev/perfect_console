@@ -103,12 +103,11 @@ namespace pixeler
     void __printPinMode(BtnID pin_id);
 
   private:
-    std::unordered_map<BtnID, Button*> _buttons;
+    std::unordered_map<BtnID, Button> _buttons BUTTONS_TMPL;
 
 #ifdef EXT_INPUT
     ExtInput _ext_input;
 #endif
-
   };
 
   extern Input _input;
