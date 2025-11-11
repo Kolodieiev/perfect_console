@@ -60,9 +60,15 @@ namespace pixeler
     uint32_t view_h = view.getSize().y;
 
     if (view_w > view_h)
-      _sprite.setPosition((view_w - TFT_WIDTH) / 2.0f, (view_h - TFT_HEIGHT) / 2.0f);
+    {
+      _sprite.setScale(view_h / TFT_HEIGHT, view_h / TFT_HEIGHT);
+      _sprite.setPosition((view_w - TFT_WIDTH - (TFT_WIDTH * view_h / TFT_HEIGHT)) / 2.0f, 0);
+    }
     else
-      _sprite.setPosition((view_w - TFT_HEIGHT) / 2.0f, (view_h - view_w) / 2.0f);
+    {
+      _sprite.setScale(view_w / TFT_WIDTH, view_w / TFT_WIDTH);
+      _sprite.setPosition(0, (view_h - TFT_WIDTH - (TFT_WIDTH * view_w / TFT_WIDTH)) / 2.0f);
+    }
 
 #endif  // #if SFML_VERSION_MAJOR < 3
 
