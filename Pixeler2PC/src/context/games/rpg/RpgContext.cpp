@@ -2,7 +2,7 @@
 
 #include "../../WidgetCreator.h"
 #include "./SceneID.h"
-#include "scene/Rpg0Scene.h"
+#include "scene/RpgScene.h"
 
 const char STR_LOAD_GAME[] = "Завантажити";
 const char STR_NEW_GAME[] = "Нова гра";
