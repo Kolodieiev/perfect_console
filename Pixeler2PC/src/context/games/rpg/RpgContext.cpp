@@ -8,6 +8,15 @@ const char STR_LOAD_GAME[] = "Завантажити";
 const char STR_NEW_GAME[] = "Нова гра";
 const char STR_HELP[] = "Допомога";
 
+#define COLOR_MAIN_RPG_BACK 0x30A0
+#define COLOR_ITEM_RPG_BACK 0x0885
+#define COLOR_ITEM_RPG_BORDER 0x73A6
+
+#define GAME_MENU_H_PADDINGS 30
+#define GAME_MENU_V_PADDINGS 5
+#define GAME_MENU_ITEM_SPACING 3
+#define GAME_MENU_ITEM_ADD_HEIGHT 20
+
 namespace rpg
 {
   RpgContext::~RpgContext()
@@ -16,19 +25,76 @@ namespace rpg
 
   RpgContext::RpgContext()
   {
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
-    setLayout(layout);
-
     showGameMenuTmpl();
   }
 
   void RpgContext::showGameMenuTmpl()
   {
+    _mode = MODE_MAIN_MENU;
+
+    WidgetCreator creator;
+    EmptyLayout* layout = creator.getEmptyLayout();
+    setLayout(layout);
+
+    layout->setBackColor(COLOR_MAIN_RPG_BACK);
+
+    _game_menu = new FixedMenu(ID_MENU_GAME);
+    layout->addWidget(_game_menu);
+    _game_menu->setBackColor(COLOR_MAIN_RPG_BACK);
+    _game_menu->setWidth(TFT_WIDTH - GAME_MENU_H_PADDINGS * 2);
+    _game_menu->setHeight(TFT_HEIGHT / 2 - GAME_MENU_V_PADDINGS * 2);
+    _game_menu->setPos(GAME_MENU_H_PADDINGS, TFT_HEIGHT / 2 + GAME_MENU_V_PADDINGS);
+    _game_menu->setItemsSpacing(GAME_MENU_ITEM_SPACING);
+    _game_menu->setLoopState(true);
+
+    //
+
+    // TODO перевірити збереження, якщо наявне додати ITEM_LOAD
+
+    MenuItem* item_load_game = creator.getMenuItem(ID_ITEM_LOAD_GAME);
+    _game_menu->addItem(item_load_game);
+    item_load_game->setBackColor(COLOR_ITEM_RPG_BACK);
+    item_load_game->setBorderColor(COLOR_ITEM_RPG_BORDER);
+    item_load_game->setBorder(true);
+    item_load_game->setCornerRadius(4);
+    item_load_game->setChangingBorder(false);
+    item_load_game->setChangingBack(true);
+
+    Label* lbl_load_game = creator.getItemLabel(STR_LOAD_GAME, font_10x20);
+    item_load_game->setLbl(lbl_load_game);
+    lbl_load_game->setGravity(IWidget::GRAVITY_CENTER);
+    lbl_load_game->setAlign(IWidget::ALIGN_CENTER);
+
+    //
+
+    _game_menu->setItemHeight(lbl_load_game->getHeight() + GAME_MENU_ITEM_ADD_HEIGHT);
+
+    //
+
+    MenuItem* item_new_game = item_load_game->clone(ID_ITEM_NEW_GAME);
+    _game_menu->addItem(item_new_game);
+
+    Label* lbl_new_game = lbl_load_game->clone(1);
+    item_new_game->setLbl(lbl_new_game);
+    lbl_new_game->setText(STR_NEW_GAME);
+
+    //
+
+    MenuItem* item_help = item_load_game->clone(ID_ITEM_HELP);
+    _game_menu->addItem(item_help);
+
+    Label* lbl_help = lbl_load_game->clone(1);
+    item_help->setLbl(lbl_help);
+    lbl_help->setText(STR_HELP);
   }
 
   void RpgContext::showHelpTmpl()
   {
+    _mode = MODE_HELP;
+
+    WidgetCreator creator;
+    EmptyLayout* layout = creator.getEmptyLayout();
+    setLayout(layout);
   }
 
   bool RpgContext::loop()
@@ -38,7 +104,7 @@ namespace rpg
 
   void RpgContext::update()
   {
-    if (_is_game_started)
+    if (_mode == MODE_GAME)
     {
       if (!_scene->isFinished())
       {
@@ -55,7 +121,6 @@ namespace rpg
       else
       {
         delete _scene;
-        _is_game_started = false;
         showGameMenuTmpl();
       }
     }

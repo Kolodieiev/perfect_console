@@ -23,7 +23,17 @@ namespace rpg
   private:
     enum Widget_ID : uint8_t
     {
-      ID_LVL_LIST = 1,
+      ID_MENU_GAME = 1,
+      ID_ITEM_LOAD_GAME,
+      ID_ITEM_NEW_GAME,
+      ID_ITEM_HELP,
+    };
+
+    enum Mode : uint8_t
+    {
+      MODE_MAIN_MENU = 0,
+      MODE_HELP,
+      MODE_GAME,
     };
 
     void showGameMenuTmpl();
@@ -34,7 +44,7 @@ namespace rpg
     FixedMenu* _game_menu{nullptr};
     IGameScene* _scene{nullptr};
 
-    bool _is_game_started{false};
+    Mode _mode{MODE_MAIN_MENU};
   };
 
 }  // namespace rpg
