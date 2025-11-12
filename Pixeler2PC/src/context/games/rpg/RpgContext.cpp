@@ -109,18 +109,20 @@ namespace rpg
       if (!_scene->isFinished())
       {
         if (!_scene->isReleased())
+        {
           _scene->update();
+        }
         else
         {
           uint8_t next_lvl = _scene->getNextSceneID();
           delete _scene;
-          //   _scene = new SokobanScene(_stored_objs, false, next_lvl); // TODO
-          //   _is_game_started = true;
+          _scene = new RpgScene(_stored_objs, false, next_lvl);
         }
       }
       else
       {
         delete _scene;
+        _scene = nullptr;
         showGameMenuTmpl();
       }
     }
@@ -144,9 +146,21 @@ namespace rpg
       else if (_input.isReleased(BtnID::BTN_OK))
       {
         _input.lock(BtnID::BTN_OK, CLICK_LOCK);
-        // getLayout()->delWidgets();
-        // _scene = new SokobanScene(_stored_objs, false, _prev_lvl); // TODO
-        // _is_game_started = true;
+
+        uint8_t item_id = _game_menu->getCurrItemID();
+
+        if (item_id == ID_ITEM_LOAD_GAME)
+        {
+        }
+        else if (item_id == ID_ITEM_NEW_GAME)
+        {
+          _mode = MODE_GAME;
+          getLayout()->delWidgets();
+          _scene = new RpgScene(_stored_objs, false);
+        }
+        else if (item_id == ID_ITEM_HELP)
+        {
+        }
       }
     }
   }
