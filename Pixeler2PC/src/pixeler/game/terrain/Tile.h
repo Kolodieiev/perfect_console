@@ -18,7 +18,8 @@ namespace pixeler
       TYPE_SNOW = 1 << 5,
       TYPE_MUD = 1 << 6,
       TYPE_ROAD = 1 << 7,
-      TYPE_TREE = 1 << 8
+      TYPE_TREE = 1 << 8,
+      TYPE_IMPASSABLE = 1 << 9,
     };
 
     Tile(TileType type, const uint16_t* img_ptr) : _img_ptr{img_ptr}, _type{type} {}
