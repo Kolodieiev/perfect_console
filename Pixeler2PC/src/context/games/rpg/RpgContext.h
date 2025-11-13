@@ -2,7 +2,8 @@
 //
 #include "pixeler/game/DataStream.h"
 //
-#include "pixeler/game/IGameScene.h"
+#include "scene/RpgBaseScene.h"
+
 #include "pixeler/ui/context/IContext.h"
 #include "pixeler/ui/widget/menu/FixedMenu.h"
 
@@ -42,7 +43,7 @@ namespace rpg
     DataStream _stored_objs{1024};
 
     FixedMenu* _game_menu{nullptr};
-    IGameScene* _scene{nullptr};
+    RpgBaseScene* _scene{nullptr};
 
     Mode _mode{MODE_MAIN_MENU};
   };

@@ -2,11 +2,6 @@
 
 #include "../../WidgetCreator.h"
 #include "./SceneID.h"
-#include "scene/RpgScene.h"
-
-const char STR_LOAD_GAME[] = "Завантажити";
-const char STR_NEW_GAME[] = "Нова гра";
-const char STR_HELP[] = "Допомога";
 
 #define COLOR_MAIN_RPG_BACK 0x30A0
 #define COLOR_ITEM_RPG_BACK 0x0885
@@ -19,6 +14,10 @@ const char STR_HELP[] = "Допомога";
 
 namespace rpg
 {
+  const char STR_LOAD_GAME[] = "Завантажити";
+  const char STR_NEW_GAME[] = "Нова гра";
+  const char STR_HELP[] = "Допомога";
+
   RpgContext::~RpgContext()
   {
   }
@@ -116,7 +115,7 @@ namespace rpg
         {
           uint8_t next_lvl = _scene->getNextSceneID();
           delete _scene;
-          _scene = new RpgScene(_stored_objs, false, next_lvl);
+          _scene = new RpgBaseScene(_stored_objs, false, next_lvl);
         }
       }
       else
@@ -156,7 +155,7 @@ namespace rpg
         {
           _mode = MODE_GAME;
           getLayout()->delWidgets();
-          _scene = new RpgScene(_stored_objs, false);
+          _scene = new RpgBaseScene(_stored_objs, false);
         }
         else if (item_id == ID_ITEM_HELP)
         {
