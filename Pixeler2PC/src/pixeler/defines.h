@@ -140,7 +140,7 @@ inline void xSemaphoreGive(SemaphoreHandle_t handle)
 
 #define log_e(fmt, ...) printf("E: " fmt "\n", ##__VA_ARGS__)
 #define log_i(fmt, ...) printf("I: " fmt "\n", ##__VA_ARGS__)
-#define print(fmt, ...) printf("I: " fmt, ##__VA_ARGS__)
+#define debug(fmt, ...) printf("I: " fmt, ##__VA_ARGS__)
 
 //--------------------------------------------------------------------------
 
