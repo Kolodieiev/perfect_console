@@ -43,7 +43,7 @@ namespace pixeler
 
   ImgData ResManager::getBmpRes(uint16_t res_id)
   {
-    auto it = _bmp_res.find(res_id);
+    const auto it = _bmp_res.find(res_id);
     if (it == _bmp_res.end())
       return _empty_img;
 
@@ -52,7 +52,7 @@ namespace pixeler
 
   AudioData ResManager::getWavRes(uint16_t res_id)
   {
-    auto it = _wav_res.find(res_id);
+    const auto it = _wav_res.find(res_id);
     if (it == _wav_res.end())
       return _empty_audio;
 

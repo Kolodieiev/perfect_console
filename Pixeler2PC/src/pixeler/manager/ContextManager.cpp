@@ -142,7 +142,7 @@ namespace pixeler
         ContextID next_context_id = _cur_context->getNextContextID();
         delete _cur_context;
 
-        auto it = _context_id_map.find(next_context_id);
+        const auto it = _context_id_map.find(next_context_id);
         if (it == _context_id_map.end())
         {
           log_e("Невідомий ідентифікатор контексту: %u", next_context_id);

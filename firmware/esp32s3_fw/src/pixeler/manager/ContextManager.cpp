@@ -1,12 +1,11 @@
 #pragma GCC optimize("O3")
 #include "ContextManager.h"
 
-#include "pixeler/manager/SPI_Manager.h"
-#include "pixeler/ui/context/IContext.h"
 #include "../setup/context_id_setup.h"
 #include "../setup/display_setup.h"
 #include "../setup/ui_setup.h"
-
+#include "pixeler/manager/SPI_Manager.h"
+#include "pixeler/ui/context/IContext.h"
 
 namespace pixeler
 {
@@ -32,7 +31,7 @@ namespace pixeler
         ContextID next_context_id = context->getNextContextID();
         delete context;
 
-        auto it = _context_id_map.find(next_context_id);
+        const auto it = _context_id_map.find(next_context_id);
         if (it == _context_id_map.end())
         {
           log_e("Невідомий ідентифікатор контексту: %u", next_context_id);
