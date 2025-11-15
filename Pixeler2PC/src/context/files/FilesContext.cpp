@@ -256,7 +256,7 @@ void FilesContext::showContextMenu()
         path_to_bmp += "/";
         path_to_bmp += _files[id - 1].getName();
 
-        FILE* bmp_file = _fs.openFile(path_to_bmp.c_str(), "r");
+        FILE* bmp_file = _fs.openFile(path_to_bmp.c_str(), "rb");
         if (bmp_file)
         {
           BmpHeader bmp_header;

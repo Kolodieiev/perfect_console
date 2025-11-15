@@ -26,7 +26,7 @@ namespace pixeler
     if (!_fs.fileExist(path_to_bmp))
       return empty_bmp_data;
 
-    FILE* bmp_file = _fs.openFile(path_to_bmp, "r");
+    FILE* bmp_file = _fs.openFile(path_to_bmp, "rb");
     if (!bmp_file)
       return empty_bmp_data;
 

@@ -720,7 +720,7 @@ void ReaderContext::createBookPagesTask(void* params)
 
   unsigned long ts = millis();
 
-  FILE* file = _fs.openFile(book_path.c_str(), "r");
+  FILE* file = _fs.openFile(book_path.c_str(), "rb");
 
   while (self->_need_load_book)
   {

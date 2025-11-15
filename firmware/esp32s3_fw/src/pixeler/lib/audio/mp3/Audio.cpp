@@ -366,7 +366,7 @@ bool Audio::connecttoFS(const char* path, int32_t fileStartPos)
     }
   }
 
-  audiofile = _fs.openFile(audioPath, "r");
+  audiofile = _fs.openFile(audioPath, "rb");
 
   if (!audiofile)
   {

@@ -519,7 +519,7 @@ namespace pixeler
     makeFullPath(from, _copy_from_path.c_str());
     makeFullPath(to, _copy_to_path.c_str());
 
-    FILE* n_f = fopen(to.c_str(), "a");
+    FILE* n_f = fopen(to.c_str(), "ab");
 
     if (!n_f)
     {
@@ -528,7 +528,7 @@ namespace pixeler
       return;
     }
 
-    FILE* o_f = fopen(from.c_str(), "r");
+    FILE* o_f = fopen(from.c_str(), "rb");
 
     if (!o_f)
     {
