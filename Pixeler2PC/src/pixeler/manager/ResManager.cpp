@@ -24,6 +24,7 @@ namespace pixeler
 
   uint16_t ResManager::loadWavRes(const char* path_to_wav)
   {
+    // stub
     return 0;
   }
 
@@ -31,7 +32,10 @@ namespace pixeler
   {
     const auto it = _bmp_res.find(res_id);
     if (it == _bmp_res.end())
+    {
+      log_e("Bmp-ресурс не знайдено по ID: %u", res_id);
       return _empty_img;
+    }
 
     return it->second;
   }
@@ -49,6 +53,7 @@ namespace pixeler
 
   void ResManager::deleteWavRes(uint16_t res_id)
   {
+    // stub
   }
 
   void ResManager::clearBmpRes()
@@ -61,6 +66,7 @@ namespace pixeler
 
   void ResManager::clearWavRes()
   {
+    // stub
   }
 
   ResManager _res;

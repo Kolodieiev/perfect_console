@@ -45,7 +45,10 @@ namespace pixeler
   {
     const auto it = _bmp_res.find(res_id);
     if (it == _bmp_res.end())
+    {
+      log_e("Bmp-ресурс не знайдено по ID: %u", res_id);
       return _empty_img;
+    }
 
     return it->second;
   }
