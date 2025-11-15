@@ -45,15 +45,15 @@ namespace simple_rpg
 
   void CaveScene::buildTerrain()
   {
-    _terrain.addTileDesc(0, Tile::TYPE_GROUND, IMG_TILE_0);
-    _terrain.addTileDesc(1, Tile::TYPE_GROUND, IMG_TILE_1);
-    _terrain.addTileDesc(2, Tile::TYPE_GROUND, IMG_TILE_2);
-    _terrain.addTileDesc(3, Tile::TYPE_GROUND, IMG_TILE_3);
-    _terrain.addTileDesc(4, Tile::TYPE_GROUND, IMG_TILE_4);
-    _terrain.addTileDesc(5, Tile::TYPE_GROUND, IMG_TILE_5);
-    _terrain.addTileDesc(6, Tile::TYPE_GROUND, IMG_TILE_6);
-    _terrain.addTileDesc(7, Tile::TYPE_GROUND, IMG_TILE_7);
-    _terrain.addTileDesc(8, Tile::TYPE_GROUND, IMG_TILE_8);
+    _terrain.addTileDesc(0, TILE_TYPE_GROUND, IMG_TILE_0);
+    _terrain.addTileDesc(1, TILE_TYPE_GROUND, IMG_TILE_1);
+    _terrain.addTileDesc(2, TILE_TYPE_GROUND, IMG_TILE_2);
+    _terrain.addTileDesc(3, TILE_TYPE_GROUND, IMG_TILE_3);
+    _terrain.addTileDesc(4, TILE_TYPE_GROUND, IMG_TILE_4);
+    _terrain.addTileDesc(5, TILE_TYPE_GROUND, IMG_TILE_5);
+    _terrain.addTileDesc(6, TILE_TYPE_GROUND, IMG_TILE_6);
+    _terrain.addTileDesc(7, TILE_TYPE_GROUND, IMG_TILE_7);
+    _terrain.addTileDesc(8, TILE_TYPE_GROUND, IMG_TILE_8);
 
     uint16_t w_num = 10;
     uint16_t h_num = 10;

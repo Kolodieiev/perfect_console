@@ -15,7 +15,7 @@ namespace sokoban
     _sprite.has_img = true;
     _sprite.width = 32;
     _sprite.height = 32;
-    _sprite.pass_abillity_mask = Tile::TYPE_GROUND;
+    _sprite.pass_abillity_mask = TILE_TYPE_GROUND;
   }
 
   void BoxObj::update()

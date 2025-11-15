@@ -15,7 +15,7 @@ namespace sokoban
     _sprite.width = 32;                // Ширина спрайта
     _sprite.height = 32;               // Висота спрайта
 
-    _sprite.pass_abillity_mask |= Tile::TYPE_GROUND;  // Маска типу прохідності ігрового об'єкта.
+    _sprite.pass_abillity_mask |= TILE_TYPE_GROUND;  // Маска типу прохідності ігрового об'єкта.
                                                       // Дозволяє обмежувати пересування об'єкта по певних видах плиток ігрової мапи
   }
 

@@ -90,7 +90,7 @@ namespace pixeler
       {
         for (uint16_t w = first_tile_x_pos; w < last_tile_x_pos; ++w)
         {
-          if (_terrain[h][w]->_img_ptr)
+          if (_terrain[h][w]->_type != TILE_TYPE_NONE)
             _display.drawBitmap(temp_x_draw_pos, y_draw_pos, _terrain[h][w]->_img_ptr, _tile_side_len, _tile_side_len);
 
           temp_x_draw_pos += _tile_side_len;
@@ -258,10 +258,10 @@ namespace pixeler
     return false;
   }
 
-  Tile::TileType TerrainManager::getTileType(uint16_t x, uint16_t y) const
+  TileType TerrainManager::getTileType(uint16_t x, uint16_t y) const
   {
     if (x > _terrain_w || y > _terrain_h || !_terrain)
-      return Tile::TYPE_NONE;
+      return TILE_TYPE_NONE;
 
     uint16_t tile_y_pos = coordToTilePos(y);
     uint16_t tile_x_pos = coordToTilePos(x);
@@ -276,7 +276,7 @@ namespace pixeler
     return true;
   }
 
-  void TerrainManager::addTileDesc(uint16_t sprite_id, Tile::TileType type, const uint16_t* sprite_src)
+  void TerrainManager::addTileDesc(uint16_t sprite_id, TileType type, const uint16_t* sprite_src)
   {
     try
     {

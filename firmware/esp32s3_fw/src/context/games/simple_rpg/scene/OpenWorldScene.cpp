@@ -59,23 +59,23 @@ namespace simple_rpg
   void OpenWorldScene::buildTerrain()
   {
     // Створити опис кожної плитки мапи.
-    _terrain.addTileDesc(0, Tile::TYPE_WATER, IMG_TILE_0);
-    _terrain.addTileDesc(1, Tile::TYPE_WATER, IMG_TILE_1);
-    _terrain.addTileDesc(2, Tile::TYPE_WATER, IMG_TILE_2);
-    _terrain.addTileDesc(3, Tile::TYPE_WATER, IMG_TILE_3);
-    _terrain.addTileDesc(4, Tile::TYPE_WATER, IMG_TILE_4);
-    _terrain.addTileDesc(5, Tile::TYPE_WATER, IMG_TILE_5);
-    _terrain.addTileDesc(6, Tile::TYPE_WATER, IMG_TILE_6);
-    _terrain.addTileDesc(7, Tile::TYPE_WATER, IMG_TILE_7);
-    _terrain.addTileDesc(8, Tile::TYPE_GROUND, IMG_TILE_8);
-    _terrain.addTileDesc(9, Tile::TYPE_GROUND, IMG_TILE_9);
-    _terrain.addTileDesc(10, Tile::TYPE_GROUND, IMG_TILE_10);
-    _terrain.addTileDesc(11, Tile::TYPE_WATER, IMG_TILE_11);
-    _terrain.addTileDesc(12, Tile::TYPE_WATER, IMG_TILE_12);
-    _terrain.addTileDesc(13, Tile::TYPE_WATER, IMG_TILE_13);
-    _terrain.addTileDesc(14, Tile::TYPE_WATER, IMG_TILE_14);
-    _terrain.addTileDesc(15, Tile::TYPE_WATER, IMG_TILE_15);
-    _terrain.addTileDesc(16, Tile::TYPE_WATER, IMG_TILE_16);
+    _terrain.addTileDesc(0, TILE_TYPE_WATER, IMG_TILE_0);
+    _terrain.addTileDesc(1, TILE_TYPE_WATER, IMG_TILE_1);
+    _terrain.addTileDesc(2, TILE_TYPE_WATER, IMG_TILE_2);
+    _terrain.addTileDesc(3, TILE_TYPE_WATER, IMG_TILE_3);
+    _terrain.addTileDesc(4, TILE_TYPE_WATER, IMG_TILE_4);
+    _terrain.addTileDesc(5, TILE_TYPE_WATER, IMG_TILE_5);
+    _terrain.addTileDesc(6, TILE_TYPE_WATER, IMG_TILE_6);
+    _terrain.addTileDesc(7, TILE_TYPE_WATER, IMG_TILE_7);
+    _terrain.addTileDesc(8, TILE_TYPE_GROUND, IMG_TILE_8);
+    _terrain.addTileDesc(9, TILE_TYPE_GROUND, IMG_TILE_9);
+    _terrain.addTileDesc(10, TILE_TYPE_GROUND, IMG_TILE_10);
+    _terrain.addTileDesc(11, TILE_TYPE_WATER, IMG_TILE_11);
+    _terrain.addTileDesc(12, TILE_TYPE_WATER, IMG_TILE_12);
+    _terrain.addTileDesc(13, TILE_TYPE_WATER, IMG_TILE_13);
+    _terrain.addTileDesc(14, TILE_TYPE_WATER, IMG_TILE_14);
+    _terrain.addTileDesc(15, TILE_TYPE_WATER, IMG_TILE_15);
+    _terrain.addTileDesc(16, TILE_TYPE_WATER, IMG_TILE_16);
 
     // Зібрати ігровий рівень основі даних шаблону та опису плиток
     uint16_t w_num = 30;          // Кількість плиток в ширину

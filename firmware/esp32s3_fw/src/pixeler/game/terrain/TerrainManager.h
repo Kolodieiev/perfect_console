@@ -90,7 +90,7 @@ namespace pixeler
      * @param type Тип прохідності плитки.
      * @param sprite_src Зображення плитки.
      */
-    void addTileDesc(uint16_t sprite_id, Tile::TileType type, const uint16_t* sprite_src);
+    void addTileDesc(uint16_t sprite_id, TileType type, const uint16_t* sprite_src);
 
     /**
      * @brief Скидає опис плиток.
@@ -131,9 +131,9 @@ namespace pixeler
      *
      * @param x Координата плитки.
      * @param y Координата плитки.
-     * @return Tile::TileType тип плитки у вказаних координатах. Tile::TYPE_NONE - якщо плитка за вказаними координатами відсутня.
+     * @return TileType тип плитки у вказаних координатах. TILE_TYPE_NONE - якщо плитка за вказаними координатами відсутня.
      */
-    Tile::TileType getTileType(uint16_t x, uint16_t y) const;
+    TileType getTileType(uint16_t x, uint16_t y) const;
 
     /**
      * @brief Встановлює позицію камери за вказаними координатами.

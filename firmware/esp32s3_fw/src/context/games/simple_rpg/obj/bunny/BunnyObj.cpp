@@ -71,7 +71,7 @@ namespace simple_rpg
     _sprite.height = 16;
     _sprite.frames_between_anim = 20;
 
-    _sprite.pass_abillity_mask |= Tile::TYPE_GROUND;
+    _sprite.pass_abillity_mask |= TILE_TYPE_GROUND;
 
     _sprite.rigid_offsets.top = 10;
 

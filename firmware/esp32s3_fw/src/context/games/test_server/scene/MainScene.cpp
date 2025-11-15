@@ -93,8 +93,8 @@ namespace test_server
 
   void MainScene::buildTerrain()
   {
-    _terrain.addTileDesc(0, Tile::TYPE_GROUND, IMG_TILE_0);
-    _terrain.addTileDesc(1, Tile::TYPE_WALL, IMG_TILE_1);
+    _terrain.addTileDesc(0, TILE_TYPE_GROUND, IMG_TILE_0);
+    _terrain.addTileDesc(1, TILE_TYPE_WALL, IMG_TILE_1);
 
     uint8_t tiles_x_num{11};  // Кількість плиток мапи по ширині
     uint8_t tiles_y_num{11};  // Кількість плиток мапи по висоті
