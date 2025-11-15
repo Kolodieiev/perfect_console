@@ -13,6 +13,10 @@
 ![file_manager](resources/images/screenshot/context_lua.png)
 ![settings_context](resources/images/screenshot/settings.png)
 <br>
+Демонстрація можливостей ігрового рушія(зібрано в портованій версії для ПК):
+<br>
+![alt text](resources/images/screenshot/rpg.png)
+<br>
 Більше скриншотів можна знайти в [Screenshots](resources/images/screenshot)
 <br>
 
