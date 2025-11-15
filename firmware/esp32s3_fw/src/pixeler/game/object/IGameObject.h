@@ -5,8 +5,8 @@
 #include "../../defines.h"
 //
 #include "../../driver/graphics/DisplayWrapper.h"
-#include "../../manager/WavManager.h"
 #include "../../manager/ResManager.h"
+#include "../../manager/WavManager.h"
 //
 #include "../DataStream.h"
 //
@@ -33,8 +33,7 @@ namespace pixeler
     IGameObject(const IGameObject& rhs) = delete;
     IGameObject& operator=(const IGameObject& rhs) = delete;
 
-    IGameObject(ResManager& res,
-                WavManager& audio,
+    IGameObject(WavManager& audio,
                 TerrainManager& terrain,
                 std::unordered_map<uint32_t, IGameObject*>& game_objs);
     virtual ~IGameObject() = 0;
@@ -286,7 +285,7 @@ namespace pixeler
     {
       try
       {
-        return new T(_res_manager, _audio, _terrain, _game_objs);
+        return new T(_audio, _terrain, _game_objs);
       }
       catch (const std::bad_alloc& e)
       {
@@ -300,9 +299,8 @@ namespace pixeler
     static uint32_t _global_obj_id_counter;  // Глобальний лічильник ідентифікаторів об'єктів.
 
   protected:
-    ResManager& _res_manager;                                // Менеджер ресурсів
-    TerrainManager& _terrain;                                // Поверхня ігрового рівня
     WavManager& _audio;                                      // Менеджер аудіо
+    TerrainManager& _terrain;                                // Поверхня ігрового рівня
     std::unordered_map<uint32_t, IGameObject*>& _game_objs;  // Список ігрових об'єктів на сцені
     SpriteDescription _sprite{};                             // Об'єкт структури, яка описує спрайт об'єкта та його стани
 

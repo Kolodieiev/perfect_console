@@ -10,10 +10,9 @@ namespace sokoban
   class SokobanObj : public IGameObject
   {
   public:
-    SokobanObj(ResManager& res,
-               WavManager& audio,
+    SokobanObj(WavManager& audio,
                TerrainManager& terrain,
-               std::unordered_map<uint32_t, IGameObject*>& game_objs) : IGameObject(res, audio, terrain, game_objs) {}
+               std::unordered_map<uint32_t, IGameObject*>& game_objs) : IGameObject(audio, terrain, game_objs) {}
     virtual ~SokobanObj() {}
 
     virtual void init() override;

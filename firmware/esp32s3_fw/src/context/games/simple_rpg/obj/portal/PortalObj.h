@@ -9,10 +9,9 @@ namespace simple_rpg
   class PortalObj : public IGameObject
   {
   public:
-    PortalObj(ResManager& res,
-              WavManager& audio,
+    PortalObj(WavManager& audio,
               TerrainManager& terrain,
-              std::unordered_map<uint32_t, IGameObject*>& game_objs) : IGameObject(res, audio, terrain, game_objs) {}
+              std::unordered_map<uint32_t, IGameObject*>& game_objs) : IGameObject(audio, terrain, game_objs) {}
     virtual ~PortalObj() {}
 
     virtual void init() override;

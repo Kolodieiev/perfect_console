@@ -14,8 +14,8 @@
 #include "./IGameMenu.h"
 #include "./IGameUI.h"
 #include "./object/IGameObject.h"
-#include "./terrain/TerrainManager.h"
 #include "./terrain/TerrainLoader.h"
+#include "./terrain/TerrainManager.h"
 
 namespace pixeler
 {
@@ -106,7 +106,7 @@ namespace pixeler
     {
       try
       {
-        return new T(_res_manager, _audio, _terrain, _game_objs);
+        return new T(_audio, _terrain, _game_objs);
       }
       catch (const std::bad_alloc& e)
       {

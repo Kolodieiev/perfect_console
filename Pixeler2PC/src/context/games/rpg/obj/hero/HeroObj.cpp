@@ -5,8 +5,8 @@
 namespace rpg
 {
 
-  HeroObj::HeroObj(ResManager& res, WavManager& audio, TerrainManager& terrain, std::unordered_map<uint32_t, IGameObject*>& game_objs)
-      : IGameObject(res, audio, terrain, game_objs)
+  HeroObj::HeroObj(WavManager& audio, TerrainManager& terrain, std::unordered_map<uint32_t, IGameObject*>& game_objs)
+      : IGameObject( audio, terrain, game_objs)
   {
   }
 
@@ -18,6 +18,10 @@ namespace rpg
   {
     _type_ID = ClassID::CLASS_HERO;
     _layer = 1;
+
+
+    // _res
+
     _sprite.has_img = false;
 
     _sprite.pass_abillity_mask = TILE_TYPE_ALL;

@@ -10,10 +10,9 @@ namespace simple_rpg
   class HeroObj : public IGameObject
   {
   public:
-    HeroObj(ResManager& res,
-            WavManager& audio,
+    HeroObj(WavManager& audio,
             TerrainManager& terrain,
-            std::unordered_map<uint32_t, IGameObject*>& game_objs) : IGameObject(res, audio, terrain, game_objs) {}
+            std::unordered_map<uint32_t, IGameObject*>& game_objs) : IGameObject(audio, terrain, game_objs) {}
     virtual ~HeroObj() {}
 
     virtual void init() override;

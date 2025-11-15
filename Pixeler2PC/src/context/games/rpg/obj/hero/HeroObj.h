@@ -9,8 +9,7 @@ namespace rpg
   class HeroObj : public IGameObject
   {
   public:
-    HeroObj(ResManager& res,
-            WavManager& audio,
+    HeroObj(WavManager& audio,
             TerrainManager& terrain,
             std::unordered_map<uint32_t, IGameObject*>& game_objs);
 
@@ -29,7 +28,9 @@ namespace rpg
     void stepTo(uint16_t x, uint16_t y);
 
   private:
-    const uint16_t PIX_PER_STEP{32};
+    const uint16_t PIX_PER_STEP{16};
+
+    uint16_t _sprite_id{0};
   };
 
 };  // namespace rpg

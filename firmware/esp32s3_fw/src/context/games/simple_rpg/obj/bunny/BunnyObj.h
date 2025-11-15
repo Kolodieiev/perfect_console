@@ -10,10 +10,9 @@ namespace simple_rpg
   class BunnyObj : public IGameObject
   {
   public:
-    BunnyObj(ResManager& res,
-             WavManager& audio,
+    BunnyObj(WavManager& audio,
              TerrainManager& terrain,
-             std::unordered_map<uint32_t, IGameObject*>& game_objs) : IGameObject(res, audio, terrain, game_objs) {}
+             std::unordered_map<uint32_t, IGameObject*>& game_objs) : IGameObject(audio, terrain, game_objs) {}
     virtual ~BunnyObj() {}
 
     virtual void init() override;

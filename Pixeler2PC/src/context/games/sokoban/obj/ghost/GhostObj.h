@@ -9,10 +9,9 @@ namespace sokoban
   class GhostObj : public IGameObject
   {
   public:
-    GhostObj(ResManager& res,
-             WavManager& audio,
+    GhostObj(WavManager& audio,
              TerrainManager& terrain,
-             std::unordered_map<uint32_t, IGameObject*>& game_objs) : IGameObject(res, audio, terrain, game_objs) {}
+             std::unordered_map<uint32_t, IGameObject*>& game_objs) : IGameObject(audio, terrain, game_objs) {}
     virtual ~GhostObj() {}
     virtual void init() override;
     virtual void update() override;
