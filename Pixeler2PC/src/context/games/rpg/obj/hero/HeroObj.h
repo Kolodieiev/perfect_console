@@ -26,6 +26,10 @@ namespace rpg
     void move(MovingDirection direction);
 
   private:
+    void stepTo(uint16_t x, uint16_t y);
+
+  private:
+    const uint16_t PIX_PER_STEP{32};
   };
 
 };  // namespace rpg
