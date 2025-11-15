@@ -2,16 +2,19 @@
 
 #include "../ClassID.h"
 
+const char STR_HERO_BMP_PATH[] = "games/rpg/hero.bmp";
+
 namespace rpg
 {
 
   HeroObj::HeroObj(WavManager& audio, TerrainManager& terrain, std::unordered_map<uint32_t, IGameObject*>& game_objs)
-      : IGameObject( audio, terrain, game_objs)
+      : IGameObject(audio, terrain, game_objs)
   {
   }
 
   HeroObj::~HeroObj()
   {
+    _res.deleteBmpRes(_bmp_id);
   }
 
   void HeroObj::init()
@@ -19,12 +22,25 @@ namespace rpg
     _type_ID = ClassID::CLASS_HERO;
     _layer = 1;
 
+    _bmp_id = _res.loadBmpRes(STR_HERO_BMP_PATH);
 
-    // _res
+    if (_bmp_id == 0)
+    {
+      _sprite.has_img = false;
+    }
+    else
+    {
+      _sprite.has_img = true;
+      _sprite.img_ptr = _res.getBmpRes(_bmp_id).data_ptr;
+      _sprite.width = 20;
+      _sprite.height = 30;
+      _sprite.rigid_offsets.top = 25;
+      _sprite.rigid_offsets.left = 9;
+      _sprite.rigid_offsets.right = 9;
+    }
 
-    _sprite.has_img = false;
-
-    _sprite.pass_abillity_mask = TILE_TYPE_ALL;
+    // _sprite.pass_abillity_mask = TILE_TYPE_ALL;
+    _sprite.pass_abillity_mask = TILE_TYPE_GROUND;
   }
 
   void HeroObj::update()
@@ -46,6 +62,7 @@ namespace rpg
 
   void HeroObj::onDraw()
   {
+    IGameObject::onDraw();
   }
 
   void HeroObj::move(MovingDirection direction)

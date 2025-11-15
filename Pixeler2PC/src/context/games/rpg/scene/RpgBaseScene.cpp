@@ -12,7 +12,6 @@ namespace rpg
   // TODO Додати обробку рівня RpgContext.
   // TODO Додати власний клас сцени для конкретного рівня.
   // TODO Додати серіалізацію герою.
-  // TODO Додати спрайт герою.
   // TODO Додати збереження сцени.
   // TODO Додати завантаження збереженої сцени з головного меню.
   // TODO Додати тригер переходу на іншу сцену.
@@ -129,8 +128,8 @@ namespace rpg
     _hero_obj = createObject<HeroObj>();
     _hero_obj->init();
     _game_objs.emplace(_hero_obj->getId(), _hero_obj);
-    _hero_obj->_x_global = 0;
-    _hero_obj->_y_global = 0;
+    _hero_obj->_x_global = 50;
+    _hero_obj->_y_global = 120;
     _main_obj = _hero_obj;
   }
 

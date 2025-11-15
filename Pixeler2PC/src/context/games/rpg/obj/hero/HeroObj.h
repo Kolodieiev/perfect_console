@@ -30,7 +30,7 @@ namespace rpg
   private:
     const uint16_t PIX_PER_STEP{16};
 
-    uint16_t _sprite_id{0};
+    uint16_t _bmp_id{0};
   };
 
 };  // namespace rpg
