@@ -2,22 +2,22 @@
 
 #include "../ResID.h"
 #include "../SceneID.h"
-#include "../map/map_scene_0.h"
-#include "../map/map_scene_1.h"
-#include "../map/map_scene_2.h"
-#include "../map/map_scene_3.h"
 #include "../ui/SceneUI.h"
 
 namespace rpg
 {
-  const char STR_MAPS_RES_FOLDER[] = "games/rpg/tiles/map/";
+  const char STR_TERRAIN_TMPL_FOLDER[] = "games/rpg/terrain_tmpl/";
+  const char STR_TERRAIN_TILES_RES_FOLDER[] = "games/rpg/tiles/terrain/";
 
-    const MapInfo MAPS_INFO[] = {
-      {MAP_SCENE_0_W, MAP_SCENE_0_H, MAP_SCENE_0},
-      {MAP_SCENE_1_W, MAP_SCENE_1_H, MAP_SCENE_1},
-      {MAP_SCENE_2_W, MAP_SCENE_2_H, MAP_SCENE_2},
-      {MAP_SCENE_3_W, MAP_SCENE_3_H, MAP_SCENE_3},
-  };
+  // TODO Додати обробку рівня RpgContext.
+  // TODO Додати власний клас сцени для конкретного рівня.
+  // TODO Додати серіалізацію герою.
+  // TODO Додати спрайт герою.
+  // TODO Додати збереження сцени.
+  // TODO Додати завантаження збереженої сцени з головного меню.
+  // TODO Додати тригер переходу на іншу сцену.
+  // TODO Додати відновлення даних героя на сцені.
+  // TODO Додати відновлення сцени зі збереження.
 
   RpgBaseScene::RpgBaseScene(DataStream& stored_objs, bool is_loaded, uint8_t lvl) : IGameScene(stored_objs)
   {
@@ -26,22 +26,23 @@ namespace rpg
     if (!loadMapRes())
     {
       _has_error = true;
-      // TODO show err notification
+      _is_finished = true;  // Просто закриваємо гру. Можна додати вивід повідомлення.
       log_e("Помилка завантаження ресурсів");
       return;
     }
 
-    log_e("Ресурси завантажено");
+    log_i("Ресурси завантажено");
 
-    buildTerrain();
-    createHero();
+    // Автоматично збираємо поверхню рівня з завантажених даних.
+    _terrain_loader.buildTerrain(_terrain, 16);
+
+    createHeroObj();
 
     _game_UI = new SceneUI();
   }
 
   RpgBaseScene::~RpgBaseScene()
   {
-    clearMapRes();
   }
 
   void RpgBaseScene::update()
@@ -76,79 +77,61 @@ namespace rpg
     {
       IGameObject::MovingDirection direction = IGameObject::DIRECTION_NONE;
 
-      if (_input.isReleased(BtnID::BTN_UP))
+      if (_input.isHolded(BtnID::BTN_UP))
       {
-        _input.lock(BtnID::BTN_UP, 100);
+        _input.lock(BtnID::BTN_UP, HOLD_LOCK);
         direction = IGameObject::DIRECTION_UP;
       }
-      else if (_input.isReleased(BtnID::BTN_DOWN))
+      else if (_input.isHolded(BtnID::BTN_DOWN))
       {
-        _input.lock(BtnID::BTN_DOWN, 100);
+        _input.lock(BtnID::BTN_DOWN, HOLD_LOCK);
         direction = IGameObject::DIRECTION_DOWN;
       }
-      else if (_input.isReleased(BtnID::BTN_RIGHT))
+      else if (_input.isHolded(BtnID::BTN_RIGHT))
       {
-        _input.lock(BtnID::BTN_RIGHT, 100);
+        _input.lock(BtnID::BTN_RIGHT, HOLD_LOCK);
         direction = IGameObject::DIRECTION_RIGHT;
       }
-      else if (_input.isReleased(BtnID::BTN_LEFT))
+      else if (_input.isHolded(BtnID::BTN_LEFT))
       {
-        _input.lock(BtnID::BTN_LEFT, 100);
+        _input.lock(BtnID::BTN_LEFT, HOLD_LOCK);
         direction = IGameObject::DIRECTION_LEFT;
       }
 
-      // _hero_obj->move(direction); TODO
+      _hero_obj->move(direction);
     }
+
+    IGameScene::update();
   }
 
   void RpgBaseScene::onTrigger(uint8_t id)
   {
   }
 
-  void RpgBaseScene::clearMapRes()
-  {
-    for (auto&& res : _map_resources)
-      _res_manager.deleteBmpRes(res.second);
-
-    _map_resources.clear();
-  }
-
   bool RpgBaseScene::loadMapRes()
   {
-    // TODO Додати прогрес завантаження ресурсів
-    MapInfo map_info = MAPS_INFO[_level];
+    // TODO Додати прогрес завантаження ресурсів.
+    // TODO Завантаження винести в окрему задачу.
+    String path_to_csv = STR_TERRAIN_TMPL_FOLDER;
+    path_to_csv += _level;
+    path_to_csv += ".csv";
 
-    uint16_t map_size = map_info.width * map_info.height;
+    String path_to_tile_type = STR_TERRAIN_TMPL_FOLDER;
+    path_to_tile_type += "tiles.meta";
 
-    for (uint16_t i = 0; i < map_size; ++i)
-    {
-      if (_map_resources.find(map_info.map_tmpl[i]) != _map_resources.end())
-        continue;
+    String path_to_bmps = STR_TERRAIN_TILES_RES_FOLDER;
 
-      String cur_file_name = STR_MAPS_RES_FOLDER;
-      cur_file_name += map_info.map_tmpl[i];
-      cur_file_name += ".bmp";
-
-      uint16_t res_id = _res_manager.loadBmpRes(cur_file_name.c_str());
-
-      if (res_id == 0)
-        return false;
-
-      log_i("Завантажено %u", map_info.map_tmpl[i]);
-
-      _map_resources.emplace(map_info.map_tmpl[i], res_id);
-    }
-
-    return true;
+    return _terrain_loader.loadTerrain(path_to_csv.c_str(), path_to_tile_type.c_str(), path_to_bmps.c_str());
   }
 
-  void RpgBaseScene::buildTerrain()
+  void RpgBaseScene::createHeroObj()
   {
-  }
-
-  void RpgBaseScene::createHero()
-  {
-    // _main_obj =
+    _hero_obj = createObject<HeroObj>();
+    _hero_obj->init();
+    _game_objs.emplace(_hero_obj->getId(), _hero_obj);
+    _hero_obj->_x_global = 0;
+    _hero_obj->_y_global = 0;
+    _main_obj = _hero_obj;
   }
 
 }  // namespace rpg

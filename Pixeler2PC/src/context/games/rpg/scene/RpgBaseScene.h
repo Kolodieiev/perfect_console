@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../obj/hero/HeroObj.h"
 #include "pixeler/game/IGameScene.h"
 
 using namespace pixeler;
@@ -15,15 +16,13 @@ namespace rpg
     virtual void onTrigger(uint8_t id) override;
 
   private:
-    void clearMapRes();
     bool loadMapRes();
-    void buildTerrain();
-    void createHero();
+    void createHeroObj();
 
   private:
-    std::unordered_map<uint16_t, uint16_t> _map_resources;
-
+    TerrainLoader _terrain_loader;
     String _err_message;
+    HeroObj* _hero_obj{nullptr};
     bool _has_error{false};
     uint8_t _level{0};
   };
