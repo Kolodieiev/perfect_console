@@ -15,7 +15,7 @@
 #include "./IGameUI.h"
 #include "./object/IGameObject.h"
 #include "./terrain/TerrainManager.h"
-#include "./terrain/MapInfo.h"
+#include "./terrain/TerrainLoader.h"
 
 namespace pixeler
 {
