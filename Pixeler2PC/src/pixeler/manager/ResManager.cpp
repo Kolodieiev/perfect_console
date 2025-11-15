@@ -42,6 +42,9 @@ namespace pixeler
 
   void ResManager::deleteBmpRes(uint16_t res_id)
   {
+    if (res_id == 0)
+      return;
+      
     const auto it = _bmp_res.find(res_id);
 
     if (it != _bmp_res.end())
