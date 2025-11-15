@@ -652,9 +652,9 @@ namespace pixeler
 
 #ifdef _WIN32
     String to_ansi_str = utf8ToAnsi(to.c_str());
-    FILE* n_f = fopen(to_ansi_str.c_str(), "a");
+    FILE* n_f = fopen(to_ansi_str.c_str(), "ab");
 #else
-    FILE* n_f = fopen(to.c_str(), "a");
+    FILE* n_f = fopen(to.c_str(), "ab");
 #endif
 
     if (!n_f)
@@ -666,9 +666,9 @@ namespace pixeler
 
 #ifdef _WIN32
     String from_ansi_str = utf8ToAnsi(from.c_str());
-    FILE* o_f = fopen(from_ansi_str.c_str(), "r");
+    FILE* o_f = fopen(from_ansi_str.c_str(), "rb");
 #else
-    FILE* o_f = fopen(from.c_str(), "r");
+    FILE* o_f = fopen(from.c_str(), "rb");
 #endif
 
     if (!o_f)
