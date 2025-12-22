@@ -62,9 +62,9 @@ simple_item:setChangingBorder(true) -- Встановлюємо прапор з�
 simple_item:setChangingBack(true) -- Встановлюємо прапор зміни кольору фону віджета, у разі його потрапляння у фокус.
 
 simple_item_label = simple_item:getLbl() -- Отримуємо вказівник на віджет текстової мітки. Можна також створити нову мітку і присвоїти її елементу.
-simple_item:setLbl(simple_item_label)
 simple_item_label:setText("Простий елемент списку")
 simple_item_label:setGravity(GRAVITY_CENTER)
+simple_item_label:setFocusBackColor(COLOR_ITEM_FOCUS_BACK)
 simple_item_label:setAutoscrollInFocus(true) -- Встановлюємо прапор автоматичного прокручування тексту віджета, у разі його потрапляння у фокус.
 
 -- ----
@@ -106,8 +106,8 @@ function update() -- Функція викликається автоматич�
     elseif input.is_released(BTN_DOWN) then
         input.lock(BTN_DOWN, 250)
         main_menu:focusDown()
-    elseif input.is_released(BTN_A) then
-        input.lock(BTN_A, 250)
+    elseif input.is_released(BTN_OK) then
+        input.lock(BTN_OK, 250)
         ok_handler()
     end
 end
