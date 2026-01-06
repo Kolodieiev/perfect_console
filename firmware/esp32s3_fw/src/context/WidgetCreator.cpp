@@ -83,6 +83,8 @@ Label* WidgetCreator::getStatusMsgLable(uint16_t id, const char* text, uint8_t t
   lbl->setBackColor(COLOR_MAIN_BACK);
   lbl->setWidth(_display.getWidth());
   lbl->setHeight(_display.getHeight());
+  lbl->setAutoscroll(true);
+  lbl->setFullAutoscroll(false);
 
   return lbl;
 }
