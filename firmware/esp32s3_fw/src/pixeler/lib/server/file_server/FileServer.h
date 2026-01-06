@@ -1,8 +1,10 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-#include <stdint.h>
 #include <WebServer.h>
+#include <stdint.h>
+
+#include "pixeler/manager/FileManager.h"
 
 namespace pixeler
 {
@@ -102,7 +104,8 @@ namespace pixeler
     String _ssid;
     String _pwd;
 
-    FILE* in_file{nullptr};
+    FILE* _in_file{nullptr};
+    FileStream* _out_file_stream{nullptr};
     WebServer* _server = nullptr;
 
     unsigned long _last_delay_ts = 0;

@@ -2,7 +2,6 @@
 #include "FileServer.h"
 
 #include "./tmpl_html.cpp"
-#include "pixeler/manager/FileManager.h"
 #include "pixeler/manager/WiFiManager.h"
 
 namespace pixeler
@@ -85,11 +84,18 @@ namespace pixeler
 
   void FileServer::stop()
   {
-    if (!_is_working)
+    if (!_must_work)
       return;
 
     _must_work = false;
 
+    if (_out_file_stream)
+      _out_file_stream->close();
+
+    while (_is_working)
+      delay(1);
+
+    _server->stop();
     _server->close();
 
     if (_wifi.isApEnabled())
@@ -140,6 +146,8 @@ namespace pixeler
     }
 
     _is_working = false;
+    
+    log_i("FileServer task finished");
     vTaskDelete(NULL);
   }
 
@@ -169,13 +177,16 @@ namespace pixeler
       else
       {
         size_t f_size = _fs.getFileSize(path.c_str());
-        FileStream f_stream(file, _server->arg(0).c_str(), f_size);
+        _out_file_stream = new FileStream(file, _server->arg(0).c_str(), f_size);
 
         _server->sendHeader("Content-Type", "application/force-download");
         _server->sendHeader("Content-Disposition", "attachment; filename=\"" + _server->arg(0) + "\"");
         _server->sendHeader("Content-Transfer-Encoding", "binary");
         _server->sendHeader("Cache-Control", "no-cache");
-        _server->streamFile(f_stream, "application/octet-stream");
+        _server->streamFile(*_out_file_stream, "application/octet-stream");
+
+        delete _out_file_stream;
+        _out_file_stream = nullptr;
       }
     }
     // Якщо відсутні параметри, відобразити список файлів в директорії
@@ -225,13 +236,16 @@ namespace pixeler
       int pos = _server_path.lastIndexOf('/');
       String filename = (pos == -1) ? _server_path : _server_path.substring(pos + 1);
 
-      FileStream f_stream(file, filename.c_str(), f_size);
+      _out_file_stream = new FileStream(file, filename.c_str(), f_size);
 
       _server->sendHeader("Content-Type", "application/force-download");
       _server->sendHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
       _server->sendHeader("Content-Transfer-Encoding", "binary");
       _server->sendHeader("Cache-Control", "no-cache");
-      _server->streamFile(f_stream, "application/octet-stream");
+      _server->streamFile(*_out_file_stream, "application/octet-stream");
+
+      delete _out_file_stream;
+      _out_file_stream = nullptr;
     }
   }
 
@@ -248,7 +262,7 @@ namespace pixeler
 
       log_i("Запит на створення файлу %s", filename.c_str());
 
-      _fs.closeFile(in_file);
+      _fs.closeFile(_in_file);
 
       if (_fs.exists(filename.c_str(), true))
       {
@@ -261,9 +275,9 @@ namespace pixeler
         filename = temp_name;
       }
 
-      in_file = _fs.openFile(filename.c_str(), "ab");
+      _in_file = _fs.openFile(filename.c_str(), "ab");
 
-      if (!in_file)
+      if (!_in_file)
       {
         log_e("Не можу відкрити файл %s на запис", filename.c_str());
         _server->send(500, "text/html", "");
@@ -274,7 +288,7 @@ namespace pixeler
     }
     else if (uploadfile.status == UPLOAD_FILE_WRITE)
     {
-      _fs.writeToFile(in_file, static_cast<const void*>(uploadfile.buf), uploadfile.currentSize);
+      _fs.writeToFile(_in_file, static_cast<const void*>(uploadfile.buf), uploadfile.currentSize);
       if (millis() - _last_delay_ts > 1000)
       {
         delay(1);
@@ -283,9 +297,9 @@ namespace pixeler
     }
     else if (uploadfile.status == UPLOAD_FILE_END || uploadfile.status == UPLOAD_FILE_ABORTED)
     {
-      if (in_file)
+      if (_in_file)
       {
-        _fs.closeFile(in_file);
+        _fs.closeFile(_in_file);
 
         handleReceive();
 
@@ -318,7 +332,5 @@ namespace pixeler
   {
     FileServer* instance = static_cast<FileServer*>(params);
     instance->fileServerTask(params);
-    log_i("FileServer task finished");
-    vTaskDelete(NULL);
   }
 }  // namespace pixeler
