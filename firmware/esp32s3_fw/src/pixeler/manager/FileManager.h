@@ -95,11 +95,13 @@ namespace pixeler
     virtual size_t write(uint8_t byte) override;
     virtual int peek() override;
     virtual void flush() override {}
+    void close();
 
     const char* name() const
     {
       return _name.c_str();
     }
+    
     size_t size() const
     {
       return _size;

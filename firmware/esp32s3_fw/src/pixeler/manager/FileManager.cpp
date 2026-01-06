@@ -902,5 +902,14 @@ namespace pixeler
     return c;
   }
 
+  void FileStream::close()
+  {
+    if (_file)
+    {
+      fclose(_file);
+      _file = nullptr;
+    }
+  }
+
   FileManager _fs;
 }  // namespace pixeler
