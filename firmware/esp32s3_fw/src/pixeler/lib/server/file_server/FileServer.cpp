@@ -63,7 +63,7 @@ namespace pixeler
 
     _must_work = true;
 
-    BaseType_t result = xTaskCreatePinnedToCore(startWebServer, "fileServerTask", (1024 / 2) * 20, this, 10, NULL, 1);
+    BaseType_t result = xTaskCreatePinnedToCore(fileServerTask, "fileServerTask", (1024 / 2) * 20, this, 10, NULL, 1);
 
     if (result == pdPASS)
     {
@@ -77,6 +77,8 @@ namespace pixeler
 
       if (_wifi.isApEnabled())
         _wifi.disable();
+
+      _must_work = false;
 
       return false;
     }
@@ -95,13 +97,28 @@ namespace pixeler
     while (_is_working)
       delay(1);
 
-    _server->stop();
     _server->close();
 
     if (_wifi.isApEnabled())
       _wifi.disable();
 
     delete _server;
+    _server = nullptr;
+  }
+
+  bool FileServer::isWorking() const
+  {
+    return _is_working;
+  }
+
+  void FileServer::setSSID(const char* ssid)
+  {
+    _ssid = ssid;
+  }
+
+  void FileServer::setPWD(const char* pwd)
+  {
+    _pwd = pwd;
   }
 
   String FileServer::getAddress() const
@@ -112,7 +129,7 @@ namespace pixeler
       return emptyString;
   }
 
-  void FileServer::fileServerTask(void* params)
+  void FileServer::startWebServer(void* params)
   {
     _server = new WebServer(80);
 
@@ -146,7 +163,7 @@ namespace pixeler
     }
 
     _is_working = false;
-    
+
     log_i("FileServer task finished");
     vTaskDelete(NULL);
   }
@@ -328,9 +345,14 @@ namespace pixeler
     _server->send(404, "text/html", html);
   }
 
-  void FileServer::startWebServer(void* params)
+  FileServer::ServerMode FileServer::getServerMode() const
+  {
+    return _server_mode;
+  }
+
+  void FileServer::fileServerTask(void* params)
   {
     FileServer* instance = static_cast<FileServer*>(params);
-    instance->fileServerTask(params);
+    instance->startWebServer(params);
   }
 }  // namespace pixeler

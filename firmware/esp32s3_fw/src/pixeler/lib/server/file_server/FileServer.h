@@ -23,7 +23,7 @@ namespace pixeler
     /**
      * @brief Запускає файловий сервер з раніше налаштованими параметрами.
      * Якщо встановлено з'єднання з маршрутизатором, сервер буде запущено на виділеному IP.
-     * Якщо з'єднання не встановлено раніше і його не вдалося встановити, буде створено точку доступу із заданими налаштуваннями.
+     * Якщо з'єднання не встановлено раніше, буде створено точку доступу із заданими налаштуваннями.
      *
      * @param server_path І'мя каталогу або файлу, для якого буде запущено файловий сервер.
      * @param mode Режим, в якому буде запущено файловий сервер. Може мати значення SERVER_MODE_SEND/SERVER_MODE_SEND_FILE/SERVER_MODE_RECEIVE.
@@ -44,32 +44,21 @@ namespace pixeler
      * @return true - Якщо сервер працює.
      * @return false - Інакше.
      */
-    bool isWorking() const
-    {
-      return _is_working;
-    }
+    bool isWorking() const;
 
     /**
-     * @brief Встановлює SSID до якого буде виконано спробу підключення,
-     * або з яким буде створено точку доступу, якщо підключення не вдалося.
+     * @brief Встановлює SSID з яким буде створено точку доступу, якщо відсутнє підключення до маршрутизатора.
      *
      * @param ssid
      */
-    void setSSID(const char* ssid)
-    {
-      _ssid = ssid;
-    }
+    void setSSID(const char* ssid);
 
     /**
-     * @brief Встановлює пароль, який буде використано при підключенні до маршрутизатора,
-     * або який буде використано для точки доступу, якщо підключення не вдалося.
+     * @brief Встановлює пароль, який буде використано для точки доступу, якщо відсутнє підключення до маршрутизатора.
      *
      * @param pwd
      */
-    void setPWD(const char* pwd)
-    {
-      _pwd = pwd;
-    }
+    void setPWD(const char* pwd);
 
     /**
      * @brief Повертає виділену IP-адресу сервера на маршрутизаторі або IP-адресу сервера на точці доступу.
@@ -83,14 +72,11 @@ namespace pixeler
      *
      * @return ServerMode
      */
-    ServerMode getServerMode() const
-    {
-      return _server_mode;
-    }
+    ServerMode getServerMode() const;
 
   private:
-    static void startWebServer(void* params);
-    void fileServerTask(void* params);
+    static void fileServerTask(void* params);
+    void startWebServer(void* params);
 
     void handleReceive();
     void handleSend();
