@@ -108,7 +108,6 @@ public:
   uint32_t inBufferFilled();  // returns the number of stored bytes in the inputbuffer
   uint32_t inBufferFree();    // returns the number of free bytes in the inputbuffer
   uint32_t inBufferSize();    // returns the size of the inputbuffer in bytes
-  void setTone(int8_t gainLowPass, int8_t gainBandPass, int8_t gainHighPass);
 
 private:
   size_t id3Size{0};
@@ -167,10 +166,7 @@ private:
   void computeLimit();
   void Gain(int16_t* sample);
   bool initializeDecoder();
-  int16_t* IIR_filterChain0(int16_t iir_in[2], bool clear = false);
-  int16_t* IIR_filterChain1(int16_t iir_in[2], bool clear = false);
-  int16_t* IIR_filterChain2(int16_t iir_in[2], bool clear = false);
-  void IIR_calculateCoefficients(int8_t G1, int8_t G2, int8_t G3);
+
   bool readID3V1Tag();
   int32_t mp3_correctResumeFilePos(uint32_t resumeFilePos);
 
@@ -335,7 +331,6 @@ private:
   uint32_t m_audioDataStart = 0;   // in bytes
   size_t m_audioDataSize = 0;      //
   float m_filterBuff[3][2][2][2];  // IIR filters memory for Audio DSP
-  float m_corr = 1.0;              // correction factor for level adjustment
   size_t m_i2s_bytesWritten = 0;   // set in i2s_write() but not used
   size_t m_fileSize = 0;           // size of the file
   uint16_t m_filterFrequency[2];
