@@ -1,5 +1,6 @@
 #pragma once
 #pragma GCC optimize("O3")
+#include <SPI.h>
 #include <Stream.h>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -7,8 +8,8 @@
 #include <cstring>
 #include <vector>
 
-#include "../defines.h"
-#include "SD_Manager.h"
+#include "pixeler/defines.h"
+#include "pixeler/setup/sd_setup.h"
 
 namespace pixeler
 {
@@ -101,7 +102,7 @@ namespace pixeler
     {
       return _name.c_str();
     }
-    
+
     size_t size() const
     {
       return _size;
@@ -422,7 +423,40 @@ namespace pixeler
       return _last_task_result;
     }
 
-    FileManager() {}
+    /**
+     * @brief Генерує унікальне ім'я файлу на основі переданого імені, якщо вказаний файл вже інсує.
+     * Інакше повертає передане ім'я.
+     *
+     * @param file_path
+     * @return String
+     */
+    String makeUniqueFilename(const String& file_path);
+
+    /**
+     * @brief Монтує карту пам'яті, яка приєднана до вказаної шини SPI.
+     * Якщо раніше була примонтована інша карта пам'яті, вона буде автоматично відмонтована.
+     *
+     * @param spi Вказівник на ініціалізовану шину SPI.
+     * @return true - Якщо карту пам'яті було примонтовано.
+     * @return false - Якщо під час монтування виникла помилка.
+     */
+    bool mount(SPIClass* spi);
+
+    /**
+     * @brief Відмонтовує примонтовану раніше карту пам'яті.
+     *
+     */
+    void unmount();
+
+    /**
+     * @brief Перевіряє чи примонтовано будь-яку карту пам'яті в даний момент.
+     *
+     * @return true - Якщо карта пам'яті примонтована та успішно читається.
+     * @return false - Якщо карта не примонтована або недоступна для читання.
+     */
+    bool isMounted() const;
+
+    FileManager();
     FileManager(const FileManager&) = delete;
     FileManager& operator=(const FileManager&) = delete;
 
@@ -438,9 +472,9 @@ namespace pixeler
       INDX_MODE_ALL
     };
 
-    uint8_t getEntryType(const char* path, dirent* entry = nullptr);
+    uint8_t getEntryTypeUnlocked(const char* path, dirent* entry = nullptr);
     //
-    void startIndex(std::vector<FileInfo>& out_vec, const char* dir_path, IndexMode mode, const char* file_ext = "");
+    void index(std::vector<FileInfo>& out_vec, const char* dir_path, IndexMode mode, const char* file_ext = "");
     //
     void rm();
     void copyFile();
@@ -450,9 +484,15 @@ namespace pixeler
     static void rmTask(void* params);
     static void copyFileTask(void* params);
     //
-    size_t writeOptimal(FILE* file, const void* buffer, size_t len);
+    size_t writeOptimalUnlocked(FILE* file, const void* buffer, size_t len);
+    bool rmFileUnlocked(const char* path, bool make_full = false);
+    bool rmDirUnlocked(const char* path, bool make_full = false);
+    size_t getFileSizeUnlocked(const char* path);
+    size_t availableUnlocked(FILE* file, size_t file_size);
+    bool copyFileUnlocked(const String& from, const String& to);
 
   private:
+    SemaphoreHandle_t _sd_mutex;
     TaskDoneHandler _doneHandler{nullptr};
 
     String _rm_path;
@@ -464,6 +504,8 @@ namespace pixeler
     const uint32_t TASK_SIZE{(1024 / 2) * 30};
 
     uint8_t _copy_progress{0};
+
+    uint8_t _pdrv{0xFF};
 
     bool _is_working{false};
     bool _is_canceled{false};

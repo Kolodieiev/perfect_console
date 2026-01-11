@@ -19,7 +19,7 @@ namespace pixeler
     _server_path = server_path;
     _server_mode = mode;
 
-    if (!_sd.isMounted())
+    if (!_fs.isMounted())
       return false;
 
     if (_server_mode != SERVER_MODE_SEND_FILE)
@@ -277,21 +277,10 @@ namespace pixeler
       filename += "/";
       filename += uploadfile.filename;
 
-      log_i("Запит на створення файлу %s", filename.c_str());
-
       _fs.closeFile(_in_file);
 
-      if (_fs.exists(filename.c_str(), true))
-      {
-        String temp_name = filename;
-        temp_name += "_copy";
-
-        while (_fs.fileExist(temp_name.c_str(), true))
-          temp_name += "_copy";
-
-        filename = temp_name;
-      }
-
+      log_i("Запит на створення файлу %s", filename.c_str());
+      filename = _fs.makeUniqueFilename(filename);
       _in_file = _fs.openFile(filename.c_str(), "ab");
 
       if (!_in_file)

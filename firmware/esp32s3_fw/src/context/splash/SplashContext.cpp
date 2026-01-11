@@ -3,7 +3,7 @@
 #include "../WidgetCreator.h"
 #include "pixeler/lib/neo_pixel/Adafruit_NeoPixel.h"
 #include "pixeler/manager/I2C_Manager.h"
-#include "pixeler/manager/SD_Manager.h"
+#include "pixeler/manager/FileManager.h"
 #include "pixeler/manager/SPI_Manager.h"
 #include "pixeler/manager/SettingsManager.h"
 #include "pixeler/setup/sd_setup.h"
@@ -28,10 +28,10 @@ SplashContext::SplashContext()
   uint16_t y_pos{0};
 
   SPI_Manager::initBus(SD_SPI_BUS, SD_PIN_SCLK, SD_PIN_MISO, SD_PIN_MOSI);
-  _sd.mount(pixeler::SPI_Manager::getSpi4Bus(SD_SPI_BUS));
+  _fs.mount(pixeler::SPI_Manager::getSpi4Bus(SD_SPI_BUS));
 
   // SDCARD
-  if (_sd.isMounted())
+  if (_fs.isMounted())
   {
     addLabel(OFFSET_LBL_INFO, y_pos, STR_SUCCESS, COLOR_GREEN);
 

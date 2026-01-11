@@ -215,20 +215,21 @@ void ReaderContext::showReadTmpl()
   IWidgetContainer* layout = creator.getEmptyLayout();
   setLayout(layout);
 
-  layout->setBackColor(COLOR_BLACK);
+  layout->setBackColor(COLOR_DARKGREY);
 
   _page = new Label(ID_PAGE_LBL);
   layout->addWidget(_page);
   _page->setMultiline(true);
   _page->setWidth(TFT_WIDTH);
   _page->setHeight(TFT_HEIGHT - 16);
-  _page->setBackColor(COLOR_BLACK);
+  _page->setBackColor(COLOR_DARKGREY);
   _page->setTextColor(COLOR_WHITE);
 
   _progress_lbl = new Label(ID_PROGRESS_LBL);
   layout->addWidget(_progress_lbl);
   _progress_lbl->setText("0000/0000");
   _progress_lbl->setTextColor(COLOR_WHITE);
+  _progress_lbl->setBackColor(COLOR_DARKGREY);
   _progress_lbl->initWidthToFit(5);
   _progress_lbl->setPos(0, TFT_HEIGHT - _progress_lbl->getHeight());
 
@@ -477,7 +478,7 @@ ReaderContext::ReaderContext()
   EmptyLayout* layout = creator.getEmptyLayout();
   setLayout(layout);
 
-  if (!_sd.isMounted())
+  if (!_fs.isMounted())
   {
     showSDErrTmpl();
     return;

@@ -52,7 +52,7 @@ Mp3Context::Mp3Context()
   EmptyLayout* layout = creator.getEmptyLayout();
   setLayout(layout);
 
-  if (!_sd.isMounted())
+  if (!_fs.isMounted())
   {
     showSDErrTmpl();
     return;
@@ -76,7 +76,6 @@ Mp3Context::Mp3Context()
   _playlist_name = SettingsManager::get(STR_PLAYLIST_PREF);
   _track_name = SettingsManager::get(STR_TRACK_NAME_PREF);
 
-  _audio.setTone(3, -1, -3);
   _audio.setVolumeSteps(31);
   _audio.setVolume(_volume);
 

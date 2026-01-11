@@ -68,7 +68,7 @@ FilesContext::FilesContext() : _sync_task_mutex{xSemaphoreCreateMutex()}
   EmptyLayout* layout = creator.getEmptyLayout();
   setLayout(layout);
 
-  if (!_sd.isMounted())
+  if (!_fs.isMounted())
   {
     showSDErrTmpl();
     return;
@@ -530,24 +530,10 @@ void FilesContext::pasteFile()
   }
   else if (_has_copying_file)
   {
-    if (!_fs.fileExist(old_file_path.c_str()) || !_fs.startCopyFile(old_file_path.c_str(), new_file_path.c_str()))
-    {
+    if (!_fs.startCopyFile(old_file_path.c_str(), new_file_path.c_str()))
       showResultToast(false);
-    }
     else
-    {
-      if (old_file_path.equals(new_file_path))
-      {
-        new_file_path += "_copy";
-
-        while (_fs.fileExist(new_file_path.c_str(), true))
-          new_file_path += "_copy";
-      }
-
-      _copy_to_path = new_file_path;
-
       showCopyingTmpl();
-    }
   }
 
   _has_moving_file = false;
@@ -563,7 +549,9 @@ void FilesContext::removeFile()
   filename += "/";
   filename += _files_list->getCurrItemText();
 
-  if (_fs.startRemoving(filename.c_str()))
+  if (!_fs.startRemoving(filename.c_str()))
+    showResultToast(false);
+  else
     showRemovingTmpl();
 }
 
@@ -636,7 +624,7 @@ void FilesContext::update()
   {
     xSemaphoreTake(_sync_task_mutex, portMAX_DELAY);
 
-    if (_fs.isWorking())
+    if (_fs.isWorking()) //TODO
     {
       if ((millis() - _upd_msg_time) > UPD_TRACK_INF_INTERVAL)
       {

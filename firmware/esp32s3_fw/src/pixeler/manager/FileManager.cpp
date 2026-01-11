@@ -1,13 +1,16 @@
 #pragma GCC optimize("O3")
 #include "FileManager.h"
 
+#include <dirent.h>
 #include <errno.h>
+#include <esp_task_wdt.h>
+#include <sd_diskio.h>
 #include <sys/stat.h>
 
 #include <cctype>
 
-#include "../setup/sd_setup.h"
-#include "esp_task_wdt.h"
+#include "pixeler/setup/sd_setup.h"
+#include "pixeler/util/AutoLock.h"
 
 #define IDLE_WD_GUARD_TIME 250U
 
@@ -20,7 +23,29 @@ namespace pixeler
     return full_path;
   }
 
-  uint8_t FileManager::getEntryType(const char* path, dirent* entry)
+  String FileManager::makeUniqueFilename(const String& file_path)
+  {
+    uint16_t counter = 1;
+    String temp_path = file_path;
+    String unique_filename = file_path;
+    while (fileExist(unique_filename.c_str(), true))
+    {
+      unique_filename = temp_path.substring(0, temp_path.lastIndexOf("."));
+      unique_filename += "(";
+      unique_filename += counter;
+      unique_filename += ")";
+      unique_filename += temp_path.substring(temp_path.lastIndexOf("."));
+      ++counter;
+    }
+
+    return unique_filename;
+  }
+
+  FileManager::FileManager() : _sd_mutex{xSemaphoreCreateMutex()}
+  {
+  }
+
+  uint8_t FileManager::getEntryTypeUnlocked(const char* path, dirent* entry)
   {
     if (entry && entry->d_type != DT_UNKNOWN)
       return entry->d_type;
@@ -41,8 +66,13 @@ namespace pixeler
 
   size_t FileManager::getFileSize(const char* path)
   {
-    String full_path = makeFullPath(path);
+    AutoLock lock(_sd_mutex);
+    return getFileSizeUnlocked(path);
+  }
 
+  size_t FileManager::getFileSizeUnlocked(const char* path)
+  {
+    String full_path = makeFullPath(path);
     struct stat st;
     if (stat(full_path.c_str(), &st) != 0 || !S_ISREG(st.st_mode))
       return 0;
@@ -54,6 +84,7 @@ namespace pixeler
   {
     String full_path = makeFullPath(path);
 
+    AutoLock lock(_sd_mutex);
     if (stat(full_path.c_str(), &out_stat) != 0)
       return false;
 
@@ -64,7 +95,8 @@ namespace pixeler
   {
     String full_path = makeFullPath(path);
 
-    bool result = getEntryType(full_path.c_str()) == DT_REG;
+    AutoLock lock(_sd_mutex);
+    bool result = getEntryTypeUnlocked(full_path.c_str()) == DT_REG;
 
     if (!result && !silently)
       log_e("File %s not found", full_path.c_str());
@@ -76,7 +108,8 @@ namespace pixeler
   {
     String full_path = makeFullPath(path);
 
-    bool result = getEntryType(full_path.c_str()) == DT_DIR;
+    AutoLock lock(_sd_mutex);
+    bool result = getEntryTypeUnlocked(full_path.c_str()) == DT_DIR;
 
     if (!result && !silently)
       log_e("Dir %s not found", full_path.c_str());
@@ -87,8 +120,8 @@ namespace pixeler
   bool FileManager::exists(const char* path, bool silently)
   {
     String full_path = makeFullPath(path);
-
-    uint8_t type = getEntryType(full_path.c_str());
+    AutoLock lock(_sd_mutex);
+    uint8_t type = getEntryTypeUnlocked(full_path.c_str());
 
     if (type == DT_REG || type == DT_DIR)
       return true;
@@ -103,6 +136,7 @@ namespace pixeler
 
     errno = 0;
 
+    AutoLock lock(_sd_mutex);
     bool result = !mkdir(full_path.c_str(), 0777);
 
     if (!result)
@@ -119,6 +153,7 @@ namespace pixeler
   {
     String full_path = makeFullPath(path);
 
+    AutoLock lock(_sd_mutex);
     FILE* f = fopen(full_path.c_str(), "rb");
 
     if (!f)
@@ -154,6 +189,7 @@ namespace pixeler
       return false;
     }
 
+    AutoLock lock(_sd_mutex);
     if (seek_pos > 0 && fseek(file, seek_pos, SEEK_SET))
     {
       log_e("Помилка встановлення позиції: %zu", seek_pos);
@@ -182,6 +218,7 @@ namespace pixeler
     if (len == 0)
       return 0;
 
+    AutoLock lock(_sd_mutex);
     if (seek_pos > 0 && fseek(file, seek_pos, SEEK_SET))
       return 0;
 
@@ -206,6 +243,7 @@ namespace pixeler
 
     String full_path = makeFullPath(path);
 
+    AutoLock lock(_sd_mutex);
     FILE* f = fopen(full_path.c_str(), "wb");
 
     if (!f)
@@ -214,7 +252,7 @@ namespace pixeler
       return 0;
     }
 
-    size_t written = writeOptimal(f, buffer, len);
+    size_t written = writeOptimalUnlocked(f, buffer, len);
 
     fclose(f);
 
@@ -232,10 +270,11 @@ namespace pixeler
       return 0;
     }
 
-    return writeOptimal(file, buffer, len);
+    AutoLock lock(_sd_mutex);
+    return writeOptimalUnlocked(file, buffer, len);
   }
 
-  size_t FileManager::writeOptimal(FILE* file, const void* buffer, size_t len)
+  size_t FileManager::writeOptimalUnlocked(FILE* file, const void* buffer, size_t len)
   {
     size_t opt_size = 256;
     size_t total_written = 0;
@@ -269,6 +308,7 @@ namespace pixeler
   {
     String full_path = makeFullPath(path);
 
+    AutoLock lock(_sd_mutex);
     FILE* f = fopen(full_path.c_str(), mode);
 
     if (!f)
@@ -281,6 +321,7 @@ namespace pixeler
   {
     if (file)
     {
+      AutoLock lock(_sd_mutex);
       fclose(file);
       file = nullptr;
     }
@@ -291,6 +332,7 @@ namespace pixeler
     if (!file)
       return false;
 
+    AutoLock lock(_sd_mutex);
     if (fseek(file, pos, mode))
     {
       log_e("Помилка встановлення позиції [%d]", pos);
@@ -304,10 +346,17 @@ namespace pixeler
     if (!file)
       return 0;
 
+    AutoLock lock(_sd_mutex);
     return ftell(file);
   }
 
   size_t FileManager::available(FILE* file, size_t file_size)
+  {
+    AutoLock lock(_sd_mutex);
+    return availableUnlocked(file, file_size);
+  }
+
+  size_t FileManager::availableUnlocked(FILE* file, size_t file_size)
   {
     if (!file || feof(file))
       return 0;
@@ -328,10 +377,13 @@ namespace pixeler
 
     bool is_dir = dirExist(_rm_path.c_str(), true);
 
-    if (!is_dir)
-      result = rmFile(full_path.c_str());
-    else
-      result = rmDir(full_path.c_str());
+    {
+      AutoLock lock(_sd_mutex);
+      if (!is_dir)
+        result = rmFileUnlocked(full_path.c_str());
+      else
+        result = rmDirUnlocked(full_path.c_str());
+    }
 
     if (result)
       log_i("Успішно видалено: %s", full_path.c_str());
@@ -339,7 +391,7 @@ namespace pixeler
     taskDone(result);
   }
 
-  bool FileManager::rmFile(const char* path, bool make_full)
+  bool FileManager::rmFileUnlocked(const char* path, bool make_full)
   {
     bool result;
 
@@ -362,7 +414,7 @@ namespace pixeler
     return result;
   }
 
-  bool FileManager::rmDir(const char* path, bool make_full)
+  bool FileManager::rmDirUnlocked(const char* path, bool make_full)
   {
     bool result = false;
 
@@ -401,17 +453,17 @@ namespace pixeler
       full_path += "/";
       full_path += dir_entry->d_name;
 
-      uint8_t entr_type = getEntryType(full_path.c_str(), dir_entry);
+      uint8_t entr_type = getEntryTypeUnlocked(full_path.c_str(), dir_entry);
 
       if (entr_type == DT_REG)
       {
-        result = rmFile(full_path.c_str());
+        result = rmFileUnlocked(full_path.c_str());
         if (!result)
           goto exit;
       }
       else if (entr_type == DT_DIR)
       {
-        result = rmDir(full_path.c_str());
+        result = rmDirUnlocked(full_path.c_str());
 
         if (!result)
           goto exit;
@@ -430,11 +482,23 @@ namespace pixeler
       closedir(dir);
 
     if (result)
-      result = !rmdir(path);
+      result = !rmDirUnlocked(path);
     else
       log_e("Помилка під час видалення: %s", path);
 
     return result;
+  }
+
+  bool FileManager::rmFile(const char* path, bool make_full)
+  {
+    AutoLock lock(_sd_mutex);
+    return rmFileUnlocked(path, make_full);
+  }
+
+  bool FileManager::rmDir(const char* path, bool make_full)
+  {
+    AutoLock lock(_sd_mutex);
+    return rmDirUnlocked(path, make_full);
   }
 
   void FileManager::rmTask(void* params)
@@ -488,33 +552,18 @@ namespace pixeler
       return false;
     }
 
+    AutoLock lock(_sd_mutex);
     return !::rename(old_n.c_str(), new_n.c_str());
   }
 
-  void FileManager::copyFile()
+  bool FileManager::copyFileUnlocked(const String& from, const String& to)
   {
-    uint16_t counter = 1;
-    String to_temp = _copy_to_path;
-    while (_copy_from_path.equals(_copy_to_path) || fileExist(_copy_to_path.c_str(), true))
-    {
-      _copy_to_path = to_temp.substring(0, to_temp.lastIndexOf("."));
-      _copy_to_path += "(";
-      _copy_to_path += counter;
-      _copy_to_path += ")";
-      _copy_to_path += to_temp.substring(to_temp.lastIndexOf("."));
-      ++counter;
-    }
-
-    String from = makeFullPath(_copy_from_path.c_str());
-    String to = makeFullPath(_copy_to_path.c_str());
-
     FILE* n_f = fopen(to.c_str(), "ab");
 
     if (!n_f)
     {
       log_e("Помилка створення файлу: %s", to.c_str());
-      taskDone(false);
-      return;
+      return false;
     }
 
     FILE* o_f = fopen(from.c_str(), "rb");
@@ -523,8 +572,7 @@ namespace pixeler
     {
       log_e("Помилка читання файлу: %s", from.c_str());
       fclose(n_f);
-      taskDone(false);
-      return;
+      return false;
     }
 
     size_t buf_size = 1024;
@@ -550,26 +598,26 @@ namespace pixeler
       esp_restart();
     }
 
-    size_t file_size = getFileSize(_copy_from_path.c_str());
+    size_t file_size = getFileSizeUnlocked(_copy_from_path.c_str());
 
     if (file_size > 0)
     {
       log_i("Починаю копіювання");
-      log_i("Із: %s", from.c_str());
+      log_i("З: %s", from.c_str());
       log_i("До: %s", to.c_str());
 
       size_t writed_bytes_counter{0};
       size_t bytes_read;
       size_t byte_aval = 0;
 
-      while (!_is_canceled && (byte_aval = available(o_f, file_size)) > 0)
+      while (!_is_canceled && (byte_aval = availableUnlocked(o_f, file_size)) > 0)
       {
         if (byte_aval < buf_size)
           bytes_read = fread(buffer, byte_aval, 1, o_f) * byte_aval;
         else
           bytes_read = fread(buffer, buf_size, 1, o_f) * buf_size;
         //
-        writed_bytes_counter += writeOptimal(n_f, buffer, bytes_read);
+        writed_bytes_counter += writeOptimalUnlocked(n_f, buffer, bytes_read);
         _copy_progress = ((float)writed_bytes_counter / file_size) * 100;
       }
     }
@@ -584,14 +632,37 @@ namespace pixeler
     fclose(n_f);
     fclose(o_f);
 
+    return true;
+  }
+
+  void FileManager::copyFile()
+  {
+    _copy_to_path = makeUniqueFilename(_copy_to_path);
+
+    String from = makeFullPath(_copy_from_path.c_str());
+    String to = makeFullPath(_copy_to_path.c_str());
+
+    bool result;
+
+    {
+      AutoLock lock(_sd_mutex);
+      result = copyFileUnlocked(from, to);
+    }
+
     if (_is_canceled)
     {
-      rmFile(to.c_str());
+      log_i("Копіювання скасовано: %s", from.c_str());
+      rmFileUnlocked(to.c_str());
       taskDone(false);
     }
     else
     {
-      taskDone(true);
+      if (result)
+        log_i("Успішно скопійовано: %s", from.c_str());
+      else
+        log_i("Невдача копіювання: %s", from.c_str());
+
+      taskDone(result);
     }
   }
 
@@ -639,23 +710,23 @@ namespace pixeler
     }
   }
 
-  void FileManager::startIndex(std::vector<FileInfo>& out_vec, const char* dir_path, IndexMode mode, const char* file_ext)
+  void FileManager::index(std::vector<FileInfo>& out_vec, const char* dir_path, IndexMode mode, const char* file_ext)
   {
+    out_vec.clear();
+    out_vec.reserve(40);
+
     if (!dirExist(dir_path))
       return;
 
     String full_path = makeFullPath(dir_path);
 
+    AutoLock lock(_sd_mutex);
     DIR* dir = opendir(full_path.c_str());
     if (!dir)
     {
       log_e("Помилка відкриття директорії %s", full_path.c_str());
-      taskDone(false);
       return;
     }
-
-    out_vec.clear();
-    out_vec.reserve(40);
 
     dirent* dir_entry{nullptr};
     String filename;
@@ -678,7 +749,7 @@ namespace pixeler
       full_name += "/";
       full_name += filename;
 
-      uint8_t entr_type = getEntryType(full_name.c_str(), dir_entry);
+      uint8_t entr_type = getEntryTypeUnlocked(full_name.c_str(), dir_entry);
 
       if (entr_type == DT_REG)
         is_dir = false;
@@ -725,22 +796,22 @@ namespace pixeler
 
   void FileManager::indexFilesExt(std::vector<FileInfo>& out_vec, const char* dir_path, const char* file_ext)
   {
-    return startIndex(out_vec, dir_path, INDX_MODE_FILES_EXT, file_ext);
+    return index(out_vec, dir_path, INDX_MODE_FILES_EXT, file_ext);
   }
 
   void FileManager::indexFiles(std::vector<FileInfo>& out_vec, const char* dir_path)
   {
-    return startIndex(out_vec, dir_path, INDX_MODE_FILES);
+    return index(out_vec, dir_path, INDX_MODE_FILES);
   }
 
   void FileManager::indexDirs(std::vector<FileInfo>& out_vec, const char* dir_path)
   {
-    return startIndex(out_vec, dir_path, INDX_MODE_DIR);
+    return index(out_vec, dir_path, INDX_MODE_DIR);
   }
 
   void FileManager::indexAll(std::vector<FileInfo>& out_vec, const char* dir_path)
   {
-    return startIndex(out_vec, dir_path, INDX_MODE_ALL);
+    return index(out_vec, dir_path, INDX_MODE_ALL);
   }
 
   void FileManager::taskDone(bool result)
@@ -764,6 +835,71 @@ namespace pixeler
   {
     _doneHandler = handler;
     _doneArg = arg;
+  }
+
+  //------------------------------------------------------------------------------------------------------------------------
+
+  bool FileManager::isMounted() const
+  {
+    if (_pdrv == 0xFF)
+    {
+      log_e("Карту пам'яті не примонтовано");
+      return false;
+    }
+
+    String path_to_root = SD_MOUNTPOINT;
+    path_to_root += "/";
+    struct stat st;
+    AutoLock lock(_sd_mutex);
+    if (stat(path_to_root.c_str(), &st) != 0)
+    {
+      log_e("Помилка читання stat");
+      return false;
+    }
+
+    return S_ISDIR(st.st_mode);
+  }
+
+  bool FileManager::mount(SPIClass* spi)
+  {
+    if (_pdrv != 0xFF)
+      unmount();
+
+    if (!spi || !spi->begin())
+    {
+      log_e("Некоректна шина SPI або помилка ініціалізації шини");
+      return false;
+    }
+
+    AutoLock lock(_sd_mutex);
+    _pdrv = sdcard_init(SD_PIN_CS, spi, SD_FREQUENCY);
+    if (_pdrv == 0xFF)
+    {
+      log_e("Помилка ініціалізації SD");
+      return false;
+    }
+
+    if (!sdcard_mount(_pdrv, SD_MOUNTPOINT, SD_MAX_FILES, false))
+    {
+      sdcard_unmount(_pdrv);
+      sdcard_uninit(_pdrv);
+      _pdrv = 0xFF;
+      log_e("Помилка монтування SD");
+      return false;
+    }
+
+    delay(10);
+    log_i("Карту пам'яті примонтовано");
+    return true;
+  }
+
+  void FileManager::unmount()
+  {
+    AutoLock lock(_sd_mutex);
+    sdcard_unmount(_pdrv);
+    sdcard_uninit(_pdrv);
+    _pdrv = 0xFF;
+    delay(10);
   }
 
   //------------------------------------------------------------------------------------------------------------------------
@@ -863,52 +999,32 @@ namespace pixeler
 
   int FileStream::available()
   {
-    if (!_file || feof(_file))
-      return 0;
-
-    return _size - ftell(_file);
+    return _fs.available(_file, _size);
   }
 
   size_t FileStream::readBytes(char* buffer, size_t length)
   {
-    if (!_file)
-      return 0;
-    return fread(buffer, length, 1, _file) * length;
+    return _fs.readFromFile(_file, buffer, length);
   }
 
   int FileStream::read()
   {
-    if (!_file || feof(_file))
-      return -1;
-    return fgetc(_file);
+    return -1;  // stub
   }
 
   size_t FileStream::write(uint8_t byte)
   {
-    if (!_file)
-      return 0;
-
-    return fwrite(&byte, 1, 1, _file);
+    return 0;  // stub
   }
 
   int FileStream::peek()
   {
-    if (!_file || feof(_file))
-      return -1;
-
-    int c = fgetc(_file);
-    if (c != EOF)
-      ungetc(c, _file);
-    return c;
+    return -1;  // stub
   }
 
   void FileStream::close()
   {
-    if (_file)
-    {
-      fclose(_file);
-      _file = nullptr;
-    }
+    _fs.closeFile(_file);
   }
 
   FileManager _fs;

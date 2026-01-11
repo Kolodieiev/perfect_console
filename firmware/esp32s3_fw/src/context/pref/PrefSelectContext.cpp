@@ -27,7 +27,7 @@ void PrefSelectContext::showSDErrTmpl()
 
 PrefSelectContext::PrefSelectContext()
 {
-  if (!_sd.isMounted())
+  if (!_fs.isMounted())
   {
     showSDErrTmpl();
     return;

@@ -33,7 +33,7 @@ namespace simple_rpg
     EmptyLayout* layout = creator.getEmptyLayout();
     setLayout(layout);
 
-    if (!_sd.isMounted())  // Якщо карту пам'яті не примонтовано
+    if (!_fs.isMounted())  // Якщо карту пам'яті не примонтовано
     {
       showSDErrTmpl();  // Виводимо шаблон з повідомлення про помилку
       return;
