@@ -420,12 +420,12 @@ namespace pixeler
     uint16_t _y_pos{0};
     uint16_t _width{1};
     uint16_t _height{1};
-    uint16_t _back_color{0x0000};
-    uint16_t _border_color{0x0000};
-    uint16_t _focus_border_color{0xFFFF};
-    uint16_t _old_border_color{0xFFFF};
-    uint16_t _focus_back_color{0xFFFF};
-    uint16_t _old_back_color{0xFFFF};
+    uint16_t _back_color{COLOR_BLACK};
+    uint16_t _border_color{COLOR_BLACK};
+    uint16_t _focus_border_color{COLOR_WHITE};
+    uint16_t _old_border_color{COLOR_WHITE};
+    uint16_t _focus_back_color{COLOR_WHITE};
+    uint16_t _old_back_color{COLOR_WHITE};
 
   private:
     const uint16_t _id;
