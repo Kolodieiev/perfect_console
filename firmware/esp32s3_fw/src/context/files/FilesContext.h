@@ -1,7 +1,7 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-#include "pixeler/lib/server/file_server/FileServer.h"
+#include "pixeler/lib/server/FileServer.h"
 #include "pixeler/manager/FileManager.h"
 #include "pixeler/ui/context/IContext.h"
 //
@@ -57,6 +57,7 @@ private:
     ID_ITEM_SET_WALLPP,
     ID_ITEM_RENAME,
     ID_ITEM_IMPORT,
+    ID_ITEM_BACK_IMPORT,
     ID_ITEM_EXPORT,
   };
 
@@ -112,7 +113,7 @@ private:
 
   void makeMenuFilesItems(std::vector<MenuItem*>& items, uint16_t file_pos, uint8_t size);
   //
-  void startFileServer(FileServer::ServerMode mode);
+  void startFileServer(FileServer::ServerMode mode, bool in_back = false);
   void stopFileServer();
 
   void taskDoneHandler(bool result);
@@ -128,6 +129,7 @@ private:
   //
   void createNotificationObj();
   //
+  void runServerInBg();
   void executeScript();
   void saveWallppSettings();
 
@@ -168,4 +170,7 @@ private:
   bool _has_moving_file{false};
   bool _has_copying_file{false};
   bool _dialog_success_res{false};
+  bool _task_runnning{false};
+  bool _task_done{false};
+  bool _task_done_result{false};
 };

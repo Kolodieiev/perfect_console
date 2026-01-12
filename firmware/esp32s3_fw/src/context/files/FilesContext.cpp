@@ -9,6 +9,7 @@
 #include "./res/folder.h"
 #include "./res/lua.h"
 #include "pixeler/ui/widget/menu/item/MenuItem.h"
+#include "pixeler/ui/widget/menu/item/ToggleItem.h"
 #include "pixeler/ui/widget/progress/ProgressBar.h"
 
 #define UPD_TRACK_INF_INTERVAL 1000UL
@@ -19,6 +20,7 @@ const char STR_SIZE[] = "File size:";
 const char STR_LUA_EXT[] = ".lua";
 const char STR_BMP_EXT[] = ".bmp";
 const char STR_SET_WALLPP[] = "На шпалери";
+const char STR_BACK_IMPORT[] = "Отримати у фоні";
 
 bool FilesContext::loop()
 {
@@ -51,7 +53,7 @@ bool FilesContext::loop()
   return true;
 }
 
-FilesContext::FilesContext() : _sync_task_mutex{xSemaphoreCreateMutex()}
+FilesContext::FilesContext()
 {
   setCpuFrequencyMhz(MAX_CPU_FREQ_MHZ);
   _dir_img = new Image(1);
@@ -89,7 +91,6 @@ FilesContext::~FilesContext()
   delete _lua_img;
   delete _lua_context;
   delete _notification;
-  vSemaphoreDelete(_sync_task_mutex);
   setCpuFrequencyMhz(BASE_CPU_FREQ_MHZ);
 }
 
@@ -378,6 +379,27 @@ void FilesContext::showContextMenu()
   export_item->setLbl(export_lbl);
   export_lbl->setHPadding(1);
 
+  // Фоновий сервер
+  ToggleItem* import_back_item = new ToggleItem(ID_ITEM_BACK_IMPORT);
+  _context_menu->addItem(import_back_item);
+  import_back_item->setFocusBorderColor(COLOR_LIME);
+  import_back_item->setFocusBackColor(COLOR_FOCUS_BACK);
+  import_back_item->setBackColor(COLOR_MENU_ITEM);
+  import_back_item->setChangingBorder(true);
+  import_back_item->setChangingBack(true);
+
+  Label* import_back_lbl = creator.getItemLabel(STR_BACK_IMPORT, font_unifont);
+  import_back_item->setLbl(import_back_lbl);
+  import_back_lbl->setHPadding(1);
+  import_back_lbl->setFullAutoscroll(false);
+
+  ToggleSwitch* import_back_toggle = new ToggleSwitch(1);
+  import_back_item->setToggle(import_back_toggle);
+  import_back_toggle->setWidth(30);
+  import_back_toggle->setHeight(_context_menu->getItemHeight() - 4);
+  import_back_toggle->setCornerRadius(4);
+  import_back_toggle->setOn(_server.isWorking());
+
   // оновити
   MenuItem* upd_item = creator.getMenuItem(ID_ITEM_UPDATE);
   _context_menu->addItem(upd_item);
@@ -531,9 +553,14 @@ void FilesContext::pasteFile()
   else if (_has_copying_file)
   {
     if (!_fs.startCopyFile(old_file_path.c_str(), new_file_path.c_str()))
+    {
       showResultToast(false);
+    }
     else
+    {
       showCopyingTmpl();
+      _task_runnning = true;
+    }
   }
 
   _has_moving_file = false;
@@ -550,9 +577,14 @@ void FilesContext::removeFile()
   filename += _files_list->getCurrItemText();
 
   if (!_fs.startRemoving(filename.c_str()))
+  {
     showResultToast(false);
+  }
   else
+  {
     showRemovingTmpl();
+    _task_runnning = true;
+  }
 }
 
 //-------------------------------------------------------------------------------------------
@@ -622,46 +654,53 @@ void FilesContext::update()
 
   if (_fs.isWorking())
   {
-    xSemaphoreTake(_sync_task_mutex, portMAX_DELAY);
-
-    if (_fs.isWorking()) //TODO
+    if ((millis() - _upd_msg_time) > UPD_TRACK_INF_INTERVAL)
     {
-      if ((millis() - _upd_msg_time) > UPD_TRACK_INF_INTERVAL)
+      String upd_txt;
+      String upd_progress;
+
+      if (_upd_counter > 2)
+        _upd_counter = 0;
+      else
+        ++_upd_counter;
+
+      for (uint8_t i{0}; i < _upd_counter; ++i)
+        upd_progress += ".";
+
+      if (_mode == MODE_CANCELING)
       {
-        String upd_txt;
-        String upd_progress;
-
-        if (_upd_counter > 2)
-          _upd_counter = 0;
-        else
-          ++_upd_counter;
-
-        for (uint8_t i{0}; i < _upd_counter; ++i)
-          upd_progress += ".";
-
-        if (_mode == MODE_CANCELING)
-        {
-          upd_txt = STR_CANCELING;
-          upd_txt += upd_progress;
-          _msg_lbl->setText(upd_txt);
-        }
-        else if (_mode == MODE_COPYING)
-        {
-          _task_progress->setProgress(_fs.getCopyProgress());
-          _upd_msg_time = millis();
-        }
-        else if (_mode == MODE_REMOVING)
-        {
-          upd_txt = STR_REMOVING;
-          upd_txt += upd_progress;
-          _msg_lbl->setText(upd_txt);
-        }
-
+        upd_txt = STR_CANCELING;
+        upd_txt += upd_progress;
+        _msg_lbl->setText(upd_txt);
+      }
+      else if (_mode == MODE_COPYING)
+      {
+        _task_progress->setProgress(_fs.getCopyProgress());
         _upd_msg_time = millis();
       }
-    }
+      else if (_mode == MODE_REMOVING)
+      {
+        upd_txt = STR_REMOVING;
+        upd_txt += upd_progress;
+        _msg_lbl->setText(upd_txt);
+      }
 
-    xSemaphoreGive(_sync_task_mutex);
+      _upd_msg_time = millis();
+    }
+  }
+  else if (_task_runnning)
+  {
+    _task_runnning = false;
+    if (_task_done)
+    {
+      _task_done = false;
+
+      showResultToast(_task_done_result);
+
+      indexCurDir();
+      showFilesTmpl();
+      fillFilesTmpl();
+    }
   }
 }
 
@@ -699,6 +738,8 @@ void FilesContext::ok()
       startFileServer(FileServer::SERVER_MODE_SEND);
     else if (id == ID_ITEM_EXECUTE)
       executeScript();
+    else if (id == ID_ITEM_BACK_IMPORT)
+      runServerInBg();
     else if (id == ID_ITEM_SET_WALLPP)
       saveWallppSettings();
   }
@@ -853,7 +894,7 @@ void FilesContext::fillFilesTmpl()
   updateFileInfo();
 }
 
-void FilesContext::startFileServer(FileServer::ServerMode mode)
+void FilesContext::startFileServer(FileServer::ServerMode mode, bool in_back)
 {
   String ssid = SettingsManager::get(STR_PREF_FS_AP_SSID);
   String pwd = SettingsManager::get(STR_PREF_FS_AP_PWD);
@@ -869,12 +910,21 @@ void FilesContext::startFileServer(FileServer::ServerMode mode)
   String cur_path = makePathFromBreadcrumbs();
   if (_server.begin(cur_path.c_str(), mode))
   {
-    QR_Gen gen;
-    String addr = _server.getAddress();
-    _qr_img_buff = gen.generateQR(addr.c_str(), 3);
-    _qr_width = gen.getImageWidth();
+    if (!in_back)
+    {
+      _server.setReplaceFile(false);
+      QR_Gen gen;
+      String addr = _server.getAddress();
+      _qr_img_buff = gen.generateQR(addr.c_str(), 3);
+      _qr_width = gen.getImageWidth();
 
-    showServerTmpl();
+      showServerTmpl();
+    }
+    else
+    {
+      _server.setReplaceFile(true);
+      showToast(STR_SUCCESS);
+    }
   }
 }
 
@@ -891,13 +941,8 @@ void FilesContext::stopFileServer()
 
 void FilesContext::taskDoneHandler(bool result)
 {
-  xSemaphoreTake(_sync_task_mutex, portMAX_DELAY);
-  showResultToast(result);
-
-  indexCurDir();
-  showFilesTmpl();
-  fillFilesTmpl();
-  xSemaphoreGive(_sync_task_mutex);
+  _task_done = true;
+  _task_done_result = result;
 }
 
 void FilesContext::taskDone(bool result, void* arg)
@@ -1007,6 +1052,16 @@ void FilesContext::createNotificationObj()
   _notification->setRightBackColor(COLOR_DARKCYAN);
   _notification->setTitleText(STR_NOTIFICATION);
   _notification->setRightText(STR_OK);
+}
+
+void FilesContext::runServerInBg()
+{
+  hideContextMenu();
+
+  if (_server.isWorking())
+    _server.stop();
+  else
+    startFileServer(FileServer::SERVER_MODE_RECEIVE, true);
 }
 
 void FilesContext::executeScript()
