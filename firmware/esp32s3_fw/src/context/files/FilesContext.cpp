@@ -688,19 +688,16 @@ void FilesContext::update()
       _upd_msg_time = millis();
     }
   }
-  else if (_task_runnning)
+  else if (_task_runnning && _task_done)
   {
     _task_runnning = false;
-    if (_task_done)
-    {
-      _task_done = false;
+    _task_done = false;
 
-      showResultToast(_task_done_result);
+    showResultToast(_task_done_result);
 
-      indexCurDir();
-      showFilesTmpl();
-      fillFilesTmpl();
-    }
+    indexCurDir();
+    showFilesTmpl();
+    fillFilesTmpl();
   }
 }
 
