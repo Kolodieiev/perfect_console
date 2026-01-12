@@ -279,7 +279,12 @@ namespace pixeler
       _fs.closeFile(_in_file);
 
       log_i("Запит на створення файлу %s", filename.c_str());
-      filename = _fs.makeUniqueFilename(filename);
+
+      if (_need_replace_file && _fs.fileExist(filename.c_str(), true))
+        _fs.rmFile(filename.c_str(), true);
+      else
+        filename = _fs.makeUniqueFilename(filename);
+
       _in_file = _fs.openFile(filename.c_str(), "ab");
 
       if (!_in_file)
@@ -347,6 +352,11 @@ namespace pixeler
   FileServer::ServerMode FileServer::getServerMode() const
   {
     return _server_mode;
+  }
+
+  void FileServer::setReplaceFile(bool state)
+  {
+    _need_replace_file = state;
   }
 
   void FileServer::fileServerTask(void* params)

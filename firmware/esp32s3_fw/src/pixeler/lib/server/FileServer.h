@@ -74,6 +74,14 @@ namespace pixeler
      */
     ServerMode getServerMode() const;
 
+    /**
+     * @brief Встановлює прапор, який визначає чи буде існуючий файл замінений на новий,
+     * або ж новий файл буде прейменовано та збережено поряд.
+     *
+     * @param state Якщо true - файл буде переписано новим вхідним файлом. Якщо false - новий файл буде перейменовано та збережено поряд.
+     */
+    void setReplaceFile(bool state);
+
   private:
     static void fileServerTask(void* params);
     static void clientWatcherTask(void* params);
@@ -105,5 +113,6 @@ namespace pixeler
     bool _must_work{false};
     bool _is_working{false};
     bool _need_watch_client{false};
+    bool _need_replace_file{false};
   };
 }  // namespace pixeler
