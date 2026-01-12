@@ -194,16 +194,7 @@ namespace pixeler
       else
       {
         size_t f_size = _fs.getFileSize(path.c_str());
-        _out_file_stream = new FileStream(file, _server->arg(0).c_str(), f_size);
-
-        _server->sendHeader("Content-Type", "application/force-download");
-        _server->sendHeader("Content-Disposition", "attachment; filename=\"" + _server->arg(0) + "\"");
-        _server->sendHeader("Content-Transfer-Encoding", "binary");
-        _server->sendHeader("Cache-Control", "no-cache");
-        _server->streamFile(*_out_file_stream, "application/octet-stream");
-
-        delete _out_file_stream;
-        _out_file_stream = nullptr;
+        streamFileToClient(file, _server->arg(0), f_size);
       }
     }
     // Якщо відсутні параметри, відобразити список файлів в директорії
@@ -249,21 +240,29 @@ namespace pixeler
     else
     {
       size_t f_size = _fs.getFileSize(_server_path.c_str());
-
       int pos = _server_path.lastIndexOf('/');
       String filename = (pos == -1) ? _server_path : _server_path.substring(pos + 1);
 
-      _out_file_stream = new FileStream(file, filename.c_str(), f_size);
-
-      _server->sendHeader("Content-Type", "application/force-download");
-      _server->sendHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
-      _server->sendHeader("Content-Transfer-Encoding", "binary");
-      _server->sendHeader("Cache-Control", "no-cache");
-      _server->streamFile(*_out_file_stream, "application/octet-stream");
-
-      delete _out_file_stream;
-      _out_file_stream = nullptr;
+      streamFileToClient(file, filename, f_size);
     }
+  }
+
+  void FileServer::streamFileToClient(FILE* file, const String& filename, size_t file_size)
+  {
+    _need_watch_client = true;
+    xTaskCreatePinnedToCore(clientWatcherTask, "clientWatcherTask", (1024 / 2) * 5, this, 10, NULL, 1);
+
+    _out_file_stream = new FileStream(file, filename.c_str(), file_size);
+
+    _server->sendHeader("Content-Type", "application/force-download");
+    _server->sendHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+    _server->sendHeader("Content-Transfer-Encoding", "binary");
+    _server->sendHeader("Cache-Control", "no-cache");
+    _server->streamFile(*_out_file_stream, "application/octet-stream");
+
+    _need_watch_client = false;
+    delete _out_file_stream;
+    _out_file_stream = nullptr;
   }
 
   void FileServer::handleFile()
@@ -294,6 +293,17 @@ namespace pixeler
     }
     else if (uploadfile.status == UPLOAD_FILE_WRITE)
     {
+      if (!_must_work)
+      {
+        _fs.closeFile(_in_file);
+        WiFiClient client = _server->client();
+        if (client)
+          client.stop();
+
+        log_i("Сервер перервав завантаження файлу");
+        return;
+      }
+
       _fs.writeToFile(_in_file, static_cast<const void*>(uploadfile.buf), uploadfile.currentSize);
       if (millis() - _last_delay_ts > 1000)
       {
@@ -343,5 +353,24 @@ namespace pixeler
   {
     FileServer* instance = static_cast<FileServer*>(params);
     instance->startWebServer(params);
+  }
+
+  void FileServer::clientWatcherTask(void* params)
+  {
+    FileServer* instance = static_cast<FileServer*>(params);
+
+    while (instance->_need_watch_client)
+    {
+      if (!instance->_server->client() && instance->_out_file_stream && instance->_out_file_stream->available())
+      {
+        log_i("Клієнт перервав завантаження");
+        instance->_out_file_stream->close();
+      }
+
+      vTaskDelay(100 / portTICK_PERIOD_MS);
+    }
+
+    log_i("ClientWatcher task finished");
+    vTaskDelete(NULL);
   }
 }  // namespace pixeler

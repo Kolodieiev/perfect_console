@@ -76,6 +76,8 @@ namespace pixeler
 
   private:
     static void fileServerTask(void* params);
+    static void clientWatcherTask(void* params);
+
     void startWebServer(void* params);
 
     void handleReceive();
@@ -83,6 +85,8 @@ namespace pixeler
     void handleSendFile();
     void handleFile();
     void handle404();
+
+    void streamFileToClient(FILE* file, const String& filename, size_t file_size);
 
   private:
     String _server_ip;
@@ -92,7 +96,7 @@ namespace pixeler
 
     FILE* _in_file{nullptr};
     FileStream* _out_file_stream{nullptr};
-    WebServer* _server = nullptr;
+    WebServer* _server{nullptr};
 
     unsigned long _last_delay_ts = 0;
 
@@ -100,5 +104,6 @@ namespace pixeler
     //
     bool _must_work{false};
     bool _is_working{false};
+    bool _need_watch_client{false};
   };
 }  // namespace pixeler
