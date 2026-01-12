@@ -348,14 +348,19 @@ void WiFiContext::showContextMenuTmpl()
   _context_menu->setBorder(true);
   _context_menu->setItemHeight(20);
   _context_menu->setWidth(120);
-  _context_menu->setHeight(44);
-  _context_menu->setPos(TFT_WIDTH - _context_menu->getWidth(), TFT_HEIGHT - _context_menu->getHeight());
 
   if (item_id == ID_ITEM_CUR_NET)
   {
+    String ip = _wifi.getLocalIP();
+
+    MenuItem* ip_item = creator.getMenuItem(ID_ITEM_IP);
+    _context_menu->addItem(ip_item);
+    Label* ip_lbl = creator.getItemLabel(ip.c_str());
+    ip_item->setLbl(ip_lbl);
+    ip_lbl->setFullAutoscroll(false);
+
     MenuItem* disconn_item = creator.getMenuItem(ID_ITEM_DISCONN);
     _context_menu->addItem(disconn_item);
-
     Label* disconn_lbl = creator.getItemLabel(STR_DISCONNECT);
     disconn_item->setLbl(disconn_lbl);
   }
@@ -380,6 +385,8 @@ void WiFiContext::showContextMenuTmpl()
     _main_menu->disable();
     _mode = MODE_CONTEXT_MENU;
     getLayout()->addWidget(_context_menu);
+    _context_menu->setHeight(_context_menu->getItemHeight() * _context_menu->getSize() + 4);
+    _context_menu->setPos(TFT_WIDTH - _context_menu->getWidth(), TFT_HEIGHT - _context_menu->getHeight());
   }
 }
 

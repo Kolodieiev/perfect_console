@@ -41,6 +41,7 @@ private:
   enum ItemId : uint8_t
   {
     ID_ITEM_WIFI_STATE = 1,
+    ID_ITEM_IP,
     ID_ITEM_DISCONN,
     ID_ITEM_FORGET,
     ID_ITEM_CUR_NET  // Повинен бути завжди останнім в перечисленні
