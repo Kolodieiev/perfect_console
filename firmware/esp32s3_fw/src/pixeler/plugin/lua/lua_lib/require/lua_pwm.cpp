@@ -7,10 +7,6 @@
 #include "pixeler/plugin/lua/lua_lib/helper/lua_helper.h"
 
 //
-const char STR_PMW_STOP[] = "stop";
-const char STR_PMW_ATTACH[] = "attach";
-const char STR_PWM_DETACH[] = "detach";
-const char STR_PWM_SET[] = "set";
 
 int lua_pwm_stop(lua_State* L)
 {
@@ -46,10 +42,10 @@ int lua_pwm_set(lua_State* L)
 //----------------------------------------------------------------------------------------------------
 
 const struct luaL_Reg LIB_PWM[] = {
-    {STR_PMW_STOP, lua_pwm_stop},
-    {STR_PMW_ATTACH, lua_pwm_attach},
-    {STR_PWM_DETACH, lua_pwm_detach},
-    {STR_PWM_SET, lua_pwm_set},
+    {"stop", lua_pwm_stop},
+    {"attach", lua_pwm_attach},
+    {"detach", lua_pwm_detach},
+    {"set", lua_pwm_set},
     {nullptr, nullptr},
 };
 
