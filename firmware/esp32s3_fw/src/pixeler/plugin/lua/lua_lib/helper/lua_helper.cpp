@@ -30,8 +30,8 @@ uint8_t lua_check_top(lua_State* L, std::initializer_list<uint8_t> args_assert)
 
     return luaL_error(L, STR_INCORRECT_ARGS_NUMBER_BTW, expected_buf, args_num);
   }
-  else
-    return args_num;
+
+  return args_num;
 }
 
 const uint8_t* fontNameToFont(const char* font_name)
