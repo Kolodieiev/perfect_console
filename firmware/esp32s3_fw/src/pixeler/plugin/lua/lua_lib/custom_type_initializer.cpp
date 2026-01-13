@@ -12,8 +12,6 @@
 #include "./type/widget/lua_menu.h"
 #include "./type/widget/lua_menu_item.h"
 #include "./type/widget/lua_progress.h"
-#include "./type/widget/lua_spin_item.h"
-#include "./type/widget/lua_spinbox.h"
 #include "./type/widget/lua_toggle_item.h"
 #include "./type/widget/lua_toggle_switch.h"
 
