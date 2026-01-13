@@ -143,7 +143,7 @@ namespace pixeler
     WiFi.scanDelete();
   }
 
-  void WiFiManager::setWiFiPower(WiFiPowerLevel power_lvl)
+  void WiFiManager::setPower(WiFiPowerLevel power_lvl)
   {
     switch (power_lvl)
     {

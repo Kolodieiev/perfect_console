@@ -95,7 +95,7 @@ namespace pixeler
      * WIFI_POWER_MEDIUM == 15 dBm.
      * WIFI_POWER_MAX == 19.5 dBm.
      */
-    void setWiFiPower(WiFiPowerLevel power_lvl);
+    void setPower(WiFiPowerLevel power_lvl);
 
     /**
      * @brief Повертає логічне значення, яке вказує на те, чи встановлено з'єднання з WiFi.
