@@ -103,32 +103,24 @@ namespace pixeler
     bool endTransmission() const;
 
     /**
-     * @brief Надсилає один байт даних до поточної відкритої транзакції з I2C-пристроєм.
-     *
-     * @param value Дані.
-     * @return true - Якщо значення було успішно записано.
-     * @return false - Інакше.
-     */
-    bool send(uint8_t value) const;
-
-    /**
      * @brief Надсилає буфер даних до поточної відкритої транзакції з I2C-пристроєм.
      *
      * @param data_buff Буфер з даними.
      * @param data_size Розмір даних.
-     * @return true - Якщо дані було успішно записано.
+     * @return true - Якщо всі дані було успішно записано.
      * @return false - Інакше.
      */
-    bool send(const void* data_buff, size_t data_size) const;
+    bool send(const void* data_buff, size_t data_size = 1) const;
 
     /**
      * @brief Читає дані з відкритої транзакції з I2C-пристроєм.
      *
      * @param out_data_buff Буфер, до якого будуть записані прочитані дані.
-     * @return true - Якщо дані було успішно прочитано.
+     * @param data_size Розмір очікуваних даних.
+     * @return true - Якщо всі дані було успішно прочитано.
      * @return false - Інакше.
      */
-    bool receive(void* out_data_buff) const;
+    bool receive(void* out_data_buff, size_t data_size = 1) const;
 
     /**
      * @brief Повертає стан ініціалізації шини I2C.

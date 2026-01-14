@@ -77,13 +77,6 @@ namespace pixeler
     return !Wire.endTransmission();
   }
 
-  bool I2C_Manager::send(uint8_t value) const
-  {
-    if (!isInited())
-      return false;
-    return Wire.write(value) == 1;
-  }
-
   bool I2C_Manager::send(const void* data_buff, size_t data_size) const
   {
     if (!isInited())
@@ -127,7 +120,7 @@ namespace pixeler
     return true;
   }
 
-  bool I2C_Manager::receive(void* out_data_buff) const
+  bool I2C_Manager::receive(void* out_data_buff, size_t data_size) const
   {
     if (!isInited())
       return false;
@@ -144,7 +137,7 @@ namespace pixeler
     while (Wire.available())
       temp_ptr[i++] = Wire.read();
 
-    return true;
+    return i == data_size;
   }
 
   void I2C_Manager::beginTransmission(uint8_t addr) const
