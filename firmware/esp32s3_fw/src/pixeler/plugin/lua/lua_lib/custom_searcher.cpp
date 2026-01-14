@@ -4,7 +4,7 @@
 #include <stdint.h>
 //
 #include "./require/lua_i2c.h"
-#include "./require/lua_net.h"
+#include "./require/lua_web.h"
 #include "./require/lua_pwm.h"
 #include "./require/lua_sd.h"
 #include "./require/lua_uart.h"
@@ -21,7 +21,7 @@ int custom_searcher(lua_State* L)
   else if (strcmp(lib_name, STR_LIB_NAME_WIFI) == 0)
     lua_pushcfunction(L, lua_open_wifi);
   else if (strcmp(lib_name, STR_LIB_NAME_NET) == 0)
-    lua_pushcfunction(L, lua_open_net);
+    lua_pushcfunction(L, lua_open_web);
   else if (strcmp(lib_name, STR_LIB_NAME_UART) == 0)
     lua_pushcfunction(L, lua_open_uart);
   else if (strcmp(lib_name, STR_LIB_NAME_I2C) == 0)
