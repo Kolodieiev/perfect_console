@@ -12,10 +12,10 @@ int lua_mcu_millis(lua_State* L)
   return 1;
 }
 
-int lua_mcu_sleep(lua_State* L)
+int lua_mcu_delay(lua_State* L)
 {
   int ms = luaL_checkinteger(L, 1);
-  delay(ms);
+  vTaskDelay(ms / portTICK_PERIOD_MS);
   return 0;
 }
 
@@ -30,7 +30,7 @@ int lua_mcu_set_cpu_freq(lua_State* L)
 
 const struct luaL_Reg LIB_MCU[] = {
     {"millis", lua_mcu_millis},
-    {"sleep", lua_mcu_sleep},
+    {"delay", lua_mcu_delay},
     {"setCpuFreq", lua_mcu_set_cpu_freq},
     {nullptr, nullptr},
 };
