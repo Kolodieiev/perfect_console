@@ -35,7 +35,7 @@ else
   SD.close(file_d)
 end
 
-require("sd")
+unrequire("sd")
 sd = nil
 
 print("Ресурси SD повністю звільнено")
