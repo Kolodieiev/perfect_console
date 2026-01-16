@@ -8,6 +8,8 @@
 int lua_wifi_try_connect(lua_State* L)
 {
   uint8_t arg_num = lua_check_top(L, {2, 3, 4});
+  if (arg_num == 0)
+    return 0; // Не повертаємо нічого бо функція вище, вже запушила помилку
 
   const char* ssid = luaL_checkstring(L, 1);
   const char* pwd = luaL_checkstring(L, 2);
@@ -30,6 +32,8 @@ int lua_wifi_try_connect(lua_State* L)
 int lua_wifi_create_ap(lua_State* L)
 {
   uint8_t arg_num = lua_check_top(L, {2, 3, 4, 5});
+  if (arg_num == 0)
+    return 0; // Не повертаємо нічого бо функція вище, вже запушила помилку
 
   const char* ssid = luaL_checkstring(L, 1);
   const char* pwd = luaL_checkstring(L, 2);
