@@ -4,23 +4,26 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 
-class AutoLock
+namespace pixeler
 {
-public:
-  explicit AutoLock(SemaphoreHandle_t mutex)
-      : _mutex(mutex)
+  class AutoLock
   {
-    xSemaphoreTake(_mutex, portMAX_DELAY);
-  }
+  public:
+    explicit AutoLock(SemaphoreHandle_t mutex)
+        : _mutex(mutex)
+    {
+      xSemaphoreTake(_mutex, portMAX_DELAY);
+    }
 
-  ~AutoLock()
-  {
-    xSemaphoreGive(_mutex);
-  }
+    ~AutoLock()
+    {
+      xSemaphoreGive(_mutex);
+    }
 
-  AutoLock(const AutoLock&) = delete;
-  AutoLock& operator=(const AutoLock&) = delete;
+    AutoLock(const AutoLock&) = delete;
+    AutoLock& operator=(const AutoLock&) = delete;
 
-private:
-  SemaphoreHandle_t _mutex;
-};
+  private:
+    SemaphoreHandle_t _mutex;
+  };
+}  // namespace pixeler
