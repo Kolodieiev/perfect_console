@@ -49,7 +49,7 @@ namespace pixeler
 
   void DisplayWrapper::setTextSize(uint8_t size)
   {
-    _canvas.setTextSize(size, size);
+    _canvas.setTextSize(size, size, 0);
   }
 
   void DisplayWrapper::setTextColor(uint16_t color)
@@ -173,16 +173,6 @@ namespace pixeler
     free(rotated);
   }
 
-  uint16_t DisplayWrapper::getWidth()
-  {
-    return _canvas.width();
-  }
-
-  uint16_t DisplayWrapper::getHeight()
-  {
-    return _canvas.height();
-  }
-
   uint16_t DisplayWrapper::getFontHeight(const uint8_t* font, uint8_t size)
   {
     int16_t x1, y1;
@@ -193,7 +183,7 @@ namespace pixeler
     return h;
   }
 
-  void DisplayWrapper::init()
+  void DisplayWrapper::__init()
   {
     if (BUSS_FREQUENCY < 10000000)
     {
