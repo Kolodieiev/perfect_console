@@ -1,3 +1,12 @@
+/**
+ * @file Input.h
+ * @brief Реалізація системи обробки користувацького вводу
+ * @details Об'єднує та уніфікує обробку вводу з сенсорних датчиків 
+ * і фізичних пінів ESP або взаємодіє з іншим МК для розширення GPIO. 
+ * 
+ * Налаштовується в pixeler/setup/input_setup.h
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 
@@ -110,5 +119,9 @@ namespace pixeler
 #endif
   };
 
+  /**
+   * @brief Глобальний об'єкт для зчитування стану вводу.
+   *
+   */
   extern Input _input;
 }  // namespace pixeler
