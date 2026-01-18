@@ -14,7 +14,7 @@ namespace pixeler
     _input.__init();
 
 #ifdef GRAPHICS_ENABLED
-    _display.init();
+    _display.__init();
 #endif
 
     IContext* context = new START_CONTEXT();
