@@ -3,6 +3,7 @@
 #include "../WidgetCreator.h"
 #include "Update.h"
 #include "pixeler/manager/FileManager.h"
+#include "pixeler/util/file/FileStream.h"
 
 const char STR_FIRMWARE_FN[] = "/firmware.bin";
 const char STR_UPDATE_FIRMWARE[] = "Оновлення прошивки";
