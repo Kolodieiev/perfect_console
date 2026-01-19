@@ -1,133 +1,26 @@
+/**
+ * @file FileManager.h
+ * @brief Абстракція для взаємодії з картою пам'яті по шині SPI
+ * @details Не потребує додаткової реалізації. Доступ до методів можна отримати через глобальний об'єкт "_fs".
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include <SPI.h>
-#include <Stream.h>
 #include <dirent.h>
 #include <sys/stat.h>
 
-#include <cstring>
-#include <vector>
-
+#include "pixeler/util/file/FileInfo.h"
 #include "pixeler/defines.h"
 #include "pixeler/setup/sd_setup.h"
 
 namespace pixeler
 {
-  /**
-   * @brief Структура, яка зберігає мінімальну інформацію про ВказівникНаФайл, а саме його ім'я та чи є ВказівникНаФайл папкою.
-   *
-   */
-  struct FileInfo
-  {
-  public:
-    FileInfo(const String& name, bool is_dir);
-    ~FileInfo();
-
-    /**
-     * @brief Повертає стан прапора, який було встановлено під час створення об'єкта, та який вказує чи є ВказівникНаФайл папкою.
-     *
-     * @return true - якщо ВказівникНаФайл вказує на папку.
-     * @return false - якщо ВказівникНаФайл вказує на бінарний файл.
-     */
-    bool isDir() const
-    {
-      return _is_dir;
-    }
-
-    /**
-     * @brief Перевіряє чи закінчується ім'я файла вказаною послідовністю символів.
-     *
-     * @param suffix Вказівник на очікувану послідовність символів.
-     * @return true - Якщо закінчується.
-     * @return false - Інакше.
-     */
-    bool nameEndsWith(const char* suffix) const;
-
-    /**
-     * @brief Повертає кількість байтів, які займає в пам'яті ім'я файла.
-     *
-     * @return uint32_t
-     */
-    uint32_t getNameLen() const
-    {
-      return _name_len;
-    }
-
-    /**
-     * @brief Повертає ім'я об'єкта, на який вказує ВказівникНаФайл.
-     *
-     * @return const char* - вказівник на масив символів, що містить ім'я об'єкта.
-     */
-    const char* getName() const
-    {
-      return _name;
-    }
-    //
-    bool operator<(const FileInfo& other) const;
-    FileInfo(const FileInfo&) = delete;
-    FileInfo& operator=(const FileInfo&) = delete;
-    FileInfo(FileInfo&& other) noexcept;
-    FileInfo& operator=(FileInfo&& other) noexcept;
-
-  private:
-    char* _name{nullptr};
-    uint32_t _name_len;
-    bool _is_dir;
-  };
-
-  /**
-   * @brief Тип, що перевантажує основні методи класу Stream. Може бути використаний у випадках,
-   * коли методи класів Arduino вимагають об'єкт успадкований від Stream.
-   *
-   */
-  class FileStream : public Stream
-  {
-  public:
-    FileStream(FILE* file, const char* name, size_t size) : _name{name}, _file(file), _size{size} {}
-    virtual ~FileStream()
-    {
-      if (_file)
-        fclose(_file);
-    }
-
-    virtual int available() override;
-    virtual size_t readBytes(char* buffer, size_t length) override;
-    virtual int read() override;
-    virtual size_t write(uint8_t byte) override;
-    virtual int peek() override;
-    virtual void flush() override {}
-    void close();
-
-    const char* name() const
-    {
-      return _name.c_str();
-    }
-
-    size_t size() const
-    {
-      return _size;
-    }
-
-    virtual operator bool() const
-    {
-      return _file != nullptr;
-    }
-
-  private:
-    String _name;
-    FILE* _file;
-    size_t _size;
-  };
-
-  typedef std::function<void(bool result, void* arg)> TaskDoneHandler;
-
-  /**
-   * @brief
-   *
-   */
   class FileManager
   {
   public:
+    typedef std::function<void(bool result, void* arg)> TaskDoneHandler;
+
     /**
      * @brief Формує повний шлях до path, з урахуванням точки монтування.
      *
@@ -513,7 +406,7 @@ namespace pixeler
   };
 
   /**
-   * @brief Глобальний об'єкт-обгортка для роботи з файловою системою на карті пам'яті.
+   * @brief Глобальний об'єкт для роботи з файловою системою на карті пам'яті.
    *
    */
   extern FileManager _fs;
