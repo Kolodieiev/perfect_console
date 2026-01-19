@@ -19,11 +19,10 @@ namespace pixeler
      * @param stack_depth_kb Розмір стеку Pixeler в кілобайтах.
      * Пам'ять цього стеку буде використовуватися на потреби фреймворку, а також під час виконання будь-якого із контекстів.
      */
-    void begin(uint32_t stack_depth_kb);
+    static void begin(uint32_t stack_depth_kb);
 
   private:
+    Pixeler();
     static void pixelerContextTask(void* params);
   };
-
-  extern Pixeler PIXELER;
 }  // namespace pixeler

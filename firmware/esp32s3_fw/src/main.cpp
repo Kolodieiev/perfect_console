@@ -48,7 +48,7 @@ void setup()
   _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data));
 
   // Запустити виконання Pixeler.
-  PIXELER.begin(80);
+  Pixeler::begin(80);
 }
 
 void loop()

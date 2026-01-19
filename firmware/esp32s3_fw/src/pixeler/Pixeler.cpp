@@ -17,6 +17,4 @@ namespace pixeler
     ContextManager context_manager;
     context_manager.run();
   }
-
-  Pixeler PIXELER;
 }  // namespace pixeler
