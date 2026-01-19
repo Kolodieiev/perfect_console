@@ -31,9 +31,9 @@ namespace pixeler
     _title_lbl->setHeight(_title_lbl->getHeight() + title_padding);
     _left_lbl->setHeight(_left_lbl->getHeight() + title_padding);
     _right_lbl->setHeight(_left_lbl->getHeight());
-    _msg_lbl->setHeight(_display.getHeight() - _h_margin * 2 - _title_lbl->getHeight() - _left_lbl->getHeight());
+    _msg_lbl->setHeight(TFT_HEIGHT - _h_margin * 2 - _title_lbl->getHeight() - _left_lbl->getHeight());
     //
-    _width = _display.getWidth();
+    _width = TFT_WIDTH;
     _title_lbl->setWidth(_width - 4);
     _msg_lbl->setWidth(_title_lbl->getWidth());
     _left_lbl->setWidth((float)(_title_lbl->getWidth()) * 0.5);

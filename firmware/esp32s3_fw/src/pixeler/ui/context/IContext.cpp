@@ -49,8 +49,8 @@ namespace pixeler
                          _layout{new EmptyLayout(1)}
   {
     _layout->setBackColor(COLOR_YELLOW);
-    _layout->setWidth(_display.getWidth());
-    _layout->setHeight(_display.getHeight());
+    _layout->setWidth(TFT_WIDTH);
+    _layout->setHeight(TFT_HEIGHT);
   }
 
   IContext::~IContext()
