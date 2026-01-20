@@ -9,7 +9,6 @@
 #include "Arduino_GFX.h"
 
 #include <pgmspace.h>
-#include "../../../setup/display_setup.h"
 #include "../../../setup/graphics_setup.h"
 
 #include "Arduino_DataBus.h"

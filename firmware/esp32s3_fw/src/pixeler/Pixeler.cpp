@@ -3,7 +3,7 @@
 #include "pixeler/driver/graphics/DisplayWrapper.h"
 #include "pixeler/manager/SPI_Manager.h"
 #include "pixeler/setup/context_id_setup.h"
-#include "pixeler/setup/display_setup.h"
+#include "pixeler/setup/graphics_setup.h"
 #include "pixeler/setup/ui_setup.h"
 #include "pixeler/ui/context/IContext.h"
 #include "setup/cpu_setup.h"
