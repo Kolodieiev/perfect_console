@@ -1,5 +1,14 @@
-#pragma GCC optimize("O3")
+/**
+ * @file LuaContext.h
+ * @brief Клас контексту для керування станом Lua-машини
+ * @details Запускає/зупиняє віртуальну Lua-машину, виділяє/звільняє ресурси для її функціонування.
+ * Реєструє типи для Lua.
+ * Дозволяє передати скрипт на виконання віртуальній машині Lua.
+ * Повертає повідомлення від Lua, якщо виникла помилка виконання.
+ */
+
 #pragma once
+#pragma GCC optimize("O3")
 
 #include "../lua.h"
 #include "pixeler/ui/context/IContext.h"
@@ -12,7 +21,20 @@ namespace pixeler
     LuaContext();
     virtual ~LuaContext();
 
+    /**
+     * @brief Завантажує скрипт до віртуальної машини Lua.
+     *
+     * @param lua_script Рядок, що містить скрипт.
+     * @return true - Якщо скрипт коректно завантажено до Lua-машини.
+     * @return false - Інакше.
+     */
     bool execScript(const char* lua_script);
+
+    /**
+     * @brief Повертає повідомлення від Lua, якщо виникла помилка виконання скрипта.
+     *
+     * @return String
+     */
     String getMsg() const;
 
   protected:

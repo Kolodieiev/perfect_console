@@ -1,3 +1,10 @@
+/**
+ * @file WavManager.h
+ * @brief Менеджер відтворення wav-доріжок
+ * @details Підтримує додавання/видалення wav-доріжки з міксу.
+ * Автоматично міксує всі додані wav-доріжки та надсилає дані до i2s виводу.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include <list>

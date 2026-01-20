@@ -1,3 +1,10 @@
+/**
+ * @file WiFiManager.h
+ * @brief Абстракція над бібліотекою WiFi
+ * @details Покращує асинхронну взаємодію з модулем WiFi.
+ * Зменшує дублювання часто використовуваного коду.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include <WiFi.h>
@@ -206,7 +213,7 @@ namespace pixeler
   };
 
   /**
-   * @brief Глобальний об'єкт-обгортка для роботи з модулем WiFi.
+   * @brief Глобальний об'єкт для роботи з модулем WiFi.
    *
    */
   extern WiFiManager _wifi;
