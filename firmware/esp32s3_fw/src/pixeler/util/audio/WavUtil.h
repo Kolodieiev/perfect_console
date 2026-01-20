@@ -10,9 +10,9 @@ namespace pixeler
   class WavUtil
   {
   public:
-    AudioData loadWav(const char* path_to_wav);
+    static AudioData loadWav(const char* path_to_wav);
 
   private:
-    bool validateHeader(const WavHeader& wav_header);
+    static bool validateHeader(const WavHeader& wav_header);
   };
 }  // namespace pixeler

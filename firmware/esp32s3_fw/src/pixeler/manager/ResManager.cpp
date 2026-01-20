@@ -28,8 +28,7 @@ namespace pixeler
     if (!path_to_wav)
       return 0;
 
-    WavUtil util;
-    AudioData data = util.loadWav(path_to_wav);
+    AudioData data = WavUtil::loadWav(path_to_wav);
 
     if (data.size == 0)
     {
