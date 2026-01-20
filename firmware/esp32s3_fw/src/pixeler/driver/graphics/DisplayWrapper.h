@@ -5,14 +5,13 @@
  * Не повинен реалізовуватися в користувацьому коді.
  * Доступний для використання через глобальний об'єкт "_display" в класі контексту.
  *
- * Налаштовується в pixeler/setup/display_setup.h та в pixeler/setup/graphics_setup.h
+ * Налаштовується в pixeler/setup/graphics_setup.h
  */
 
 #pragma once
 #pragma GCC optimize("O3")
 #include <stdint.h>
 
-#include "../../setup/display_setup.h"
 #include "../../setup/graphics_setup.h"
 #include "Arduino_GFX/Arduino_GFX_Library.h"
 
