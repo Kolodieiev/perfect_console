@@ -80,7 +80,7 @@ namespace pixeler
     bool isInited() const;
 
   private:
-    static bool _is_inited;
+    bool _is_inited{false};
 
     i2s_std_config_t _i2s_rx_std_cfg{};
     i2s_chan_config_t _i2s_chan_cfg{};

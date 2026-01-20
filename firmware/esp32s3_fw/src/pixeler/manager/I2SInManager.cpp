@@ -7,8 +7,6 @@
 
 namespace pixeler
 {
-  bool I2SInManager::_is_inited{false};
-
   bool I2SInManager::init(uint32_t sample_rate, bool has_interleaving)
   {
     if (_is_inited)
