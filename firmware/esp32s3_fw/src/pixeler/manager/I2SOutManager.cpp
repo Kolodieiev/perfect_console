@@ -5,8 +5,6 @@
 
 namespace pixeler
 {
-  bool I2SOutManager::_is_inited{false};
-
   bool I2SOutManager::init(uint32_t sample_rate)
   {
     if (_is_inited)

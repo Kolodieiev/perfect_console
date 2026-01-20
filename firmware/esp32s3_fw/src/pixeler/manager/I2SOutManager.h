@@ -90,7 +90,7 @@ namespace pixeler
     bool isInited() const;
 
   private:
-    static bool _is_inited;
+    bool _is_inited{false};
 
     //--------------------------------------------
 
