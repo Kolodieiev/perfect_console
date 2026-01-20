@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "pixeler/manager/FileManager.h"
+#include "pixeler/util/file/FileStream.h"
 
 namespace pixeler
 {
