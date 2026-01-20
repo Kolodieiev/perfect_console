@@ -1,3 +1,9 @@
+/**
+ * @file I2C_Manager.h
+ * @brief Абстакція над бібліотекою I2C
+ * @details Загортає стандартні виклики I2C в зручніші методи, задля уникнення дублювання коду.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "../defines.h"
