@@ -1,3 +1,10 @@
+/**
+ * @file IWidgetContainer.h
+ * @brief Головний абстрактий клас, від якого повинні бути успадковані всі класи контейнерів віджетів
+ * @details Містить базовий функціонал та поля, що є спільними для всіх контейнерів віджетів.
+ * Контейнер віджетів також являється віджетом.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include <vector>
@@ -9,7 +16,7 @@ namespace pixeler
   class IWidgetContainer : public IWidget
   {
   public:
-    IWidgetContainer(uint16_t widget_ID, IWidget::TypeID type_ID);
+    IWidgetContainer(uint16_t widget_ID, TypeID type_ID);
     virtual ~IWidgetContainer();
 
     /**
@@ -30,15 +37,6 @@ namespace pixeler
      */
     bool delWidgetByID(uint16_t widget_ID);
 
-    /*!
-     * @brief
-     *       Знайти віджет у контейнері за його ідентифікатором.
-     * @param widget_ID
-     *       Ідентифікатор віджета.
-     * @return
-     *        Вказівник на віджет у разі успіху. Інакше nullptr.
-     */
-
     /**
      * @brief Шукає у своєму контейнері віджет з указаним ідентифікатором.
      *
@@ -48,15 +46,6 @@ namespace pixeler
      */
     IWidget* getWidgetByID(uint16_t widget_ID) const;
 
-    /*!
-     * @brief
-     *       Отримати віджет за його порядковим номером у контейнері.
-     * @param widget_indx
-     *       Порядковий номер віджета.
-     * @return
-     *       Вказівник на віджет у разі успіху. Інакше nullptr.
-     */
-
     /**
      * @brief Повертає вказівник на віджет за його порядковим номером у контейнері.
      *
@@ -65,17 +54,6 @@ namespace pixeler
      * @return nullptr - Якщо віджет за вказаною позицією відсутній.
      */
     IWidget* getWidgetByIndx(uint16_t widget_indx) const;
-
-    /*!
-     * @brief
-     *       Знайти віджет у цьому контейнері за його позицією на екрані.
-     * @param x
-     *       Позиція віджета по осі X.
-     * @param y
-     *       Позиція віджета по осі Y.
-     * @return
-     *       Вказівник на самий глибоко-вкладений віджет у разі успіху. Інакше вказівник на цей контейнер.
-     */
 
     /**
      * @brief Видаляє усі віджети з контейнера та очищує пам'ять, яку вони займали.
@@ -88,28 +66,19 @@ namespace pixeler
      *
      * @return uint16_t
      */
-    uint16_t getSize() const
-    {
-      return _widgets.size();
-    }
+    uint16_t getSize() const;
 
     /**
      * @brief Вмикає перерисовку контейнера та його вмісту.
      *
      */
-    void enable()
-    {
-      _is_enabled = true;
-    }
+    void enable();
 
     /**
      * @brief Вимикає перерисовку контейнера та його вмісту.
      *
      */
-    void disable()
-    {
-      _is_enabled = false;
-    }
+    void disable();
 
     /**
      * @brief Повертає поточний стан прапору, який відповідає за перерисовку контейнера та його вмісту.
@@ -117,10 +86,7 @@ namespace pixeler
      * @return true - Якщо перерисовка увімкнена.
      * @return false - Інакше.
      */
-    bool isEnabled() const
-    {
-      return _is_enabled;
-    }
+    bool isEnabled() const;
 
   protected:
     std::vector<IWidget*> _widgets;

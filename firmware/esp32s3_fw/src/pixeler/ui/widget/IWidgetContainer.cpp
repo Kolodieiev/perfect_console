@@ -3,7 +3,7 @@
 
 namespace pixeler
 {
-  IWidgetContainer::IWidgetContainer(uint16_t widget_ID, IWidget::TypeID type_ID) : IWidget(widget_ID, type_ID, true) {}
+  IWidgetContainer::IWidgetContainer(uint16_t widget_ID, TypeID type_ID) : IWidget(widget_ID, type_ID, true) {}
 
   IWidgetContainer::~IWidgetContainer()
   {
@@ -88,5 +88,25 @@ namespace pixeler
     _widgets.clear();
 
     _is_changed = true;
+  }
+
+  uint16_t IWidgetContainer::getSize() const
+  {
+    return _widgets.size();
+  }
+
+  void IWidgetContainer::enable()
+  {
+    _is_enabled = true;
+  }
+
+  void IWidgetContainer::disable()
+  {
+    _is_enabled = false;
+  }
+
+  bool IWidgetContainer::isEnabled() const
+  {
+    return _is_enabled;
   }
 }  // namespace pixeler
