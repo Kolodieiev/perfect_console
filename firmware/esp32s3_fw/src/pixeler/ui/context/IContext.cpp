@@ -45,6 +45,16 @@ namespace pixeler
     }
   }
 
+  ContextID IContext::getNextContextID() const
+  {
+    return _next_context_ID;
+  }
+
+  bool IContext::isReleased() const
+  {
+    return _is_released;
+  }
+
   IContext::IContext() : _layout_mutex{xSemaphoreCreateMutex()},
                          _layout{new EmptyLayout(1)}
   {
@@ -78,6 +88,11 @@ namespace pixeler
     _layout = layout;
 
     xSemaphoreGive(_layout_mutex);
+  }
+
+  IWidgetContainer* IContext::getLayout() const
+  {
+    return _layout;
   }
 
   void IContext::openContextByID(ContextID context_ID)
@@ -129,6 +144,16 @@ namespace pixeler
       _toast_label->setWidth(120);
 
     _toast_label->setPos(getCenterX(_toast_label), TFT_HEIGHT - _toast_label->getHeight() - 15);
+  }
+
+  uint16_t IContext::getCenterX(const IWidget* widget) const
+  {
+    return widget ? (TFT_WIDTH - widget->getWidth()) / 2 : 0;
+  }
+
+  uint16_t IContext::getCenterY(const IWidget* widget) const
+  {
+    return widget ? (TFT_HEIGHT - widget->getHeight()) / 2 : 0;
   }
 
   void IContext::showNotification(Notification* notification)

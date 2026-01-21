@@ -1,16 +1,24 @@
+/**
+ * @file IContext.h
+ * @brief Головний абстрактий клас, від якого повинні бути успадковані всі класи контексту
+ * @details Містить базовий функціонал та поля, що є спільними для всіх класів контексту.
+ * Викликає віртуальні методи loop та update у його нащадків.
+ * Керує відображенням Notification та Toast.
+ * Викликає малювання віджетів на Canvas кожен кадр.
+ * Викликає оновлення стану користувацького вводу кожен кадр.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 
-
-#include "../../driver/graphics/DisplayWrapper.h"
-#include "../../driver/input/Input.h"
-#include "../../defines.h"
 #include "../widget/IWidgetContainer.h"
 #include "../widget/notification/Notification.h"
 #include "../widget/text/Label.h"
-
-#include "../../setup/cpu_setup.h"
-#include "../../setup/context_id_setup.h"
+#include "pixeler/defines.h"
+#include "pixeler/driver/graphics/DisplayWrapper.h"
+#include "pixeler/driver/input/Input.h"
+#include "pixeler/setup/context_id_setup.h"
+#include "pixeler/setup/cpu_setup.h"
 
 namespace pixeler
 {
@@ -36,10 +44,7 @@ namespace pixeler
      *
      * @return ContextID - унікальний ідентифікатор дисплею.
      */
-    ContextID getNextContextID() const
-    {
-      return _next_context_ID;
-    }
+    ContextID getNextContextID() const;
 
     /**
      * @brief Повертає значення прапору, який вказує на те, чи повинен бути звільнений цей контекст.
@@ -47,10 +52,7 @@ namespace pixeler
      * @return true - якщо контекст повинен бути звільнений.
      * @return false - якщо контекст повинен бути активним.
      */
-    bool isReleased() const
-    {
-      return _is_released;
-    }
+    bool isReleased() const;
 
   protected:
     /**
@@ -88,10 +90,7 @@ namespace pixeler
      *
      * @return IWidgetContainer*
      */
-    IWidgetContainer* getLayout() const
-    {
-      return _layout;
-    }
+    IWidgetContainer* getLayout() const;
 
     /**
      * @brief Встановлює стан поточного контексту в такий, що повинен бути звільнений.
@@ -122,10 +121,7 @@ namespace pixeler
      * @param widget Вказівник на віджет.
      * @return uint16_t
      */
-    uint16_t getCenterX(const IWidget* widget) const
-    {
-      return widget ? (TFT_WIDTH - widget->getWidth()) / 2 : 0;
-    }
+    uint16_t getCenterX(const IWidget* widget) const;
 
     /**
      * @brief Повертає y-координату, на якій віджет буде встановлено по центру відносно екрану.
@@ -133,10 +129,7 @@ namespace pixeler
      * @param widget Вказівник на віджет.
      * @return uint16_t
      */
-    uint16_t getCenterY(const IWidget* widget) const
-    {
-      return widget ? (TFT_HEIGHT - widget->getHeight()) / 2 : 0;
-    }
+    uint16_t getCenterY(const IWidget* widget) const;
 
     /**
      * @brief Відображає віджет Notification для поточного макету.
