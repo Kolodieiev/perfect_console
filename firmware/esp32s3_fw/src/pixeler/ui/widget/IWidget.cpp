@@ -3,9 +3,9 @@
 
 namespace pixeler
 {
-  IWidget::IWidget(uint16_t widget_ID, IWidget::TypeID type_ID, bool is_container) : _id{widget_ID},
-                                                                                     _type_ID{type_ID},
-                                                                                     _is_container{is_container}
+  IWidget::IWidget(uint16_t widget_ID, TypeID type_ID, bool is_container) : _id{widget_ID},
+                                                                            _type_ID{type_ID},
+                                                                            _is_container{is_container}
 
   {
     if (widget_ID == 0)
@@ -16,6 +16,11 @@ namespace pixeler
   }
 
   IWidget::~IWidget() {}
+
+  IWidget::TypeID IWidget::getTypeID() const
+  {
+    return _type_ID;
+  }
 
   void IWidget::forcedDraw()
   {
@@ -52,6 +57,11 @@ namespace pixeler
   {
     _parent = parent;
     _is_changed = true;
+  }
+
+  const IWidget* IWidget::getParent() const
+  {
+    return _parent;
   }
 
   void IWidget::setCornerRadius(uint8_t radius)
@@ -154,6 +164,51 @@ namespace pixeler
       return _y_pos;
   }
 
+  uint16_t IWidget::getXPosLoc() const
+  {
+    return _x_pos;
+  }
+
+  uint16_t IWidget::getYPosLoc() const
+  {
+    return _y_pos;
+  }
+
+  uint8_t IWidget::getCornerRadius() const
+  {
+    return _corner_radius;
+  }
+
+  uint16_t IWidget::getID() const
+  {
+    return _id;
+  }
+
+  uint16_t IWidget::getHeight() const
+  {
+    return _height;
+  }
+
+  uint16_t IWidget::getWidth() const
+  {
+    return _width;
+  }
+
+  uint16_t IWidget::getBackColor() const
+  {
+    return _back_color;
+  }
+
+  uint16_t IWidget::getBorderColor() const
+  {
+    return _border_color;
+  }
+
+  bool IWidget::hasBorder() const
+  {
+    return _has_border;
+  }
+
   void IWidget::setChangingBorder(bool state)
   {
     _need_change_border = state;
@@ -172,10 +227,20 @@ namespace pixeler
     _is_changed = true;
   }
 
+  uint16_t IWidget::getFocusBorderColor() const
+  {
+    return _focus_border_color;
+  }
+
   void IWidget::setFocusBackColor(uint16_t color)
   {
     _focus_back_color = color;
     _is_changed = true;
+  }
+
+  uint16_t IWidget::getFocusBackColor() const
+  {
+    return _focus_back_color;
   }
 
   void IWidget::setFocus()
@@ -227,6 +292,11 @@ namespace pixeler
     _is_changed = true;
   }
 
+  IWidget::Visibility IWidget::getVisibility() const
+  {
+    return _visibility;
+  }
+
   bool IWidget::hasIntersectWithCoords(uint16_t x, uint16_t y) const
   {
     if (_parent)
@@ -234,5 +304,20 @@ namespace pixeler
           (y > _parent->getYPos() + _y_pos && y < _parent->getYPos() + _y_pos + _height);
     else
       return (x > _x_pos && x < _x_pos + _width) && (y > _y_pos && y < _y_pos + _height);
+  }
+
+  bool IWidget::isContainer() const
+  {
+    return _is_container;
+  }
+
+  void IWidget::setTransparency(bool state)
+  {
+    _is_transparent = state;
+  }
+
+  bool IWidget::isTransparent() const
+  {
+    return _is_transparent;
   }
 }  // namespace pixeler

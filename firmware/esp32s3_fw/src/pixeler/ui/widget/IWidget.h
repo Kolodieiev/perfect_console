@@ -1,7 +1,14 @@
+/**
+ * @file IWidget.h
+ * @brief Головний абстрактий клас, від якого повинні бути успадковані всі класи віджетів
+ * @details Містить базовий функціонал та поля, що є спільними для всіх віджетів.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
-#include "../../defines.h"
-#include "../../driver/graphics/DisplayWrapper.h"
+
+#include "pixeler/defines.h"
+#include "pixeler/driver/graphics/DisplayWrapper.h"
 
 namespace pixeler
 {
@@ -10,24 +17,24 @@ namespace pixeler
   public:
     enum TypeID : uint8_t
     {
-      TYPE_ID_IMAGE = 0,
-      TYPE_ID_KEYBOARD,
-      TYPE_ID_KB_ROW,
-      TYPE_ID_EMPTY_LAYOUT,
-      TYPE_ID_MENU_ITEM,
-      TYPE_ID_TOGGLE_ITEM,
-      TYPE_ID_SPIN_ITEM,
-      TYPE_ID_COMBO_ITEM,
-      TYPE_ID_DYN_MENU,
-      TYPE_ID_FIX_MENU,
-      TYPE_ID_NAVBAR,
-      TYPE_ID_NOTIFICATION,
-      TYPE_ID_PROGRESSBAR,
-      TYPE_ID_SCROLLBAR,
-      TYPE_ID_SPINBOX,
-      TYPE_ID_LABEL,
-      TYPE_ID_TEXTBOX,
-      TYPE_ID_TOGGLE_SWITCH,
+      TYPE_IMAGE = 0,
+      TYPE_KEYBOARD,
+      TYPE_KB_ROW,
+      TYPE_EMPTY_LAYOUT,
+      TYPE_MENU_ITEM,
+      TYPE_TOGGLE_ITEM,
+      TYPE_SPIN_ITEM,
+      TYPE_COMBO_ITEM,
+      TYPE_DYN_MENU,
+      TYPE_FIX_MENU,
+      TYPE_NAVBAR,
+      TYPE_NOTIFICATION,
+      TYPE_PROGRESSBAR,
+      TYPE_SCROLLBAR,
+      TYPE_SPINBOX,
+      TYPE_LABEL,
+      TYPE_TEXTBOX,
+      TYPE_TOGGLE_SWITCH,
     };
 
     enum Alignment : uint8_t
@@ -56,7 +63,7 @@ namespace pixeler
       INVISIBLE,
     };
 
-    IWidget(uint16_t widget_ID, IWidget::TypeID type_ID, bool is_container = false);
+    IWidget(uint16_t widget_ID, TypeID type_ID, bool is_container = false);
     virtual ~IWidget() = 0;
 
     /**
@@ -79,10 +86,7 @@ namespace pixeler
      *
      * @return TypeID
      */
-    TypeID getObjTypeID() const
-    {
-      return _type_ID;
-    }
+    TypeID getTypeID() const;
 
     /**
      * @brief Якщо можливо, приводить об'єкт до відповідного типу.
@@ -144,10 +148,7 @@ namespace pixeler
      *
      * @return const IWidget*
      */
-    const IWidget* getParent() const
-    {
-      return _parent;
-    }
+    const IWidget* getParent() const;
 
     /**
      * @brief Встановлює значення скруглення кутів віджета.
@@ -191,80 +192,56 @@ namespace pixeler
      *
      * @return uint16_t
      */
-    uint16_t getXPosLoc() const
-    {
-      return _x_pos;
-    }
+    uint16_t getXPosLoc() const;
 
     /**
      * @brief Повертає локальну Y координату віджета.
      *
      * @return uint16_t
      */
-    uint16_t getYPosLoc() const
-    {
-      return _y_pos;
-    }
+    uint16_t getYPosLoc() const;
 
     /**
      * @brief Повертає значення скруглення кутів віджета.
      *
      * @return uint8_t
      */
-    uint8_t getCornerRadius() const
-    {
-      return _corner_radius;
-    }
+    uint8_t getCornerRadius() const;
 
     /**
      * @brief Повертає ідентифікатор віджета, який йому було присвоєно під час створення.
      *
      * @return uint16_t
      */
-    uint16_t getID() const
-    {
-      return _id;
-    }
+    uint16_t getID() const;
 
     /**
      * @brief Повертає висоту віджета у пікселях.
      *
      * @return uint16_t
      */
-    uint16_t getHeight() const
-    {
-      return _height;
-    }
+    uint16_t getHeight() const;
 
     /**
      * @brief Повертає ширину віджета у пікселях.
      *
      * @return uint16_t
      */
-    uint16_t getWidth() const
-    {
-      return _width;
-    }
+    uint16_t getWidth() const;
 
     /**
      * @brief Повертає колір фону віджета.
      *
      * @return uint16_t
      */
-    uint16_t getBackColor() const
-    {
-      return _back_color;
-    }
+    uint16_t getBackColor() const;
 
     /**
      * @brief Повертає колір межі віджета.
      *
      * @return uint16_t
      */
-    uint16_t getBorderColor() const
-    {
-      return _border_color;
-    }
+    uint16_t getBorderColor() const;
 
     /**
      * @brief Повертає стан пропору, який керує маханізмом відображення межі віджета.
@@ -272,10 +249,7 @@ namespace pixeler
      * @return true - Якщо межа віджета відображається.
      * @return false - Інакше.
      */
-    bool hasBorder() const
-    {
-      return _has_border;
-    }
+    bool hasBorder() const;
 
     /**
      * @brief Встановлює стан прапору, який керує відображенням межі віджета та її кольором, під час потрапляння фокусу на нього.
@@ -305,10 +279,7 @@ namespace pixeler
      *
      * @return uint16_t
      */
-    uint16_t getFocusBorderColor() const
-    {
-      return _focus_border_color;
-    }
+    uint16_t getFocusBorderColor() const;
 
     /**
      * @brief Встановлює колір фону віджета у фокусі.
@@ -322,10 +293,7 @@ namespace pixeler
      *
      * @return uint16_t
      */
-    uint16_t getFocusBackColor() const
-    {
-      return _focus_back_color;
-    }
+    uint16_t getFocusBackColor() const;
 
     /*!
      * @brief Переводить віджет до стану "У фокусі".
@@ -350,10 +318,7 @@ namespace pixeler
      *
      * @return Visibility
      */
-    Visibility getVisibility() const
-    {
-      return _visibility;
-    }
+    Visibility getVisibility() const;
 
     /**
      * @brief Перевіряє чи пересікається віджет з указаними координатами.
@@ -371,10 +336,7 @@ namespace pixeler
      * @return true - Якщо віджет є контейнером.
      * @return false - Інакше.
      */
-    bool isContainer() const
-    {
-      return _is_container;
-    }
+    bool isContainer() const;
 
     /**
      * @brief Встановлює прозорість фону віджета.
@@ -382,10 +344,7 @@ namespace pixeler
      * @param state Якщо true - фон віджета не замальовується фоновим кольором.
      * Для коректного відображення необхідно самостійно перемальовувати зображення під прозорим віджетом.
      */
-    void setTransparency(bool state)
-    {
-      _is_transparent = state;
-    }
+    void setTransparency(bool state);
 
     /**
      * @brief Повертає стан прапору, який вказує, чи є віджет прозорим.
@@ -393,10 +352,7 @@ namespace pixeler
      * @return true - Якщо віджет є прозорим.
      * @return false - Інакше.
      */
-    bool isTransparent() const
-    {
-      return _is_transparent;
-    }
+    bool isTransparent() const;
 
   protected:
     /**
