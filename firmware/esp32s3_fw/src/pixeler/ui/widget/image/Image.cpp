@@ -3,7 +3,7 @@
 
 namespace pixeler
 {
-  Image::Image(uint16_t widget_ID) : IWidget(widget_ID, TYPE_ID_IMAGE) {}
+  Image::Image(uint16_t widget_ID) : IWidget(widget_ID, TYPE_IMAGE) {}
 
   void Image::setTransparency(bool state)
   {
@@ -47,6 +47,11 @@ namespace pixeler
       log_e("%s", e.what());
       esp_restart();
     }
+  }
+
+  constexpr Image::TypeID Image::getTypeID()
+  {
+    return TypeID::TYPE_IMAGE;
   }
 
   void Image::setSrc(const uint16_t* image_ptr)

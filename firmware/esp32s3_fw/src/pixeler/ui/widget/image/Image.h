@@ -1,5 +1,14 @@
+/**
+ * @file Image.h
+ * @brief Віджет для відображення статичних зображень
+ * @details Відображає на Canvas растрові bmp-зображення,
+ * що мають 16 бітну глибину кольору та кодування пікселів в форматі RGB565.
+ * Підтримує псевдопрозорість.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
+
 #include "../IWidget.h"
 
 namespace pixeler
@@ -32,15 +41,12 @@ namespace pixeler
      *
      * @return constexpr TypeID
      */
-    static constexpr TypeID getTypeID()
-    {
-      return TypeID::TYPE_ID_IMAGE;
-    }
+    static constexpr TypeID getTypeID();
 
     /**
      * @brief Встановлює прапор, який змінює поведінку виводу зображення на дисплей.
      *
-     * @param state Якщо true зображення буде виводитися з ігноруванням кольору COLOR_TRANSPARENT. 
+     * @param state Якщо true зображення буде виводитися з ігноруванням кольору COLOR_TRANSPARENT.
      * Інакше буде виводитись, як є.
      */
     void setTransparency(bool state);
