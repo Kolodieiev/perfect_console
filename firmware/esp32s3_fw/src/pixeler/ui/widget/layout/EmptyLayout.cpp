@@ -3,7 +3,7 @@
 
 namespace pixeler
 {
-  EmptyLayout::EmptyLayout(uint16_t widget_ID, IWidget::TypeID type_ID) : IWidgetContainer(widget_ID, type_ID)
+  EmptyLayout::EmptyLayout(uint16_t widget_ID, TypeID type_ID) : IWidgetContainer(widget_ID, type_ID)
   {
   }
 
@@ -32,7 +32,6 @@ namespace pixeler
       for (size_t i{0}; i < _widgets.size(); ++i)
         _widgets[i]->forcedDraw();
     }
-
   }
 
   EmptyLayout* EmptyLayout::clone(uint16_t id) const
@@ -71,5 +70,10 @@ namespace pixeler
       log_e("%s", e.what());
       esp_restart();
     }
+  }
+
+  constexpr IWidget::TypeID EmptyLayout::getTypeID()
+  {
+    return TypeID::TYPE_EMPTY_LAYOUT;
   }
 }  // namespace pixeler

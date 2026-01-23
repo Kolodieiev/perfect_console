@@ -1,3 +1,9 @@
+/**
+ * @file EmptyLayout.h
+ * @brief Віджет-контейнер для об'єднання віджетів у групу без правил вирівнювання
+ * @details Базова реалізація контейнера віджетів без правил вирівнювання.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "../IWidgetContainer.h"
@@ -7,7 +13,7 @@ namespace pixeler
   class EmptyLayout : public IWidgetContainer
   {
   public:
-    explicit EmptyLayout(uint16_t widget_ID, IWidget::TypeID type_ID = TYPE_ID_EMPTY_LAYOUT);
+    explicit EmptyLayout(uint16_t widget_ID, TypeID type_ID = TYPE_EMPTY_LAYOUT);
     virtual ~EmptyLayout();
 
     /**
@@ -31,9 +37,6 @@ namespace pixeler
      *
      * @return constexpr TypeID
      */
-    static constexpr TypeID getTypeID()
-    {
-      return TypeID::TYPE_ID_EMPTY_LAYOUT;
-    }
+    static constexpr TypeID getTypeID();
   };
 }  // namespace pixeler
