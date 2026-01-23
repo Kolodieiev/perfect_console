@@ -1,3 +1,10 @@
+/**
+ * @file KeyboardRow.h
+ * @brief Віджет для формування та відображення одного ряду віртуальної клавіатури
+ * @details Формує з Label один ряд віртуальної клавіатури ти виводить його на Canvas.
+ * Керує переміщенням фокусу між окремими кнопками в рядку.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "../IWidgetContainer.h"
@@ -31,10 +38,7 @@ namespace pixeler
      *
      * @return constexpr TypeID
      */
-    static constexpr TypeID getTypeID()
-    {
-      return TypeID::TYPE_ID_KB_ROW;
-    }
+    static constexpr TypeID getTypeID();
 
     /**
      * @brief Повертає ідентифікатор віджета, на якому встановлено фокус.
@@ -71,52 +75,35 @@ namespace pixeler
      *
      * @param height Значення висоти кнопок у пікселях.
      */
-    void setBtnHeight(uint16_t height)
-    {
-      _btn_height = height > 0 ? height : 1;
-      _is_changed = true;
-    }
+    void setBtnHeight(uint16_t height);
 
     /**
      * @brief Повертає значення висоти кнопок у пікселях.
      *
      * @return uint16_t
      */
-    uint16_t getBtnsHeight() const
-    {
-      return _btn_height;
-    }
+    uint16_t getBtnsHeight() const;
 
     /**
      * @brief Встановлює ширину кнопок у цьому контейнері.
      *
      * @param width Значення ширини кнопок у пікселях.
      */
-    void setBtnWidth(uint16_t width)
-    {
-      _btn_width = width > 0 ? width : 1;
-      _is_changed = true;
-    }
+    void setBtnWidth(uint16_t width);
 
     /**
      * @brief Повертає значення ширини кнопок у пікселях.
      *
      * @return uint16_t
      */
-    uint16_t getBtnsWidth() const
-    {
-      return _btn_width;
-    }
+    uint16_t getBtnsWidth() const;
 
     /**
      * @brief Повертає позицію кнопки для данного ряду, на якій встановлено фокус.
      *
      * @return uint16_t
      */
-    uint16_t getCurFocusPos() const
-    {
-      return _cur_focus_pos;
-    }
+    uint16_t getCurFocusPos() const;
 
     /**
      * @brief Встановлює фокус на віджеті з указаним порядковим номером.

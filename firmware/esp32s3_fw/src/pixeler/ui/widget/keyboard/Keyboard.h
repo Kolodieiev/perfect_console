@@ -1,3 +1,10 @@
+/**
+ * @file Keyboard.h
+ * @brief Віджет для формування та відображення віртуальної клавіатури
+ * @details Формує з KeyboardRow віртуальну клавіатуру та малює її на Canvas.
+ * Керує переміщенням фокусу між рядями кнопок.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "../IWidgetContainer.h"
@@ -32,10 +39,7 @@ namespace pixeler
      *
      * @return constexpr TypeID
      */
-    static constexpr TypeID getTypeID()
-    {
-      return TypeID::TYPE_ID_KEYBOARD;
-    }
+    static constexpr TypeID getTypeID();
 
     /**
      * @brief Повертає ідентифікатор віджета кнопки, на якому встановлено фокус.
@@ -91,10 +95,7 @@ namespace pixeler
      *
      * @return uint16_t
      */
-    uint16_t getFocusYPos() const
-    {
-      return _cur_focus_row_pos;
-    }
+    uint16_t getFocusYPos() const;
 
     /**
      * @brief Встановлює фокус на кнопці.

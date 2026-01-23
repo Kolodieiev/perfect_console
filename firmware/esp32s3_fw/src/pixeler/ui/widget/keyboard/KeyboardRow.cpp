@@ -5,7 +5,7 @@
 
 namespace pixeler
 {
-  KeyboardRow::KeyboardRow(uint16_t widget_ID) : IWidgetContainer(widget_ID, TYPE_ID_KB_ROW) {}
+  KeyboardRow::KeyboardRow(uint16_t widget_ID) : IWidgetContainer(widget_ID, TYPE_KB_ROW) {}
 
   KeyboardRow* KeyboardRow::clone(uint16_t id) const
   {
@@ -45,6 +45,11 @@ namespace pixeler
       log_e("%s", e.what());
       esp_restart();
     }
+  }
+
+  constexpr IWidget::TypeID KeyboardRow::getTypeID()
+  {
+    return TypeID::TYPE_KB_ROW;
   }
 
   uint16_t KeyboardRow::getCurrBtnID() const
@@ -89,6 +94,33 @@ namespace pixeler
     }
 
     return false;
+  }
+
+  void KeyboardRow::setBtnHeight(uint16_t height)
+  {
+    _btn_height = height > 0 ? height : 1;
+    _is_changed = true;
+  }
+
+  uint16_t KeyboardRow::getBtnsHeight() const
+  {
+    return _btn_height;
+  }
+
+  void KeyboardRow::setBtnWidth(uint16_t width)
+  {
+    _btn_width = width > 0 ? width : 1;
+    _is_changed = true;
+  }
+
+  uint16_t KeyboardRow::getBtnsWidth() const
+  {
+    return _btn_width;
+  }
+
+  uint16_t KeyboardRow::getCurFocusPos() const
+  {
+    return _cur_focus_pos;
   }
 
   void KeyboardRow::setFocus(uint16_t pos)

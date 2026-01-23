@@ -3,7 +3,7 @@
 
 namespace pixeler
 {
-  Keyboard::Keyboard(uint16_t widget_ID) : IWidgetContainer(widget_ID, TYPE_ID_KEYBOARD) {}
+  Keyboard::Keyboard(uint16_t widget_ID) : IWidgetContainer(widget_ID, TYPE_KEYBOARD) {}
 
   Keyboard* Keyboard::clone(uint16_t id) const
   {
@@ -41,6 +41,11 @@ namespace pixeler
       log_e("%s", e.what());
       esp_restart();
     }
+  }
+
+  constexpr IWidget::TypeID Keyboard::getTypeID()
+  {
+    return TypeID::TYPE_KEYBOARD;
   }
 
   uint16_t Keyboard::getCurrBtnID() const
@@ -112,6 +117,11 @@ namespace pixeler
   uint16_t Keyboard::getFocusXPos() const
   {
     return getFocusRow()->getCurFocusPos();
+  }
+
+  uint16_t Keyboard::getFocusYPos() const
+  {
+    return _cur_focus_row_pos;
   }
 
   void Keyboard::setFocusPos(uint16_t x, uint16_t y)
