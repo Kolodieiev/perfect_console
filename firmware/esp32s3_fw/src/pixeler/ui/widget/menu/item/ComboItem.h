@@ -1,3 +1,13 @@
+/**
+ * @file ComboItem.h
+ * @brief Віджет елемента меню з прокручуваним списком значень
+ * @details Дозволяє перемикатися між попередньо визначеними текстовими
+ * значеннями без відкриття випадаючого списку. Зміна значення 
+ * здійснюється прокручуванням через внутрішній буфер рядків.
+ * 
+ * Успадкований від MenuItem.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "MenuItem.h"
@@ -25,10 +35,7 @@ namespace pixeler
      *
      * @return constexpr TypeID
      */
-    static constexpr TypeID getTypeID()
-    {
-      return TypeID::TYPE_ID_COMBO_ITEM;
-    }
+    static constexpr TypeID getTypeID();
 
     /**
      * @brief Додає список пунктів для вибору.
@@ -49,10 +56,7 @@ namespace pixeler
      *
      * @return uint16_t
      */
-    uint16_t getPos() const
-    {
-      return _curr_pos;
-    }
+    uint16_t getPos() const;
 
     /**
      * @brief Змінює поточний пункт списку на одну позицію вгору.

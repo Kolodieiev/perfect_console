@@ -3,7 +3,7 @@
 
 namespace pixeler
 {
-  SpinItem::SpinItem(uint16_t widget_ID) : MenuItem(widget_ID, TYPE_ID_SPIN_ITEM)
+  SpinItem::SpinItem(uint16_t widget_ID) : MenuItem(widget_ID, TYPE_SPIN_ITEM)
   {
     setSpin(new SpinBox(1));
   }
@@ -95,6 +95,11 @@ namespace pixeler
     }
   }
 
+  constexpr IWidget::TypeID SpinItem::getTypeID()
+  {
+    return TypeID::TYPE_SPIN_ITEM;
+  }
+
   void SpinItem::setSpin(SpinBox* spinbox_ptr)
   {
     if (!spinbox_ptr)
@@ -113,6 +118,11 @@ namespace pixeler
 
     _spinbox->setParent(this);
     _spinbox->setChangingBorder(false);
+  }
+
+  SpinBox* SpinItem::getSpin() const
+  {
+    return _spinbox;
   }
 
   void SpinItem::up()

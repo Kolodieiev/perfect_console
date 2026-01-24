@@ -1,3 +1,13 @@
+/**
+ * @file SpinItem.h
+ * @brief Віджет елемента меню з SpinBox
+ * @details Дозволяє змінювати числове значення безпосередньо в елементі
+ * меню через вбудований SpinBox. Підтримує встановлення діапазону,
+ * кроку зміни та поточного значення.
+ *
+ * Успадкований від MenuItem.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "../../spinbox/SpinBox.h"
@@ -33,10 +43,7 @@ namespace pixeler
      *
      * @return constexpr TypeID
      */
-    static constexpr TypeID getTypeID()
-    {
-      return TypeID::TYPE_ID_SPIN_ITEM;
-    }
+    static constexpr TypeID getTypeID();
 
     /**
      * @brief Встановлює вказівник на віджет SpinBox, що буде відображатися у віджеті елемента списку.
@@ -52,10 +59,7 @@ namespace pixeler
      *
      * @return SpinBox* - Вказівник на віджет.
      */
-    SpinBox* getSpin() const
-    {
-      return _spinbox;
-    }
+    SpinBox* getSpin() const;
 
     /**
      * @brief Перевикликає відповідний метод у об'єкта SpinBox, що міститься у цьому елементі списку.
@@ -96,9 +100,6 @@ namespace pixeler
      * @return float
      */
     float getValue() const;
-
-  private:
-    using IWidget::setVisibility;
 
   private:
     SpinBox* _spinbox{nullptr};

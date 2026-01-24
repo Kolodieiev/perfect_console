@@ -3,7 +3,7 @@
 
 namespace pixeler
 {
-  ComboItem::ComboItem(uint16_t widget_ID) : MenuItem(widget_ID, TYPE_ID_COMBO_ITEM)
+  ComboItem::ComboItem(uint16_t widget_ID) : MenuItem(widget_ID, TYPE_COMBO_ITEM)
   {
   }
 
@@ -54,6 +54,11 @@ namespace pixeler
     }
   }
 
+  constexpr IWidget::TypeID ComboItem::getTypeID()
+  {
+    return TypeID::TYPE_COMBO_ITEM;
+  }
+
   void ComboItem::setRange(const std::vector<String>& range)
   {
     if (range.empty())
@@ -77,6 +82,11 @@ namespace pixeler
 
     _curr_pos = pos;
     _label->setText(_range[_curr_pos]);
+  }
+
+  uint16_t ComboItem::getPos() const
+  {
+    return _curr_pos;
   }
 
   void ComboItem::scrollUp()

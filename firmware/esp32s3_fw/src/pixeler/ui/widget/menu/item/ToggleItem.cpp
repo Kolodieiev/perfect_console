@@ -3,7 +3,7 @@
 
 namespace pixeler
 {
-  ToggleItem::ToggleItem(uint16_t widget_ID) : MenuItem(widget_ID, TYPE_ID_TOGGLE_ITEM)
+  ToggleItem::ToggleItem(uint16_t widget_ID) : MenuItem(widget_ID, TYPE_TOGGLE_ITEM)
   {
     setToggle(new ToggleSwitch(1));
   }
@@ -94,6 +94,11 @@ namespace pixeler
     }
   }
 
+  constexpr IWidget::TypeID ToggleItem::getTypeID()
+  {
+    return TypeID::TYPE_TOGGLE_ITEM;
+  }
+
   void ToggleItem::setToggle(ToggleSwitch* togg_switch_ptr)
   {
     if (!togg_switch_ptr)
@@ -112,6 +117,11 @@ namespace pixeler
 
     _toggle->setParent(this);
     _toggle->setChangingBorder(false);
+  }
+
+  ToggleSwitch* ToggleItem::getToggle() const
+  {
+    return _toggle;
   }
 
   void ToggleItem::setOn(bool state)

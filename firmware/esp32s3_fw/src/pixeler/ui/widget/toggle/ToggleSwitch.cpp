@@ -9,16 +9,52 @@ namespace pixeler
     _is_changed = true;
   }
 
+  IWidget::Orientation ToggleSwitch::getOrientation() const
+  {
+    return _orientation;
+  }
+
   void ToggleSwitch::setOffColor(uint16_t color)
   {
     _off_color = color;
     _is_changed = true;
   }
 
+  uint16_t ToggleSwitch::getOffColor() const
+  {
+    return _off_color;
+  }
+
   void ToggleSwitch::setLeverColor(uint16_t color)
   {
     _lever_color = color;
     _is_changed = true;
+  }
+
+  uint16_t ToggleSwitch::getLeverColor() const
+  {
+    return _lever_color;
+  }
+
+  void ToggleSwitch::setOnColor(uint16_t color)
+  {
+    _on_color = color;
+    _is_changed = true;
+  }
+
+  uint16_t ToggleSwitch::getOnColor() const
+  {
+    return _on_color;
+  }
+
+  bool ToggleSwitch::isOn() const
+  {
+    return _is_on;
+  }
+
+  constexpr IWidget::TypeID ToggleSwitch::getTypeID()
+  {
+    return TypeID::TYPE_TOGGLE_SWITCH;
   }
 
   void ToggleSwitch::setOn(bool state)

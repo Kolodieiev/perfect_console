@@ -1,3 +1,12 @@
+/**
+ * @file ToggleItem.h
+ * @brief Віджет елемента меню з ToggleSwitch
+ * @details Дозволяє перемикати булеве значення (увімкнено/вимкнено)
+ * безпосередньо в елементі меню через вбудований ToggleSwitch.
+ *
+ * Успадкований від MenuItem.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "../../toggle/ToggleSwitch.h"
@@ -33,10 +42,7 @@ namespace pixeler
      *
      * @return constexpr TypeID
      */
-    static constexpr TypeID getTypeID()
-    {
-      return TypeID::TYPE_ID_TOGGLE_ITEM;
-    }
+    static constexpr TypeID getTypeID();
 
     /**
      * @brief Встановлює вказівник на віджет ToggleSwitch, що буде відображатися у віджеті елемента списку.
@@ -52,10 +58,7 @@ namespace pixeler
      *
      * @return ToggleSwitch* - Вказівник на віджет.
      */
-    ToggleSwitch* getToggle() const
-    {
-      return _toggle;
-    }
+    ToggleSwitch* getToggle() const;
 
     /**
      * @brief Встановлює стан ToggleSwitch.
@@ -77,9 +80,6 @@ namespace pixeler
      * або вказівник на ToggleSwitch не було встановлено..
      */
     bool isOn() const;
-
-  private:
-    using IWidget::setVisibility;
 
   private:
     ToggleSwitch* _toggle{nullptr};

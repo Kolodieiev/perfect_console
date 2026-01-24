@@ -1,3 +1,10 @@
+/**
+ * @file ToggleSwitch.h
+ * @brief Віджет для відображення перемикача стану
+ * @details Дозволяє перемикати булеве значення між станами 
+ * увімкнено/вимкнено з візуальною індикацією поточного стану.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "../IWidget.h"
@@ -7,7 +14,7 @@ namespace pixeler
   class ToggleSwitch final : public IWidget
   {
   public:
-    explicit ToggleSwitch(uint16_t widget_ID) : IWidget(widget_ID, TYPE_ID_TOGGLE_SWITCH) {}
+    explicit ToggleSwitch(uint16_t widget_ID) : IWidget(widget_ID, TYPE_TOGGLE_SWITCH) {}
     virtual ~ToggleSwitch() {};
 
     /**
@@ -31,10 +38,7 @@ namespace pixeler
      *
      * @return constexpr TypeID
      */
-    static constexpr TypeID getTypeID()
-    {
-      return TypeID::TYPE_ID_TOGGLE_SWITCH;
-    }
+    static constexpr TypeID getTypeID();
 
     /**
      * @brief  Повертає поточний стан перемикача.
@@ -42,10 +46,7 @@ namespace pixeler
      * @return true - Якщо перемикач знаходиться в положенні "Увімкнутий".
      * @return false - Якщо перемикач знаходиться в положонні "Вимкнутий".
      */
-    bool isOn() const
-    {
-      return _is_on;
-    }
+    bool isOn() const;
 
     /**
      * @brief Встановлює стан перемикача.
@@ -68,35 +69,25 @@ namespace pixeler
     void setLeverColor(uint16_t color);
 
     /**
-     * @brief Повертає значення кольору важелю.
+     * @brief Повертає значення кольору важеля.
      *
      * @return uint16_t
      */
-    uint16_t getLeverColor() const
-    {
-      return _lever_color;
-    }
+    uint16_t getLeverColor() const;
 
     /**
      * @brief Встановлює колір фону перемикача у стані "Увімкнений".
      *
      * @param color
      */
-    void setOnColor(uint16_t color)
-    {
-      _on_color = color;
-      _is_changed = true;
-    }
+    void setOnColor(uint16_t color);
 
     /**
      * @brief Повертає значення кольору фону перемикача у стані "Увімкнений".
      *
      * @return uint16_t
      */
-    uint16_t getOnColor() const
-    {
-      return _on_color;
-    }
+    uint16_t getOnColor() const;
 
     /**
      * @brief Встановлює колір фону перемикача у стані "Ввимкнений".
@@ -110,10 +101,7 @@ namespace pixeler
      *
      * @return uint16_t
      */
-    uint16_t getOffColor() const
-    {
-      return _off_color;
-    }
+    uint16_t getOffColor() const;
 
     /**
      * @brief Встановлює орієнтацію відображення перемикача.
@@ -127,10 +115,7 @@ namespace pixeler
      *
      * @return Orientation
      */
-    Orientation getOrientation() const
-    {
-      return _orientation;
-    }
+    Orientation getOrientation() const;
 
   private:
     using IWidget::getBackColor;
@@ -138,7 +123,7 @@ namespace pixeler
     using IWidget::setBackColor;
     using IWidget::setTransparency;
 
-    uint16_t _lever_color{0xFFFF};
+    uint16_t _lever_color{COLOR_WHITE};
     uint16_t _on_color{COLOR_GREEN};
     uint16_t _off_color{COLOR_RED};
     Orientation _orientation{HORIZONTAL};
