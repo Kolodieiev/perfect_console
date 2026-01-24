@@ -42,7 +42,10 @@ namespace pixeler
      *
      * @return constexpr TypeID
      */
-    static constexpr TypeID getTypeID();
+    static constexpr TypeID getTypeID()
+    {
+      return TypeID::TYPE_TOGGLE_ITEM;
+    }
 
     /**
      * @brief Встановлює вказівник на віджет ToggleSwitch, що буде відображатися у віджеті елемента списку.

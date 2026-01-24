@@ -43,7 +43,10 @@ namespace pixeler
      *
      * @return constexpr TypeID
      */
-    static constexpr TypeID getTypeID();
+    static constexpr TypeID getTypeID()
+    {
+      return TypeID::TYPE_SPIN_ITEM;
+    }
 
     /**
      * @brief Встановлює вказівник на віджет SpinBox, що буде відображатися у віджеті елемента списку.

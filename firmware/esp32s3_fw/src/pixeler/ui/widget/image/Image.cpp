@@ -49,11 +49,6 @@ namespace pixeler
     }
   }
 
-  constexpr Image::TypeID Image::getTypeID()
-  {
-    return TypeID::TYPE_IMAGE;
-  }
-
   void Image::setSrc(const uint16_t* image_ptr)
   {
     _is_changed = true;

@@ -71,9 +71,4 @@ namespace pixeler
       esp_restart();
     }
   }
-
-  constexpr IWidget::TypeID EmptyLayout::getTypeID()
-  {
-    return TypeID::TYPE_EMPTY_LAYOUT;
-  }
 }  // namespace pixeler

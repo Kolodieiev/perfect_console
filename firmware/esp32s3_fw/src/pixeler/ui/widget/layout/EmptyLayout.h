@@ -37,6 +37,9 @@ namespace pixeler
      *
      * @return constexpr TypeID
      */
-    static constexpr TypeID getTypeID();
+    static constexpr TypeID getTypeID()
+    {
+      return TypeID::TYPE_EMPTY_LAYOUT;
+    }
   };
 }  // namespace pixeler

@@ -47,11 +47,6 @@ namespace pixeler
     }
   }
 
-  constexpr IWidget::TypeID KeyboardRow::getTypeID()
-  {
-    return TypeID::TYPE_KB_ROW;
-  }
-
   uint16_t KeyboardRow::getCurrBtnID() const
   {
     uint16_t id = getFocusBtn()->getID();

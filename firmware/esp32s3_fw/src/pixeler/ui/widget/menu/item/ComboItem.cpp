@@ -54,11 +54,6 @@ namespace pixeler
     }
   }
 
-  constexpr IWidget::TypeID ComboItem::getTypeID()
-  {
-    return TypeID::TYPE_COMBO_ITEM;
-  }
-
   void ComboItem::setRange(const std::vector<String>& range)
   {
     if (range.empty())

@@ -94,11 +94,6 @@ namespace pixeler
     }
   }
 
-  constexpr IWidget::TypeID ToggleItem::getTypeID()
-  {
-    return TypeID::TYPE_TOGGLE_ITEM;
-  }
-
   void ToggleItem::setToggle(ToggleSwitch* togg_switch_ptr)
   {
     if (!togg_switch_ptr)

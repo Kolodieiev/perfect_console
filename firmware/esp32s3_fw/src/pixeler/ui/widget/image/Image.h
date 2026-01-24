@@ -41,7 +41,10 @@ namespace pixeler
      *
      * @return constexpr TypeID
      */
-    static constexpr TypeID getTypeID();
+    static constexpr TypeID getTypeID()
+    {
+      return TypeID::TYPE_IMAGE;
+    }
 
     /**
      * @brief Встановлює прапор, який змінює поведінку виводу зображення на дисплей.

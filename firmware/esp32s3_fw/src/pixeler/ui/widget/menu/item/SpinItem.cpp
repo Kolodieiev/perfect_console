@@ -95,11 +95,6 @@ namespace pixeler
     }
   }
 
-  constexpr IWidget::TypeID SpinItem::getTypeID()
-  {
-    return TypeID::TYPE_SPIN_ITEM;
-  }
-
   void SpinItem::setSpin(SpinBox* spinbox_ptr)
   {
     if (!spinbox_ptr)
