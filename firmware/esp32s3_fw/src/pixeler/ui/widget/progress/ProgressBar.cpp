@@ -3,7 +3,7 @@
 
 namespace pixeler
 {
-  ProgressBar::ProgressBar(uint16_t widget_ID) : IWidget(widget_ID, TYPE_ID_PROGRESSBAR) {}
+  ProgressBar::ProgressBar(uint16_t widget_ID) : IWidget(widget_ID, TYPE_PROGRESSBAR) {}
 
   ProgressBar::~ProgressBar() {}
 
@@ -26,6 +26,18 @@ namespace pixeler
     else
       _progress = progress;
 
+    _is_changed = true;
+  }
+
+  void ProgressBar::setProgressColor(uint16_t color)
+  {
+    _progress_color = color;
+    _is_changed = true;
+  }
+
+  void ProgressBar::setOrientation(Orientation orientation)
+  {
+    _orientation = orientation;
     _is_changed = true;
   }
 
@@ -208,6 +220,11 @@ namespace pixeler
     _prev_progress = _progress;
   }
 
+  IWidget::Orientation ProgressBar::getOrientation() const
+  {
+    return _orientation;
+  }
+
   void ProgressBar::reset()
   {
     uint16_t x_offset{0};
@@ -237,5 +254,15 @@ namespace pixeler
                         _height - 4,
                         _back_color);
     }
+  }
+
+  uint16_t ProgressBar::getProgress() const
+  {
+    return _progress;
+  }
+
+  uint16_t ProgressBar::getMax() const
+  {
+    return _max;
   }
 }  // namespace pixeler

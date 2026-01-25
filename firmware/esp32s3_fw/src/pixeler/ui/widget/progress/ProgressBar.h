@@ -1,3 +1,11 @@
+/**
+ * @file ProgressBar.h
+ * @brief Віджет для відображення прогресу
+ * @details Підтримує налаштування кольорів.
+ * Підтримує встановлення максимального значення прогресу, відносно якого розраховується заповнення.
+ * Підтримує зміну орієнтації.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "../IWidget.h"
@@ -33,7 +41,7 @@ namespace pixeler
      */
     static constexpr TypeID getTypeID()
     {
-      return TypeID::TYPE_ID_PROGRESSBAR;
+      return TypeID::TYPE_PROGRESSBAR;
     }
 
     /**
@@ -55,11 +63,7 @@ namespace pixeler
      *
      * @param color
      */
-    void setProgressColor(uint16_t color)
-    {
-      _progress_color = color;
-      _is_changed = true;
-    }
+    void setProgressColor(uint16_t color);
 
     /**
      * @brief Встановлює орієнтацію віджета.
@@ -67,21 +71,14 @@ namespace pixeler
      *
      * @param orientation Може мати значення: VERTICAL / HORIZONTAL.
      */
-    void setOrientation(Orientation orientation)
-    {
-      _orientation = orientation;
-      _is_changed = true;
-    }
+    void setOrientation(Orientation orientation);
 
     /**
      * @brief Повертає значення орієнтації віджета.
      *
      * @return Orientation
      */
-    Orientation getOrientation() const
-    {
-      return _orientation;
-    }
+    Orientation getOrientation() const;
 
     /**
      * @brief Скидає значення прогресу до 1.
@@ -94,20 +91,14 @@ namespace pixeler
      *
      * @return uint16_t
      */
-    uint16_t getProgress() const
-    {
-      return _progress;
-    }
+    uint16_t getProgress() const;
 
     /**
      * @brief Повертає максимально можливе значення прогресу.
      *
      * @return uint16_t
      */
-    uint16_t getMax() const
-    {
-      return _max;
-    }
+    uint16_t getMax() const;
 
   private:
     using IWidget::isTransparent;
@@ -116,7 +107,7 @@ namespace pixeler
   private:
     uint16_t _progress{1};
     uint16_t _max{1};
-    uint16_t _progress_color{0xFFFF};
+    uint16_t _progress_color{COLOR_WHITE};
     uint16_t _prev_progress{1};
     //
     Orientation _orientation{HORIZONTAL};
