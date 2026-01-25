@@ -20,7 +20,7 @@ int lua_image_new(lua_State* L)
 
 int lua_image_clone(lua_State* L)
 {
-  Image* image = *static_cast<Image**>(lua_touserdata(L, 1));
+  Image* image = *static_cast<Image**>(luaL_checkudata(L, 1, STR_TYPE_NAME_IMAGE));
   uint16_t id = luaL_checkinteger(L, 2);
   Image* clone = image->clone(id);
 
@@ -35,7 +35,7 @@ int lua_image_clone(lua_State* L)
 
 int lua_image_set_src(lua_State* L)
 {
-  Image* image = *static_cast<Image**>(lua_touserdata(L, 1));
+  Image* image = *static_cast<Image**>(luaL_checkudata(L, 1, STR_TYPE_NAME_IMAGE));
   uint16_t res_id = luaL_checkinteger(L, 2);
 
   if (res_id == 0)

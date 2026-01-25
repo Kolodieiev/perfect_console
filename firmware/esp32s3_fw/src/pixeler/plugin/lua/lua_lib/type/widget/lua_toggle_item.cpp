@@ -21,7 +21,7 @@ int lua_toggle_item_new(lua_State* L)
 
 int lua_toggle_item_clone(lua_State* L)
 {
-  ToggleItem* toggle_item = *static_cast<ToggleItem**>(lua_touserdata(L, 1));
+  ToggleItem* toggle_item = *static_cast<ToggleItem**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_ITEM));
   uint16_t id = luaL_checkinteger(L, 2);
   ToggleItem* clone = toggle_item->clone(id);
 
@@ -35,15 +35,15 @@ int lua_toggle_item_clone(lua_State* L)
 
 int lua_toggle_item_set_toggle(lua_State* L)
 {
-  ToggleItem* toggle_item = *static_cast<ToggleItem**>(lua_touserdata(L, 1));
-  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(lua_touserdata(L, 2));
+  ToggleItem* toggle_item = *static_cast<ToggleItem**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_ITEM));
+  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(luaL_checkudata(L, 2, STR_TYPE_NAME_TOGGLE_SWITCH));
   toggle_item->setToggle(toggle_switch);
   return 0;
 }
 
 int lua_toggle_item_get_toggle(lua_State* L)
 {
-  ToggleItem* toggle_item = *static_cast<ToggleItem**>(lua_touserdata(L, 1));
+  ToggleItem* toggle_item = *static_cast<ToggleItem**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_ITEM));
   ToggleSwitch** lua_toggle_switch = static_cast<ToggleSwitch**>(lua_newuserdata(L, sizeof(ToggleSwitch*)));
   *lua_toggle_switch = toggle_item->getToggle();
 
@@ -54,7 +54,7 @@ int lua_toggle_item_get_toggle(lua_State* L)
 
 int lua_toggle_item_set_on(lua_State* L)
 {
-  ToggleItem* toggle_item = *static_cast<ToggleItem**>(lua_touserdata(L, 1));
+  ToggleItem* toggle_item = *static_cast<ToggleItem**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_ITEM));
   bool state = lua_toboolean(L, 2);
   toggle_item->setOn(state);
   return 0;
@@ -62,14 +62,14 @@ int lua_toggle_item_set_on(lua_State* L)
 
 int lua_toggle_item_toggle(lua_State* L)
 {
-  ToggleItem* toggle_item = *static_cast<ToggleItem**>(lua_touserdata(L, 1));
+  ToggleItem* toggle_item = *static_cast<ToggleItem**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_ITEM));
   toggle_item->toggle();
   return 0;
 }
 
 int lua_toggle_item_is_on(lua_State* L)
 {
-  ToggleItem* toggle_item = *static_cast<ToggleItem**>(lua_touserdata(L, 1));
+  ToggleItem* toggle_item = *static_cast<ToggleItem**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_ITEM));
   lua_pushboolean(L, toggle_item->isOn());
   return 1;
 }

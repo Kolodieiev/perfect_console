@@ -19,7 +19,7 @@ int lua_el_new(lua_State* L)
 
 int lua_el_clone(lua_State* L)
 {
-  EmptyLayout* el = *static_cast<EmptyLayout**>(lua_touserdata(L, 1));
+  EmptyLayout* el = *static_cast<EmptyLayout**>(luaL_checkudata(L, 1, STR_TYPE_NAME_EMPTY_LAYOUT));
   uint16_t id = luaL_checkinteger(L, 2);
   EmptyLayout* clone = el->clone(id);
 

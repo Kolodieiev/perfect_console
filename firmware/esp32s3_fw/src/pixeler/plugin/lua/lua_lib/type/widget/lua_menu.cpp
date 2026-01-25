@@ -2,6 +2,7 @@
 #include "lua_menu.h"
 
 #include "./lua_iwidget_cont.h"
+#include "./lua_menu_item.h"
 #include "pixeler/plugin/lua/res/lua_strs.h"
 #include "pixeler/ui/widget/menu/FixedMenu.h"
 
@@ -19,7 +20,7 @@ int lua_menu_new(lua_State* L)
 
 int lua_menu_clone(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   uint16_t id = luaL_checkinteger(L, 2);
   FixedMenu* clone = menu->clone(id);
 
@@ -34,28 +35,28 @@ int lua_menu_clone(lua_State* L)
 
 int lua_menu_focus_up(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   lua_pushboolean(L, menu->focusUp());
   return 1;
 }
 
 int lua_menu_focus_down(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   lua_pushboolean(L, menu->focusDown());
   return 1;
 }
 
 int lua_menu_delete_widgets(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   menu->delWidgets();
   return 0;
 }
 
 int lua_menu_delete_widget_by_id(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   uint16_t id = luaL_checkinteger(L, 2);
   lua_pushboolean(L, menu->delWidgetByID(id));
   return 1;
@@ -63,7 +64,7 @@ int lua_menu_delete_widget_by_id(lua_State* L)
 
 int lua_menu_set_item_h(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   uint16_t h = luaL_checknumber(L, 2);
   menu->setItemHeight(h);
   return 0;
@@ -71,14 +72,14 @@ int lua_menu_set_item_h(lua_State* L)
 
 int lua_menu_get_item_h(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   lua_pushinteger(L, menu->getItemHeight());
   return 1;
 }
 
 int lua_menu_set_item_w(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   uint16_t w = luaL_checknumber(L, 2);
   menu->setItemHeight(w);
   return 0;
@@ -86,14 +87,14 @@ int lua_menu_set_item_w(lua_State* L)
 
 int lua_menu_get_item_w(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   lua_pushinteger(L, menu->getItemWidth());
   return 1;
 }
 
 int lua_menu_set_orientation(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   uint16_t raw_value = luaL_checkinteger(L, 2);
   if (raw_value > IWidget::VERTICAL)
     return luaL_error(L, "Invalid orientation value: %d", raw_value);
@@ -105,28 +106,28 @@ int lua_menu_set_orientation(lua_State* L)
 
 int lua_menu_get_curr_item_id(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   lua_pushinteger(L, menu->getCurrItemID());
   return 1;
 }
 
 int lua_menu_get_curr_focus_pos(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   lua_pushinteger(L, menu->getCurrFocusPos());
   return 1;
 }
 
 int lua_menu_get_curr_item_text(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   lua_pushstring(L, menu->getCurrItemText().c_str());
   return 1;
 }
 
 int lua_menu_set_item_spacing(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   uint16_t s = luaL_checknumber(L, 2);
   menu->setItemsSpacing(s);
   return 0;
@@ -134,15 +135,15 @@ int lua_menu_set_item_spacing(lua_State* L)
 
 int lua_menu_add_item(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
-  MenuItem* item = *static_cast<MenuItem**>(lua_touserdata(L, 2));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
+  MenuItem* item = *static_cast<MenuItem**>(luaL_checkudata(L, 2, STR_TYPE_NAME_MENU_ITEM));
   menu->addItem(item);
   return 0;
 }
 
 int lua_menu_set_loop_state(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   bool state = lua_toboolean(L, 2);
   menu->setLoopState(state);
   return 0;
@@ -150,7 +151,7 @@ int lua_menu_set_loop_state(lua_State* L)
 
 int lua_menu_set_curr_focus_pos(lua_State* L)
 {
-  FixedMenu* menu = *static_cast<FixedMenu**>(lua_touserdata(L, 1));
+  FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
   uint16_t pos = luaL_checkinteger(L, 2);
   menu->setCurrFocusPos(pos);
   return 0;

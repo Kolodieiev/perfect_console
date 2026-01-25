@@ -19,7 +19,7 @@ int lua_toggle_switch_new(lua_State* L)
 
 int lua_toggle_switch_clone(lua_State* L)
 {
-  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(lua_touserdata(L, 1));
+  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_SWITCH));
   uint16_t id = luaL_checkinteger(L, 2);
   ToggleSwitch* clone = toggle_switch->clone(id);
 
@@ -33,14 +33,14 @@ int lua_toggle_switch_clone(lua_State* L)
 
 int lua_toggle_switch_is_on(lua_State* L)
 {
-  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(lua_touserdata(L, 1));
+  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_SWITCH));
   lua_pushboolean(L, toggle_switch->isOn());
   return 1;
 }
 
 int lua_toggle_set_on(lua_State* L)
 {
-  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(lua_touserdata(L, 1));
+  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_SWITCH));
   bool state = lua_toboolean(L, 2);
   toggle_switch->setOn(state);
   return 0;
@@ -48,14 +48,14 @@ int lua_toggle_set_on(lua_State* L)
 
 int lua_toggle_toggle(lua_State* L)
 {
-  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(lua_touserdata(L, 1));
+  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_SWITCH));
   toggle_switch->toggle();
   return 0;
 }
 
 int lua_toggle_switch_set_lever_color(lua_State* L)
 {
-  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(lua_touserdata(L, 1));
+  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_SWITCH));
   uint16_t color = luaL_checkinteger(L, 2);
   toggle_switch->setLeverColor(color);
   return 0;
@@ -63,7 +63,7 @@ int lua_toggle_switch_set_lever_color(lua_State* L)
 
 int lua_toggle_switch_set_on_color(lua_State* L)
 {
-  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(lua_touserdata(L, 1));
+  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_SWITCH));
   uint16_t color = luaL_checkinteger(L, 2);
   toggle_switch->setOnColor(color);
   return 0;
@@ -71,7 +71,7 @@ int lua_toggle_switch_set_on_color(lua_State* L)
 
 int lua_toggle_switch_set_off_color(lua_State* L)
 {
-  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(lua_touserdata(L, 1));
+  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_SWITCH));
   uint16_t color = luaL_checkinteger(L, 2);
   toggle_switch->setOffColor(color);
   return 0;
@@ -79,7 +79,7 @@ int lua_toggle_switch_set_off_color(lua_State* L)
 
 int lua_toggle_switch_set_orientation(lua_State* L)
 {
-  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(lua_touserdata(L, 1));
+  ToggleSwitch* toggle_switch = *static_cast<ToggleSwitch**>(luaL_checkudata(L, 1, STR_TYPE_NAME_TOGGLE_SWITCH));
   uint16_t raw_value = luaL_checkinteger(L, 2);
   if (raw_value > IWidget::VERTICAL)
     return luaL_error(L, "Invalid orientation value: %d", raw_value);
