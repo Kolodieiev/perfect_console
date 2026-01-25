@@ -1,3 +1,12 @@
+/**
+ * @file Label.h
+ * @brief Віджет для відображення тексту
+ * @details Підтримує налаштування кольорів, прозорості фону, шрифту, розмірів.
+ * Підтримує позиціонування тексту відносно віджета.
+ * Підтримує два типи прокручування тексту, якщо текст не вміщується по ширині.
+ * Підтримує автоматичне перенесення рядків.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "../IWidget.h"
@@ -8,7 +17,7 @@ namespace pixeler
   class Label : public IWidget
   {
   public:
-    explicit Label(uint16_t widget_ID, IWidget::TypeID type_ID = TYPE_ID_LABEL);
+    explicit Label(uint16_t widget_ID, TypeID type_ID = TYPE_LABEL);
     virtual ~Label() {};
 
     /**
@@ -34,7 +43,7 @@ namespace pixeler
      */
     static constexpr TypeID getTypeID()
     {
-      return TypeID::TYPE_ID_LABEL;
+      return TypeID::TYPE_LABEL;
     }
 
     /**
@@ -124,10 +133,7 @@ namespace pixeler
      *
      * @return uint16_t
      */
-    uint16_t getLen() const
-    {
-      return _text_len;
-    }
+    uint16_t getLen() const;
 
     /**
      * @brief Встановлює прапор, який керує механізмом прокручування тексту,
@@ -143,10 +149,7 @@ namespace pixeler
      * @return true - Текст буде прокручуватися, якщо ширина віджета недостатньо, щоб вмістити його повністю.
      * @return false - Текст не буде прокручуватися.
      */
-    bool hasAutoscroll() const
-    {
-      return _temp_has_autoscroll;
-    }
+    bool hasAutoscroll() const;
 
     /**
      * @brief Встановлює прапор, який керує механізмом прокручування тексту коли віджет потрапляє у фокус,
@@ -163,10 +166,7 @@ namespace pixeler
      * @return true - Текст буде прокручуватися при потраплянні віджета у фокус.
      * @return false - Інакше.
      */
-    bool hasAutoscrollInFocus() const
-    {
-      return _temp_has_autoscroll_in_focus;
-    }
+    bool hasAutoscrollInFocus() const;
 
     /**
      * @brief Повертає висоту шрифта цього віджета в пікселях.
@@ -189,10 +189,7 @@ namespace pixeler
      *
      * @return Image*
      */
-    Image* getBackImg() const
-    {
-      return _back_img;
-    }
+    Image* getBackImg() const;
 
     /**
      * @brief Встановлює стан прапора, який керує механізмом відображення тексту в декілька рядків.
@@ -209,10 +206,7 @@ namespace pixeler
      * @return true - Текст може відображатися в декілька рядків, якщо не вміщується в один.
      * @return false - Текст відображається тільки в один рядок.
      */
-    bool isMultiline() const
-    {
-      return _is_multiline;
-    }
+    bool isMultiline() const;
 
     /**
      * @brief Встановлює затримку між зміщеннями тексту у віджеті.
@@ -226,15 +220,12 @@ namespace pixeler
      *
      * @return uint16_t - Час затримки у мілісекундах.
      */
-    uint16_t getAutoscrollDelay() const
-    {
-      return _autoscroll_update_delay;
-    }
+    uint16_t getAutoscrollDelay() const;
 
     /**
      * @brief Встановлює тип прокручування тексту.
      *
-     * @param state Якщо передано true - текст у віджеті буде прокручуватися до останнього символу. 
+     * @param state Якщо передано true - текст у віджеті буде прокручуватися до останнього символу.
      * Інакше на 3/4 від ширини віджета.
      */
     void setFullAutoscroll(bool state);
@@ -251,13 +242,13 @@ namespace pixeler
     void updateHeight();
 
   protected:
-    String _text{""};
+    String _text;
 
     unsigned long _last_autoscroll_ts{0};
     Image* _back_img{nullptr};
     const uint8_t* _font_ptr{font_unifont};
 
-    uint16_t _text_color{0xFFFF};
+    uint16_t _text_color{COLOR_WHITE};
     uint16_t _text_len{0};
     uint16_t _autoscroll_update_delay{200};
     uint16_t _temp_width{0};

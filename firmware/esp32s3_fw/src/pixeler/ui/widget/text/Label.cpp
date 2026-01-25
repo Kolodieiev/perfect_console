@@ -6,7 +6,7 @@
 
 namespace pixeler
 {
-  Label::Label(uint16_t widget_ID, IWidget::TypeID type_ID) : IWidget(widget_ID, type_ID)
+  Label::Label(uint16_t widget_ID, TypeID type_ID) : IWidget(widget_ID, type_ID)
   {
     updateHeight();
   }
@@ -127,6 +127,11 @@ namespace pixeler
     _is_changed = true;
   }
 
+  bool Label::hasAutoscrollInFocus() const
+  {
+    return _temp_has_autoscroll_in_focus;
+  }
+
   uint16_t Label::getCharHgt() const
   {
     return _char_hgt;
@@ -136,6 +141,11 @@ namespace pixeler
   {
     _back_img = back_img;
     _is_changed = true;
+  }
+
+  Image* Label::getBackImg() const
+  {
+    return _back_img;
   }
 
   void Label::setMultiline(bool state)
@@ -148,10 +158,20 @@ namespace pixeler
     _is_changed = true;
   }
 
+  bool Label::isMultiline() const
+  {
+    return _is_multiline;
+  }
+
   void Label::setAutoscrollDelay(uint16_t delay)
   {
     _autoscroll_update_delay = delay;
     _is_changed = true;
+  }
+
+  uint16_t Label::getAutoscrollDelay() const
+  {
+    return _autoscroll_update_delay;
   }
 
   void Label::setAutoscroll(bool state)
@@ -163,6 +183,11 @@ namespace pixeler
       _first_draw_char_pos = 0;
 
     _is_changed = true;
+  }
+
+  bool Label::hasAutoscroll() const
+  {
+    return _temp_has_autoscroll;
   }
 
   void Label::setAutoscrollInFocus(bool state)
@@ -208,6 +233,11 @@ namespace pixeler
   {
     _h_padding = padding;
     _is_changed = true;
+  }
+
+  uint16_t Label::getLen() const
+  {
+    return _text_len;
   }
 
   void Label::setFullAutoscroll(bool state)
