@@ -1,3 +1,10 @@
+/**
+ * @file Notification.h
+ * @brief Віджет для відображення багаторядкового повідомлення
+ * @details Підтримує налаштування кольорів та тексту кнопок вибору, якщо потрібно.
+ * Підтримує автоматичне перенесення тексту на новий рядок.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "../IWidget.h"
@@ -25,12 +32,7 @@ namespace pixeler
     /**
      * @brief STUB! Не викликай!
      */
-    Notification* clone(uint16_t id) const override
-    {
-      log_e("Клонування цього віджета неможливе");
-      esp_restart();
-      return nullptr;
-    }
+    Notification* clone(uint16_t id) const override;
 
     /**
      * @brief Повертає ідентифікатор типу.
@@ -40,7 +42,7 @@ namespace pixeler
      */
     static constexpr TypeID getTypeID()
     {
-      return TypeID::TYPE_ID_NOTIFICATION;
+      return TypeID::TYPE_NOTIFICATION;
     }
 
     /**
@@ -161,10 +163,7 @@ namespace pixeler
      *
      * @param margin
      */
-    void setHMargin(uint16_t margin)
-    {
-      _h_margin = margin;
-    }
+    void setHMargin(uint16_t margin);
 
   private:
     using IWidget::getFocusBackColor;

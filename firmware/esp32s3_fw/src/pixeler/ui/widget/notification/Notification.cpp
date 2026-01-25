@@ -3,7 +3,7 @@
 
 namespace pixeler
 {
-  Notification::Notification(uint16_t widget_ID) : IWidget(widget_ID, TYPE_ID_NOTIFICATION)
+  Notification::Notification(uint16_t widget_ID) : IWidget(widget_ID, TYPE_NOTIFICATION)
   {
     setBorderColor(COLOR_ORANGE);
     setBorder(true);
@@ -67,6 +67,13 @@ namespace pixeler
     _right_lbl->forcedDraw();
   }
 
+  Notification* Notification::clone(uint16_t id) const
+  {
+    log_e("Клонування цього віджета неможливе");
+    esp_restart();
+    return nullptr;
+  }
+
   void Notification::setInfoFont(const uint8_t* font_ptr)
   {
     _title_lbl->setFont(font_ptr);
@@ -119,6 +126,11 @@ namespace pixeler
   void Notification::setMsgTextSize(uint16_t size)
   {
     _msg_lbl->setTextSize(size);
+  }
+
+  void Notification::setHMargin(uint16_t margin)
+  {
+    _h_margin = margin;
   }
 
   void Notification::setLeftText(const String& str)
