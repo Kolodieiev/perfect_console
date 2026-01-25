@@ -3,7 +3,7 @@
 
 namespace pixeler
 {
-  FixedMenu::FixedMenu(uint16_t widget_ID) : Menu(widget_ID, TYPE_ID_FIX_MENU) {}
+  FixedMenu::FixedMenu(uint16_t widget_ID) : Menu(widget_ID, TYPE_FIX_MENU) {}
 
   bool FixedMenu::focusUp()
   {
@@ -83,6 +83,11 @@ namespace pixeler
       drawItems(_first_item_index, cycles_count);
 
     return true;
+  }
+
+  void FixedMenu::setLoopState(bool state)
+  {
+    _is_loop_enbl = state;
   }
 
   void FixedMenu::setCurrFocusPos(uint16_t focus_pos)

@@ -1,6 +1,15 @@
+/**
+ * @file FixedMenu.h
+ * @brief Віджет меню, що дозволяє відобразити фіксований, визначений раніше список елементів
+ * @details Керує переміщенням фокусу по елементах меню.
+ * Підтримує зациклювання меню.
+ *
+ * Успадкований від IMenu.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
-#include "Menu.h"
+#include "IMenu.h"
 
 namespace pixeler
 {
@@ -26,7 +35,7 @@ namespace pixeler
      */
     static constexpr TypeID getTypeID()
     {
-      return TypeID::TYPE_ID_FIX_MENU;
+      return TypeID::TYPE_FIX_MENU;
     }
 
     /**
@@ -51,10 +60,7 @@ namespace pixeler
      * @param state Якщо true - меню буде зациклене.
      * Якщо false - фокус не буде переходити на протилежний край списку при досягненні його кінця.
      */
-    void setLoopState(bool state)
-    {
-      _is_loop_enbl = state;
-    }
+    void setLoopState(bool state);
 
     /**
      * @brief Встановлює фокус в списку на віджеті за його порядковим номером у контейнері.

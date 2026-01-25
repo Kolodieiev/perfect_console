@@ -1,16 +1,27 @@
+/**
+ * @file DynamicMenu.h
+ * @brief Віджет меню, що дозволяє димнамічно завантажувати та відображати елементи меню
+ * @details Керує переміщенням фокусу по елементах меню.
+ * Під час досягення одного з кінців списку, намагається завантажити наступну частину
+ * меню через зворотній виклик відповідної функції-завантажувача.
+ * Рекомендований для відображення довгих меню, які займають великий об'єм оперативної пам'яті.
+ *
+ * Успадкований від IMenu.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 
-#include "Menu.h"
+#include "IMenu.h"
 
 namespace pixeler
 {
-  typedef std::function<void(std::vector<MenuItem*>& items, uint8_t size, uint16_t cur_id, void* arg)> NextItemsLoadHandler_t;
-  typedef std::function<void(std::vector<MenuItem*>& items, uint8_t size, uint16_t cur_id, void* arg)> PrevItemsLoadHandler_t;
-
   class DynamicMenu final : public Menu
   {
   public:
+    typedef std::function<void(std::vector<MenuItem*>& items, uint8_t size, uint16_t cur_id, void* arg)> NextItemsLoadHandler_t;
+    typedef std::function<void(std::vector<MenuItem*>& items, uint8_t size, uint16_t cur_id, void* arg)> PrevItemsLoadHandler_t;
+
     explicit DynamicMenu(uint16_t widget_ID);
     virtual ~DynamicMenu() {}
 
@@ -30,7 +41,7 @@ namespace pixeler
      */
     static constexpr TypeID getTypeID()
     {
-      return TypeID::TYPE_ID_DYN_MENU;
+      return TypeID::TYPE_DYN_MENU;
     }
 
     /**
@@ -55,11 +66,7 @@ namespace pixeler
      * @param handler Обробник.
      * @param arg Аргумент, що буде передано в обробник.
      */
-    void setOnNextItemsLoadHandler(NextItemsLoadHandler_t handler, void* arg)
-    {
-      _next_items_load_handler = handler;
-      _next_items_load_arg = arg;
-    }
+    void setOnNextItemsLoadHandler(NextItemsLoadHandler_t handler, void* arg);
 
     /**
      * @brief Встановлює обробник, який буде викликано для завантаження попередньої частини віджетів для меню.
@@ -67,11 +74,7 @@ namespace pixeler
      * @param handler Обробник.
      * @param arg Аргумент, що буде передано в обробник.
      */
-    void setOnPrevItemsLoadHandler(PrevItemsLoadHandler_t handler, void* arg)
-    {
-      _prev_items_load_handler = handler;
-      _prev_items_load_arg = arg;
-    }
+    void setOnPrevItemsLoadHandler(PrevItemsLoadHandler_t handler, void* arg);
 
   private:
     NextItemsLoadHandler_t _next_items_load_handler{nullptr};

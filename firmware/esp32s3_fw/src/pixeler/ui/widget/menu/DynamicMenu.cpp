@@ -4,7 +4,7 @@
 
 namespace pixeler
 {
-  DynamicMenu::DynamicMenu(uint16_t widget_ID) : Menu(widget_ID, TYPE_ID_DYN_MENU) {}
+  DynamicMenu::DynamicMenu(uint16_t widget_ID) : Menu(widget_ID, TYPE_DYN_MENU) {}
 
   bool DynamicMenu::focusUp()
   {
@@ -110,6 +110,18 @@ namespace pixeler
     }
 
     return false;
+  }
+
+  void DynamicMenu::setOnNextItemsLoadHandler(NextItemsLoadHandler_t handler, void* arg)
+  {
+    _next_items_load_handler = handler;
+    _next_items_load_arg = arg;
+  }
+
+  void DynamicMenu::setOnPrevItemsLoadHandler(PrevItemsLoadHandler_t handler, void* arg)
+  {
+    _prev_items_load_handler = handler;
+    _prev_items_load_arg = arg;
   }
 
   DynamicMenu* DynamicMenu::clone(uint16_t id) const
