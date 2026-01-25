@@ -1,3 +1,12 @@
+/**
+ * @file TextBox.h
+ * @brief Віджет для відображення та редагування тексту
+ * @details Успадкований від Label з приховуванням частини його методів,
+ * та перевизначеним малюванням віджета.
+ * Підтримує два режима відображення тексту - поле для звичайного тексту та поле для вводу пароля.
+ * Підтримує додавання та видалення одного символу з кінця.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "../IWidget.h"
@@ -17,7 +26,7 @@ namespace pixeler
       TYPE_PASSWORD
     };
 
-    explicit TextBox(uint16_t widget_ID, IWidget::TypeID type_ID = TYPE_ID_TEXTBOX);
+    explicit TextBox(uint16_t widget_ID, TypeID type_ID = TYPE_TEXTBOX);
     virtual ~TextBox() {}
 
     /**
@@ -43,7 +52,7 @@ namespace pixeler
      */
     static constexpr TypeID getTypeID()
     {
-      return TypeID::TYPE_ID_TEXTBOX;
+      return TypeID::TYPE_TEXTBOX;
     }
 
     /**
@@ -53,20 +62,14 @@ namespace pixeler
      * TYPE_TEXT - текст відображається регулярними символами.
      * TYPE_PASSWORD - усі символи замінюються на *.
      */
-    void setType(FieldType type)
-    {
-      _type = type;
-    }
+    void setType(FieldType type);
 
     /**
      * @brief Повертає тип текстового поля.
      *
      * @return FieldType
      */
-    FieldType getType() const
-    {
-      return _type;
-    }
+    FieldType getType() const;
 
     /**
      * @brief Видаляє останній символ з рядка, що знаходиться в текстовому полі.
@@ -96,7 +99,7 @@ namespace pixeler
     using Label::updateWidthToFit;
 
     uint16_t getFitStr(String& ret_str) const;
-    FieldType _type = TYPE_TEXT;
+    FieldType _type{TYPE_TEXT};
   };
 
 }  // namespace pixeler

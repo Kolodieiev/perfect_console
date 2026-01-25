@@ -3,7 +3,7 @@
 
 namespace pixeler
 {
-  TextBox::TextBox(uint16_t widget_ID, IWidget::TypeID type_ID) : Label(widget_ID, type_ID)
+  TextBox::TextBox(uint16_t widget_ID, TypeID type_ID) : Label(widget_ID, type_ID)
   {
     _text_gravity = GRAVITY_CENTER;
     _back_color = COLOR_WHITE;
@@ -63,6 +63,16 @@ namespace pixeler
     }
   }
 
+  void TextBox::setType(FieldType type)
+  {
+    _type = type;
+  }
+
+  TextBox::FieldType TextBox::getType() const
+  {
+    return _type;
+  }
+
   bool TextBox::removeLastChar()
   {
     if (_text.isEmpty())
@@ -92,7 +102,7 @@ namespace pixeler
     {
       uint16_t pix_num = calcTextPixels(first_char_pos);
 
-      if (pix_num < _width - _h_padding * 2 - 2) // TODO
+      if (pix_num < _width - _h_padding * 2 - 2)  // TODO
       {
         ret_str = getSubStr(ch_str, first_char_pos, calcRealStrLen(ch_str) - 1);
         return pix_num;
