@@ -1,3 +1,13 @@
+/**
+ * @file SpinBox.h
+ * @brief Віджет для відображення числа в заданому діапазоні
+ * @details Дозволяє змінювати числове значення інкрементом/декрементом з автоматичним контролем меж.
+ * Підтримує цілі числа та числа з плаваючою крапкою.
+ * Дозволяє налаштувати мінімальне та максимальне значення
+ * Підтримує встановлення кроку зміни значення.
+ * Значення автоматично зациклюється при досягненні меж діапазону.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "../text/Label.h"
@@ -32,7 +42,7 @@ namespace pixeler
      */
     static constexpr TypeID getTypeID()
     {
-      return TypeID::TYPE_ID_SPINBOX;
+      return TypeID::TYPE_SPINBOX;
     }
 
     /**
@@ -61,10 +71,7 @@ namespace pixeler
      *
      * @return float
      */
-    float getMin() const
-    {
-      return _min;
-    }
+    float getMin() const;
 
     /**
      * @brief Встановлює максимальне значення, яке може бути встановлено у віджеті.
@@ -78,10 +85,7 @@ namespace pixeler
      *
      * @return float
      */
-    float getMax() const
-    {
-      return _max;
-    }
+    float getMax() const;
 
     /**
      * @brief Встановлює поточне значення.
@@ -95,10 +99,7 @@ namespace pixeler
      *
      * @return float
      */
-    float getValue() const
-    {
-      return _value;
-    }
+    float getValue() const;
 
     /**
      * @brief Встановлює тип відображення вмісту.
@@ -114,10 +115,7 @@ namespace pixeler
      *
      * @return SpinType
      */
-    SpinType getType() const
-    {
-      return _spin_type;
-    }
+    SpinType getType() const;
 
     /**
      * @brief Встановлює значення кроку, на яке буде змінюватися поточне значення SpinBox-у.
@@ -131,10 +129,7 @@ namespace pixeler
      *
      * @return float
      */
-    float getStep() const
-    {
-      return _step;
-    }
+    float getStep() const;
 
   private:
     using Label::hasAutoscroll;
