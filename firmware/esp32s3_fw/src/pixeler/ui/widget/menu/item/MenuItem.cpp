@@ -3,7 +3,7 @@
 
 namespace pixeler
 {
-  MenuItem::MenuItem(uint16_t widget_ID, IWidget::TypeID type_ID) : IWidget(widget_ID, type_ID)
+  MenuItem::MenuItem(uint16_t widget_ID, TypeID type_ID) : IWidget(widget_ID, type_ID)
   {
     setLbl(new Label(1));
   }
@@ -11,11 +11,17 @@ namespace pixeler
   MenuItem::~MenuItem()
   {
     delete _label;
+    delete _img;
   }
 
   String MenuItem::getText() const
   {
     return _label->getText();
+  }
+
+  Label* MenuItem::getLbl() const
+  {
+    return _label;
   }
 
   void MenuItem::setText(const String& text)
@@ -40,7 +46,6 @@ namespace pixeler
     uint8_t img_width{0};
     if (_img)
     {
-      _img->setParent(this);
       img_width = _img->getWidth() + ITEM_PADDING;
       _img->setPos(ITEM_PADDING, (_height - _img->getHeight()) * 0.5);
       _img->setBackColor(_back_color);
@@ -106,7 +111,15 @@ namespace pixeler
     delete _img;
     _img = img_ptr;
 
+    if (_img)
+      _img->setParent(this);
+
     _is_changed = true;
+  }
+
+  Image* MenuItem::getImg() const
+  {
+    return _img;
   }
 
   void MenuItem::setLbl(Label* lbl_ptr)
@@ -132,7 +145,7 @@ namespace pixeler
 
     _label->setBackColor(_back_color);
     _label->setFocusBackColor(_focus_back_color);
-    _label->setChangingBack(true);  // TODO
+    _label->setChangingBack(true);
     _label->setTransparency(_is_transparent);
   }
 }  // namespace pixeler

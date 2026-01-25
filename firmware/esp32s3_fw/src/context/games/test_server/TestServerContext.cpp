@@ -53,7 +53,7 @@ namespace test_server
   {
     delete _img_back_normal;
     delete _img_back_hover;
-
+    
     _client.disconnect();
     _server.stop();
   }
@@ -189,14 +189,18 @@ namespace test_server
     WidgetCreator creator;
     EmptyLayout* layout = creator.getEmptyLayout();
 
-    _img_back_normal = new Image(1);
+    if (!_img_back_normal)
+      _img_back_normal = new Image(1);
+
     _img_back_normal->setWidth(IMG_W);
     _img_back_normal->setHeight(IMG_H);
     _img_back_normal->setSrc(BTN_BACK_NORMAL);
     _img_back_normal->setBackColor(COLOR_MAIN_BACK);
     _img_back_normal->setTransparency(true);
 
-    _img_back_hover = new Image(1);
+    if (!_img_back_hover)
+      _img_back_hover = new Image(1);
+
     _img_back_hover->setWidth(IMG_W);
     _img_back_hover->setHeight(IMG_H);
     _img_back_hover->setSrc(BTN_BACK_HOVER);
@@ -234,7 +238,7 @@ namespace test_server
 
     Label* lbl_offline = lbl_online->clone(1);
     item_offline->setLbl(lbl_offline);
-    lbl_offline->setBackImg(_img_back_normal);
+    lbl_offline->setBackImg(_img_back_normal->clone(1));
     lbl_offline->setText(STR_SOLO_GAME);
 
     //
@@ -244,7 +248,7 @@ namespace test_server
 
     Label* lbl_pref = lbl_online->clone(1);
     item_pref->setLbl(lbl_pref);
-    lbl_pref->setBackImg(_img_back_normal);
+    lbl_pref->setBackImg(_img_back_normal->clone(1));
     lbl_pref->setText(STR_PREFERENCES);
 
     setLayout(layout);
@@ -261,7 +265,7 @@ namespace test_server
     {
       _input.lock(BtnID::BTN_UP, HOLD_LOCK);
       MenuItem* item = _main_menu->getCurrItem()->castTo<MenuItem>();
-      item->getLbl()->setBackImg(_img_back_normal);
+      item->getLbl()->setBackImg(_img_back_normal->clone(1));
       _main_menu->focusUp();
       item = _main_menu->getCurrItem()->castTo<MenuItem>();
       item->getLbl()->setBackImg(_img_back_hover);
@@ -270,7 +274,7 @@ namespace test_server
     {
       _input.lock(BtnID::BTN_DOWN, HOLD_LOCK);
       MenuItem* item = _main_menu->getCurrItem()->castTo<MenuItem>();
-      item->getLbl()->setBackImg(_img_back_normal);
+      item->getLbl()->setBackImg(_img_back_normal->clone(1));
       _main_menu->focusDown();
       item = _main_menu->getCurrItem()->castTo<MenuItem>();
       item->getLbl()->setBackImg(_img_back_hover);

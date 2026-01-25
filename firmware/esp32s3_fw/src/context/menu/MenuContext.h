@@ -23,8 +23,6 @@ private:
     ID_SCROLLBAR,
   };
 
-  std::vector<IWidget*> _bin;
-
   FixedMenu* _menu;
   ScrollBar* _scrollbar;
 

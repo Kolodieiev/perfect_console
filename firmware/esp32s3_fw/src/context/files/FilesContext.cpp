@@ -977,9 +977,9 @@ void FilesContext::makeMenuFilesItems(std::vector<MenuItem*>& items, uint16_t fi
     lbl->setFont(font_10x20);
 
     if (_files[i].isDir())
-      item->setImg(_dir_img);
+      item->setImg(_dir_img->clone(1));
     else if (_files[i].nameEndsWith(STR_LUA_EXT))
-      item->setImg(_lua_img);
+      item->setImg(_lua_img->clone(1));
 
     lbl->setText(_files[i].getName());
   }

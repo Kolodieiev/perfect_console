@@ -28,7 +28,6 @@ private:
   void down();
 
 private:
-  std::vector<IWidget*> _bin;
   FixedMenu* _menu;
   ScrollBar* _scrollbar;
 };

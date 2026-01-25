@@ -63,16 +63,11 @@ GamesListContext::GamesListContext()
   simple_rpg_lbl->setAutoscrollInFocus(true);
 
   //---------------------------------
-  _bin.reserve(_menu->getSize());
-  _bin.push_back(soko_img);
-
   _scrollbar->setMax(_menu->getSize());
 }
 
 GamesListContext::~GamesListContext()
 {
-  for (auto b_it = _bin.begin(), e_it = _bin.end(); b_it != e_it; ++b_it)
-    delete *b_it;
 }
 
 bool GamesListContext::loop()

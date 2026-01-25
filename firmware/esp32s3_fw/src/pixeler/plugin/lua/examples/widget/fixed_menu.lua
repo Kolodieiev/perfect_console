@@ -1,9 +1,9 @@
 -- Приклад створення віджета меню з фіксованою кількістю елементів списку.
 -- Піни кнопок.
-BTN_EXIT = 2 
+BTN_EXIT = 2
 BTN_UP = 5
 BTN_DOWN = 6
-BTN_A = 1
+BTN_OK = 1
 
 -- Ідентифікатори віджетів повинні бути унікальними в межах одного контейнера та повинні бути більшими за 0.
 HEADER_LABEL_ID = 1
@@ -22,7 +22,7 @@ CUTOUT_SIZE = 40 -- Висота вирізів(скруглення) екран
 
 -- Завантажити зображення із карти пам'яті в PSRAM. У змінній зберігається його ID.
 -- Пам'ять зображення може бути звільнена вручну за потреби або буде звільнена автоматично після завершення виходу зі скрипта.
-img_id_plus = loadImg("/plus.bmp"); 
+img_id_plus = loadImg("/lua/plus.bmp");
 
 initType("ToggleItem") -- Підключаємо клас ToggleItem, який автоматично підключить для себе класи ToggleSwitch, MenuItem, Label, Image, IWidget.
 initType("Menu") -- Під час підключння Menu автоматично підключить також IWidgetContainer, який потрібний для його коректного функціонування.
@@ -85,20 +85,19 @@ toggle_switch:setWidth(40)
 toggle_switch:setHeight(20)
 toggle_switch:setCornerRadius(7)
 
-if(img_id_plus > 0) then -- Якщо ресурс зображення успішно завантажено з карти пам'яті, додаємо зображення до текстової мітки.
+if (img_id_plus > 0) then -- Якщо ресурс зображення успішно завантажено з карти пам'яті, додаємо зображення до текстової мітки.
     toggle_item_img = Image:new(1) -- Створюємо віджет зображення.
     toggle_item_img:setSrc(img_id_plus); -- Встановлюємо ресурс. Розмір віджета встановиться таким, як і у ресурса зображення.
-    simple_item:setImg(toggle_item_img)
-    toggle_item:setImg(toggle_item_img)
-    context.manageWidget(toggle_item_img) -- Передаємо керування віджетом до контексту. Тому що елемент меню не видаляє самосітйно віджет зобрраження.
+    simple_item:setImg(toggle_item_img) -- Встановлюємо іконку елемента меню.
+    toggle_item:setImg(toggle_item_img:clone(1)) -- Встановлюємо іконку наступого елемента меню методом клонуванням основного зображення.
 end
 
 -------------------------------------------------------- Обробка вводу
 
 function update() -- Функція викликається автоматично контекстом кожен кадр.
-     if input.is_pressed(BTN_EXIT) then -- Обробка кнопки виходу.
+    if input.is_pressed(BTN_EXIT) then -- Обробка кнопки виходу.
         input.lock(BTN_EXIT, 1000) -- Заблокувати спрацьовування кнопки на n мс.
-		context.exit() -- Завершити роботу скрипта.
+        context.exit() -- Завершити роботу скрипта.
         return;
     elseif input.is_released(BTN_UP) then
         input.lock(BTN_UP, 250)
@@ -119,6 +118,6 @@ function ok_handler()
     if item_id == SIMPLE_ITEM_ID then
         showToast("Натиснуто ОК")
     elseif item_id == TOGGLE_ITEM_ID then
-        toggle_item:toggle() 
+        toggle_item:toggle()
     end
 end

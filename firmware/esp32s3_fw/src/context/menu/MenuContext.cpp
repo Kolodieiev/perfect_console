@@ -143,16 +143,6 @@ MenuContext::MenuContext()
   Label* firm_lbl = creator.getItemLabel(STR_FIRMWARE_ITEM, font_10x20);
   firm_item->setLbl(firm_lbl);
   //
-  // Зображення не видаляються віджетами автоматично задля можливості превикористання.
-  // Тому нам потрібно додати механізм для видалення зображень після виходу з контексту.
-  _bin.reserve(_menu->getSize());
-  _bin.push_back(mp3_img);
-  _bin.push_back(read_img);
-  _bin.push_back(game_img);
-  _bin.push_back(files_img);
-  _bin.push_back(pref_img);
-  _bin.push_back(firm_img);
-
   _scrollbar->setMax(_menu->getSize());
 
   _menu->setCurrFocusPos(_last_sel_item_pos);
@@ -161,8 +151,6 @@ MenuContext::MenuContext()
 
 MenuContext::~MenuContext()
 {
-  for (auto b_it = _bin.begin(), e_it = _bin.end(); b_it != e_it; ++b_it)
-    delete *b_it;
 }
 
 bool MenuContext::loop()

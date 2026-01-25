@@ -1,3 +1,9 @@
+/**
+ * @file MenuItem.h
+ * @brief Базовий віджет для відображення одного елемнта меню
+ * @details MenuItem містить в собі Image та віджета Label.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 
@@ -10,7 +16,7 @@ namespace pixeler
   class MenuItem : public IWidget
   {
   public:
-    explicit MenuItem(uint16_t widget_ID, IWidget::TypeID type_ID = TYPE_ID_MENU_ITEM);
+    explicit MenuItem(uint16_t widget_ID, TypeID type_ID = TYPE_MENU_ITEM);
     virtual ~MenuItem() override;
 
     /**
@@ -36,13 +42,13 @@ namespace pixeler
      */
     static constexpr TypeID getTypeID()
     {
-      return TypeID::TYPE_ID_MENU_ITEM;
+      return TypeID::TYPE_MENU_ITEM;
     }
 
     /**
      * @brief Встановлює вказівник на віджет Image, що буде використано в якості іконки.
-     * Image не буде видалено автоматично разом з віджетом.
-     * Один і той же Image може бути закріплений за різними елементами списку.
+     * Image буде видалено автоматично разом з віджетом.
+     * Для кожного елемента списку повинен використовуватися власний Image.
      *
      * @param img Вказівник на Image.
      */
@@ -54,10 +60,7 @@ namespace pixeler
      * @return Image* - Вказівник на віджет.
      * @return nullptr - Якщо вказівник не було встановлено раніше.
      */
-    Image* getImg() const
-    {
-      return _img;
-    }
+    Image* getImg() const;
 
     /**
      * @brief Встановлює вказівник на віджет Label, що буде використаний для відображення тексту елемента списку.
@@ -74,10 +77,7 @@ namespace pixeler
      * @return Label* - Вказівник на віджет.
      * @return nullptr - Якщо вказівник не було встановлено раніше.
      */
-    Label* getLbl() const
-    {
-      return _label;
-    }
+    Label* getLbl() const;
 
     /**
      * @brief Встановлює текст, що буде відображатися у віджеті.
