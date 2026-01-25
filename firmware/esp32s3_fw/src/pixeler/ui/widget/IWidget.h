@@ -27,7 +27,6 @@ namespace pixeler
       TYPE_COMBO_ITEM,
       TYPE_DYN_MENU,
       TYPE_FIX_MENU,
-      TYPE_NAVBAR,
       TYPE_NOTIFICATION,
       TYPE_PROGRESSBAR,
       TYPE_SCROLLBAR,
