@@ -1,3 +1,11 @@
+/**
+ * @file Menu.h
+ * @brief Головний абстракний клас, від якого повинні бути успадковані всі віджети меню
+ * @details Керує позиціонуванням, приховуванням та відображенням елементів меню.
+ *
+ * Успадкований від IWidgetContainer.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 
@@ -9,7 +17,7 @@ namespace pixeler
   class Menu : public IWidgetContainer
   {
   public:
-    Menu(uint16_t widget_ID, IWidget::TypeID type_ID);
+    Menu(uint16_t widget_ID, TypeID type_ID);
     virtual ~Menu() {}
 
     virtual bool focusUp() = 0;
@@ -42,42 +50,28 @@ namespace pixeler
      *
      * @param height Висота кожного елемента списку.
      */
-    void setItemHeight(uint16_t height)
-    {
-      _item_height = height > 0 ? height : 1;
-      _is_changed = true;
-    }
+    void setItemHeight(uint16_t height);
 
     /**
      * @brief Повертає висоту кожного елемента списку.
      *
      * @return uint16_t
      */
-    uint16_t getItemHeight() const
-    {
-      return _orientation == VERTICAL ? _item_height : _height - 4;
-    }
+    uint16_t getItemHeight() const;
 
     /**
      * @brief Встановлює ширину кожного із елементів списку для горизонтальної орієнтації меню.
      *
      * @param width
      */
-    void setItemWidth(uint16_t width)
-    {
-      _item_width = width > 0 ? width : 1;
-      _is_changed = true;
-    }
+    void setItemWidth(uint16_t width);
 
     /**
      * @brief Повертає ширину кожного елемента списку.
      *
      * @return uint16_t
      */
-    uint16_t getItemWidth() const
-    {
-      return _orientation == HORIZONTAL ? _item_width : _width - 4;
-    }
+    uint16_t getItemWidth() const;
 
     /**
      * @brief Встановлює орієнтацію меню.
@@ -86,21 +80,14 @@ namespace pixeler
      *
      * @param orientation Може мати значення: VERTICAL / HORIZONTAL.
      */
-    void setOrientation(const Orientation orientation)
-    {
-      _orientation = orientation;
-      _is_changed = true;
-    }
+    void setOrientation(const Orientation orientation);
 
     /**
      * @brief Повертає поточну орієнтацію меню.
      *
      * @return Orientation
      */
-    Orientation getOrientation() const
-    {
-      return _orientation;
-    }
+    Orientation getOrientation() const;
 
     /**
      * @brief Повертає ідентифікатор віджета елемента списку, на якому встановлено фокус.
@@ -114,10 +101,7 @@ namespace pixeler
      *
      * @return uint16_t - Позиція віджета в контейнері. 0 - Якщо контейнер порожній.
      */
-    uint16_t getCurrFocusPos() const
-    {
-      return _cur_focus_pos;
-    };
+    uint16_t getCurrFocusPos() const;
 
     /**
      * @brief Повертає копію тексту, що міститься у віджеті елемента списку, на якому встановлено фокус.
@@ -139,20 +123,14 @@ namespace pixeler
      *
      * @param items_spacing Розмір відступу у пікселях між елементами списку.
      */
-    void setItemsSpacing(uint16_t items_spacing)
-    {
-      _items_spacing = items_spacing;
-    }
+    void setItemsSpacing(uint16_t items_spacing);
 
     /**
      * @brief Повертає розмір відступу між елементами списку.
      *
      * @return uint16_t
      */
-    uint16_t getItemsSpacing() const
-    {
-      return _items_spacing;
-    }
+    uint16_t getItemsSpacing() const;
 
     /**
      * @brief Додає вказівник на віджет елемента списку до контейнера меню.

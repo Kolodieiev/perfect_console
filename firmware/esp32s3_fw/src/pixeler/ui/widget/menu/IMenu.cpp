@@ -1,9 +1,9 @@
 #pragma GCC optimize("O3")
-#include "Menu.h"
+#include "IMenu.h"
 
 namespace pixeler
 {
-  Menu::Menu(uint16_t widget_ID, IWidget::TypeID type_ID) : IWidgetContainer(widget_ID, type_ID) {}
+  Menu::Menu(uint16_t widget_ID, TypeID type_ID) : IWidgetContainer(widget_ID, type_ID) {}
 
   void Menu::delWidgets()
   {
@@ -42,12 +42,50 @@ namespace pixeler
     return true;
   }
 
+  void Menu::setItemHeight(uint16_t height)
+  {
+    _item_height = height > 0 ? height : 1;
+    _is_changed = true;
+  }
+
+  uint16_t Menu::getItemHeight() const
+  {
+    return _orientation == VERTICAL ? _item_height : _height - 4;
+  }
+
+  void Menu::setItemWidth(uint16_t width)
+  {
+    _item_width = width > 0 ? width : 1;
+    _is_changed = true;
+  }
+
+  uint16_t Menu::getItemWidth() const
+  {
+    return _orientation == HORIZONTAL ? _item_width : _width - 4;
+  }
+
+  void Menu::setOrientation(const Orientation orientation)
+  {
+    _orientation = orientation;
+    _is_changed = true;
+  }
+
+  IWidget::Orientation Menu::getOrientation() const
+  {
+    return _orientation;
+  }
+
   uint16_t Menu::getCurrItemID() const
   {
     if (_widgets.empty())
       return 0;
 
     return _widgets[_cur_focus_pos]->getID();
+  }
+
+  uint16_t Menu::getCurrFocusPos() const
+  {
+    return _cur_focus_pos;
   }
 
   String Menu::getCurrItemText() const
@@ -65,6 +103,16 @@ namespace pixeler
       return nullptr;
 
     return _widgets[_cur_focus_pos];
+  }
+
+  void Menu::setItemsSpacing(uint16_t items_spacing)
+  {
+    _items_spacing = items_spacing;
+  }
+
+  uint16_t Menu::getItemsSpacing() const
+  {
+    return _items_spacing;
   }
 
   void Menu::addItem(MenuItem* item_ptr)
