@@ -3,7 +3,7 @@
 
 namespace pixeler
 {
-  ScrollBar::ScrollBar(uint16_t widget_ID) : IWidget(widget_ID, TYPE_ID_SCROLLBAR) {}
+  ScrollBar::ScrollBar(uint16_t widget_ID) : IWidget(widget_ID, TYPE_SCROLLBAR) {}
 
   ScrollBar* ScrollBar::clone(uint16_t id) const
   {
@@ -59,6 +59,33 @@ namespace pixeler
   {
     _cur_value = value > _max_value ? _max_value : value;
     _is_changed = true;
+  }
+
+  void ScrollBar::setOrientation(Orientation orientation)
+  {
+    _orientation = orientation;
+    _is_changed = true;
+  }
+
+  IWidget::Orientation ScrollBar::getOrientation() const
+  {
+    return _orientation;
+  }
+
+  void ScrollBar::setSliderColor(uint16_t color)
+  {
+    _slider_color = color;
+    _is_changed = true;
+  }
+
+  uint16_t ScrollBar::getValue() const
+  {
+    return _cur_value;
+  }
+
+  uint16_t ScrollBar::getMax() const
+  {
+    return _max_value;
   }
 
   void ScrollBar::onDraw()

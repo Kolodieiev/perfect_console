@@ -1,3 +1,12 @@
+/**
+ * @file ScrollBar.h
+ * @brief Віджет для відображення поточної позиції відносно списку меню
+ * @details Підтримує налаштування кольорів.
+ * Підтримує зміну орієнтації.
+ * Підтримує автоматичний розрахунок розміру слайдера та його крок зміщення,
+ * якщо кількість елементів списку більша за довжину ScrollBar.
+ */
+
 #pragma once
 #pragma GCC optimize("O3")
 #include "../IWidget.h"
@@ -33,7 +42,7 @@ namespace pixeler
      */
     static constexpr TypeID getTypeID()
     {
-      return TypeID::TYPE_ID_SCROLLBAR;
+      return TypeID::TYPE_SCROLLBAR;
     }
 
     /**
@@ -73,52 +82,35 @@ namespace pixeler
      *
      * @param orientation Може мати значення: VERTICAL / HORIZONTAL.
      */
-    void setOrientation(Orientation orientation)
-    {
-      _orientation = orientation;
-      _is_changed = true;
-    }
+    void setOrientation(Orientation orientation);
 
     /**
      * @brief Повертає поточну орієнтацію смуги прокрутки.
      *
      * @return Orientation
      */
-    Orientation getOrientation() const
-    {
-      return _orientation;
-    }
+    Orientation getOrientation() const;
 
     /**
      * @brief Встановлює колір слайдера.
      *
      * @param color Новий колір слайдера.
      */
-    void setSliderColor(uint16_t color)
-    {
-      _slider_color = color;
-      _is_changed = true;
-    }
+    void setSliderColor(uint16_t color);
 
     /**
      * @brief Повертає поточну позицію слайдера.
      *
      * @return uint16_t
      */
-    uint16_t getValue() const
-    {
-      return _cur_value;
-    }
+    uint16_t getValue() const;
 
     /**
      * @brief Повертає максимально можливе значення позиції.
      *
      * @return uint16_t
      */
-    uint16_t getMax() const
-    {
-      return _max_value;
-    }
+    uint16_t getMax() const;
 
   private:
     using IWidget::isTransparent;
@@ -129,7 +121,7 @@ namespace pixeler
     uint16_t _cur_value{0};
     uint16_t _slider_last_x_pos{0};
     uint16_t _slider_last_y_pos{0};
-    uint16_t _slider_color{0xFFFF};
+    uint16_t _slider_color{COLOR_WHITE};
     uint16_t _smart_value{0};
 
     Orientation _orientation{VERTICAL};
