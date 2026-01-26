@@ -2,6 +2,7 @@
 #include "lua_iwidget_cont.h"
 
 #include "./lua_iwidget.h"
+#include "./lua_widget_helper.h"
 #include "pixeler/plugin/lua/res/lua_strs.h"
 #include "pixeler/ui/widget/IWidgetContainer.h"
 #include "vector"
@@ -25,15 +26,15 @@ void lua_push_widget_or_nil(lua_State* L, IWidget* widget)
 
 int lua_cont_add_widget(lua_State* L)
 {
-  IWidgetContainer* container = *static_cast<IWidgetContainer**>(luaL_checkudata(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
-  IWidget* widget = *static_cast<IWidget**>(luaL_checkudata(L, 2, STR_TYPE_NAME_IWIDGET));
+  IWidgetContainer* container = *static_cast<IWidgetContainer**>(lua_check_instance(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
+  IWidget* widget = *static_cast<IWidget**>(lua_check_instance(L, 2, STR_TYPE_NAME_IWIDGET));
   container->addWidget(widget);
   return 0;
 }
 
 int lua_cont_delete_widget_by_id(lua_State* L)
 {
-  IWidgetContainer* container = *static_cast<IWidgetContainer**>(luaL_checkudata(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
+  IWidgetContainer* container = *static_cast<IWidgetContainer**>(lua_check_instance(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
   uint16_t id = luaL_checkinteger(L, 2);
   bool result = container->delWidgetByID(id);
   lua_pushboolean(L, result);
@@ -42,7 +43,7 @@ int lua_cont_delete_widget_by_id(lua_State* L)
 
 int lua_cont_get_widget_by_id(lua_State* L)
 {
-  IWidgetContainer* container = *static_cast<IWidgetContainer**>(luaL_checkudata(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
+  IWidgetContainer* container = *static_cast<IWidgetContainer**>(lua_check_instance(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
   uint16_t id = luaL_checkinteger(L, 2);
   IWidget* widget = container->getWidgetByID(id);
   lua_push_widget_or_nil(L, widget);
@@ -51,7 +52,7 @@ int lua_cont_get_widget_by_id(lua_State* L)
 
 int lua_cont_get_widget_by_indx(lua_State* L)
 {
-  IWidgetContainer* container = *static_cast<IWidgetContainer**>(luaL_checkudata(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
+  IWidgetContainer* container = *static_cast<IWidgetContainer**>(lua_check_instance(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
   uint16_t indx = luaL_checkinteger(L, 2);
   IWidget* widget = container->getWidgetByIndx(indx);
   lua_push_widget_or_nil(L, widget);
@@ -60,14 +61,14 @@ int lua_cont_get_widget_by_indx(lua_State* L)
 
 int lua_cont_delete_widgets(lua_State* L)
 {
-  IWidgetContainer* container = *static_cast<IWidgetContainer**>(luaL_checkudata(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
+  IWidgetContainer* container = *static_cast<IWidgetContainer**>(lua_check_instance(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
   container->delWidgets();
   return 0;
 }
 
 int lua_cont_get_size(lua_State* L)
 {
-  IWidgetContainer* container = *static_cast<IWidgetContainer**>(luaL_checkudata(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
+  IWidgetContainer* container = *static_cast<IWidgetContainer**>(lua_check_instance(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
   uint16_t size = container->getSize();
   lua_pushinteger(L, size);
   return 1;
@@ -75,14 +76,14 @@ int lua_cont_get_size(lua_State* L)
 
 int lua_cont_enable(lua_State* L)
 {
-  IWidgetContainer* container = *static_cast<IWidgetContainer**>(luaL_checkudata(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
+  IWidgetContainer* container = *static_cast<IWidgetContainer**>(lua_check_instance(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
   container->enable();
   return 0;
 }
 
 int lua_cont_disable(lua_State* L)
 {
-  IWidgetContainer* container = *static_cast<IWidgetContainer**>(luaL_checkudata(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
+  IWidgetContainer* container = *static_cast<IWidgetContainer**>(lua_check_instance(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
   container->disable();
   return 0;
 }

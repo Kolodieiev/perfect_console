@@ -4,6 +4,7 @@
 #include "./lua_image.h"
 #include "./lua_iwidget.h"
 #include "./lua_label.h"
+#include "./lua_widget_helper.h"
 #include "pixeler/plugin/lua/res/lua_strs.h"
 #include "pixeler/ui/widget/IWidget.h"
 #include "pixeler/ui/widget/image/Image.h"
@@ -38,7 +39,7 @@ int lua_menu_item_clone(lua_State* L)
 
 int lua_menu_item_set_img(lua_State* L)
 {
-  MenuItem* item = *static_cast<MenuItem**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU_ITEM));
+  MenuItem* item = *static_cast<MenuItem**>(lua_check_instance(L, 1, STR_TYPE_NAME_MENU_ITEM));
   Image* image = *static_cast<Image**>(luaL_checkudata(L, 2, STR_TYPE_NAME_IMAGE));
   item->setImg(image);
   return 0;
@@ -46,7 +47,7 @@ int lua_menu_item_set_img(lua_State* L)
 
 int lua_menu_item_get_img(lua_State* L)
 {
-  MenuItem* item = *static_cast<MenuItem**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU_ITEM));
+  MenuItem* item = *static_cast<MenuItem**>(lua_check_instance(L, 1, STR_TYPE_NAME_MENU_ITEM));
   Image* image = item->getImg();
 
   if (!image)
@@ -67,7 +68,7 @@ int lua_menu_item_get_img(lua_State* L)
 
 int lua_menu_item_set_lbl(lua_State* L)
 {
-  MenuItem* item = *static_cast<MenuItem**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU_ITEM));
+  MenuItem* item = *static_cast<MenuItem**>(lua_check_instance(L, 1, STR_TYPE_NAME_MENU_ITEM));
   Label* label = *static_cast<Label**>(luaL_checkudata(L, 2, STR_TYPE_NAME_LABEL));
   item->setLbl(label);
   return 0;
@@ -75,7 +76,7 @@ int lua_menu_item_set_lbl(lua_State* L)
 
 int lua_menu_item_get_lbl(lua_State* L)
 {
-  MenuItem* item = *static_cast<MenuItem**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU_ITEM));
+  MenuItem* item = *static_cast<MenuItem**>(lua_check_instance(L, 1, STR_TYPE_NAME_MENU_ITEM));
   Label** lbl = static_cast<Label**>(lua_newuserdata(L, sizeof(Label*)));
   *lbl = item->getLbl();
 
@@ -86,7 +87,7 @@ int lua_menu_item_get_lbl(lua_State* L)
 
 int lua_menu_item_set_text(lua_State* L)
 {
-  MenuItem* item = *static_cast<MenuItem**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU_ITEM));
+  MenuItem* item = *static_cast<MenuItem**>(lua_check_instance(L, 1, STR_TYPE_NAME_MENU_ITEM));
   const char* text = luaL_checkstring(L, 2);
   item->setText(text);
   return 0;
@@ -94,7 +95,7 @@ int lua_menu_item_set_text(lua_State* L)
 
 int lua_menu_item_get_text(lua_State* L)
 {
-  MenuItem* item = *static_cast<MenuItem**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU_ITEM));
+  MenuItem* item = *static_cast<MenuItem**>(lua_check_instance(L, 1, STR_TYPE_NAME_MENU_ITEM));
   lua_pushstring(L, item->getText().c_str());
   return 1;
 }

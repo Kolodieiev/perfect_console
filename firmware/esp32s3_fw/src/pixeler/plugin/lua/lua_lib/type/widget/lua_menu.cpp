@@ -3,6 +3,7 @@
 
 #include "./lua_iwidget_cont.h"
 #include "./lua_menu_item.h"
+#include "./lua_widget_helper.h"
 #include "pixeler/plugin/lua/res/lua_strs.h"
 #include "pixeler/ui/widget/menu/FixedMenu.h"
 
@@ -136,7 +137,7 @@ int lua_menu_set_item_spacing(lua_State* L)
 int lua_menu_add_item(lua_State* L)
 {
   FixedMenu* menu = *static_cast<FixedMenu**>(luaL_checkudata(L, 1, STR_TYPE_NAME_MENU));
-  MenuItem* item = *static_cast<MenuItem**>(luaL_checkudata(L, 2, STR_TYPE_NAME_MENU_ITEM));
+  MenuItem* item = *static_cast<MenuItem**>(lua_check_instance(L, 2, STR_TYPE_NAME_MENU_ITEM));
   menu->addItem(item);
   return 0;
 }
