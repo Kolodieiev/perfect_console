@@ -8,6 +8,15 @@
 !README.md
 !LICENSE
 
+!doc/
+!doc/Makefile
+!doc/Readme.txt
+!doc/Doxyfile_xml
+!doc/Doxyfile_html
+!doc/source/
+!doc/source/**
+doc/source/classes/ 
+
 !images/
 !images/**
 
