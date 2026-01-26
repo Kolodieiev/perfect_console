@@ -4,7 +4,7 @@ author = 'Kolodieiev'
 release = '1.0'
 
 import os
-from exhale import utils
+from exhale import utils # type: ignore
 
 extensions = [
     'sphinx.ext.viewcode',     # Посилання на вихідний код
