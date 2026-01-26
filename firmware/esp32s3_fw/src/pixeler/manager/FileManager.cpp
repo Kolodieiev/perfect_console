@@ -357,6 +357,11 @@ namespace pixeler
     return availableUnlocked(file, file_size);
   }
 
+  uint8_t FileManager::getCopyProgress() const
+  {
+    return _copy_progress;
+  }
+
   size_t FileManager::availableUnlocked(FILE* file, size_t file_size)
   {
     if (!file || feof(file))
@@ -836,6 +841,16 @@ namespace pixeler
   {
     _doneHandler = handler;
     _doneArg = arg;
+  }
+
+  bool FileManager::isWorking() const
+  {
+    return _is_working;
+  }
+
+  bool FileManager::lastTaskResult() const
+  {
+    return _last_task_result;
   }
 
   //------------------------------------------------------------------------------------------------------------------------

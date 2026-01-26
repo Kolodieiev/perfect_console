@@ -10,9 +10,9 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-#include "pixeler/util/file/FileInfo.h"
 #include "pixeler/defines.h"
 #include "pixeler/setup/sd_setup.h"
+#include "pixeler/util/file/FileInfo.h"
 
 namespace pixeler
 {
@@ -281,10 +281,7 @@ namespace pixeler
      *
      * @return uint8_t - прогрес операції копіювання бінарного файла у відсотках.
      */
-    uint8_t getCopyProgress() const
-    {
-      return _copy_progress;
-    }
+    uint8_t getCopyProgress() const;
 
     /**
      * @brief Встановлює обробник події завершення будь-якої задачі.
@@ -300,10 +297,7 @@ namespace pixeler
      * @return true - якщо будь-яка із задач файлового менеджера запущена на даний момент.
      * @return false - якщо жодна із задач файлового менеджера наразі не запущена.
      */
-    bool isWorking() const
-    {
-      return _is_working;
-    }
+    bool isWorking() const;
 
     /**
      * @brief Повертає значення прапору, який вказує чи була успішно завершена остання запущена задача.
@@ -311,10 +305,7 @@ namespace pixeler
      * @return true - Якщо задача завершена успішно.
      * @return false - Інакше.
      */
-    bool lastTaskResult() const
-    {
-      return _last_task_result;
-    }
+    bool lastTaskResult() const;
 
     /**
      * @brief Генерує унікальне ім'я файлу на основі переданого імені, якщо вказаний файл вже інсує.
