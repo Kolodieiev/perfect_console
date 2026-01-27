@@ -620,7 +620,6 @@ int Audio::read_ID3_Header(uint8_t* data, size_t len)
   else if (m_controlCounter == 99)
   {  //  exist another ID3tag?
     m_audioDataStart += id3Size;
-    //    vTaskDelay(30);
     if ((*(data + 0) == 'I') && (*(data + 1) == 'D') && (*(data + 2) == '3'))
     {
       m_controlCounter = 0;
