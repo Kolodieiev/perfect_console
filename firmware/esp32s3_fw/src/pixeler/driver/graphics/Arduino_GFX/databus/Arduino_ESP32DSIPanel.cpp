@@ -90,7 +90,7 @@ bool Arduino_ESP32DSIPanel::begin(int16_t w, int16_t h, int32_t speed, const lcd
   {
     // Send command
     ESP_ERROR_CHECK(esp_lcd_panel_io_tx_param(io_handle, init_operations[i].cmd, init_operations[i].data, init_operations[i].data_bytes));
-    vTaskDelay(pdMS_TO_TICKS(init_operations[i].delay_ms));
+    delay(init_operations[i].delay_ms);
   }
   ESP_LOGD(TAG, "send init commands success");
 

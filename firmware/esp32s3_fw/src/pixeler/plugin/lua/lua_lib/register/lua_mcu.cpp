@@ -15,7 +15,7 @@ int lua_mcu_millis(lua_State* L)
 int lua_mcu_delay(lua_State* L)
 {
   int ms = luaL_checkinteger(L, 1);
-  vTaskDelay(ms / portTICK_PERIOD_MS);
+  delay(ms);
   return 0;
 }
 

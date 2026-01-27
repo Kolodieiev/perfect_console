@@ -377,7 +377,7 @@ namespace pixeler
         instance->_out_file_stream->close();
       }
 
-      vTaskDelay(100 / portTICK_PERIOD_MS);
+      delay(100);
     }
 
     log_i("ClientWatcher task finished");
