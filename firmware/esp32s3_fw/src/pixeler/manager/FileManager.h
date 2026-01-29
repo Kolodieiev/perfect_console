@@ -368,12 +368,13 @@ namespace pixeler
     static void rmTask(void* params);
     static void copyFileTask(void* params);
     //
-    size_t writeOptimalUnlocked(FILE* file, const void* buffer, size_t len);
+    size_t writeOptimalUnlocked(int file_desc, const void* buffer, size_t len);
     bool rmFileUnlocked(const char* path, bool make_full = false);
     bool rmDirUnlocked(const char* path, bool make_full = false);
     size_t getFileSizeUnlocked(const char* path);
     size_t availableUnlocked(FILE* file, size_t file_size);
     bool copyFileUnlocked(const String& from, const String& to);
+    void closeFileUnlocked(FILE*& file);
 
   private:
     SemaphoreHandle_t _sd_mutex;

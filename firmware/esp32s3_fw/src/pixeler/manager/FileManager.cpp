@@ -14,6 +14,7 @@
 #include "pixeler/util/AutoLock.h"
 
 #define IDLE_WD_GUARD_TIME 250U
+#define OPT_BLOCK_SIZE 16384
 
 namespace pixeler
 {
@@ -155,27 +156,70 @@ namespace pixeler
     String full_path = makeFullPath(path);
 
     AutoLock lock(_sd_mutex);
-    FILE* f = fopen(full_path.c_str(), "rb");
 
-    if (!f)
+    int fd = open(full_path.c_str(), O_RDONLY);
+
+    if (seek_pos > 0)
     {
-      log_e("Помилка відкриття файлу: %s", full_path.c_str());
+      off_t result = lseek(fd, seek_pos, SEEK_SET);
+      if (result == -1)
+      {
+        log_e("Помилка встановлення позиції(%d) у файлі %s", seek_pos, full_path.c_str());
+        close(fd);
+        return 0;
+      }
+    }
+
+    ssize_t bytes_read = read(fd, out_buffer, len);
+    if (bytes_read < 0)
+    {
+      log_e("Помилка читання файлу %s", full_path.c_str());
+      close(fd);
       return 0;
     }
 
-    if (seek_pos > 0 && fseek(f, seek_pos, SEEK_SET))
+    if (bytes_read != static_cast<ssize_t>(len))
+      log_e("Прочитано: [ %zd ]  Очікувалося: [ %zu ]", bytes_read, len);
+
+    close(fd);
+    return bytes_read;
+  }
+
+  size_t FileManager::readFromFile(FILE* file, void* out_buffer, size_t len, size_t seek_pos)
+  {
+    if (!file)
     {
-      log_e("Помилка встановлення позиції(%d) у файлі %s", seek_pos, full_path.c_str());
-      fclose(f);
+      log_e("FILE* не повинен бути null");
       return 0;
     }
 
-    size_t bytes_read = fread(out_buffer, 1, len, f);
+    if (len == 0)
+      return 0;
 
-    if (bytes_read != len)
-      log_e("Прочитано: [ %zu ]  Очікувалося: [ %zu ]", bytes_read, len);
+    int fd = fileno(file);
 
-    fclose(f);
+    AutoLock lock(_sd_mutex);
+
+    if (seek_pos > 0)
+    {
+      off_t result = lseek(fd, seek_pos, SEEK_SET);
+      if (result == -1)
+      {
+        log_e("Помилка встановлення позиції(%zu) у файлі", seek_pos);
+        return 0;
+      }
+    }
+
+    ssize_t bytes_read = read(fd, out_buffer, len);
+    if (bytes_read < 0)
+    {
+      log_e("Помилка читання з файлу");
+      return 0;
+    }
+
+    if (bytes_read != static_cast<ssize_t>(len))
+      log_e("Прочитано: [ %zd ]  Очікувалося: [ %zu ]", bytes_read, len);
+
     return bytes_read;
   }
 
@@ -190,45 +234,34 @@ namespace pixeler
       return false;
     }
 
+    int fd = fileno(file);
+
     AutoLock lock(_sd_mutex);
-    if (seek_pos > 0 && fseek(file, seek_pos, SEEK_SET))
+
+    if (seek_pos > 0)
     {
-      log_e("Помилка встановлення позиції: %zu", seek_pos);
+      off_t result = lseek(fd, seek_pos, SEEK_SET);
+      if (result == -1)
+      {
+        log_e("Помилка встановлення позиції: %zu", seek_pos);
+        return false;
+      }
+    }
+
+    ssize_t bytes_read = read(fd, out_buffer, len);
+    if (bytes_read < 0)
+    {
+      log_e("Помилка читання з файлу");
       return false;
     }
 
-    size_t section_read = fread(out_buffer, len, 1, file);
-
-    if (section_read == 0)
+    if (bytes_read != static_cast<ssize_t>(len))
     {
-      log_e("Не вдалося прочитати всі %zu байтів", len);
+      log_e("Не вдалося прочитати всі %zu байтів, прочитано: %zd", len, bytes_read);
       return false;
     }
 
     return true;
-  }
-
-  size_t FileManager::readFromFile(FILE* file, void* out_buffer, size_t len, size_t seek_pos)
-  {
-    if (!file)
-    {
-      log_e("FILE* не повинен бути null");
-      return 0;
-    }
-
-    if (len == 0)
-      return 0;
-
-    AutoLock lock(_sd_mutex);
-    if (seek_pos > 0 && fseek(file, seek_pos, SEEK_SET))
-      return 0;
-
-    size_t bytes_read = fread(out_buffer, 1, len, file);
-
-    if (bytes_read != len)
-      log_e("Прочитано: [ %zu ]  Очікувалося: [ %zu ]", bytes_read, len);
-
-    return bytes_read;
   }
 
   size_t FileManager::writeFile(const char* path, const void* buffer, size_t len)
@@ -245,17 +278,18 @@ namespace pixeler
     String full_path = makeFullPath(path);
 
     AutoLock lock(_sd_mutex);
-    FILE* f = fopen(full_path.c_str(), "wb");
 
-    if (!f)
+    int fd = open(full_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666);
+    if (fd < 0)
     {
-      log_e("Помилка відркиття файлу: %s", full_path.c_str());
+      log_e("Помилка відкриття файлу: %s", full_path.c_str());
       return 0;
     }
 
-    size_t written = writeOptimalUnlocked(f, buffer, len);
+    size_t written = writeOptimalUnlocked(fd, buffer, len);
 
-    fclose(f);
+    fsync(fd);
+    close(fd);
 
     return written;
   }
@@ -272,21 +306,27 @@ namespace pixeler
     }
 
     AutoLock lock(_sd_mutex);
-    return writeOptimalUnlocked(file, buffer, len);
+    int fd = fileno(file);
+    return writeOptimalUnlocked(fd, buffer, len);
   }
 
-  size_t FileManager::writeOptimalUnlocked(FILE* file, const void* buffer, size_t len)
+  size_t FileManager::writeOptimalUnlocked(int file_desc, const void* buffer, size_t len)
   {
-    size_t opt_size = 256;
     size_t total_written = 0;
+    const uint8_t* ptr = static_cast<const uint8_t*>(buffer);
 
-    size_t full_blocks = len / opt_size;
-    size_t remaining_bytes = len % opt_size;
+    size_t full_blocks = len / OPT_BLOCK_SIZE;
+    size_t remaining_bytes = len % OPT_BLOCK_SIZE;
 
     unsigned long ts = millis();
     for (size_t i = 0; i < full_blocks; ++i)
     {
-      total_written += fwrite(static_cast<const uint8_t*>(buffer) + total_written, opt_size, 1, file) * opt_size;
+      ssize_t res = write(file_desc, ptr + total_written, OPT_BLOCK_SIZE);
+      if (res == -1)
+        break;
+
+      total_written += res;
+
       if (millis() - ts > IDLE_WD_GUARD_TIME)
       {
         delay(1);
@@ -294,10 +334,12 @@ namespace pixeler
       }
     }
 
-    if (remaining_bytes > 0)
-      total_written += fwrite(static_cast<const uint8_t*>(buffer) + total_written, remaining_bytes, 1, file) * remaining_bytes;
-
-    fflush(file);
+    if (total_written == (full_blocks * OPT_BLOCK_SIZE) && remaining_bytes > 0)
+    {
+      ssize_t res = write(file_desc, ptr + total_written, remaining_bytes);
+      if (res != -1)
+        total_written += res;
+    }
 
     if (total_written != len)
       log_e("Записано: [ %zu ]  Очікувалося: [ %zu ]", total_written, len);
@@ -323,9 +365,16 @@ namespace pixeler
     if (file)
     {
       AutoLock lock(_sd_mutex);
-      fclose(file);
-      file = nullptr;
+      closeFileUnlocked(file);
     }
+  }
+
+  void FileManager::closeFileUnlocked(FILE*& file)
+  {
+    int fd = fileno(file);
+    fsync(fd);
+    fclose(file);
+    file = nullptr;
   }
 
   bool FileManager::seekPos(FILE* file, int32_t pos, uint8_t mode)
@@ -333,12 +382,17 @@ namespace pixeler
     if (!file)
       return false;
 
+    int fd = fileno(file);
+
     AutoLock lock(_sd_mutex);
-    if (fseek(file, pos, mode))
+
+    off_t result = lseek(fd, pos, mode);
+    if (result == -1)
     {
       log_e("Помилка встановлення позиції [%d]", pos);
       return false;
     }
+
     return true;
   }
 
@@ -347,8 +401,15 @@ namespace pixeler
     if (!file)
       return 0;
 
+    int fd = fileno(file);
+
     AutoLock lock(_sd_mutex);
-    return ftell(file);
+
+    off_t pos = lseek(fd, 0, SEEK_CUR);
+    if (pos == -1)
+      return 0;
+
+    return pos;
   }
 
   size_t FileManager::available(FILE* file, size_t file_size)
@@ -364,15 +425,19 @@ namespace pixeler
 
   size_t FileManager::availableUnlocked(FILE* file, size_t file_size)
   {
-    if (!file || feof(file))
+    if (!file)
       return 0;
 
-    long tell = ftell(file);
+    int fd = fileno(file);
 
-    if (file_size < tell)
+    off_t current_pos = lseek(fd, 0, SEEK_CUR);
+    if (current_pos == -1)
       return 0;
 
-    return file_size - tell;
+    if (file_size < static_cast<size_t>(current_pos))
+      return 0;
+
+    return file_size - current_pos;
   }
 
   void FileManager::rm()
@@ -488,7 +553,7 @@ namespace pixeler
       closedir(dir);
 
     if (result)
-      result = !rmDirUnlocked(path);
+      result = !remove(path);
     else
       log_e("Помилка під час видалення: %s", path);
 
@@ -564,20 +629,20 @@ namespace pixeler
 
   bool FileManager::copyFileUnlocked(const String& from, const String& to)
   {
-    FILE* n_f = fopen(to.c_str(), "ab");
+    int n_fd = open(to.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0666);
 
-    if (!n_f)
+    if (n_fd < 0)
     {
       log_e("Помилка створення файлу: %s", to.c_str());
       return false;
     }
 
-    FILE* o_f = fopen(from.c_str(), "rb");
+    int o_fd = open(from.c_str(), O_RDONLY);
 
-    if (!o_f)
+    if (o_fd < 0)
     {
       log_e("Помилка читання файлу: %s", from.c_str());
-      fclose(n_f);
+      close(n_fd);
       return false;
     }
 
@@ -597,8 +662,8 @@ namespace pixeler
 
     if (!buffer)
     {
-      fclose(n_f);
-      fclose(o_f);
+      close(n_fd);
+      close(o_fd);
 
       log_e("Помилка виділення пам'яті: %zu b", buf_size);
       esp_restart();
@@ -613,18 +678,24 @@ namespace pixeler
       log_i("До: %s", to.c_str());
 
       size_t writed_bytes_counter{0};
-      size_t bytes_read;
-      size_t byte_aval = 0;
+      ssize_t bytes_read;
 
-      while (!_is_canceled && (byte_aval = availableUnlocked(o_f, file_size)) > 0)
+      off_t current_pos = lseek(o_fd, 0, SEEK_CUR);
+      size_t byte_aval = (current_pos != -1 && file_size > static_cast<size_t>(current_pos)) ? file_size - current_pos : 0;
+
+      while (!_is_canceled && byte_aval > 0)
       {
-        if (byte_aval < buf_size)
-          bytes_read = fread(buffer, byte_aval, 1, o_f) * byte_aval;
-        else
-          bytes_read = fread(buffer, buf_size, 1, o_f) * buf_size;
-        //
-        writed_bytes_counter += writeOptimalUnlocked(n_f, buffer, bytes_read);
-        _copy_progress = ((float)writed_bytes_counter / file_size) * 100;
+        size_t to_read = (byte_aval < buf_size) ? byte_aval : buf_size;
+        bytes_read = read(o_fd, buffer, to_read);
+
+        if (bytes_read <= 0)
+          break;
+
+        writed_bytes_counter += writeOptimalUnlocked(n_fd, buffer, bytes_read);
+        _copy_progress = (static_cast<float>(writed_bytes_counter) / file_size) * 100;
+
+        current_pos = lseek(o_fd, 0, SEEK_CUR);
+        byte_aval = (current_pos != (off_t)-1 && file_size > static_cast<size_t>(current_pos)) ? file_size - current_pos : 0;
       }
     }
     else
@@ -635,8 +706,9 @@ namespace pixeler
 
     free(buffer);
 
-    fclose(n_f);
-    fclose(o_f);
+    fsync(n_fd);
+    close(n_fd);
+    close(o_fd);
 
     return true;
   }
