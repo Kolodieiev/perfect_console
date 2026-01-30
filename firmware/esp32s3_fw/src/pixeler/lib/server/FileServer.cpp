@@ -131,7 +131,7 @@ namespace pixeler
 
   void FileServer::startWebServer(void* params)
   {
-    _server = new WebServer(80);
+    _server = new FServer(80);
 
     if (_server_mode == SERVER_MODE_RECEIVE)
     {
@@ -252,7 +252,7 @@ namespace pixeler
     _need_watch_client = true;
     xTaskCreatePinnedToCore(clientWatcherTask, "clientWatcherTask", (1024 / 2) * 5, this, 10, NULL, 1);
 
-    _out_file_stream = new FileStream(file, filename.c_str(), file_size);
+    _out_file_stream = new FileStream(file, filename.c_str(), file_size); // TODO
 
     _server->sendHeader("Content-Type", "application/force-download");
     _server->sendHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
@@ -308,6 +308,8 @@ namespace pixeler
         log_i("Сервер перервав завантаження файлу");
         return;
       }
+
+      // TODO додати буфер
 
       _fs.writeToFile(_in_file, static_cast<const void*>(uploadfile.buf), uploadfile.currentSize);
       if (millis() - _last_delay_ts > 1000)

@@ -1,9 +1,9 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-#include <WebServer.h>
 #include <stdint.h>
 
+#include "./FServer/FServer.h"
 #include "pixeler/manager/FileManager.h"
 #include "pixeler/util/file/FileStream.h"
 
@@ -105,7 +105,7 @@ namespace pixeler
 
     FILE* _in_file{nullptr};
     FileStream* _out_file_stream{nullptr};
-    WebServer* _server{nullptr};
+    FServer* _server{nullptr};
 
     unsigned long _last_delay_ts = 0;
 
