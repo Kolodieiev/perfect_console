@@ -107,7 +107,7 @@ namespace pixeler
     FileStream* _out_file_stream{nullptr};
     FServer* _server{nullptr};
 
-    unsigned long _last_delay_ts = 0;
+    unsigned long _last_delay_ts{0};
 
     ServerMode _server_mode{SERVER_MODE_RECEIVE};
     //
