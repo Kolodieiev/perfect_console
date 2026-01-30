@@ -6,6 +6,14 @@
 
 namespace pixeler
 {
+  FileStream::FileStream(FILE* file, const char* name, size_t size) : _name{name}, _file{file}, _size{size}
+  {
+    _cache = static_cast<uint8_t*>(heap_caps_malloc(MAX_CACHE_SIZE, MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL));
+
+    if (!_cache)
+      log_e("Помилка виділення [ %zu ] байт для файлового потоку [ %s ]", MAX_CACHE_SIZE, name);
+  }
+
   FileStream::~FileStream()
   {
     close();
@@ -13,12 +21,61 @@ namespace pixeler
 
   int FileStream::available()
   {
-    return _fs.available(_file, _size);
+    if (!_file)
+      return 0;
+
+    return _size - _consumed_total;
   }
 
-  size_t FileStream::readBytes(char* buffer, size_t length)
+  bool FileStream::fillCache()
   {
-    return _fs.readFromFile(_file, buffer, length);
+    size_t remaining_in_file = _size - _consumed_total;
+    if (remaining_in_file == 0)
+      return false;
+
+    size_t to_read = (remaining_in_file > MAX_CACHE_SIZE) ? MAX_CACHE_SIZE : remaining_in_file;
+
+    size_t actually_read = _fs.readFromFile(_file, _cache, to_read);
+
+    if (actually_read > 0)
+    {
+      _cache_pos = 0;
+      _cache_available = actually_read;
+      return true;
+    }
+    return false;
+  }
+
+  size_t FileStream::readBytes(char* out_buffer, size_t length)
+  {
+    if (_consumed_total >= _size)
+      return 0;
+
+    size_t total_written = 0;
+
+    while (length > 0)
+    {
+      if (_cache_pos >= _cache_available)
+      {
+        if (!fillCache())
+          break;
+      }
+
+      size_t can_copy = _cache_available - _cache_pos;
+      size_t to_copy = (length > can_copy) ? can_copy : length;
+
+      memcpy(out_buffer + total_written, _cache + _cache_pos, to_copy);
+
+      _cache_pos += to_copy;
+      _consumed_total += to_copy;
+      total_written += to_copy;
+      length -= to_copy;
+
+      if (_consumed_total >= _size)
+        break;
+    }
+
+    return total_written;
   }
 
   int FileStream::read()
@@ -39,6 +96,8 @@ namespace pixeler
   void FileStream::close()
   {
     _fs.closeFile(_file);
+    free(_cache);
+    _cache = nullptr;
   }
 
   const char* FileStream::name() const
