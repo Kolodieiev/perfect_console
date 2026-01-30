@@ -683,6 +683,7 @@ namespace pixeler
       off_t current_pos = lseek(o_fd, 0, SEEK_CUR);
       size_t byte_aval = (current_pos != -1 && file_size > static_cast<size_t>(current_pos)) ? file_size - current_pos : 0;
 
+      unsigned long ts = millis();
       while (!_is_canceled && byte_aval > 0)
       {
         size_t to_read = (byte_aval < buf_size) ? byte_aval : buf_size;
@@ -695,7 +696,13 @@ namespace pixeler
         _copy_progress = (static_cast<float>(writed_bytes_counter) / file_size) * 100;
 
         current_pos = lseek(o_fd, 0, SEEK_CUR);
-        byte_aval = (current_pos != (off_t)-1 && file_size > static_cast<size_t>(current_pos)) ? file_size - current_pos : 0;
+        byte_aval = (current_pos != -1 && file_size > static_cast<size_t>(current_pos)) ? file_size - current_pos : 0;
+
+        if (millis() - ts > IDLE_WD_GUARD_TIME)
+        {
+          delay(1);
+          ts = millis();
+        }
       }
     }
     else
