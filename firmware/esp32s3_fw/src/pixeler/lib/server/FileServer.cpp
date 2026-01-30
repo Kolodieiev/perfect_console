@@ -63,7 +63,7 @@ namespace pixeler
 
     _must_work = true;
 
-    BaseType_t result = xTaskCreatePinnedToCore(fileServerTask, "fileServerTask", (1024 / 2) * 20, this, 10, NULL, 1);
+    BaseType_t result = xTaskCreatePinnedToCore(fileServerTask, "fileServerTask", (1024 / 2) * 20, this, 10, NULL, 0);
 
     if (result == pdPASS)
     {
@@ -252,7 +252,7 @@ namespace pixeler
     _need_watch_client = true;
     xTaskCreatePinnedToCore(clientWatcherTask, "clientWatcherTask", (1024 / 2) * 5, this, 10, NULL, 1);
 
-    _out_file_stream = new FileStream(file, filename.c_str(), file_size); // TODO
+    _out_file_stream = new FileStream(file, filename.c_str(), file_size);
 
     _server->sendHeader("Content-Type", "application/force-download");
     _server->sendHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
