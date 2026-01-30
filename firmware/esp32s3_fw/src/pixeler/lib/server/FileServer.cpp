@@ -164,7 +164,7 @@ namespace pixeler
 
     _is_working = false;
 
-    log_i("FileServer task finished");
+    log_i("Задачу FileServer завершено");
     vTaskDelete(NULL);
   }
 
@@ -289,7 +289,7 @@ namespace pixeler
 
       if (!_in_file)
       {
-        log_e("Не можу відкрити файл %s на запис", filename.c_str());
+        log_e("Не можу відкрити файл %s для запису", filename.c_str());
         _server->send(500, "text/html", "");
         return;
       }
@@ -305,11 +305,9 @@ namespace pixeler
         if (client)
           client.stop();
 
-        log_i("Сервер перервав завантаження файлу");
+        log_i("Сервер скасував завантаження файлу");
         return;
       }
-
-      // TODO додати буфер
 
       _fs.writeToFile(_in_file, static_cast<const void*>(uploadfile.buf), uploadfile.currentSize);
       if (millis() - _last_delay_ts > 1000)
@@ -329,7 +327,7 @@ namespace pixeler
         if (uploadfile.status == UPLOAD_FILE_END)
           log_i("Файл отримано");
         else
-          log_i("Завантаження перервано");
+          log_i("Завантаження скасовано");
       }
       else
       {
@@ -375,14 +373,14 @@ namespace pixeler
     {
       if (!instance->_server->client() && instance->_out_file_stream && instance->_out_file_stream->available())
       {
-        log_i("Клієнт перервав завантаження");
+        log_i("Клієнт скасував завантаження");
         instance->_out_file_stream->close();
       }
 
       delay(100);
     }
 
-    log_i("ClientWatcher task finished");
+    log_i("Задачу ClientWatcher завершено");
     vTaskDelete(NULL);
   }
 }  // namespace pixeler
