@@ -21,6 +21,7 @@ Pixeler - це фреймворк для розробки прошивки з м
 
 start.md
 about.md
+setup.md
 context.md
 input.md
 widgets.md
