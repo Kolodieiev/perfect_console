@@ -13,11 +13,24 @@ extensions = [
     'exhale',                  # Генерація файлів документації класів
 ]
 
+highlight_options = {
+    'stripnl': False,
+    'ensurenl': True,
+}
+
+pygments_style = 'vs' # або 'vs', 'github-dark'
+
+highlight_language = 'cpp'
+
 myst_enable_extensions = [
     "colon_fence",      # ::: блоки
     "deflist",          # Definition lists
     "fieldlist",        # Field lists
     "attrs_block",      # Атрибути блоків
+]
+
+suppress_warnings = [
+    'myst.header',  # Ігнорувати попередження про заголовки
 ]
 
 # Breathe налаштування
@@ -64,7 +77,3 @@ html_static_path = ['_static']
 html_css_files = [
     'custom.css',
 ]
-html_theme_options = {
-    'navigation_depth': 4,
-    'titles_only': False,
-}
