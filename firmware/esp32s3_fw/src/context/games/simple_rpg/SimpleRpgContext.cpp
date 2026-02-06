@@ -69,10 +69,8 @@ namespace simple_rpg
     // Встановлюється стан контексту
     _state_id = STATE_MAIN_MENU;
 
-    WidgetCreator creator;
-
     // Створення головного контейнера шаблону
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     //  Створення віджетів фонових зображень для пунктів меню.
 

@@ -66,8 +66,7 @@ FilesContext::FilesContext()
   _lua_img = _dir_img->clone(1);
   _lua_img->setSrc(LUA_IMG);
 
-  WidgetCreator creator;
-  EmptyLayout* layout = creator.getEmptyLayout();
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   if (!_fs.isMounted())
@@ -98,10 +97,9 @@ FilesContext::~FilesContext()
 
 void FilesContext::showSDErrTmpl()
 {
-  WidgetCreator creator;
-  EmptyLayout* layout = creator.getEmptyLayout();
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
-  _msg_lbl = creator.getStatusMsgLable(ID_MSG_LBL, STR_SD_ERR);
+  _msg_lbl = WidgetCreator::getStatusMsgLable(ID_MSG_LBL, STR_SD_ERR);
   layout->addWidget(_msg_lbl);
 
   _mode = MODE_SD_UNCONN;
@@ -111,9 +109,7 @@ void FilesContext::showSDErrTmpl()
 
 void FilesContext::showServerTmpl()
 {
-  WidgetCreator creator;
-
-  EmptyLayout* layout = creator.getEmptyLayout();
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
   String header_str;
 
@@ -125,7 +121,7 @@ void FilesContext::showServerTmpl()
   header_str += ": ";
   header_str += _server.getAddress().c_str();
 
-  _msg_lbl = creator.getStatusMsgLable(ID_MSG_LBL, header_str.c_str());
+  _msg_lbl = WidgetCreator::getStatusMsgLable(ID_MSG_LBL, header_str.c_str());
   layout->addWidget(_msg_lbl);
   _msg_lbl->setHeight(_msg_lbl->getCharHgt() + 4);
 
@@ -145,10 +141,9 @@ void FilesContext::showServerTmpl()
 
 void FilesContext::showCopyingTmpl()
 {
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
 
-  _msg_lbl = creator.getStatusMsgLable(ID_MSG_LBL, STR_COPYING, 2);
+  _msg_lbl = WidgetCreator::getStatusMsgLable(ID_MSG_LBL, STR_COPYING, 2);
   layout->addWidget(_msg_lbl);
   _msg_lbl->setHeight(32);
   _msg_lbl->setPos(0, TFT_HEIGHT / 2 - _msg_lbl->getHeight() - 2);
@@ -173,20 +168,18 @@ void FilesContext::showRemovingTmpl()
 {
   _mode = MODE_REMOVING;
 
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
-  _msg_lbl = creator.getStatusMsgLable(ID_MSG_LBL, STR_REMOVING, 2);
+  _msg_lbl = WidgetCreator::getStatusMsgLable(ID_MSG_LBL, STR_REMOVING, 2);
   layout->addWidget(_msg_lbl);
 }
 
 void FilesContext::showCancelingTmpl()
 {
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
 
-  _msg_lbl = creator.getStatusMsgLable(ID_MSG_LBL, STR_CANCELING, 2);
+  _msg_lbl = WidgetCreator::getStatusMsgLable(ID_MSG_LBL, STR_CANCELING, 2);
   layout->addWidget(_msg_lbl);
 
   _mode = MODE_CANCELING;
@@ -195,12 +188,11 @@ void FilesContext::showCancelingTmpl()
 
 void FilesContext::showFilesTmpl()
 {
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
 
   layout->setBackColor(COLOR_BLACK);
 
-  _files_list = creator.getDynamicMenu(ID_DYNAMIC_MENU);
+  _files_list = WidgetCreator::getDynamicMenu(ID_DYNAMIC_MENU);
   layout->addWidget(_files_list);
   _files_list->setHeight(TFT_HEIGHT - PADDING_BOTT);
   _files_list->setItemHeight((_files_list->getHeight() - 2) / MENU_ITEMS_NUM);
@@ -259,8 +251,6 @@ void FilesContext::showContextMenu()
   _mode = MODE_CONTEXT_MENU;
   _files_list->disable();
 
-  WidgetCreator creator;
-
   _context_menu = new FixedMenu(ID_CNTXT_MENU);
   getLayout()->addWidget(_context_menu);
   _context_menu->setItemHeight(18);
@@ -273,19 +263,19 @@ void FilesContext::showContextMenu()
   if (_has_moving_file || _has_copying_file)
   {
     // Якщо є файл для переміщення додати відповідний пункт меню
-    MenuItem* paste_item = creator.getMenuItem(ID_ITEM_PASTE);
+    MenuItem* paste_item = WidgetCreator::getMenuItem(ID_ITEM_PASTE);
     _context_menu->addItem(paste_item);
 
-    Label* paste_lbl = creator.getItemLabel(STR_PASTE, font_unifont);
+    Label* paste_lbl = WidgetCreator::getItemLabel(STR_PASTE, font_unifont);
     paste_item->setLbl(paste_lbl);
     paste_lbl->setHPadding(1);
   }
 
   // новий каталог
-  MenuItem* new_dir_item = creator.getMenuItem(ID_ITEM_NEW_DIR);
+  MenuItem* new_dir_item = WidgetCreator::getMenuItem(ID_ITEM_NEW_DIR);
   _context_menu->addItem(new_dir_item);
 
-  Label* new_dir_lbl = creator.getItemLabel(STR_NEW_DIR, font_unifont);
+  Label* new_dir_lbl = WidgetCreator::getItemLabel(STR_NEW_DIR, font_unifont);
   new_dir_item->setLbl(new_dir_lbl);
   new_dir_lbl->setHPadding(1);
 
@@ -299,10 +289,10 @@ void FilesContext::showContextMenu()
       // Виконати Lua-скрипт
       if (_files[id - 1].nameEndsWith(STR_LUA_EXT))
       {
-        MenuItem* exec_item = creator.getMenuItem(ID_ITEM_EXECUTE);
+        MenuItem* exec_item = WidgetCreator::getMenuItem(ID_ITEM_EXECUTE);
         _context_menu->addItem(exec_item);
 
-        Label* exec_lbl = creator.getItemLabel(STR_EXECUTE, font_unifont);
+        Label* exec_lbl = WidgetCreator::getItemLabel(STR_EXECUTE, font_unifont);
         exec_item->setLbl(exec_lbl);
         exec_lbl->setHPadding(1);
       }
@@ -318,10 +308,10 @@ void FilesContext::showContextMenu()
           BmpHeader bmp_header;
           if (BmpUtil::checkBmpFile(bmp_file, bmp_header))
           {
-            MenuItem* set_wall_item = creator.getMenuItem(ID_ITEM_SET_WALLPP);
+            MenuItem* set_wall_item = WidgetCreator::getMenuItem(ID_ITEM_SET_WALLPP);
             _context_menu->addItem(set_wall_item);
 
-            Label* set_wall_lbl = creator.getItemLabel(STR_SET_WALLPP, font_unifont);
+            Label* set_wall_lbl = WidgetCreator::getItemLabel(STR_SET_WALLPP, font_unifont);
             set_wall_item->setLbl(set_wall_lbl);
             set_wall_lbl->setHPadding(1);
           }
@@ -330,52 +320,52 @@ void FilesContext::showContextMenu()
       }
 
       // копіювати
-      MenuItem* copy_item = creator.getMenuItem(ID_ITEM_COPY);
+      MenuItem* copy_item = WidgetCreator::getMenuItem(ID_ITEM_COPY);
       _context_menu->addItem(copy_item);
 
-      Label* copy_lbl = creator.getItemLabel(STR_COPY, font_unifont);
+      Label* copy_lbl = WidgetCreator::getItemLabel(STR_COPY, font_unifont);
       copy_item->setLbl(copy_lbl);
       copy_lbl->setHPadding(1);
     }
 
     // перейменувати
-    MenuItem* rename_item = creator.getMenuItem(ID_ITEM_RENAME);
+    MenuItem* rename_item = WidgetCreator::getMenuItem(ID_ITEM_RENAME);
     _context_menu->addItem(rename_item);
 
-    Label* rename_lbl = creator.getItemLabel(STR_RENAME, font_unifont);
+    Label* rename_lbl = WidgetCreator::getItemLabel(STR_RENAME, font_unifont);
     rename_item->setLbl(rename_lbl);
     rename_lbl->setHPadding(1);
 
     // перемістити
-    MenuItem* move_item = creator.getMenuItem(ID_ITEM_MOVE);
+    MenuItem* move_item = WidgetCreator::getMenuItem(ID_ITEM_MOVE);
     _context_menu->addItem(move_item);
 
-    Label* move_lbl = creator.getItemLabel(STR_MOVE, font_unifont);
+    Label* move_lbl = WidgetCreator::getItemLabel(STR_MOVE, font_unifont);
     move_item->setLbl(move_lbl);
     move_lbl->setHPadding(1);
 
     // видалити
-    MenuItem* delete_item = creator.getMenuItem(ID_ITEM_REMOVE);
+    MenuItem* delete_item = WidgetCreator::getMenuItem(ID_ITEM_REMOVE);
     _context_menu->addItem(delete_item);
 
-    Label* delete_lbl = creator.getItemLabel(STR_DELETE, font_unifont);
+    Label* delete_lbl = WidgetCreator::getItemLabel(STR_DELETE, font_unifont);
     delete_item->setLbl(delete_lbl);
     delete_lbl->setHPadding(1);
   }
 
   // імпорт
-  MenuItem* import_item = creator.getMenuItem(ID_ITEM_IMPORT);
+  MenuItem* import_item = WidgetCreator::getMenuItem(ID_ITEM_IMPORT);
   _context_menu->addItem(import_item);
 
-  Label* import_lbl = creator.getItemLabel(STR_GET, font_unifont);
+  Label* import_lbl = WidgetCreator::getItemLabel(STR_GET, font_unifont);
   import_item->setLbl(import_lbl);
   import_lbl->setHPadding(1);
 
   // експорт
-  MenuItem* export_item = creator.getMenuItem(ID_ITEM_EXPORT);
+  MenuItem* export_item = WidgetCreator::getMenuItem(ID_ITEM_EXPORT);
   _context_menu->addItem(export_item);
 
-  Label* export_lbl = creator.getItemLabel(STR_SHARE, font_unifont);
+  Label* export_lbl = WidgetCreator::getItemLabel(STR_SHARE, font_unifont);
   export_item->setLbl(export_lbl);
   export_lbl->setHPadding(1);
 
@@ -388,7 +378,7 @@ void FilesContext::showContextMenu()
   import_back_item->setChangingBorder(true);
   import_back_item->setChangingBack(true);
 
-  Label* import_back_lbl = creator.getItemLabel(STR_BACK_IMPORT, font_unifont);
+  Label* import_back_lbl = WidgetCreator::getItemLabel(STR_BACK_IMPORT, font_unifont);
   import_back_item->setLbl(import_back_lbl);
   import_back_lbl->setHPadding(1);
   import_back_lbl->setFullAutoscroll(false);
@@ -401,10 +391,10 @@ void FilesContext::showContextMenu()
   import_back_toggle->setOn(_server.isWorking());
 
   // оновити
-  MenuItem* upd_item = creator.getMenuItem(ID_ITEM_UPDATE);
+  MenuItem* upd_item = WidgetCreator::getMenuItem(ID_ITEM_UPDATE);
   _context_menu->addItem(upd_item);
 
-  Label* upd_lbl = creator.getItemLabel(STR_UPDATE, font_unifont);
+  Label* upd_lbl = WidgetCreator::getItemLabel(STR_UPDATE, font_unifont);
   upd_item->setLbl(upd_lbl);
   upd_lbl->setHPadding(1);
 
@@ -425,8 +415,7 @@ void FilesContext::hideContextMenu()
 
 void FilesContext::showDialog(Mode mode)
 {
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
 
   _dialog_txt = new TextBox(ID_DIALOG_TXT);
   _dialog_txt->setHPadding(5);
@@ -445,7 +434,7 @@ void FilesContext::showDialog(Mode mode)
     _dialog_txt->setText(_old_name);
   }
 
-  _keyboard = creator.getStandardEnKeyboard(ID_KEYBOARD);
+  _keyboard = WidgetCreator::getStandardEnKeyboard(ID_KEYBOARD);
 
   layout->setBackColor(COLOR_BLACK);
   layout->addWidget(_dialog_txt);
@@ -960,7 +949,6 @@ void FilesContext::makeMenuFilesItems(std::vector<MenuItem*>& items, uint16_t fi
   if (read_to > _files.size())
     read_to = _files.size();
 
-  WidgetCreator creator;
   items.clear();
   items.reserve(read_to - file_pos);
 
@@ -968,7 +956,7 @@ void FilesContext::makeMenuFilesItems(std::vector<MenuItem*>& items, uint16_t fi
   {
     ++file_pos;
 
-    MenuItem* item = creator.getMenuItem(file_pos);
+    MenuItem* item = WidgetCreator::getMenuItem(file_pos);
     items.push_back(item);
 
     Label* lbl = new Label(1);

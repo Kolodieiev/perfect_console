@@ -48,8 +48,8 @@ void Mp3Context::savePref()
 Mp3Context::Mp3Context()
 {
   setCpuFrequencyMhz(BALANCED_CPU_FREQ_MHZ);
-  WidgetCreator creator;
-  EmptyLayout* layout = creator.getEmptyLayout();
+  
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   if (!_fs.isMounted())
@@ -117,8 +117,8 @@ void Mp3Context::showPlaying()
 {
   uint8_t paddings{10};
 
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+  
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
 
   _track_name_lbl = new Label(ID_TRACK_NAME);
   layout->addWidget(_track_name_lbl);
@@ -216,10 +216,10 @@ void Mp3Context::showPlaying()
 
 void Mp3Context::showTracksTmpl()
 {
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+  
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
 
-  _tracks_list = creator.getDynamicMenu(ID_D_MENU);
+  _tracks_list = WidgetCreator::getDynamicMenu(ID_D_MENU);
   layout->addWidget(_tracks_list);
   _tracks_list->setWidth(TFT_WIDTH - SCROLLBAR_WIDTH);
   _tracks_list->setHeight(TFT_HEIGHT);
@@ -241,8 +241,8 @@ void Mp3Context::showTracksTmpl()
 
 void Mp3Context::showPlaylistsTmpl()
 {
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+  
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
 
   _playlists_list = new FixedMenu(ID_F_MENU);
   layout->addWidget(_playlists_list);
@@ -259,10 +259,10 @@ void Mp3Context::showPlaylistsTmpl()
 
   if (!_track_name.isEmpty())
   {
-    MenuItem* cont_item = creator.getMenuItem(ID_CONT_ITEM);
+    MenuItem* cont_item = WidgetCreator::getMenuItem(ID_CONT_ITEM);
     _playlists_list->addItem(cont_item);
 
-    Label* cont_lbl = creator.getItemLabel(STR_CONTINUE, font_10x20);
+    Label* cont_lbl = WidgetCreator::getItemLabel(STR_CONTINUE, font_10x20);
     cont_item->setLbl(cont_lbl);
   }
 
@@ -287,7 +287,7 @@ void Mp3Context::fillPlaylists()
 
 void Mp3Context::makeMenuPlaylistsItems(std::vector<MenuItem*>& items)
 {
-  WidgetCreator creator;
+  
   items.clear();
 
   uint16_t playlist_num = _playlists.size();
@@ -296,7 +296,7 @@ void Mp3Context::makeMenuPlaylistsItems(std::vector<MenuItem*>& items)
   for (uint16_t i = 0, counter = ID_CONT_ITEM; i < playlist_num; ++i)
   {
     ++counter;
-    MenuItem* item = creator.getMenuItem(counter);
+    MenuItem* item = WidgetCreator::getMenuItem(counter);
     items.push_back(item);
 
     Label* lbl = new Label(1);
@@ -337,7 +337,7 @@ void Mp3Context::makeMenuTracksItems(std::vector<MenuItem*>& items, uint16_t fil
   if (read_to > _tracks.size())
     read_to = _tracks.size();
 
-  WidgetCreator creator;
+  
   items.clear();
   items.reserve(read_to - file_pos);
 
@@ -345,7 +345,7 @@ void Mp3Context::makeMenuTracksItems(std::vector<MenuItem*>& items, uint16_t fil
   {
     ++file_pos;
 
-    MenuItem* item = creator.getMenuItem(file_pos);
+    MenuItem* item = WidgetCreator::getMenuItem(file_pos);
     items.push_back(item);
 
     Label* lbl = new Label(1);
@@ -361,7 +361,7 @@ void Mp3Context::showPlMenu()
 {
   _tracks_list->disable();
 
-  WidgetCreator creator;
+  
   _context_menu = new FixedMenu(ID_PL_MENU);
   getLayout()->addWidget(_context_menu);
   _context_menu->setBackColor(COLOR_MENU_ITEM);
@@ -374,10 +374,10 @@ void Mp3Context::showPlMenu()
 
   if (_tracks_list->getCurrItemID() != 0)
   {
-    MenuItem* del_item = creator.getMenuItem(ID_ITEM_DEL);
+    MenuItem* del_item = WidgetCreator::getMenuItem(ID_ITEM_DEL);
     _context_menu->addItem(del_item);
 
-    Label* upd_lbl = creator.getItemLabel(STR_DELETE);
+    Label* upd_lbl = WidgetCreator::getItemLabel(STR_DELETE);
     del_item->setLbl(upd_lbl);
   }
 
@@ -393,10 +393,10 @@ void Mp3Context::hidePlMenu()
 
 void Mp3Context::showSDErrTmpl()
 {
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+  
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
 
-  _msg_lbl = creator.getStatusMsgLable(ID_MSG_LBL, STR_SD_ERR);
+  _msg_lbl = WidgetCreator::getStatusMsgLable(ID_MSG_LBL, STR_SD_ERR);
   layout->addWidget(_msg_lbl);
 
   _mode = MODE_SD_UNCONN;

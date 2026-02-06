@@ -7,10 +7,9 @@ namespace simple_rpg
 {
   void RpgPrefContext::showSDErrTmpl()
   {
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
-    Label* msg_lbl = creator.getStatusMsgLable(1, STR_SD_ERR);
+    Label* msg_lbl = WidgetCreator::getStatusMsgLable(1, STR_SD_ERR);
     layout->addWidget(msg_lbl);
 
     _state_id = STATE_SD_UNMOUNT;
@@ -29,8 +28,7 @@ namespace simple_rpg
 
   RpgPrefContext::RpgPrefContext()
   {
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
     setLayout(layout);
 
     if (!_fs.isMounted())  // Якщо карту пам'яті не примонтовано
@@ -69,8 +67,7 @@ namespace simple_rpg
   {
     _state_id = STATE_MAIN_MENU;
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     _pref_menu = new FixedMenu(ID_MENU_MAIN);
     layout->addWidget(_pref_menu);
@@ -81,27 +78,27 @@ namespace simple_rpg
     _pref_menu->setLoopState(true);
 
     // nick
-    MenuItem* nick_item = creator.getMenuItem(ID_ITEM_NICK);
+    MenuItem* nick_item = WidgetCreator::getMenuItem(ID_ITEM_NICK);
     _pref_menu->addItem(nick_item);
     nick_item->setBackColor(COLOR_MAIN_BACK);
 
-    Label* nick_lbl = creator.getItemLabel(STR_NICKNAME);
+    Label* nick_lbl = WidgetCreator::getItemLabel(STR_NICKNAME);
     nick_item->setLbl(nick_lbl);
 
     // serv name
-    MenuItem* serv_name_item = creator.getMenuItem(ID_ITEM_SERV_NAME);
+    MenuItem* serv_name_item = WidgetCreator::getMenuItem(ID_ITEM_SERV_NAME);
     _pref_menu->addItem(serv_name_item);
     serv_name_item->setBackColor(COLOR_MAIN_BACK);
 
-    Label* serv_name_lbl = creator.getItemLabel(STR_SERV_NAME);
+    Label* serv_name_lbl = WidgetCreator::getItemLabel(STR_SERV_NAME);
     serv_name_item->setLbl(serv_name_lbl);
 
     // client name
-    MenuItem* serv_pwd_item = creator.getMenuItem(ID_ITEM_SERV_PWD);
+    MenuItem* serv_pwd_item = WidgetCreator::getMenuItem(ID_ITEM_SERV_PWD);
     _pref_menu->addItem(serv_pwd_item);
     serv_pwd_item->setBackColor(COLOR_MAIN_BACK);
 
-    Label* serv_pwd_lbl = creator.getItemLabel(STR_SERV_PWD);
+    Label* serv_pwd_lbl = WidgetCreator::getItemLabel(STR_SERV_PWD);
     serv_pwd_item->setLbl(serv_pwd_lbl);
 
     setLayout(layout);
@@ -145,8 +142,7 @@ namespace simple_rpg
 
     String client_nick = SettingsManager::get(STR_TEST_GAME_NICK);
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
     addDialog(layout, STR_ENTER_NICK, client_nick.c_str());
     setLayout(layout);
   }
@@ -157,8 +153,7 @@ namespace simple_rpg
 
     String serv_ssid = SettingsManager::get(STR_TEST_GAME_S_NAME);
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     addDialog(layout, STR_ENTER_SERV_NAME, serv_ssid.c_str());
 
@@ -171,8 +166,7 @@ namespace simple_rpg
 
     String serv_pwd = SettingsManager::get(STR_TEST_GAME_S_PWD);
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     addDialog(layout, STR_ENTER_SERV_PWD, serv_pwd.c_str());
 
@@ -269,8 +263,7 @@ namespace simple_rpg
     _dialog_txt->setPos(5, 0);
     _dialog_txt->setCornerRadius(3);
 
-    WidgetCreator creator;
-    _keyboard = creator.getStandardEnKeyboard(ID_KEYBOARD);
+    _keyboard = WidgetCreator::getStandardEnKeyboard(ID_KEYBOARD);
     layout->addWidget(_keyboard);
   }
 }  // namespace simple_rpg

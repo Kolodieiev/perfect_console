@@ -21,8 +21,7 @@ SplashContext::SplashContext()
   _display.enableBackLight();
   _start_time = millis();
 
-  WidgetCreator creator;
-  EmptyLayout* layout = creator.getEmptyLayout();
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
   //
   uint16_t y_pos{0};

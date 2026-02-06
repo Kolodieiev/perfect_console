@@ -36,8 +36,6 @@ void ReaderContext::showContextMenuTmpl()
 
   _books_list_menu->disable();
 
-  WidgetCreator creator;
-
   _context_menu = new FixedMenu(ID_BOOK_MENU);
   layout->addWidget(_context_menu);
   _context_menu->setBackColor(COLOR_MENU_ITEM);
@@ -50,10 +48,10 @@ void ReaderContext::showContextMenuTmpl()
 
   if (_books_list_menu->getCurrItemID() != 0)
   {
-    MenuItem* del_item = creator.getMenuItem(ID_ITEM_DEL);
+    MenuItem* del_item = WidgetCreator::getMenuItem(ID_ITEM_DEL);
     _context_menu->addItem(del_item);
 
-    Label* upd_lbl = creator.getItemLabel(STR_DELETE);
+    Label* upd_lbl = WidgetCreator::getItemLabel(STR_DELETE);
     del_item->setLbl(upd_lbl);
   }
 
@@ -72,8 +70,7 @@ void ReaderContext::showBookDirsTmpl()
 {
   _mode = MODE_BOOK_DIR_SEL;
 
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   _book_dirs_menu = new FixedMenu(ID_F_MENU);
@@ -91,10 +88,10 @@ void ReaderContext::showBookDirsTmpl()
 
   if (!_book_name.isEmpty())
   {
-    MenuItem* cont_item = creator.getMenuItem(ID_CONT_ITEM);
+    MenuItem* cont_item = WidgetCreator::getMenuItem(ID_CONT_ITEM);
     _book_dirs_menu->addItem(cont_item);
 
-    Label* cont_lbl = creator.getItemLabel(STR_CONTINUE, font_10x20);
+    Label* cont_lbl = WidgetCreator::getItemLabel(STR_CONTINUE, font_10x20);
     cont_item->setLbl(cont_lbl);
   }
 }
@@ -115,7 +112,6 @@ void ReaderContext::fillBookDirs()
 
 void ReaderContext::makeBookDirsItems(std::vector<MenuItem*>& items)
 {
-  WidgetCreator creator;
   items.clear();
 
   uint16_t books_num = _dirs.size();
@@ -124,7 +120,7 @@ void ReaderContext::makeBookDirsItems(std::vector<MenuItem*>& items)
   for (uint16_t i = 0, counter = ID_CONT_ITEM; i < books_num; ++i)
   {
     ++counter;
-    MenuItem* item = creator.getMenuItem(counter);
+    MenuItem* item = WidgetCreator::getMenuItem(counter);
     items.push_back(item);
 
     Label* lbl = new Label(1);
@@ -138,11 +134,11 @@ void ReaderContext::makeBookDirsItems(std::vector<MenuItem*>& items)
 void ReaderContext::showBooksListTmpl()
 {
   _mode = MODE_BOOK_SEL;
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
-  _books_list_menu = creator.getDynamicMenu(ID_D_MENU);
+  _books_list_menu = WidgetCreator::getDynamicMenu(ID_D_MENU);
   layout->addWidget(_books_list_menu);
   _books_list_menu->setWidth(TFT_WIDTH - SCROLLBAR_WIDTH);
   _books_list_menu->setHeight(TFT_HEIGHT);
@@ -188,7 +184,6 @@ void ReaderContext::makeBooksItems(std::vector<MenuItem*>& items, uint16_t file_
   if (read_to > _books.size())
     read_to = _books.size();
 
-  WidgetCreator creator;
   items.clear();
   items.reserve(read_to - file_pos);
 
@@ -196,7 +191,7 @@ void ReaderContext::makeBooksItems(std::vector<MenuItem*>& items, uint16_t file_
   {
     ++file_pos;
 
-    MenuItem* item = creator.getMenuItem(file_pos);
+    MenuItem* item = WidgetCreator::getMenuItem(file_pos);
     items.push_back(item);
 
     Label* lbl = new Label(1);
@@ -211,8 +206,7 @@ void ReaderContext::showReadTmpl()
 {
   _mode = MODE_BOOK_READ;
 
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   layout->setBackColor(COLOR_DARKGREY);
@@ -240,11 +234,10 @@ void ReaderContext::showSDErrTmpl()
 {
   _mode = MODE_SD_UNCONN;
 
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
-  Label* msg_lbl = creator.getStatusMsgLable(ID_MSG_LBL, STR_SD_ERR);
+  Label* msg_lbl = WidgetCreator::getStatusMsgLable(ID_MSG_LBL, STR_SD_ERR);
   layout->addWidget(msg_lbl);
 }
 
@@ -421,8 +414,8 @@ void ReaderContext::backPressed()
 void ReaderContext::showLoadBookTmpl()
 {
   _mode = MODE_BOOK_LOAD;
-  WidgetCreator creator;
-  IWidgetContainer* layout = creator.getEmptyLayout();
+
+  IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
   layout->setBackColor(COLOR_BLACK);
 
@@ -474,8 +467,7 @@ String ReaderContext::getBookPath(const char* dirname, const char* book_name)
 
 ReaderContext::ReaderContext()
 {
-  WidgetCreator creator;
-  EmptyLayout* layout = creator.getEmptyLayout();
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   if (!_fs.isMounted())

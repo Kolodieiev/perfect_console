@@ -10,9 +10,7 @@ const char STR_UPDATE_FIRMWARE[] = "Оновлення прошивки";
 
 FirmwareContext::FirmwareContext()
 {
-  WidgetCreator creator;
-
-  EmptyLayout* layout = creator.getEmptyLayout();
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   Label* title = new Label(ID_TITLE);
@@ -75,9 +73,7 @@ void FirmwareContext::update()
 
 void FirmwareContext::showUpdating()
 {
-  WidgetCreator creator;
-
-  EmptyLayout* layout = creator.getEmptyLayout();
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   Label* updating_msg = new Label(1);

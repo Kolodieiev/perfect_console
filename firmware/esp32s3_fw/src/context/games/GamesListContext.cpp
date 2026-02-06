@@ -13,9 +13,7 @@ GamesListContext::GamesListContext()
 {
   //------ Налаштування зовнішнього вигляду віджетів
 
-  WidgetCreator creator;
-  //
-  EmptyLayout* layout = creator.getEmptyLayout();
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
   //
   _menu = new FixedMenu(ID_MENU);
@@ -31,7 +29,7 @@ GamesListContext::GamesListContext()
   _scrollbar->setHeight(TFT_HEIGHT);
   _scrollbar->setPos(TFT_WIDTH - SCROLLBAR_WIDTH, 0);
   //
-  MenuItem* sokoban_item = creator.getMenuItem(ID_CONTEXT_SOKOBAN);
+  MenuItem* sokoban_item = WidgetCreator::getMenuItem(ID_CONTEXT_SOKOBAN);
   _menu->addItem(sokoban_item);
 
   Image* soko_img = new Image(1);
@@ -42,23 +40,23 @@ GamesListContext::GamesListContext()
   soko_img->setTransparency(true);
   soko_img->setSrc(ICO_SOKOBAN);
 
-  Label* soko_lbl = creator.getItemLabel(STR_SOKOBAN_ITEM, font_10x20);
+  Label* soko_lbl = WidgetCreator::getItemLabel(STR_SOKOBAN_ITEM, font_10x20);
   sokoban_item->setLbl(soko_lbl);
   soko_lbl->setAutoscrollInFocus(true);
 
   //---------------------------------
-  MenuItem* test_server_item = creator.getMenuItem(ID_CONTEXT_TEST_SERVER);
+  MenuItem* test_server_item = WidgetCreator::getMenuItem(ID_CONTEXT_TEST_SERVER);
   _menu->addItem(test_server_item);
 
-  Label* server_lbl = creator.getItemLabel(STR_TEST_SERV_ITEM, font_10x20);
+  Label* server_lbl = WidgetCreator::getItemLabel(STR_TEST_SERV_ITEM, font_10x20);
   test_server_item->setLbl(server_lbl);
   server_lbl->setAutoscrollInFocus(true);
 
   //---------------------------------
-  MenuItem* simple_rpg_item = creator.getMenuItem(ID_CONTEXT_SIMPLE_RPG);
+  MenuItem* simple_rpg_item = WidgetCreator::getMenuItem(ID_CONTEXT_SIMPLE_RPG);
   _menu->addItem(simple_rpg_item);
 
-  Label* simple_rpg_lbl = creator.getItemLabel(STR_SIMPLE_RPG_ITEM, font_10x20);
+  Label* simple_rpg_lbl = WidgetCreator::getItemLabel(STR_SIMPLE_RPG_ITEM, font_10x20);
   simple_rpg_item->setLbl(simple_rpg_lbl);
   simple_rpg_lbl->setAutoscrollInFocus(true);
 

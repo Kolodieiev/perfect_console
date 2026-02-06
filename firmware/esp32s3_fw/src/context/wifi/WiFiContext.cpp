@@ -94,8 +94,8 @@ void WiFiContext::update()
 void WiFiContext::showSDErrTmpl()
 {
   _mode = MODE_SD_UNCONN;
-  WidgetCreator creator;
-  EmptyLayout* layout = creator.getEmptyLayout();
+
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   Label* err_lbl = new Label(ID_ERR_LBL);
@@ -111,8 +111,8 @@ void WiFiContext::showSDErrTmpl()
 void WiFiContext::showMainTmpl()
 {
   _mode = MODE_MAIN;
-  WidgetCreator creator;
-  EmptyLayout* layout = creator.getEmptyLayout();
+
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   _main_menu = new FixedMenu(ID_MAIN_MENU);
@@ -130,7 +130,7 @@ void WiFiContext::showMainTmpl()
   wifi_state_item->setChangingBorder(true);
   wifi_state_item->setChangingBack(true);
 
-  Label* wifi_state_lbl = creator.getItemLabel(STR_TRANSMITTER_STATE, font_10x20);
+  Label* wifi_state_lbl = WidgetCreator::getItemLabel(STR_TRANSMITTER_STATE, font_10x20);
   wifi_state_item->setLbl(wifi_state_lbl);
 
   ToggleSwitch* wifi_state_toggle = new ToggleSwitch(1);
@@ -154,8 +154,8 @@ void WiFiContext::showMainTmpl()
 void WiFiContext::showEnterPwdTmpl()
 {
   _mode = MODE_ENTER_PWD;
-  WidgetCreator creator;
-  EmptyLayout* layout = creator.getEmptyLayout();
+
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   _pwd_txt = new TextBox(ID_PWD_TXT);
@@ -169,7 +169,7 @@ void WiFiContext::showEnterPwdTmpl()
   _pwd_txt->setPos(5, 0);
   _pwd_txt->setCornerRadius(3);
 
-  _keyboard = creator.getStandardEnKeyboard(ID_KEYBOARD);
+  _keyboard = WidgetCreator::getStandardEnKeyboard(ID_KEYBOARD);
   layout->addWidget(_keyboard);
 }
 
@@ -180,8 +180,7 @@ void WiFiContext::addCurrNetItem()
 
   String ssid_name = _wifi.getSSID();
 
-  WidgetCreator creator;
-  MenuItem* cur_net_item = creator.getMenuItem(ID_ITEM_CUR_NET);
+  MenuItem* cur_net_item = WidgetCreator::getMenuItem(ID_ITEM_CUR_NET);
   _main_menu->addItem(cur_net_item);
 
   Image* conn_ico = new Image(1);
@@ -192,7 +191,7 @@ void WiFiContext::addCurrNetItem()
   conn_ico->setTransparency(true);
   conn_ico->setSrc(ICO_CONNECT);
 
-  Label* conn_lbl = creator.getItemLabel(ssid_name.c_str(), font_10x20);
+  Label* conn_lbl = WidgetCreator::getItemLabel(ssid_name.c_str(), font_10x20);
   cur_net_item->setLbl(conn_lbl);
   conn_lbl->setAutoscrollInFocus(true);
 }
@@ -340,8 +339,6 @@ void WiFiContext::showContextMenuTmpl()
   if (item_id == ID_ITEM_WIFI_STATE)
     return;
 
-  WidgetCreator creator;
-
   _context_menu = new FixedMenu(ID_CTX_MENU);
   _context_menu->setBackColor(COLOR_MENU_ITEM);
   _context_menu->setBorderColor(COLOR_ORANGE);
@@ -353,15 +350,15 @@ void WiFiContext::showContextMenuTmpl()
   {
     String ip = _wifi.getLocalIP();
 
-    MenuItem* ip_item = creator.getMenuItem(ID_ITEM_IP);
+    MenuItem* ip_item = WidgetCreator::getMenuItem(ID_ITEM_IP);
     _context_menu->addItem(ip_item);
-    Label* ip_lbl = creator.getItemLabel(ip.c_str());
+    Label* ip_lbl = WidgetCreator::getItemLabel(ip.c_str());
     ip_item->setLbl(ip_lbl);
     ip_lbl->setFullAutoscroll(false);
 
-    MenuItem* disconn_item = creator.getMenuItem(ID_ITEM_DISCONN);
+    MenuItem* disconn_item = WidgetCreator::getMenuItem(ID_ITEM_DISCONN);
     _context_menu->addItem(disconn_item);
-    Label* disconn_lbl = creator.getItemLabel(STR_DISCONNECT);
+    Label* disconn_lbl = WidgetCreator::getItemLabel(STR_DISCONNECT);
     disconn_item->setLbl(disconn_lbl);
   }
 
@@ -369,10 +366,10 @@ void WiFiContext::showContextMenuTmpl()
 
   if (!wifi_pass.isEmpty())
   {
-    MenuItem* forget_item = creator.getMenuItem(ID_ITEM_FORGET);
+    MenuItem* forget_item = WidgetCreator::getMenuItem(ID_ITEM_FORGET);
     _context_menu->addItem(forget_item);
 
-    Label* forget_lbl = creator.getItemLabel(STR_FORGET);
+    Label* forget_lbl = WidgetCreator::getItemLabel(STR_FORGET);
     forget_item->setLbl(forget_lbl);
   }
 
@@ -409,12 +406,11 @@ void WiFiContext::changeKbCaps()
 
     getLayout()->delWidgetByID(ID_KEYBOARD);
 
-    WidgetCreator creator;
     _is_standrad_kb = !_is_standrad_kb;
     if (_is_standrad_kb)
-      _keyboard = creator.getStandardEnKeyboard(ID_KEYBOARD);
+      _keyboard = WidgetCreator::getStandardEnKeyboard(ID_KEYBOARD);
     else
-      _keyboard = creator.getCapsdEnKeyboard(ID_KEYBOARD);
+      _keyboard = WidgetCreator::getCapsdEnKeyboard(ID_KEYBOARD);
 
     _keyboard->setFocusPos(_pwd_kb_x_pos, _pwd_kb_y_pos);
     getLayout()->addWidget(_keyboard);
@@ -460,8 +456,6 @@ void WiFiContext::updateNetList(bool no_scan)
 
   takeLayoutMutex();
 
-  WidgetCreator creator;
-
   ToggleItem* wifi_state_item = _main_menu->getWidgetByID(ID_ITEM_WIFI_STATE)->castTo<ToggleItem>();
   ToggleItem* temp_toggle = wifi_state_item->clone(ID_ITEM_WIFI_STATE);
   _main_menu->delWidgets();
@@ -485,10 +479,10 @@ void WiFiContext::updateNetList(bool no_scan)
       continue;
     }
 
-    MenuItem* item = creator.getMenuItem(i);
+    MenuItem* item = WidgetCreator::getMenuItem(i);
     _main_menu->addItem(item);
 
-    Label* item_lbl = creator.getItemLabel((i_b)->c_str(), font_10x20);
+    Label* item_lbl = WidgetCreator::getItemLabel((i_b)->c_str(), font_10x20);
     item->setLbl(item_lbl);
     ++i;
   }

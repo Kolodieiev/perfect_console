@@ -24,11 +24,11 @@ using namespace pixeler;
 class WidgetCreator
 {
 public:
-  EmptyLayout* getEmptyLayout();
-  Label* getItemLabel(const char* text, const uint8_t* font_ptr = font_unifont, uint8_t text_size = 1);
-  MenuItem* getMenuItem(uint16_t id = 1);
-  DynamicMenu* getDynamicMenu(uint16_t id);
-  Label* getStatusMsgLable(uint16_t id, const char* text, uint8_t text_size = 1);
-  Keyboard* getStandardEnKeyboard(uint16_t id);
-  Keyboard* getCapsdEnKeyboard(uint16_t id);
+  static EmptyLayout* getEmptyLayout();
+  static Label* getItemLabel(const char* text, const uint8_t* font_ptr = font_unifont, uint8_t text_size = 1);
+  static MenuItem* getMenuItem(uint16_t id = 1);
+  static DynamicMenu* getDynamicMenu(uint16_t id);
+  static Label* getStatusMsgLable(uint16_t id, const char* text, uint8_t text_size = 1);
+  static Keyboard* getStandardEnKeyboard(uint16_t id);
+  static Keyboard* getCapsdEnKeyboard(uint16_t id);
 };

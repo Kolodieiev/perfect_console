@@ -15,9 +15,7 @@ PrefBrightContext::PrefBrightContext()
   else
     _old_bright = atoi(bright.c_str());
 
-  WidgetCreator creator;
-
-  EmptyLayout* layout = creator.getEmptyLayout();
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
   //
   Label* header_lbl = new Label(ID_HEADER);

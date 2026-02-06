@@ -25,9 +25,8 @@ uint8_t MenuContext::_last_sel_item_pos;
 
 MenuContext::MenuContext()
 {
-  WidgetCreator creator;
   //
-  EmptyLayout* layout = creator.getEmptyLayout();
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
   //
   _menu = new FixedMenu(ID_MENU);
@@ -46,7 +45,7 @@ MenuContext::MenuContext()
   _scrollbar->setBackColor(COLOR_MAIN_BACK);
 
   // Файли
-  MenuItem* files_item = creator.getMenuItem(ID_CONTEXT_FILES);
+  MenuItem* files_item = WidgetCreator::getMenuItem(ID_CONTEXT_FILES);
   _menu->addItem(files_item);
 
   Image* files_img = new Image(1);
@@ -56,11 +55,11 @@ MenuContext::MenuContext()
   files_img->setHeight(ICO_WH);
   files_img->setSrc(SD_IMG);
 
-  Label* files_lbl = creator.getItemLabel(STR_FILES_ITEM, font_10x20);
+  Label* files_lbl = WidgetCreator::getItemLabel(STR_FILES_ITEM, font_10x20);
   files_item->setLbl(files_lbl);
 
   // Музика
-  MenuItem* mp3_item = creator.getMenuItem(ID_CONTEXT_MP3);
+  MenuItem* mp3_item = WidgetCreator::getMenuItem(ID_CONTEXT_MP3);
   _menu->addItem(mp3_item);
 
   Image* mp3_img = new Image(1);
@@ -70,11 +69,11 @@ MenuContext::MenuContext()
   mp3_img->setHeight(ICO_WH);
   mp3_img->setSrc(HEADPHONES_IMG);
 
-  Label* mp3_lbl = creator.getItemLabel(STR_MUSIC_ITEM, font_10x20);
+  Label* mp3_lbl = WidgetCreator::getItemLabel(STR_MUSIC_ITEM, font_10x20);
   mp3_item->setLbl(mp3_lbl);
 
   // Ігри
-  MenuItem* game_item = creator.getMenuItem(ID_CONTEXT_GAMES);
+  MenuItem* game_item = WidgetCreator::getMenuItem(ID_CONTEXT_GAMES);
   _menu->addItem(game_item);
 
   Image* game_img = new Image(1);
@@ -84,11 +83,11 @@ MenuContext::MenuContext()
   game_img->setHeight(ICO_WH);
   game_img->setSrc(JOYSTICK_IMG);
 
-  Label* game_lbl = creator.getItemLabel(STR_GAME_ITEM, font_10x20);
+  Label* game_lbl = WidgetCreator::getItemLabel(STR_GAME_ITEM, font_10x20);
   game_item->setLbl(game_lbl);
 
   // Читалка
-  MenuItem* read_item = creator.getMenuItem(ID_CONTEXT_READER);
+  MenuItem* read_item = WidgetCreator::getMenuItem(ID_CONTEXT_READER);
   _menu->addItem(read_item);
 
   Image* read_img = new Image(1);
@@ -98,11 +97,11 @@ MenuContext::MenuContext()
   read_img->setHeight(ICO_WH);
   read_img->setSrc(BOOK_IMG);
 
-  Label* read_lbl = creator.getItemLabel(STR_READER_ITEM, font_10x20);
+  Label* read_lbl = WidgetCreator::getItemLabel(STR_READER_ITEM, font_10x20);
   read_item->setLbl(read_lbl);
 
   // WiFi
-  MenuItem* wifi_item = creator.getMenuItem(ID_CONTEXT_WIFI);
+  MenuItem* wifi_item = WidgetCreator::getMenuItem(ID_CONTEXT_WIFI);
   _menu->addItem(wifi_item);
 
   Image* wifi_img = new Image(1);
@@ -112,11 +111,11 @@ MenuContext::MenuContext()
   wifi_img->setHeight(ICO_WH);
   wifi_img->setSrc(WIFI_IMG);
 
-  Label* wifi_lbl = creator.getItemLabel(STR_WIFI_ITEM, font_10x20);
+  Label* wifi_lbl = WidgetCreator::getItemLabel(STR_WIFI_ITEM, font_10x20);
   wifi_item->setLbl(wifi_lbl);
 
   // Налаштування
-  MenuItem* pref_item = creator.getMenuItem(ID_CONTEXT_PREF_SEL);
+  MenuItem* pref_item = WidgetCreator::getMenuItem(ID_CONTEXT_PREF_SEL);
   _menu->addItem(pref_item);
 
   Image* pref_img = new Image(1);
@@ -126,11 +125,11 @@ MenuContext::MenuContext()
   pref_img->setHeight(ICO_WH);
   pref_img->setSrc(SETTINGS_IMG);
 
-  Label* pref_lbl = creator.getItemLabel(STR_PREFERENCES, font_10x20);
+  Label* pref_lbl = WidgetCreator::getItemLabel(STR_PREFERENCES, font_10x20);
   pref_item->setLbl(pref_lbl);
 
   // Прошивка
-  MenuItem* firm_item = creator.getMenuItem(ID_CONTEXT_FIRMWARE);
+  MenuItem* firm_item = WidgetCreator::getMenuItem(ID_CONTEXT_FIRMWARE);
   _menu->addItem(firm_item);
 
   Image* firm_img = new Image(1);
@@ -140,7 +139,7 @@ MenuContext::MenuContext()
   firm_img->setHeight(ICO_WH);
   firm_img->setSrc(CHIP_IMG);
 
-  Label* firm_lbl = creator.getItemLabel(STR_FIRMWARE_ITEM, font_10x20);
+  Label* firm_lbl = WidgetCreator::getItemLabel(STR_FIRMWARE_ITEM, font_10x20);
   firm_item->setLbl(firm_lbl);
   //
   _scrollbar->setMax(_menu->getSize());

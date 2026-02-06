@@ -11,8 +11,8 @@
 void PrefSelectContext::showSDErrTmpl()
 {
   _mode = MODE_SD_UNCONN;
-  WidgetCreator creator;
-  EmptyLayout* layout = creator.getEmptyLayout();
+  
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   Label* err_lbl = new Label(ID_ERR_LBL);
@@ -38,9 +38,9 @@ PrefSelectContext::PrefSelectContext()
 
 void PrefSelectContext::showMainTmpl()
 {
-  WidgetCreator creator;
+  
 
-  EmptyLayout* layout = creator.getEmptyLayout();
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   _menu = new FixedMenu(ID_MENU);
@@ -51,9 +51,9 @@ void PrefSelectContext::showMainTmpl()
   _menu->setItemHeight((_menu->getHeight() - 2) / 5);
 
   //
-  MenuItem* bright_item = creator.getMenuItem(ITEM_ID_BRIGHT);
+  MenuItem* bright_item = WidgetCreator::getMenuItem(ITEM_ID_BRIGHT);
   _menu->addItem(bright_item);
-  Label* bright_lbl = creator.getItemLabel(STR_BRIGHT, font_10x20);
+  Label* bright_lbl = WidgetCreator::getItemLabel(STR_BRIGHT, font_10x20);
   bright_item->setLbl(bright_lbl);
   //
   ToggleItem* mono_item = new ToggleItem(ITEM_ID_AUDIO_MONO);
@@ -63,7 +63,7 @@ void PrefSelectContext::showMainTmpl()
   mono_item->setChangingBorder(true);
   mono_item->setChangingBack(true);
 
-  Label* mono_lbl = creator.getItemLabel(STR_AUDIO_MONO, font_10x20);
+  Label* mono_lbl = WidgetCreator::getItemLabel(STR_AUDIO_MONO, font_10x20);
   mono_item->setLbl(mono_lbl);
 
   ToggleSwitch* toggle_mono = new ToggleSwitch(ID_TOGGLE);
@@ -104,9 +104,9 @@ void PrefSelectContext::showMainTmpl()
 
   //
 
-  MenuItem* file_server_item = creator.getMenuItem(ITEM_ID_FILE_SERVER);
+  MenuItem* file_server_item = WidgetCreator::getMenuItem(ITEM_ID_FILE_SERVER);
   _menu->addItem(file_server_item);
-  Label* file_server_lbl = creator.getItemLabel(STR_FILE_SERVER, font_10x20);
+  Label* file_server_lbl = WidgetCreator::getItemLabel(STR_FILE_SERVER, font_10x20);
   file_server_item->setLbl(file_server_lbl);
 
   _scrollbar = new ScrollBar(ID_SCROLLBAR);

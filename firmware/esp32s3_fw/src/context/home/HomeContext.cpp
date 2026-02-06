@@ -10,9 +10,7 @@
 
 HomeContext::HomeContext()
 {
-  WidgetCreator creator;
-
-  EmptyLayout* layout = creator.getEmptyLayout();
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   String walpp_path = SettingsManager::get(STR_WALLPP_FILENAME);

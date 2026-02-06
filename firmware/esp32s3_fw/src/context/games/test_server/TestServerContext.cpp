@@ -53,7 +53,7 @@ namespace test_server
   {
     delete _img_back_normal;
     delete _img_back_hover;
-    
+
     _client.disconnect();
     _server.stop();
   }
@@ -136,8 +136,7 @@ namespace test_server
     _dialog_txt->setPos(5, 0);
     _dialog_txt->setCornerRadius(3);
 
-    WidgetCreator creator;
-    _keyboard = creator.getStandardEnKeyboard(ID_KEYBOARD);
+    _keyboard = WidgetCreator::getStandardEnKeyboard(ID_KEYBOARD);
     layout->addWidget(_keyboard);
   }
 
@@ -161,13 +160,12 @@ namespace test_server
     Label* title = static_cast<Label*>(w_lbl);
     title->setText(STR_SERVER_SCANNING_DONE);
 
-    WidgetCreator creator;
     std::vector<String> result;
     _wifi.getScanResult(result);
     uint16_t item_id_counter = 1;
     for (auto it = result.begin(), last_it = result.end(); it != last_it; ++it, ++item_id_counter)
     {
-      MenuItem* item_client = creator.getMenuItem(item_id_counter);
+      MenuItem* item_client = WidgetCreator::getMenuItem(item_id_counter);
       _wifi_list_menu->addItem(item_client);
       item_client->setBackColor(COLOR_MAIN_BACK);
       item_client->setCornerRadius(10);
@@ -186,8 +184,7 @@ namespace test_server
   {
     _context_id = ID_CONT_MAIN;
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     if (!_img_back_normal)
       _img_back_normal = new Image(1);
@@ -305,8 +302,7 @@ namespace test_server
     _is_server = false;
     _is_client = false;
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     Label* title_lbl = new Label(ID_CONTEXT_LBL);
     layout->addWidget(title_lbl);
@@ -327,7 +323,7 @@ namespace test_server
     _role_menu->setLoopState(true);
 
     // Клієнт
-    MenuItem* item_client = creator.getMenuItem(ID_ITEM_CLIENT);
+    MenuItem* item_client = WidgetCreator::getMenuItem(ID_ITEM_CLIENT);
     _role_menu->addItem(item_client);
     item_client->setBackColor(COLOR_MAIN_BACK);
     item_client->setCornerRadius(10);
@@ -341,7 +337,7 @@ namespace test_server
     lbl_client->setCornerRadius(10);
 
     // Сервер
-    MenuItem* item_server = creator.getMenuItem(ID_ITEM_SERVER);
+    MenuItem* item_server = WidgetCreator::getMenuItem(ID_ITEM_SERVER);
     _role_menu->addItem(item_server);
     item_server->setBackColor(COLOR_MAIN_BACK);
     item_server->setCornerRadius(10);
@@ -394,8 +390,7 @@ namespace test_server
   {
     _context_id = ID_CONT_CLIENT_LOBBY;
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     Label* title_lbl = new Label(ID_CONTEXT_LBL);
     layout->addWidget(title_lbl);
@@ -416,8 +411,7 @@ namespace test_server
 
     _is_client = true;
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     Label* title_lbl = new Label(ID_CONTEXT_LBL);
     layout->addWidget(title_lbl);
@@ -487,8 +481,7 @@ namespace test_server
 
     _context_id = ID_CONT_CONN_DIALOG;
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     String title = STR_ENTER_PWD;
     title += _serv_ssid;
@@ -499,8 +492,8 @@ namespace test_server
   void TestServerContext::showConnToAP()
   {
     _context_id = ID_CONT_CONN_TO_AP;
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     Label* title_lbl = new Label(ID_CONTEXT_LBL);
     layout->addWidget(title_lbl);
@@ -640,8 +633,7 @@ namespace test_server
   {
     _context_id = ID_CONT_SERVER_LOBBY;
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     Label* title_lbl = new Label(ID_CONTEXT_LBL);
     layout->addWidget(title_lbl);
@@ -673,7 +665,7 @@ namespace test_server
 
     _clients_list_menu->delWidgets();
     _clients_list_menu->disable();
-    WidgetCreator creator;
+
     const std::unordered_map<uint32_t, ClientWrapper*>* clients = _server.getClients();
 
     uint16_t i = 1;
@@ -681,10 +673,10 @@ namespace test_server
     {
       if (!it->second->is(disconnected_client) && it->second->isConfirmed())
       {
-        MenuItem* new_item = creator.getMenuItem(i);
+        MenuItem* new_item = WidgetCreator::getMenuItem(i);
         _clients_list_menu->addItem(new_item);
 
-        Label* new_lbl = creator.getItemLabel(it->second->getName());
+        Label* new_lbl = WidgetCreator::getItemLabel(it->second->getName());
         new_item->setLbl(new_lbl);
         new_lbl->setHPadding(3);
       }
@@ -743,8 +735,6 @@ namespace test_server
     _context_id = ID_CONT_LOBBY_CONT_MENU;
     _clients_list_menu->disable();
 
-    WidgetCreator creator;
-
     _lobby_context_menu = new FixedMenu(ID_LOBBY_CONTEXT_MENU);
     getLayout()->addWidget(_lobby_context_menu);
     _lobby_context_menu->setItemHeight(18);
@@ -759,10 +749,10 @@ namespace test_server
     if (id > 0)
     {
       // Відключити
-      MenuItem* disconn_item = creator.getMenuItem(ID_ITEM_DISC_CLIENT);
+      MenuItem* disconn_item = WidgetCreator::getMenuItem(ID_ITEM_DISC_CLIENT);
       _lobby_context_menu->addItem(disconn_item);
 
-      Label* disconn_lbl = creator.getItemLabel(STR_CONT_DISC_CLIENT);
+      Label* disconn_lbl = WidgetCreator::getItemLabel(STR_CONT_DISC_CLIENT);
       disconn_item->setLbl(disconn_lbl);
       disconn_lbl->setHPadding(1);
     }
@@ -770,37 +760,37 @@ namespace test_server
     if (_server.isOpen())
     {
       // Закрити лоббі
-      MenuItem* close_item = creator.getMenuItem(ID_ITEM_CLOSE_LOBBY);
+      MenuItem* close_item = WidgetCreator::getMenuItem(ID_ITEM_CLOSE_LOBBY);
       _lobby_context_menu->addItem(close_item);
 
-      Label* close_lbl = creator.getItemLabel(STR_CONT_CLOSE_LOBBY);
+      Label* close_lbl = WidgetCreator::getItemLabel(STR_CONT_CLOSE_LOBBY);
       close_item->setLbl(close_lbl);
       close_lbl->setHPadding(1);
     }
     else
     {
       // Відкрити лоббі
-      MenuItem* open_item = creator.getMenuItem(ID_ITEM_OPEN_LOBBY);
+      MenuItem* open_item = WidgetCreator::getMenuItem(ID_ITEM_OPEN_LOBBY);
       _lobby_context_menu->addItem(open_item);
 
-      Label* open_lbl = creator.getItemLabel(STR_CONT_OPEN_LOBBY);
+      Label* open_lbl = WidgetCreator::getItemLabel(STR_CONT_OPEN_LOBBY);
       open_item->setLbl(open_lbl);
       open_lbl->setHPadding(1);
     }
 
     // Завершити гру
-    MenuItem* end_item = creator.getMenuItem(ID_ITEM_END_GAME);
+    MenuItem* end_item = WidgetCreator::getMenuItem(ID_ITEM_END_GAME);
     _lobby_context_menu->addItem(end_item);
 
-    Label* end_lbl = creator.getItemLabel(STR_CONT_GAME_EXIT);
+    Label* end_lbl = WidgetCreator::getItemLabel(STR_CONT_GAME_EXIT);
     end_item->setLbl(end_lbl);
     end_lbl->setHPadding(1);
 
     // Розпочати гру
-    MenuItem* start_item = creator.getMenuItem(ID_ITEM_START_GAME);
+    MenuItem* start_item = WidgetCreator::getMenuItem(ID_ITEM_START_GAME);
     _lobby_context_menu->addItem(start_item);
 
-    Label* start_lbl = creator.getItemLabel(STR_CONT_GAME_START);
+    Label* start_lbl = WidgetCreator::getItemLabel(STR_CONT_GAME_START);
     start_item->setLbl(start_lbl);
     start_lbl->setHPadding(1);
 
@@ -897,8 +887,7 @@ namespace test_server
   {
     _context_id = ID_CONT_CLIENT_CONFIRM;
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     String msg_str = _conn_client_wrap->getName();
     msg_str += STR_WANTS_TO_JOIN;
@@ -946,8 +935,7 @@ namespace test_server
   {
     _context_id = ID_CONT_PREF_MAIN;
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     _pref_menu = new FixedMenu(ID_PREF_MAIN_MENU);
     layout->addWidget(_pref_menu);
@@ -958,27 +946,27 @@ namespace test_server
     _pref_menu->setLoopState(true);
 
     // nick
-    MenuItem* nick_item = creator.getMenuItem(ID_ITEM_NICK);
+    MenuItem* nick_item = WidgetCreator::getMenuItem(ID_ITEM_NICK);
     _pref_menu->addItem(nick_item);
     nick_item->setBackColor(COLOR_MAIN_BACK);
 
-    Label* nick_lbl = creator.getItemLabel(STR_NICKNAME);
+    Label* nick_lbl = WidgetCreator::getItemLabel(STR_NICKNAME);
     nick_item->setLbl(nick_lbl);
 
     // serv name
-    MenuItem* serv_name_item = creator.getMenuItem(ID_ITEM_SERV_NAME);
+    MenuItem* serv_name_item = WidgetCreator::getMenuItem(ID_ITEM_SERV_NAME);
     _pref_menu->addItem(serv_name_item);
     serv_name_item->setBackColor(COLOR_MAIN_BACK);
 
-    Label* serv_name_lbl = creator.getItemLabel(STR_SERV_NAME);
+    Label* serv_name_lbl = WidgetCreator::getItemLabel(STR_SERV_NAME);
     serv_name_item->setLbl(serv_name_lbl);
 
     // client name
-    MenuItem* serv_pwd_item = creator.getMenuItem(ID_ITEM_SERV_PWD);
+    MenuItem* serv_pwd_item = WidgetCreator::getMenuItem(ID_ITEM_SERV_PWD);
     _pref_menu->addItem(serv_pwd_item);
     serv_pwd_item->setBackColor(COLOR_MAIN_BACK);
 
-    Label* serv_pwd_lbl = creator.getItemLabel(STR_SERV_PWD);
+    Label* serv_pwd_lbl = WidgetCreator::getItemLabel(STR_SERV_PWD);
     serv_pwd_item->setLbl(serv_pwd_lbl);
 
     setLayout(layout);
@@ -1021,8 +1009,7 @@ namespace test_server
     _context_id = ID_CONT_PREF_NICK;
     _client_nick = SettingsManager::get(STR_TEST_GAME_NICK);
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     addDialog(layout, STR_ENTER_NICK, _client_nick.c_str());
 
@@ -1034,8 +1021,7 @@ namespace test_server
     _context_id = ID_CONT_PREF_SERV_NAME;
     _serv_ssid = SettingsManager::get(STR_TEST_GAME_S_NAME);
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     addDialog(layout, STR_ENTER_SERV_NAME, _serv_ssid.c_str());
 
@@ -1047,8 +1033,7 @@ namespace test_server
     _context_id = ID_CONT_PREF_SERV_PWD;
     _serv_pwd = SettingsManager::get(STR_TEST_GAME_S_PWD);
 
-    WidgetCreator creator;
-    EmptyLayout* layout = creator.getEmptyLayout();
+    EmptyLayout* layout = WidgetCreator::getEmptyLayout();
 
     addDialog(layout, STR_ENTER_SERV_PWD, _serv_pwd.c_str());
 

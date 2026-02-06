@@ -24,8 +24,7 @@ PrefFileServerContext::PrefFileServerContext()
 
 void PrefFileServerContext::showMainTmpl()
 {
-  WidgetCreator creator;
-  EmptyLayout* layout = creator.getEmptyLayout();
+  EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
   //----------------------------------------------------
@@ -93,9 +92,7 @@ void PrefFileServerContext::showDialogTmpl()
   layout->delWidgets();
   layout->setBackColor(COLOR_BLACK);
 
-  WidgetCreator creator;
-
-  _dialog_txt = new TextBox(ID_TXT_DIALOG);
+    _dialog_txt = new TextBox(ID_TXT_DIALOG);
   layout->addWidget(_dialog_txt);
   _dialog_txt->setHPadding(5);
   _dialog_txt->setWidth(TFT_WIDTH - 10);
@@ -111,7 +108,7 @@ void PrefFileServerContext::showDialogTmpl()
   else
     _dialog_txt->setText(_pwd_str);
 
-  _keyboard = creator.getStandardEnKeyboard(ID_KEYBOARD);
+  _keyboard = WidgetCreator::getStandardEnKeyboard(ID_KEYBOARD);
   layout->addWidget(_keyboard);
 
   _mode = MODE_DIALOG;
