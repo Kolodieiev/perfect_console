@@ -12,8 +12,8 @@
 
 #pragma once
 #pragma GCC optimize("O3")
-#include "../defines.h"
-#include "../setup/coprocessor_setup.h"
+#include "pixeler/defines.h"
+#include "pixeler_setup/coprocessor_setup.h"
 
 namespace pixeler
 {

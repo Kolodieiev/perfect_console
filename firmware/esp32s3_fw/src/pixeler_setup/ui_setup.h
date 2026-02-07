@@ -4,7 +4,7 @@
  * @details В даний файл необхідно підключити заголовкові файли класів контексту та додати функцію їх створення в map.
  * Файли контексту необхідно підключити власні за прикладом нижче.
  *
- * Ідентифікатори контексту(ContextID) додаються у файлі "pixeler/setup/context_id_setup.h"
+ * Ідентифікатори контексту(ContextID) додаються у файлі "pixeler_setup/context_id_setup.h"
  */
 
 #pragma once
@@ -13,7 +13,7 @@
 #include <functional>
 #include <unordered_map>
 
-#include "../driver/graphics/DisplayWrapper.h"
+#include "pixeler/driver/graphics/DisplayWrapper.h"
 #include "context_id_setup.h"
 
 // -------------------------------- Підключи нижче заголовкові файли контекстів першого рівня

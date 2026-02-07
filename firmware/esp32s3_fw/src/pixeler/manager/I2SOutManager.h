@@ -3,14 +3,14 @@
  * @brief Абстрація над бібліотекою I2S для надсилання даних на зовнішню звукову карту
  * @details Не повинен бути реалізований в користувацькому коді.
  * Доступ до класу повинен виконуватися тільки через глобальний об'єкт "_i2s_out".
- * Піни, до яких підключено мікрофон, налаштовуються в файлі "pixeler/setup/i2s_setup.h"
+ * Піни, до яких підключено мікрофон, налаштовуються в файлі "pixeler_setup/i2s_setup.h"
  */
 
 #pragma once
 #pragma GCC optimize("O3")
 #include <driver/i2s_std.h>
 
-#include "../defines.h"
+#include "pixeler/defines.h"
 
 namespace pixeler
 {

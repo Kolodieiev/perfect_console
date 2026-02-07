@@ -1,7 +1,7 @@
 #pragma GCC optimize("O3")
 #include "I2SOutManager.h"
 
-#include "../setup/i2s_setup.h"
+#include "pixeler_setup/i2s_setup.h"
 
 namespace pixeler
 {

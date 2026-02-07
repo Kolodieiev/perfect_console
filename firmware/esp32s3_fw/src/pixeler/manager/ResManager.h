@@ -12,7 +12,7 @@
 #pragma GCC optimize("O3")
 #include <unordered_map>
 
-#include "../defines.h"
+#include "pixeler/defines.h"
 #include "../util/audio/AudioData.h"
 #include "../util/img/ImgData.h"
 

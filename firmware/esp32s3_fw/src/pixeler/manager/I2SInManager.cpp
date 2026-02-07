@@ -1,7 +1,7 @@
 #pragma GCC optimize("O3")
 #include "I2SInManager.h"
 
-#include "../setup/i2s_setup.h"
+#include "pixeler_setup//i2s_setup.h"
 
 #define MIN_MICRO_BUFF_LEN 40UL
 

@@ -10,7 +10,7 @@
 #include <cstring>
 #include <vector>
 
-#include "pixeler/setup/sd_setup.h"
+#include "pixeler_setup/sd_setup.h"
 #include "pixeler/util/AutoLock.h"
 
 #define IDLE_WD_GUARD_TIME 250U

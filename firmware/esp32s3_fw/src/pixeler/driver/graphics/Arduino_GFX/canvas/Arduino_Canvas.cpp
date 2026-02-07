@@ -2,7 +2,7 @@
 #include "../Arduino_DataBus.h"
 #if !defined(LITTLE_FOOT_PRINT)
 
-#include "../../../../setup/graphics_setup.h"
+#include "pixeler_setup/graphics_setup.h"
 #include "../Arduino_GFX.h"
 #include "Arduino_Canvas.h"
 

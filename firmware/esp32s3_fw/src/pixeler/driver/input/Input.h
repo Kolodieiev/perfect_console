@@ -4,7 +4,7 @@
  * @details Об'єднує та уніфікує обробку вводу з сенсорних датчиків 
  * і фізичних пінів ESP або взаємодіє з іншим МК для розширення GPIO. 
  * 
- * Налаштовується в pixeler/setup/input_setup.h
+ * Налаштовується в pixeler_setup/input_setup.h
  */
 
 #pragma once
@@ -12,8 +12,8 @@
 
 #include <unordered_map>
 
-#include "../../defines.h"
-#include "../../setup/input_setup.h"
+#include "pixeler/defines.h"
+#include "pixeler_setup/input_setup.h"
 #include "Button.h"
 #include "external_input/ExtInput.h"
 

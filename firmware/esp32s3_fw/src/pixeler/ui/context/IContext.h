@@ -17,8 +17,8 @@
 #include "pixeler/defines.h"
 #include "pixeler/driver/graphics/DisplayWrapper.h"
 #include "pixeler/driver/input/Input.h"
-#include "pixeler/setup/context_id_setup.h"
-#include "pixeler/setup/cpu_setup.h"
+#include "pixeler_setup/context_id_setup.h"
+#include "pixeler_setup/cpu_setup.h"
 
 namespace pixeler
 {
