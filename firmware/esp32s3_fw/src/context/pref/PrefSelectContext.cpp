@@ -11,7 +11,7 @@
 void PrefSelectContext::showSDErrTmpl()
 {
   _mode = MODE_SD_UNCONN;
-  
+
   EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
@@ -38,8 +38,6 @@ PrefSelectContext::PrefSelectContext()
 
 void PrefSelectContext::showMainTmpl()
 {
-  
-
   EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
