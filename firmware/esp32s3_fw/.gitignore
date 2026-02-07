@@ -26,6 +26,8 @@ doc/source/classes/
 !src/
 !src/pixeler/
 !src/pixeler/**
+!src/pixeler_setup/
+!src/pixeler_setup/**
 !src/main.cpp
 
 !src/context/
