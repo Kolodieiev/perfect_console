@@ -1,5 +1,5 @@
 #pragma once
-#include "../defines.h"
+#include "pixeler/defines.h"
 #include "../driver/graphics/DisplayWrapper.h"
 
 namespace pixeler

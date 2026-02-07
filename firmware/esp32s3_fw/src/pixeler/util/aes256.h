@@ -1,6 +1,6 @@
 #pragma once
 #pragma GCC optimize("O3")
-#include "../defines.h"
+#include "pixeler/defines.h"
 #include <esp_system.h>
 #include <mbedtls/gcm.h>
 
