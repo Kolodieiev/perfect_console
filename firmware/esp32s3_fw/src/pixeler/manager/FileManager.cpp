@@ -10,8 +10,9 @@
 #include <cstring>
 #include <vector>
 
-#include "pixeler_setup/sd_setup.h"
+#include "pixeler/manager/SPI_Manager.h"
 #include "pixeler/util/AutoLock.h"
+#include "pixeler_setup/sd_setup.h"
 
 #define IDLE_WD_GUARD_TIME 250U
 #define OPT_BLOCK_SIZE 16384
@@ -955,10 +956,16 @@ namespace pixeler
     return S_ISDIR(st.st_mode);
   }
 
-  bool FileManager::mount(SPIClass* spi)
+  bool FileManager::mount()
   {
     if (_pdrv != 0xFF)
-      unmount();
+    {
+      log_i("Карту пам'яті було примонтовано раніше");
+      return true;
+    }
+
+    SPI_Manager::initBus(SD_SPI_BUS, SD_PIN_SCLK, SD_PIN_MISO, SD_PIN_MOSI);
+    SPIClass* spi = SPI_Manager::getSpi4Bus(SD_SPI_BUS);
 
     if (!spi || !spi->begin())
     {

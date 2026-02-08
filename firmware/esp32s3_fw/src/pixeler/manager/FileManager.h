@@ -11,8 +11,8 @@
 #include <sys/stat.h>
 
 #include "pixeler/defines.h"
-#include "pixeler_setup/sd_setup.h"
 #include "pixeler/util/file/FileInfo.h"
+#include "pixeler_setup/sd_setup.h"
 
 namespace pixeler
 {
@@ -308,7 +308,7 @@ namespace pixeler
     bool lastTaskResult() const;
 
     /**
-     * @brief Генерує унікальне ім'я файлу на основі переданого імені, якщо вказаний файл вже інсує.
+     * @brief Генерує унікальне ім'я файла на основі переданого імені, якщо вказаний файл вже інсує.
      * Інакше повертає передане ім'я.
      *
      * @param file_path
@@ -317,14 +317,12 @@ namespace pixeler
     String makeUniqueFilename(const String& file_path);
 
     /**
-     * @brief Монтує карту пам'яті, яка приєднана до вказаної шини SPI.
-     * Якщо раніше була примонтована інша карта пам'яті, вона буде автоматично відмонтована.
+     * @brief Монтує карту пам'яті до, вказаної в налаштуваннях Pixeler, шини SPI.
      *
-     * @param spi Вказівник на ініціалізовану шину SPI.
-     * @return true - Якщо карту пам'яті було примонтовано.
+     * @return true - Якщо карту пам'яті було успішно примонтовано зараз або раніше.
      * @return false - Якщо під час монтування виникла помилка.
      */
-    bool mount(SPIClass* spi);
+    bool mount();
 
     /**
      * @brief Відмонтовує примонтовану раніше карту пам'яті.
