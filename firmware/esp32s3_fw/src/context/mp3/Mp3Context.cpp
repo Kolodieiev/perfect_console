@@ -48,7 +48,7 @@ void Mp3Context::savePref()
 Mp3Context::Mp3Context()
 {
   setCpuFrequencyMhz(BALANCED_CPU_FREQ_MHZ);
-  
+
   EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
 
@@ -117,7 +117,6 @@ void Mp3Context::showPlaying()
 {
   uint8_t paddings{10};
 
-  
   IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
 
   _track_name_lbl = new Label(ID_TRACK_NAME);
@@ -216,7 +215,6 @@ void Mp3Context::showPlaying()
 
 void Mp3Context::showTracksTmpl()
 {
-  
   IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
 
   _tracks_list = WidgetCreator::getDynamicMenu(ID_D_MENU);
@@ -241,7 +239,6 @@ void Mp3Context::showTracksTmpl()
 
 void Mp3Context::showPlaylistsTmpl()
 {
-  
   IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
 
   _playlists_list = new FixedMenu(ID_F_MENU);
@@ -287,7 +284,6 @@ void Mp3Context::fillPlaylists()
 
 void Mp3Context::makeMenuPlaylistsItems(std::vector<MenuItem*>& items)
 {
-  
   items.clear();
 
   uint16_t playlist_num = _playlists.size();
@@ -337,7 +333,6 @@ void Mp3Context::makeMenuTracksItems(std::vector<MenuItem*>& items, uint16_t fil
   if (read_to > _tracks.size())
     read_to = _tracks.size();
 
-  
   items.clear();
   items.reserve(read_to - file_pos);
 
@@ -361,7 +356,6 @@ void Mp3Context::showPlMenu()
 {
   _tracks_list->disable();
 
-  
   _context_menu = new FixedMenu(ID_PL_MENU);
   getLayout()->addWidget(_context_menu);
   _context_menu->setBackColor(COLOR_MENU_ITEM);
@@ -393,7 +387,6 @@ void Mp3Context::hidePlMenu()
 
 void Mp3Context::showSDErrTmpl()
 {
-  
   IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
 
   _msg_lbl = WidgetCreator::getStatusMsgLable(ID_MSG_LBL, STR_SD_ERR);
@@ -909,16 +902,9 @@ void Mp3Context::changeBackLight()
     uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_ON, CH_PIN_DISPLAY_PWR};
     _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
 
-    ccpu_cmd_data[0] = CCPU_CMD_BTN_ON;
-
-    ccpu_cmd_data[1] = BtnID::BTN_BACK;
-    _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
-
-    ccpu_cmd_data[1] = BtnID::BTN_LEFT;
-    _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
-
-    ccpu_cmd_data[1] = BtnID::BTN_RIGHT;
-    _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+    _input.enableBtn(BtnID::BTN_BACK);
+    _input.enableBtn(BtnID::BTN_LEFT);
+    _input.enableBtn(BtnID::BTN_RIGHT);
   }
   else
   {
@@ -929,16 +915,9 @@ void Mp3Context::changeBackLight()
     uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_OFF, CH_PIN_DISPLAY_PWR};
     _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
 
-    ccpu_cmd_data[0] = CCPU_CMD_BTN_OFF;
-
-    ccpu_cmd_data[1] = BtnID::BTN_BACK;
-    _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
-
-    ccpu_cmd_data[1] = BtnID::BTN_LEFT;
-    _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
-
-    ccpu_cmd_data[1] = BtnID::BTN_RIGHT;
-    _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data));
+    _input.disableBtn(BtnID::BTN_BACK);
+    _input.disableBtn(BtnID::BTN_LEFT);
+    _input.disableBtn(BtnID::BTN_RIGHT);
   }
 
   _is_locked = !_is_locked;
