@@ -61,34 +61,34 @@ namespace pixeler
 
   void Input::enableBtn(BtnID btn_id)
   {
-#ifdef EXT_INPUT
-    _ext_input.enableBtn(btn_id);
-#else
     try
     {
+#ifdef EXT_INPUT
+      _ext_input.enableBtn(btn_id);
+#endif  // EXT_INPUT
+
       _buttons.at(btn_id).enable();
     }
     catch (const std::out_of_range& ignored)
     {
       log_e("%s", STR_UNKNOWN_PIN);
     }
-#endif  // EXT_INPUT
   }
 
   void Input::disableBtn(BtnID btn_id)
   {
-#ifdef EXT_INPUT
-    _ext_input.disableBtn(btn_id);
-#else
     try
     {
+#ifdef EXT_INPUT
+      _ext_input.disableBtn(btn_id);
+#endif  // EXT_INPUT
+
       _buttons.at(btn_id).disable();
     }
     catch (const std::out_of_range& ignored)
     {
       log_e("%s", STR_UNKNOWN_PIN);
     }
-#endif  // EXT_INPUT
   }
 
   bool Input::isHolded(BtnID btn_id) const

@@ -136,7 +136,9 @@ namespace pixeler
     _is_enabled = false;
     reset();
 
+#ifndef EXT_INPUT
     gpio_reset_pin((gpio_num_t)_btn_id);
     pinMode(_btn_id, INPUT);
+#endif
   }
 }  // namespace pixeler
