@@ -43,13 +43,13 @@ namespace pixeler
   void ExtInput::enableBtn(uint8_t btn_pos)
   {
     uint8_t cmd_data[2] = {CCPU_CMD_BTN_ON, btn_pos};
-    _ccpu.sendCmd(cmd_data, sizeof(cmd_data));
+    _ccpu.sendCmd(cmd_data, sizeof(cmd_data), 2);
   }
 
   void ExtInput::disableBtn(uint8_t btn_pos)
   {
     uint8_t cmd_data[2] = {CCPU_CMD_BTN_OFF, btn_pos};
-    _ccpu.sendCmd(cmd_data, sizeof(cmd_data));
+    _ccpu.sendCmd(cmd_data, sizeof(cmd_data), 2);
   }
 }  // namespace pixeler
 
