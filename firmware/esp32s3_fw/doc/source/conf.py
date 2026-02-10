@@ -1,7 +1,6 @@
 project = 'Pixeler'
 copyright = '2026, Kolodieiev'
 author = 'Kolodieiev'
-release = '1.0'
 
 import os
 from exhale import utils # type: ignore
