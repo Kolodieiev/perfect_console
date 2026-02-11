@@ -211,6 +211,12 @@ void Mp3Context::showPlaying()
   _mode = MODE_AUDIO_PLAY;
 
   setLayout(layout);
+
+  // Необхідно для повторного оновлення довжини поточного треку
+  // після увімкнення підсвітки
+  _is_new_track = true; 
+
+  layout->forcedDraw();
 }
 
 void Mp3Context::showTracksTmpl()
@@ -905,6 +911,8 @@ void Mp3Context::changeBackLight()
     _input.enableBtn(BtnID::BTN_BACK);
     _input.enableBtn(BtnID::BTN_LEFT);
     _input.enableBtn(BtnID::BTN_RIGHT);
+
+    showPlaying();
   }
   else
   {
@@ -918,6 +926,8 @@ void Mp3Context::changeBackLight()
     _input.disableBtn(BtnID::BTN_BACK);
     _input.disableBtn(BtnID::BTN_LEFT);
     _input.disableBtn(BtnID::BTN_RIGHT);
+
+    getLayout()->delWidgets();
   }
 
   _is_locked = !_is_locked;
