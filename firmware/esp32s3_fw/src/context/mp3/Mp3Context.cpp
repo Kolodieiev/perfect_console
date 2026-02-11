@@ -115,6 +115,11 @@ Mp3Context::~Mp3Context()
 
 void Mp3Context::showPlaying()
 {
+  IWidgetContainer* container = getLayout();
+
+  if (container)
+    container->delWidgets();
+
   uint8_t paddings{10};
 
   IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
@@ -214,7 +219,7 @@ void Mp3Context::showPlaying()
 
   // Необхідно для повторного оновлення довжини поточного треку
   // після увімкнення підсвітки
-  _is_new_track = true; 
+  _is_new_track = true;
 
   layout->forcedDraw();
 }
@@ -926,8 +931,6 @@ void Mp3Context::changeBackLight()
     _input.disableBtn(BtnID::BTN_BACK);
     _input.disableBtn(BtnID::BTN_LEFT);
     _input.disableBtn(BtnID::BTN_RIGHT);
-
-    getLayout()->delWidgets();
   }
 
   _is_locked = !_is_locked;
