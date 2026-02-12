@@ -24,7 +24,7 @@ about.md
 setup.md
 context.md
 input.md
-widgets.md
+gui.md
 sd.md
 lua.md
 engine.md
