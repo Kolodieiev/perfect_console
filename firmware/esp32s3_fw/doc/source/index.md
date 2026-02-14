@@ -24,6 +24,7 @@ about.md
 setup.md
 context.md
 input.md
+display.md
 gui.md
 sd.md
 lua.md
