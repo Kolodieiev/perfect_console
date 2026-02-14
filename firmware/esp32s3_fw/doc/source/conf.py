@@ -3,13 +3,10 @@ copyright = '2026, Kolodieiev'
 author = 'Kolodieiev'
 
 import os
-from exhale import utils # type: ignore
 
 extensions = [
     'sphinx.ext.viewcode',     # Посилання на вихідний код
     'myst_parser',             # Markdown підтримка
-    'breathe',                 # Інтеграція з Doxygen
-    'exhale',                  # Генерація файлів документації класів
 ]
 
 highlight_options = {
@@ -31,34 +28,6 @@ myst_enable_extensions = [
 suppress_warnings = [
     'myst.header',  # Ігнорувати попередження про заголовки
 ]
-
-# Breathe налаштування
-breathe_projects = {
-    "Pixeler": "../docs/xml/"
-}
-breathe_default_project = "Pixeler"
-breathe_default_members = ('members',)
-
-# Exhale налаштування
-exhale_args = {
-    # Папка, де будуть створені окремі файли для кожного класу
-    "containmentFolder": "./classes",
-    
-    # Головний файл з деревом API
-    "rootFileName": "library_root.rst",
-    
-    # Назва головної сторінки
-    "rootFileTitle": "Класи фреймворку",
-    
-    # Створити дерево навігації
-    "createTreeView": True,
-    
-    # Ми вже генеруємо XML через make dox_xml
-    "exhaleExecutesDoxygen": False,
-    
-    # Видалити шлях з назв
-    "doxygenStripFromPath": "..",
-}
 
 # Підтримка Markdown файлів
 source_suffix = {
