@@ -2,8 +2,8 @@
 
 #include "../WidgetCreator.h"
 #include "pixeler/lib/neo_pixel/Adafruit_NeoPixel.h"
-#include "pixeler/manager/I2C_Manager.h"
 #include "pixeler/manager/FileManager.h"
+#include "pixeler/manager/I2C_Manager.h"
 #include "pixeler/manager/SettingsManager.h"
 #include "pixeler_setup/sd_setup.h"
 
@@ -26,7 +26,7 @@ SplashContext::SplashContext()
   uint16_t y_pos{0};
 
   // SDCARD
-  if ( _fs.mount())
+  if (_fs.mount())
   {
     addLabel(OFFSET_LBL_INFO, y_pos, STR_SUCCESS, COLOR_GREEN);
 
