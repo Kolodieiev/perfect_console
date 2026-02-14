@@ -943,13 +943,19 @@ namespace pixeler
       return false;
     }
 
+    AutoLock lock(_sd_mutex);
+    return isMountedUnlocked();
+  }
+
+  bool FileManager::isMountedUnlocked() const
+  {
     String path_to_root = SD_MOUNTPOINT;
     path_to_root += "/";
+
     struct stat st;
-    AutoLock lock(_sd_mutex);
     if (stat(path_to_root.c_str(), &st) != 0)
     {
-      log_e("Помилка читання stat");
+      log_e("Помилка читання stat під час монтування SD");
       return false;
     }
 
@@ -991,8 +997,13 @@ namespace pixeler
     }
 
     delay(10);
-    log_i("Карту пам'яті примонтовано");
-    return true;
+
+    bool result = isMountedUnlocked();
+
+    if (result)
+      log_i("Карту пам'яті примонтовано");
+
+    return result;
   }
 
   void FileManager::unmount()

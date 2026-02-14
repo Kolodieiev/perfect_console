@@ -373,6 +373,7 @@ namespace pixeler
     size_t availableUnlocked(FILE* file, size_t file_size);
     bool copyFileUnlocked(const String& from, const String& to);
     void closeFileUnlocked(FILE*& file);
+    bool isMountedUnlocked() const;
 
   private:
     SemaphoreHandle_t _sd_mutex;

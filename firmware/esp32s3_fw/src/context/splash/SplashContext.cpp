@@ -26,8 +26,7 @@ SplashContext::SplashContext()
   uint16_t y_pos{0};
 
   // SDCARD
-  _fs.mount();
-  if (_fs.isMounted())
+  if ( _fs.mount())
   {
     addLabel(OFFSET_LBL_INFO, y_pos, STR_SUCCESS, COLOR_GREEN);
 
