@@ -608,7 +608,7 @@ void ReaderContext::ok()
 
       String book_path = getBookPath(_dirname.c_str(), _book_name.c_str());
 
-      if (_fs.rmFile(book_path.c_str(), true))
+      if (_fs.rmFile(book_path.c_str()))
       {
         if (_books_list_menu->getCurrItemID() - 2 > -1)
           _book_pos = _books_list_menu->getCurrItemID() - 2;

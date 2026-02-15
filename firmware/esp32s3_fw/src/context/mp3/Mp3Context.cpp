@@ -809,7 +809,7 @@ void Mp3Context::ok()
 
       String path_to_rem = getTrackPath(_playlist_name.c_str(), _track_name.c_str());
 
-      if (_fs.rmFile(path_to_rem.c_str(), true))
+      if (_fs.rmFile(path_to_rem.c_str()))
       {
         if (_tracks_list->getCurrItemID() - 2 > -1)
           _track_pos = _tracks_list->getCurrItemID() - 2;

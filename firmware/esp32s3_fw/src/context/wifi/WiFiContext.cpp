@@ -305,7 +305,7 @@ void WiFiContext::ok()
     else if (ctx_item_id == ID_ITEM_FORGET)
     {
       String path_to_pwd = SettingsManager::getSettingsFilePath(_main_menu->getCurrItemText().c_str(), STR_WIFI_SUBDIR);
-      if (!_fs.rmFile(path_to_pwd.c_str(), true))
+      if (!_fs.rmFile(path_to_pwd.c_str()))
         showToast(STR_FAIL);
       else
         showToast(STR_SUCCESS);

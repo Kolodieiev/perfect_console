@@ -525,17 +525,17 @@ namespace pixeler
     return result;
   }
 
-  bool FileManager::rmFile(const char* path, bool make_full)
+  bool FileManager::rmFile(const char* path)
   {
     AutoLock lock(_sd_mutex);
-    return rmFileUnlocked(path, make_full);
+    return rmFileUnlocked(path, true);
   }
 
-  bool FileManager::rmDir(const char* path, bool make_full)
+  bool FileManager::rmDir(const char* path)
   {
     AutoLock lock(_sd_mutex);
     _is_canceled = false;
-    return rmDirUnlocked(path, make_full);
+    return rmDirUnlocked(path, true);
   }
 
   void FileManager::rmTask(void* params)
