@@ -534,6 +534,7 @@ namespace pixeler
   bool FileManager::rmDir(const char* path, bool make_full)
   {
     AutoLock lock(_sd_mutex);
+    _is_canceled = false;
     return rmDirUnlocked(path, make_full);
   }
 
