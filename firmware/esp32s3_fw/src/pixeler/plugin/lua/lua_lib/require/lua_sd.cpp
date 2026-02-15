@@ -107,18 +107,16 @@ int lua_sd_read_from_file(lua_State* L)
   if (has_seek_pos)
     seek_pos = luaL_checkinteger(L, 3);
 
-  void* buffer;
+  char* buffer;
   if (psramInit())
-    buffer = ps_malloc(len);
+    buffer = static_cast<char*>(ps_malloc(len));
   else
-    buffer = malloc(len);
+    buffer = static_cast<char*>(malloc(len));
 
   if (!buffer)
     return luaL_error(L, STR_MEM_ALLOC_ERR);
 
-  bool successfull = pixeler::_fs.readChunkFromFile(*f, buffer, len, seek_pos);
-
-  if (!successfull)
+  if (!pixeler::_fs.readFromFileExact(*f, buffer, len, seek_pos))
   {
     free(buffer);
     return luaL_error(L, STR_FILE_READ_ERR);
