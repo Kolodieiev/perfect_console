@@ -806,7 +806,7 @@ void Audio::processLocalFile()
     availableBytes = min(availableBytes, m_audioDataSize + m_audioDataStart - byteCounter);
   }
 
-  if (_fs.readFromFile(audiofile, InBuff.getWritePtr(), availableBytes))
+  if (_fs.readFromFileExact(audiofile, InBuff.getWritePtr(), availableBytes))
   {
     byteCounter += availableBytes;  // Pull request #42
     InBuff.bytesWritten(availableBytes);
@@ -1314,7 +1314,7 @@ void Audio::reconfigI2S()
   else
     _i2s_out.reconfigSampleRate(getSampleRate());
 
-  memset(m_filterBuff, 0, sizeof(m_filterBuff));         // Clear FilterBuffer
+  memset(m_filterBuff, 0, sizeof(m_filterBuff));  // Clear FilterBuffer
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
