@@ -187,7 +187,7 @@ namespace pixeler
     size_t readFile(const char* path, void* out_buffer, size_t len = 1, int32_t seek_pos = 0);
 
     /**
-     * @brief Читає вказану кількість байтів з відкритого бінарного файла за одну операцію.
+     * @brief Читає вказану кількість байтів з відкритого бінарного файла.
      *
      * @param file Вказівник на відкритий бінарний файл.
      * @param out_buffer Вихідний буфер, куди будуть записані прочитані байти.
@@ -197,10 +197,10 @@ namespace pixeler
      * @return true - якщо операція виконана успішно.
      * @return false - якщо операція завершилася невдачею.
      */
-    bool readChunkFromFile(FILE* file, void* out_buffer, size_t len = 1, size_t seek_pos = 0);
+    bool readFromFileExact(FILE* file, void* out_buffer, size_t len = 1, size_t seek_pos = 0);
 
     /**
-     * @brief Читає вказану кількість байтів з відкритого бінарного файла побайтово.
+     * @brief Читає вказану кількість байтів з відкритого бінарного файла.
      *
      * @param file Вказівник на відкритий бінарний файл.
      * @param out_buffer Вихідний буфер, куди будуть записані прочитані байти.
