@@ -224,45 +224,9 @@ namespace pixeler
     return bytes_read;
   }
 
-  bool FileManager::readChunkFromFile(FILE* file, void* out_buffer, size_t len, size_t seek_pos)
+  bool FileManager::readFromFileExact(FILE* file, void* out_buffer, size_t len, size_t seek_pos)
   {
-    if (len == 0)
-      return false;
-
-    if (!file)
-    {
-      log_e("FILE* не повинен бути null");
-      return false;
-    }
-
-    int fd = fileno(file);
-
-    AutoLock lock(_sd_mutex);
-
-    if (seek_pos > 0)
-    {
-      off_t result = lseek(fd, seek_pos, SEEK_SET);
-      if (result == -1)
-      {
-        log_e("Помилка встановлення позиції: %zu", seek_pos);
-        return false;
-      }
-    }
-
-    ssize_t bytes_read = read(fd, out_buffer, len);
-    if (bytes_read < 0)
-    {
-      log_e("Помилка читання з файлу");
-      return false;
-    }
-
-    if (bytes_read != static_cast<ssize_t>(len))
-    {
-      log_e("Не вдалося прочитати всі %zu байтів, прочитано: %zd", len, bytes_read);
-      return false;
-    }
-
-    return true;
+    return readFromFile(file, out_buffer, len, seek_pos) == static_cast<ssize_t>(len);
   }
 
   size_t FileManager::writeFile(const char* path, const void* buffer, size_t len)
