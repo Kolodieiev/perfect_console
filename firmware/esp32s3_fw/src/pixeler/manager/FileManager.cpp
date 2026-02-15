@@ -541,7 +541,6 @@ namespace pixeler
   void FileManager::rmTask(void* params)
   {
     FileManager* instance = static_cast<FileManager*>(params);
-    instance->_is_working = true;
     instance->rm();
   }
 
@@ -564,6 +563,7 @@ namespace pixeler
     if (result == pdPASS)
     {
       log_i("rmTask is working now");
+      _is_working = true;
       return true;
     }
     else
@@ -720,7 +720,6 @@ namespace pixeler
   void FileManager::copyFileTask(void* params)
   {
     FileManager* instance = static_cast<FileManager*>(params);
-    instance->_is_working = true;
     instance->copyFile();
   }
 
@@ -752,6 +751,7 @@ namespace pixeler
     if (result == pdPASS)
     {
       log_i("copyFileTask is working now");
+      _is_working = true;
       return true;
     }
     else
