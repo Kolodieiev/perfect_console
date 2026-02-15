@@ -134,15 +134,10 @@ namespace pixeler
       return emptyString;
     }
 
-    FILE* file = _fs.openFile(path, "rb");
-    if (!file)
-      return emptyString;
-
     size_t file_size = _fs.getFileSize(path);
     if (file_size == 0)
     {
       log_e("Файл порожній: %s", path);
-      _fs.closeFile(file);
       return emptyString;
     }
 
@@ -150,19 +145,16 @@ namespace pixeler
     if (!file_buf)
     {
       log_e("Помилка виділення пам'яті для файлу: %s", path);
-      _fs.closeFile(file);
       return emptyString;
     }
 
-    size_t bytes_read = _fs.readFromFile(file, file_buf, file_size);
-    if (bytes_read != file_size)
+    size_t byte_read = _fs.readFile(path, file_buf, file_size);
+
+    if (byte_read == 0 || byte_read != file_size)
     {
-      _fs.closeFile(file);
       free(file_buf);
       return emptyString;
     }
-
-    _fs.closeFile(file);
 
     file_buf[file_size] = '\0';
     String ret_str = file_buf;
