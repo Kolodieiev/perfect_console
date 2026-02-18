@@ -5,7 +5,7 @@
 #include "pixeler/manager/FileManager.h"
 #include "pixeler/ui/context/IContext.h"
 //
-#include "pixeler/plugin/lua/context/LuaContext.h"
+#include "pixeler/lib/lua/context/LuaContext.h"
 #include "pixeler/ui/widget/notification/Notification.h"
 //
 #include "pixeler/ui/widget/image/Image.h"
