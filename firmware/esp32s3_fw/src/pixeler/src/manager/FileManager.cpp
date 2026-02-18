@@ -157,6 +157,11 @@ namespace pixeler
     AutoLock lock(_sd_mutex);
 
     int fd = open(full_path.c_str(), O_RDONLY);
+    if (fd < 0)
+    {
+      log_e("Помилка відкриття файлу: %s", full_path.c_str());
+      return 0;
+    }
 
     if (seek_pos > 0)
     {
