@@ -10,9 +10,9 @@
 #include <cstring>
 #include <vector>
 
+#include "pixeler/setup/sd_setup.h"
 #include "pixeler/src/manager/SPI_Manager.h"
 #include "pixeler/src/util/AutoLock.h"
-#include "pixeler/setup/sd_setup.h"
 
 #define IDLE_WD_GUARD_TIME 250U
 #define OPT_BLOCK_SIZE 16384
@@ -52,19 +52,17 @@ namespace pixeler
   {
     if (entry && entry->d_type != DT_UNKNOWN)
       return entry->d_type;
-    else
-    {
-      struct stat st;
-      if (stat(path, &st) == 0)
-      {
-        if (S_ISREG(st.st_mode))
-          return DT_REG;
-        else if (S_ISDIR(st.st_mode))
-          return DT_DIR;
-      }
 
-      return DT_UNKNOWN;
+    struct stat st;
+    if (stat(path, &st) == 0)
+    {
+      if (S_ISREG(st.st_mode))
+        return DT_REG;
+      else if (S_ISDIR(st.st_mode))
+        return DT_DIR;
     }
+
+    return DT_UNKNOWN;
   }
 
   size_t FileManager::getFileSize(const char* path)
