@@ -11,12 +11,12 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-#include "../widget/IWidgetContainer.h"
-#include "../widget/notification/Notification.h"
-#include "../widget/text/Label.h"
 #include "../defines.h"
 #include "../driver/graphics/DisplayWrapper.h"
 #include "../driver/input/Input.h"
+#include "../widget/IWidgetContainer.h"
+#include "../widget/notification/Notification.h"
+#include "../widget/text/Label.h"
 #include "pixeler/setup/context_id_setup.h"
 #include "pixeler/setup/cpu_setup.h"
 
