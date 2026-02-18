@@ -1,10 +1,10 @@
 #pragma once
 #include <stdint.h>
 
-#include "pixeler/game/DataStream.h"           // Необхідний для передавання серіалізованих об'єктів між ігровими рівнями
-#include "pixeler/game/IGameScene.h"           //
-#include "pixeler/context/IContext.h"       //
-#include "pixeler/widget/menu/FixedMenu.h"  //
+#include "pixeler/src/context/IContext.h"       //
+#include "pixeler/src/game/DataStream.h"        // Необхідний для передавання серіалізованих об'єктів між ігровими рівнями
+#include "pixeler/src/game/IGameScene.h"        //
+#include "pixeler/src/widget/menu/FixedMenu.h"  //
 //
 
 // Підключення субмодулів

@@ -5,7 +5,7 @@
 #include "../obj/hero/HeroObj.h"      // Клас персонажа
 #include "../obj/portal/PortalObj.h"  // Клас порталу
 #include "../ui/BaseUI.h"             // Клас кастомного UI
-#include "pixeler/game/IGameScene.h"
+#include "pixeler/src/game/IGameScene.h"
 
 using namespace pixeler;
 

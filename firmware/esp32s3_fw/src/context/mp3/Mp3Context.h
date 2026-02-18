@@ -1,13 +1,13 @@
 #pragma once
 
 #include "pixeler/lib/audio/mp3/Audio.h"
-#include "pixeler/manager/SettingsManager.h"
-#include "pixeler/context/IContext.h"
-#include "pixeler/widget/image/Image.h"
-#include "pixeler/widget/menu/DynamicMenu.h"
-#include "pixeler/widget/menu/FixedMenu.h"
-#include "pixeler/widget/progress/ProgressBar.h"
-#include "pixeler/widget/scrollbar/ScrollBar.h"
+#include "pixeler/src/manager/SettingsManager.h"
+#include "pixeler/src/context/IContext.h"
+#include "pixeler/src/widget/image/Image.h"
+#include "pixeler/src/widget/menu/DynamicMenu.h"
+#include "pixeler/src/widget/menu/FixedMenu.h"
+#include "pixeler/src/widget/progress/ProgressBar.h"
+#include "pixeler/src/widget/scrollbar/ScrollBar.h"
 
 using namespace pixeler;
 

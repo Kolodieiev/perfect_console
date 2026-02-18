@@ -14,10 +14,11 @@
 
 #pragma once
 #pragma GCC optimize("O3")
-#include "../../../defines.h"
 #include <libb64/cencode.h>
 
 #include <vector>
+
+#include "pixeler/src/defines.h"
 
 using namespace std;
 
@@ -30,7 +31,7 @@ public:
   bool isInitialized() const
   {
     return m_f_init;
-  };                                      //
+  };  //
   int32_t getBufsize();                   //
   void changeMaxBlockSize(uint16_t mbs);  // is default 1600 for mp3 and aac, set 16384 for FLAC
   uint16_t getMaxBlockSize();             // returns maxBlockSize

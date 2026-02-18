@@ -1,6 +1,7 @@
 #pragma once
-#include "../../../defines.h"
 #include <esp_adc/adc_continuous.h>
+
+#include "pixeler/src/defines.h"
 
 namespace pixeler
 {

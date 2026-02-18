@@ -2,7 +2,7 @@
 #include "lua_wifi.h"
 
 #include "../helper/lua_helper.h"
-#include "pixeler/manager/WiFiManager.h"
+#include "pixeler/src/manager/WiFiManager.h"
 #include "pixeler/lib/lua/res/lua_strs.h"
 
 int lua_wifi_try_connect(lua_State* L)

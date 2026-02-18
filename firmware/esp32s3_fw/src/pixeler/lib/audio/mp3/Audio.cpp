@@ -13,9 +13,9 @@
 #include "Audio.h"
 
 #include "mp3_decoder/mp3_decoder.h"
-#include "pixeler/manager/FileManager.h"
-#include "pixeler/manager/I2SOutManager.h"
-#include "pixeler/util/mem_util.h"
+#include "pixeler/src/manager/FileManager.h"
+#include "pixeler/src/manager/I2SOutManager.h"
+#include "pixeler/src/util/mem_util.h"
 
 using namespace pixeler;
 

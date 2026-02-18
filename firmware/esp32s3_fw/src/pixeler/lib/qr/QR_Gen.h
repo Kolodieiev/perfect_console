@@ -1,6 +1,6 @@
 #pragma once
 #pragma GCC optimize("O3")
-#include "../../defines.h"
+#include "pixeler/src/defines.h"
 
 class QR_Gen
 {

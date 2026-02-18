@@ -7,7 +7,7 @@
 #include "./res/play.h"
 #include "./res/rewind.h"
 #include "./res/speaker.h"
-#include "pixeler/manager/CoprocessorManager.h"
+#include "pixeler/src/manager/CoprocessorManager.h"
 
 #define UPD_TRACK_INF_INTERVAL 1000UL
 #define UPD_TIME_INTERVAL 10000UL

@@ -1,12 +1,12 @@
 #include "PrefSelectContext.h"
 
 #include "../WidgetCreator.h"
-#include "pixeler/widget/menu/item/ToggleItem.h"
-#include "pixeler/widget/toggle/ToggleSwitch.h"
+#include "pixeler/src/widget/menu/item/ToggleItem.h"
+#include "pixeler/src/widget/toggle/ToggleSwitch.h"
 //
 #include "bright/PrefBrightContext.h"
 #include "file_server/PrefFileServerContext.h"
-#include "pixeler/manager/SettingsManager.h"
+#include "pixeler/src/manager/SettingsManager.h"
 
 void PrefSelectContext::showSDErrTmpl()
 {

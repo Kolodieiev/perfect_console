@@ -8,8 +8,8 @@
 #include "./res/sd.h"
 #include "./res/settings.h"
 #include "./res/wifi_ico.h"
-#include "pixeler/widget/layout/EmptyLayout.h"
-#include "pixeler/widget/menu/item/MenuItem.h"
+#include "pixeler/src/widget/layout/EmptyLayout.h"
+#include "pixeler/src/widget/menu/item/MenuItem.h"
 
 #define ICO_WH 35
 

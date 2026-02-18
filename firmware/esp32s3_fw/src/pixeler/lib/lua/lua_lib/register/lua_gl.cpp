@@ -5,7 +5,7 @@
 
 #include <cstring>
 
-#include "pixeler/driver/graphics/DisplayWrapper.h"
+#include "pixeler/src/driver/graphics/DisplayWrapper.h"
 #include "pixeler/lib/lua/lua_lib/helper/lua_helper.h"
 
 using namespace pixeler;

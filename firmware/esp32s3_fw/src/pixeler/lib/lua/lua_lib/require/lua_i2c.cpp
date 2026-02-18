@@ -1,7 +1,7 @@
 #pragma GCC optimize("O3")
 #include "lua_i2c.h"
 
-#include "pixeler/manager/I2C_Manager.h"
+#include "pixeler/src/manager/I2C_Manager.h"
 
 int lua_i2c_begin(lua_State* L)
 {

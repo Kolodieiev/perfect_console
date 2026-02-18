@@ -2,19 +2,19 @@
 #pragma GCC optimize("O3")
 
 #include "pixeler/lib/server/FileServer.h"
-#include "pixeler/manager/FileManager.h"
-#include "pixeler/context/IContext.h"
+#include "pixeler/src/context/IContext.h"
+#include "pixeler/src/manager/FileManager.h"
 //
 #include "pixeler/lib/lua/context/LuaContext.h"
-#include "pixeler/widget/notification/Notification.h"
+#include "pixeler/src/widget/notification/Notification.h"
 //
-#include "pixeler/widget/image/Image.h"
-#include "pixeler/widget/keyboard/Keyboard.h"
-#include "pixeler/widget/menu/DynamicMenu.h"
-#include "pixeler/widget/menu/FixedMenu.h"
-#include "pixeler/widget/progress/ProgressBar.h"
-#include "pixeler/widget/scrollbar/ScrollBar.h"
-#include "pixeler/widget/text/TextBox.h"
+#include "pixeler/src/widget/image/Image.h"
+#include "pixeler/src/widget/keyboard/Keyboard.h"
+#include "pixeler/src/widget/menu/DynamicMenu.h"
+#include "pixeler/src/widget/menu/FixedMenu.h"
+#include "pixeler/src/widget/progress/ProgressBar.h"
+#include "pixeler/src/widget/scrollbar/ScrollBar.h"
+#include "pixeler/src/widget/text/TextBox.h"
 
 using namespace pixeler;
 

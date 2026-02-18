@@ -3,9 +3,9 @@
 #include "../obj/BallObj.h"
 #include "../obj/ClassID.h"
 #include "../ui/SceneUI.h"
-#include "pixeler/game/IGameScene.h"
-#include "pixeler/game/online/GameClient.h"
-#include "pixeler/game/online/GameServer.h"
+#include "pixeler/src/game/IGameScene.h"
+#include "pixeler/src/game/online/GameClient.h"
+#include "pixeler/src/game/online/GameServer.h"
 
 using namespace pixeler;
 

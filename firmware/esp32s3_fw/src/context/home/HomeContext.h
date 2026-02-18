@@ -1,7 +1,7 @@
 #pragma once
 
-#include "pixeler/context/IContext.h"
-#include "pixeler/widget/text/Label.h"
+#include "pixeler/src/context/IContext.h"
+#include "pixeler/src/widget/text/Label.h"
 
 using namespace pixeler;
 

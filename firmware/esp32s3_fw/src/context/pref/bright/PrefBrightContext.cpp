@@ -1,7 +1,7 @@
 #include "PrefBrightContext.h"
 
 #include "../../WidgetCreator.h"
-#include "pixeler/manager/SettingsManager.h"
+#include "pixeler/src/manager/SettingsManager.h"
 
 #define MAX_BRIGHT 250
 #define BRIGHT_STEP 10

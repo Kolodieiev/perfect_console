@@ -1,12 +1,12 @@
 #pragma once
 
-#include "pixeler/manager/WiFiManager.h"
-#include "pixeler/context/IContext.h"
-#include "pixeler/widget/keyboard/Keyboard.h"
-#include "pixeler/widget/menu/FixedMenu.h"
-#include "pixeler/widget/scrollbar/ScrollBar.h"
-#include "pixeler/widget/text/Label.h"
-#include "pixeler/widget/text/TextBox.h"
+#include "pixeler/src/manager/WiFiManager.h"
+#include "pixeler/src/context/IContext.h"
+#include "pixeler/src/widget/keyboard/Keyboard.h"
+#include "pixeler/src/widget/menu/FixedMenu.h"
+#include "pixeler/src/widget/scrollbar/ScrollBar.h"
+#include "pixeler/src/widget/text/Label.h"
+#include "pixeler/src/widget/text/TextBox.h"
 
 using namespace pixeler;
 

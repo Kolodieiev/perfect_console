@@ -8,36 +8,12 @@
 !README.md
 !LICENSE
 
-!doc/
-!doc/Makefile
-!doc/Readme.txt
-!doc/Doxyfile_xml
-!doc/Doxyfile_html
-!doc/source/
-!doc/source/**
-doc/source/classes/ 
-
-!images/
-!images/**
-
-!cppcheck/
-!cppcheck/**
-
-!src/
-!src/pixeler/
-!src/pixeler/**
-!src/pixeler_setup/
-!src/pixeler_setup/**
 !src/main.cpp
 
 !src/context/
 !src/context/**
 
-!include/
-!include/pixeler_setup/
-!include/pixeler_setup/**
-!include/modules_setup/
-!include/modules_setup/**
-
-!lib/
-!lib/**
+!src/
+!src/pixeler/
+!src/pixeler/**
+src/pixeler/doc/build/

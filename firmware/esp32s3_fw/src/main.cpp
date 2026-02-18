@@ -1,7 +1,7 @@
 #include "context/resources/ch32_pins_def.h"
-#include "pixeler/Pixeler.h"
-#include "pixeler/manager/CoprocessorManager.h"
-#include "pixeler_setup/input_setup.h"
+#include "pixeler/src/Pixeler.h"
+#include "pixeler/src/manager/CoprocessorManager.h"
+#include "pixeler/setup/input_setup.h"
 using namespace pixeler;
 
 void setup()

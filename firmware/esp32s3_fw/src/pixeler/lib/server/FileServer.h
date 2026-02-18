@@ -13,8 +13,8 @@
 #include <stdint.h>
 
 #include "./FServer/FServer.h"
-#include "pixeler/manager/FileManager.h"
-#include "pixeler/util/file/FileStream.h"
+#include "pixeler/src/manager/FileManager.h"
+#include "pixeler/src/util/file/FileStream.h"
 
 namespace pixeler
 {

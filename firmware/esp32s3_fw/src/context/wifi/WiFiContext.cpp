@@ -2,10 +2,10 @@
 //
 #include "../WidgetCreator.h"
 #include "./res/ico_connect.h"
-#include "pixeler/manager/SettingsManager.h"
-#include "pixeler/widget/layout/EmptyLayout.h"
-#include "pixeler/widget/menu/item/ToggleItem.h"
-#include "pixeler/widget/toggle/ToggleSwitch.h"
+#include "pixeler/src/manager/SettingsManager.h"
+#include "pixeler/src/widget/layout/EmptyLayout.h"
+#include "pixeler/src/widget/menu/item/ToggleItem.h"
+#include "pixeler/src/widget/toggle/ToggleSwitch.h"
 
 const char STR_TRANSMITTER_STATE[] = "Стан модуля WiFi";
 const char STR_START_SCAN[] = "Розпочато скануваня";

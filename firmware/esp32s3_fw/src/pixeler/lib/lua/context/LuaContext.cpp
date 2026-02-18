@@ -1,14 +1,15 @@
 #pragma GCC optimize("O3")
 #include "LuaContext.h"
 
+#include <esp_heap_caps.h>
+
 #include "../lua_lib/custom_register.h"
 #include "../lua_lib/custom_searcher.h"
 #include "../lua_lib/custom_type_initializer.h"
+#include "../lua_lib/helper/lua_helper.h"
 #include "../lua_lib/type/widget/lua_iwidget_cont.h"
-#include "esp_heap_caps.h"
-#include "pixeler/manager/ResManager.h"
-#include "pixeler/lib/lua/lua_lib/helper/lua_helper.h"
-#include "pixeler/widget/layout/EmptyLayout.h"
+#include "pixeler/src/manager/ResManager.h"
+#include "pixeler/src/widget/layout/EmptyLayout.h"
 
 const char STR_NOTIFICATION[] = "Повідомлення";
 const char STR_OK[] = "OK";

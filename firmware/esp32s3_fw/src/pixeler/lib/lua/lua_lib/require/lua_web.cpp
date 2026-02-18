@@ -3,7 +3,7 @@
 
 #include <HTTPClient.h>
 
-#include "pixeler/manager/WiFiManager.h"
+#include "pixeler/src/manager/WiFiManager.h"
 
 const char STR_LUA_WEB_NOT_CONN_ERR[] = "Не приєднано до мережі";
 const char STR_LUA_WEB_INCORRECT_URL[] = "Некоректна URL";

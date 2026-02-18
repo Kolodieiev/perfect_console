@@ -5,7 +5,7 @@
 #include "../common_res/btn_back/btn_back_normal.h"
 #include "./SceneID.h"
 #include "./scene/MainScene.h"
-#include "pixeler/manager/SettingsManager.h"
+#include "pixeler/src/manager/SettingsManager.h"
 
 #define IMG_W 200U
 #define IMG_H 40U

@@ -2,7 +2,7 @@
 #include "FileServer.h"
 
 #include "./tmpl_html.cpp"
-#include "pixeler/manager/WiFiManager.h"
+#include "pixeler/src/manager/WiFiManager.h"
 
 namespace pixeler
 {

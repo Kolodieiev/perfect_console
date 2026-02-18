@@ -1,8 +1,8 @@
 #pragma once
 
-#include "pixeler/context/IContext.h"
-#include "pixeler/widget/menu/FixedMenu.h"
-#include "pixeler/widget/scrollbar/ScrollBar.h"
+#include "pixeler/src/context/IContext.h"
+#include "pixeler/src/widget/menu/FixedMenu.h"
+#include "pixeler/src/widget/scrollbar/ScrollBar.h"
 
 using namespace pixeler;
 

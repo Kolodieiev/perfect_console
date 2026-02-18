@@ -2,10 +2,10 @@
 
 #include "../WidgetCreator.h"
 #include "pixeler/lib/neo_pixel/Adafruit_NeoPixel.h"
-#include "pixeler/manager/FileManager.h"
-#include "pixeler/manager/I2C_Manager.h"
-#include "pixeler/manager/SettingsManager.h"
-#include "pixeler_setup/sd_setup.h"
+#include "pixeler/src/manager/FileManager.h"
+#include "pixeler/src/manager/I2C_Manager.h"
+#include "pixeler/src/manager/SettingsManager.h"
+#include "pixeler/setup/sd_setup.h"
 
 #define OFFSET_LBL_INFO 0
 #define OFFSET_LBL_RESULT 70

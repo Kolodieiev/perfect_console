@@ -2,9 +2,9 @@
 
 #include "../WidgetCreator.h"
 #include "../resources/ico/battery.h"
-#include "pixeler/manager/SettingsManager.h"
-#include "pixeler/util/batt_util.h"
-#include "pixeler/util/img/BmpUtil.h"
+#include "pixeler/src/manager/SettingsManager.h"
+#include "pixeler/src/util/batt_util.h"
+#include "pixeler/src/util/img/BmpUtil.h"
 
 #define UPD_DISPLAY_INTERVAL_MS 5000UL
 

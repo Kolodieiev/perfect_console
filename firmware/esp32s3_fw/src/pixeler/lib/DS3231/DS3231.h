@@ -1,9 +1,8 @@
 #pragma once
-#include "../../defines.h"
-
 #include "./DS3231ComnConst.h"
 #include "./DS3231DateTime.h"
-#include "pixeler/manager/I2C_Manager.h"
+#include "pixeler/src/defines.h"
+#include "pixeler/src/manager/I2C_Manager.h"
 
 namespace pixeler
 {

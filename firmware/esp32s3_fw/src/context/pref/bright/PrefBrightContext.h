@@ -1,7 +1,7 @@
 #pragma once
 
-#include "pixeler/context/IContext.h"
-#include "pixeler/widget/progress/ProgressBar.h"
+#include "pixeler/src/context/IContext.h"
+#include "pixeler/src/widget/progress/ProgressBar.h"
 
 using namespace pixeler;
 

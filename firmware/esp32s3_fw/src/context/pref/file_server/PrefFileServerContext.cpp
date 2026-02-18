@@ -1,7 +1,7 @@
 #include "PrefFileServerContext.h"
 
 #include "../../WidgetCreator.h"
-#include "pixeler/manager/SettingsManager.h"
+#include "pixeler/src/manager/SettingsManager.h"
 
 bool PrefFileServerContext::loop()
 {

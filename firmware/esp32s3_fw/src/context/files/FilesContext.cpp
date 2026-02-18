@@ -2,15 +2,15 @@
 #include "FilesContext.h"
 
 #include "pixeler/lib/qr/QR_Gen.h"
-#include "pixeler/manager/SettingsManager.h"
-#include "pixeler/util/img/BmpUtil.h"
+#include "pixeler/src/manager/SettingsManager.h"
+#include "pixeler/src/util/img/BmpUtil.h"
 //
 #include "../WidgetCreator.h"
 #include "./res/folder.h"
 #include "./res/lua.h"
-#include "pixeler/widget/menu/item/MenuItem.h"
-#include "pixeler/widget/menu/item/ToggleItem.h"
-#include "pixeler/widget/progress/ProgressBar.h"
+#include "pixeler/src/widget/menu/item/MenuItem.h"
+#include "pixeler/src/widget/menu/item/ToggleItem.h"
+#include "pixeler/src/widget/progress/ProgressBar.h"
 
 #define UPD_TRACK_INF_INTERVAL 1000UL
 #define PADDING_BOTT 40

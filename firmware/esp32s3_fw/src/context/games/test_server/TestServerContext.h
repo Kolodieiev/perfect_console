@@ -1,16 +1,16 @@
 #pragma once
 
-#include "pixeler/game/DataStream.h"
+#include "pixeler/src/game/DataStream.h"
 //
-#include "pixeler/game/IGameScene.h"
-#include "pixeler/game/online/GameClient.h"
-#include "pixeler/game/online/GameServer.h"
-#include "pixeler/manager/WiFiManager.h"
-#include "pixeler/context/IContext.h"
-#include "pixeler/widget/keyboard/Keyboard.h"
-#include "pixeler/widget/menu/FixedMenu.h"
-#include "pixeler/widget/scrollbar/ScrollBar.h"
-#include "pixeler/widget/text/TextBox.h"
+#include "pixeler/src/game/IGameScene.h"
+#include "pixeler/src/game/online/GameClient.h"
+#include "pixeler/src/game/online/GameServer.h"
+#include "pixeler/src/manager/WiFiManager.h"
+#include "pixeler/src/context/IContext.h"
+#include "pixeler/src/widget/keyboard/Keyboard.h"
+#include "pixeler/src/widget/menu/FixedMenu.h"
+#include "pixeler/src/widget/scrollbar/ScrollBar.h"
+#include "pixeler/src/widget/text/TextBox.h"
 
 using namespace pixeler;
 

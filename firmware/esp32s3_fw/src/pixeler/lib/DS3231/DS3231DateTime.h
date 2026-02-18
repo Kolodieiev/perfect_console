@@ -1,5 +1,5 @@
 #pragma once
-#include "../../defines.h"
+#include "pixeler/src/defines.h"
 
 namespace pixeler
 {

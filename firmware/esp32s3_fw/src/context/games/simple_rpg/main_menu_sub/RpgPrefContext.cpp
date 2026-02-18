@@ -1,7 +1,7 @@
 #include "RpgPrefContext.h"
 
 #include "../../../WidgetCreator.h"
-#include "pixeler/manager/SettingsManager.h"
+#include "pixeler/src/manager/SettingsManager.h"
 
 namespace simple_rpg
 {

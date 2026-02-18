@@ -1,6 +1,6 @@
 #include "AnalogMicrophone.h"
 
-#include "pixeler/manager/WiFiManager.h"
+#include "pixeler/src/manager/WiFiManager.h"
 
 #define ADC_DMA_BUFFER_FACTOR 2
 
