@@ -8,9 +8,9 @@
 #include "../WidgetCreator.h"
 #include "./res/folder.h"
 #include "./res/lua.h"
-#include "pixeler/ui/widget/menu/item/MenuItem.h"
-#include "pixeler/ui/widget/menu/item/ToggleItem.h"
-#include "pixeler/ui/widget/progress/ProgressBar.h"
+#include "pixeler/widget/menu/item/MenuItem.h"
+#include "pixeler/widget/menu/item/ToggleItem.h"
+#include "pixeler/widget/progress/ProgressBar.h"
 
 #define UPD_TRACK_INF_INTERVAL 1000UL
 #define PADDING_BOTT 40

@@ -1,8 +1,8 @@
 #include "PrefSelectContext.h"
 
 #include "../WidgetCreator.h"
-#include "pixeler/ui/widget/menu/item/ToggleItem.h"
-#include "pixeler/ui/widget/toggle/ToggleSwitch.h"
+#include "pixeler/widget/menu/item/ToggleItem.h"
+#include "pixeler/widget/toggle/ToggleSwitch.h"
 //
 #include "bright/PrefBrightContext.h"
 #include "file_server/PrefFileServerContext.h"

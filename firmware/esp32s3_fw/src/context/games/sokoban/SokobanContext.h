@@ -3,9 +3,9 @@
 #include "pixeler/game/DataStream.h"
 //
 #include "pixeler/game/IGameScene.h"
-#include "pixeler/ui/context/IContext.h"
-#include "pixeler/ui/widget/menu/FixedMenu.h"
-#include "pixeler/ui/widget/scrollbar/ScrollBar.h"
+#include "pixeler/context/IContext.h"
+#include "pixeler/widget/menu/FixedMenu.h"
+#include "pixeler/widget/scrollbar/ScrollBar.h"
 
 using namespace pixeler;
 

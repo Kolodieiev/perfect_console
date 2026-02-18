@@ -3,7 +3,7 @@
 
 #include "./lua_iwidget.h"
 #include "pixeler/lib/lua/res/lua_strs.h"
-#include "pixeler/ui/widget/toggle/ToggleSwitch.h"
+#include "pixeler/widget/toggle/ToggleSwitch.h"
 
 using namespace pixeler;
 

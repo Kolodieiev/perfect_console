@@ -3,8 +3,8 @@
 
 #include "pixeler/game/DataStream.h"           // Необхідний для передавання серіалізованих об'єктів між ігровими рівнями
 #include "pixeler/game/IGameScene.h"           //
-#include "pixeler/ui/context/IContext.h"       //
-#include "pixeler/ui/widget/menu/FixedMenu.h"  //
+#include "pixeler/context/IContext.h"       //
+#include "pixeler/widget/menu/FixedMenu.h"  //
 //
 
 // Підключення субмодулів

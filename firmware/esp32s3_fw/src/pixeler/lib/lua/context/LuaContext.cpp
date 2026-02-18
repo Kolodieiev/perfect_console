@@ -8,7 +8,7 @@
 #include "esp_heap_caps.h"
 #include "pixeler/manager/ResManager.h"
 #include "pixeler/lib/lua/lua_lib/helper/lua_helper.h"
-#include "pixeler/ui/widget/layout/EmptyLayout.h"
+#include "pixeler/widget/layout/EmptyLayout.h"
 
 const char STR_NOTIFICATION[] = "Повідомлення";
 const char STR_OK[] = "OK";

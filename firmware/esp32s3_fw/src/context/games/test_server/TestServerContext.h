@@ -6,11 +6,11 @@
 #include "pixeler/game/online/GameClient.h"
 #include "pixeler/game/online/GameServer.h"
 #include "pixeler/manager/WiFiManager.h"
-#include "pixeler/ui/context/IContext.h"
-#include "pixeler/ui/widget/keyboard/Keyboard.h"
-#include "pixeler/ui/widget/menu/FixedMenu.h"
-#include "pixeler/ui/widget/scrollbar/ScrollBar.h"
-#include "pixeler/ui/widget/text/TextBox.h"
+#include "pixeler/context/IContext.h"
+#include "pixeler/widget/keyboard/Keyboard.h"
+#include "pixeler/widget/menu/FixedMenu.h"
+#include "pixeler/widget/scrollbar/ScrollBar.h"
+#include "pixeler/widget/text/TextBox.h"
 
 using namespace pixeler;
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-#include "pixeler/ui/context/IContext.h"
+#include "pixeler/context/IContext.h"
 
 using namespace pixeler;
 

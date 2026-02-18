@@ -4,7 +4,7 @@
 #include "./lua_iwidget.h"
 #include "pixeler/manager/ResManager.h"
 #include "pixeler/lib/lua/res/lua_strs.h"
-#include "pixeler/ui/widget/image/Image.h"
+#include "pixeler/widget/image/Image.h"
 
 using namespace pixeler;
 

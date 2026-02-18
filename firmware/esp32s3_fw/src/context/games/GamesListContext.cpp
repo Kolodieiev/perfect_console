@@ -2,8 +2,8 @@
 
 #include "../WidgetCreator.h"
 #include "./icons/sokoban_ico.h"
-#include "pixeler/ui/widget/layout/EmptyLayout.h"
-#include "pixeler/ui/widget/menu/item/MenuItem.h"
+#include "pixeler/widget/layout/EmptyLayout.h"
+#include "pixeler/widget/menu/item/MenuItem.h"
 
 const char STR_SOKOBAN_ITEM[] = "Комірник";
 const char STR_TEST_SERV_ITEM[] = "Тестовий сервер";

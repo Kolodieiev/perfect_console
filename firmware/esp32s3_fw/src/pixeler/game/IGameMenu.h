@@ -1,7 +1,7 @@
 #pragma once
 #include "pixeler/defines.h"
-#include "../ui/widget/layout/EmptyLayout.h"
-#include "../ui/widget/menu/FixedMenu.h"
+#include "../widget/layout/EmptyLayout.h"
+#include "../widget/menu/FixedMenu.h"
 
 namespace pixeler
 {

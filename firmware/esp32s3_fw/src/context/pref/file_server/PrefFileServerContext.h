@@ -1,8 +1,8 @@
 #pragma once
 
-#include "pixeler/ui/context/IContext.h"
-#include "pixeler/ui/widget/keyboard/Keyboard.h"
-#include "pixeler/ui/widget/text/TextBox.h"
+#include "pixeler/context/IContext.h"
+#include "pixeler/widget/keyboard/Keyboard.h"
+#include "pixeler/widget/text/TextBox.h"
 
 using namespace pixeler;
 

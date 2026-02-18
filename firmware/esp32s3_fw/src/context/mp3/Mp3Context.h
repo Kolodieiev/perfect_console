@@ -2,12 +2,12 @@
 
 #include "pixeler/lib/audio/mp3/Audio.h"
 #include "pixeler/manager/SettingsManager.h"
-#include "pixeler/ui/context/IContext.h"
-#include "pixeler/ui/widget/image/Image.h"
-#include "pixeler/ui/widget/menu/DynamicMenu.h"
-#include "pixeler/ui/widget/menu/FixedMenu.h"
-#include "pixeler/ui/widget/progress/ProgressBar.h"
-#include "pixeler/ui/widget/scrollbar/ScrollBar.h"
+#include "pixeler/context/IContext.h"
+#include "pixeler/widget/image/Image.h"
+#include "pixeler/widget/menu/DynamicMenu.h"
+#include "pixeler/widget/menu/FixedMenu.h"
+#include "pixeler/widget/progress/ProgressBar.h"
+#include "pixeler/widget/scrollbar/ScrollBar.h"
 
 using namespace pixeler;
 

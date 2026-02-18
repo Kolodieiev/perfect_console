@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pixeler/game/IGameUI.h"
-#include "pixeler/ui/widget/text/Label.h"
+#include "pixeler/widget/text/Label.h"
 
 using namespace pixeler;
 
