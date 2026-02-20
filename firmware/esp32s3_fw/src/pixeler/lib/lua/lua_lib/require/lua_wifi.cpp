@@ -62,10 +62,6 @@ int lua_wifi_create_ap(lua_State* L)
 int lua_wifi_set_power(lua_State* L)
 {
   int power = luaL_checkinteger(L, 1);
-
-  if (power < pixeler::WiFiManager::WIFI_POWER_MIN || power < pixeler::WiFiManager::WIFI_POWER_MAX)
-    return luaL_error(L, "Invalid wifi power value: %i", power);
-
   pixeler::_wifi.setPower(static_cast<pixeler::WiFiManager::WiFiPowerLevel>(power));
   return 0;
 }
