@@ -1,7 +1,7 @@
 #pragma GCC optimize("O3")
 #include "FileServer.h"
 
-#include "./tmpl_html.cpp"
+#include "./fs_html.cpp"
 #include "pixeler/src/manager/WiFiManager.h"
 
 namespace pixeler
