@@ -33,6 +33,7 @@ private:
     ITEM_ID_LED_GREET,
     ITEM_ID_WATCH,
     ITEM_ID_FILE_SERVER,
+    ITEM_ID_WIFI_POWER,
   };
 
   enum Mode : uint8_t

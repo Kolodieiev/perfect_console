@@ -7,6 +7,7 @@
 #include "bright/PrefBrightContext.h"
 #include "file_server/PrefFileServerContext.h"
 #include "pixeler/src/manager/SettingsManager.h"
+#include "wifi_power/PrefWiFiPowerContext.h"
 
 void PrefSelectContext::showSDErrTmpl()
 {
@@ -106,6 +107,15 @@ void PrefSelectContext::showMainTmpl()
   _menu->addItem(file_server_item);
   Label* file_server_lbl = WidgetCreator::getItemLabel(STR_FILE_SERVER, font_10x20);
   file_server_item->setLbl(file_server_lbl);
+
+  //
+
+  MenuItem* wifi_power_item = WidgetCreator::getMenuItem(ITEM_ID_WIFI_POWER);
+  _menu->addItem(wifi_power_item);
+  Label* wifi_power_lbl = WidgetCreator::getItemLabel(STR_WIFI_POWER, font_10x20);
+  wifi_power_item->setLbl(wifi_power_lbl);
+
+  //
 
   _scrollbar = new ScrollBar(ID_SCROLLBAR);
   layout->addWidget(_scrollbar);
@@ -234,5 +244,11 @@ void PrefSelectContext::ok()
     _mode = MODE_SUBCONTEXT;
     getLayout()->delWidgets();
     _sub_context = new PrefFileServerContext();
+  }
+  else if (id == ITEM_ID_WIFI_POWER)
+  {
+    _mode = MODE_SUBCONTEXT;
+    getLayout()->delWidgets();
+    _sub_context = new PrefWiFiPowerContext();
   }
 }
