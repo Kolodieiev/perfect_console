@@ -164,20 +164,12 @@ namespace pixeler
     bool toggle();
 
     /**
-     * @brief Повертає IP-адресу пристрою в локальній мережі.
+     * @brief Повертає IP-адресу пристрою.
      *
-     * @return String - IP-адреса пристрою в локальній мережі, якщо є підключення до маршрутизатора.
-     * Порожній рядок - інакше.
+     * @return String - IP-адреса пристрою, якщо пристрій знаходиться в мережі.
+     * @return Порожній рядок - інакше.
      */
-    String getLocalIP() const;
-
-    /**
-     * @brief Повертає IP-адресу точки доступу. Зазвичай це "192.168.4.1".
-     *
-     * @return String - IP-адреса точки доступу, якщо вона активована.
-     * Порожній рядок - інакше.
-     */
-    String getAPIP() const;
+    String getIP();
 
     /**
      * @brief Повертає стан прапору, який вказує на те, чи зайнятий зараз модуль WiFi асинхронною роботою на кшталт скануваня чи підключення.
@@ -185,10 +177,7 @@ namespace pixeler
      * @return true - Якщо модуль зайнятий.
      * @return false - Інакше.
      */
-    bool isBusy() const
-    {
-      return _is_busy;
-    }
+    bool isBusy() const;
 
     WiFiManager() {}
     WiFiManager(const WiFiManager&) = delete;

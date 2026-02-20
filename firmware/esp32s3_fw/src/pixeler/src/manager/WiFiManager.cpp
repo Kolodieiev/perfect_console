@@ -224,20 +224,19 @@ namespace pixeler
     }
   }
 
-  String WiFiManager::getLocalIP() const
+  String WiFiManager::getIP()
   {
-    if (isConnected())
+    if (isApEnabled())
+      return WiFi.softAPIP().toString();
+    else if (isConnected())
       return WiFi.localIP().toString();
     else
       return emptyString;
   }
 
-  String WiFiManager::getAPIP() const
+  bool WiFiManager::isBusy() const
   {
-    if (isApEnabled())
-      return WiFi.softAPIP().toString();
-    else
-      return emptyString;
+    return _is_busy;
   }
 
   void WiFiManager::callConnDoneHandler()
