@@ -203,11 +203,11 @@ namespace pixeler
     static void onEvent(WiFiEvent_t event);
 
   private:
-    WiFiScanDoneHandler _scanDoneHandler{nullptr};
-    WiFiConnectDoneHandler _connDoneHandler{nullptr};
+    WiFiScanDoneHandler _scan_done_handler{nullptr};
+    WiFiConnectDoneHandler _conn_done_handler{nullptr};
 
-    void* _scanDoneHandlerArg{nullptr};
-    void* _connDoneHandlerArg{nullptr};
+    void* _scan_done_handler_arg{nullptr};
+    void* _conn_done_handler_arg{nullptr};
 
     bool _is_busy{false};
   };

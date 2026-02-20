@@ -68,14 +68,14 @@ namespace pixeler
 
   void WiFiManager::setConnectDoneHandler(WiFiConnectDoneHandler handler, void* arg)
   {
-    _connDoneHandler = handler;
-    _connDoneHandlerArg = arg;
+    _conn_done_handler = handler;
+    _conn_done_handler_arg = arg;
   }
 
   void WiFiManager::setScanDoneHandler(WiFiScanDoneHandler handler, void* arg)
   {
-    _scanDoneHandler = handler;
-    _scanDoneHandlerArg = arg;
+    _scan_done_handler = handler;
+    _scan_done_handler_arg = arg;
   }
 
   bool WiFiManager::startScan()
@@ -179,8 +179,8 @@ namespace pixeler
 
   void WiFiManager::disconnect()
   {
-    _connDoneHandler = nullptr;
-    _scanDoneHandler = nullptr;
+    _conn_done_handler = nullptr;
+    _scan_done_handler = nullptr;
     WiFi.disconnect();
     delay(100);
   }
@@ -244,14 +244,14 @@ namespace pixeler
   {
     log_i("WiFi.status: %d", WiFi.status());
 
-    if (_connDoneHandler)
-      _connDoneHandler(_connDoneHandlerArg, WiFi.status());
+    if (_conn_done_handler)
+      _conn_done_handler(_conn_done_handler_arg, WiFi.status());
   }
 
   void WiFiManager::callScanDoneHandler()
   {
-    if (_scanDoneHandler)
-      _scanDoneHandler(_scanDoneHandlerArg);
+    if (_scan_done_handler)
+      _scan_done_handler(_scan_done_handler_arg);
     else
       WiFi.scanDelete();
   }
