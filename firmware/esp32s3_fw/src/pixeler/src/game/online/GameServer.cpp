@@ -41,20 +41,15 @@ namespace pixeler
       String password{pwd};
       if (!_wifi.createAP(serv_name, password, _max_connection, wifi_chan))
         return false;
-
-      _server_ip = "http://";
-      _server_ip += _wifi.getAPIP();
     }
-    else if (_wifi.isConnected())
+    else if (!_wifi.isConnected())
     {
       log_e("%s", STR_ROUTER_NOT_CONNECTED);
       return false;
     }
-    else
-    {
-      _server_ip = "http://";
-      _server_ip += _wifi.getLocalIP();
-    }
+
+    _server_ip = "http://";
+    _server_ip += _wifi.getIP();
 
     log_i("Game server address: %s", _server_ip.c_str());
 

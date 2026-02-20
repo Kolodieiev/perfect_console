@@ -348,7 +348,7 @@ void WiFiContext::showContextMenuTmpl()
 
   if (item_id == ID_ITEM_CUR_NET)
   {
-    String ip = _wifi.getLocalIP();
+    String ip = _wifi.getIP();
 
     MenuItem* ip_item = WidgetCreator::getMenuItem(ID_ITEM_IP);
     _context_menu->addItem(ip_item);

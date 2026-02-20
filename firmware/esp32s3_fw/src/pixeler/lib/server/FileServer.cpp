@@ -51,13 +51,9 @@ namespace pixeler
 
       if (!_wifi.createAP(_ssid, _pwd, 1))
         return false;
+    }
 
-      _server_ip += _wifi.getAPIP();
-    }
-    else
-    {
-      _server_ip += _wifi.getLocalIP();
-    }
+    _server_ip += _wifi.getIP();
 
     log_i("File server addr: %s", _server_ip.c_str());
 

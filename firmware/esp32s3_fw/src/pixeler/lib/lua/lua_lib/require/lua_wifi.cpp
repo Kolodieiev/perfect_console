@@ -112,15 +112,9 @@ int lua_wifi_disable(lua_State* L)
   return 0;
 }
 
-int lua_wifi_get_loc_ip(lua_State* L)
+int lua_wifi_get_ip(lua_State* L)
 {
-  lua_pushstring(L, pixeler::_wifi.getLocalIP().c_str());
-  return 1;
-}
-
-int lua_wifi_get_ap_ip(lua_State* L)
-{
-  lua_pushstring(L, pixeler::_wifi.getAPIP().c_str());
+  lua_pushstring(L, pixeler::_wifi.getIP().c_str());
   return 1;
 }
 
@@ -141,8 +135,7 @@ const struct luaL_Reg LIB_WIFI[] = {
     {"isEnabled", lua_wifi_is_enabled},
     {"enable", lua_wifi_enable},
     {"disable", lua_wifi_disable},
-    {"getLocalIP", lua_wifi_get_loc_ip},
-    {"getAPIP", lua_wifi_get_ap_ip},
+    {"getIP", lua_wifi_get_ip},
     {"isBusy", lua_wifi_is_busy},
     {nullptr, nullptr},
 };
