@@ -156,6 +156,9 @@ namespace pixeler
       case WIFI_POWER_MAX:
         WiFi.setTxPower(WIFI_POWER_19_5dBm);
         break;
+      default:
+        log_e("Invalid WiFi-power level received: %u", static_cast<uint8_t>(power_lvl));
+        WiFi.setTxPower(WIFI_POWER_5dBm);
     }
   }
 
