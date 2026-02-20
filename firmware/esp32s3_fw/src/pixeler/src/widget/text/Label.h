@@ -111,14 +111,14 @@ namespace pixeler
      *
      * @param gravity Може мати значення: GRAVITY_TOP / GRAVITY_CENTER / GRAVITY_BOTTOM.
      */
-    void setGravity(const Gravity gravity);
+    void setGravity(Gravity gravity);
 
     /**
      * @brief Встановлює розташування тексту по горизонталі відносно віджета.
      *
      * @param alignment Може мати значення: ALIGN_START / ALIGN_CENTER / ALIGN_END.
      */
-    void setAlign(const Alignment alignment);
+    void setAlign(Alignment alignment);
 
     /**
      * @brief Встановлює горизонтальні відступи для тексту (в пікселях).

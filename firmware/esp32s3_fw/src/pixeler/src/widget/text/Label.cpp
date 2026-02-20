@@ -217,13 +217,13 @@ namespace pixeler
     return _font_ptr;
   }
 
-  void Label::setGravity(const Gravity gravity)
+  void Label::setGravity(Gravity gravity)
   {
     _text_gravity = gravity;
     _is_changed = true;
   }
 
-  void Label::setAlign(const Alignment alignment)
+  void Label::setAlign(Alignment alignment)
   {
     _text_alignment = alignment;
     _is_changed = true;
