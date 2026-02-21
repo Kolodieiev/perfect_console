@@ -2,75 +2,43 @@
 
 EmptyLayout* WidgetCreator::getEmptyLayout()
 {
-  try
-  {
-    EmptyLayout* layout = new EmptyLayout(1);
-    layout->setBackColor(COLOR_MAIN_BACK);
-    layout->setWidth(TFT_WIDTH);
-    layout->setHeight(TFT_HEIGHT);
-    return layout;
-  }
-  catch (const std::bad_alloc& e)
-  {
-    log_e("%s", e.what());
-    esp_restart();
-  }
+  EmptyLayout* layout = new EmptyLayout(1);
+  layout->setBackColor(COLOR_MAIN_BACK);
+  layout->setWidth(TFT_WIDTH);
+  layout->setHeight(TFT_HEIGHT);
+  return layout;
 }
 
 Label* WidgetCreator::getItemLabel(const char* text, const uint8_t* font_ptr, uint8_t text_size)
 {
-  try
-  {
-    Label* item = new Label(1);
-    item->setText(text);
-    item->setFont(font_ptr);
-    item->setTextSize(text_size);
-    item->setGravity(IWidget::GRAVITY_CENTER);
-    item->setHPadding(3);
-    item->setAutoscrollInFocus(true);
-    return item;
-  }
-  catch (const std::bad_alloc& e)
-  {
-    log_e("%s", e.what());
-    esp_restart();
-  }
+  Label* item = new Label(1);
+  item->setText(text);
+  item->setFont(font_ptr);
+  item->setTextSize(text_size);
+  item->setGravity(IWidget::GRAVITY_CENTER);
+  item->setHPadding(3);
+  item->setAutoscrollInFocus(true);
+  return item;
 }
 
 MenuItem* WidgetCreator::getMenuItem(uint16_t id)
 {
-  try
-  {
-    MenuItem* item = new MenuItem(id);
-    item->setFocusBorderColor(COLOR_LIME);
-    item->setFocusBackColor(COLOR_FOCUS_BACK);
-    item->setBackColor(COLOR_MENU_ITEM);
-    item->setChangingBorder(true);
-    item->setChangingBack(true);
-    return item;
-  }
-  catch (const std::bad_alloc& e)
-  {
-    log_e("%s", e.what());
-    esp_restart();
-  }
+  MenuItem* item = new MenuItem(id);
+  item->setFocusBorderColor(COLOR_LIME);
+  item->setFocusBackColor(COLOR_FOCUS_BACK);
+  item->setBackColor(COLOR_MENU_ITEM);
+  item->setChangingBorder(true);
+  item->setChangingBack(true);
+  return item;
 }
 
 DynamicMenu* WidgetCreator::getDynamicMenu(uint16_t id)
 {
-  try
-  {
-    DynamicMenu* menu = new DynamicMenu(id);
-    menu->setBackColor(COLOR_BLACK);
-    menu->setWidth(TFT_WIDTH);
-    menu->setHeight(TFT_HEIGHT * 2 - 2);
-    return menu;
-  }
-  catch (const std::bad_alloc& e)
-  {
-    log_e("%s", e.what());
-    esp_restart();
-  }
+  DynamicMenu* menu = new DynamicMenu(id);
+  menu->setBackColor(COLOR_BLACK);
+  menu->setWidth(TFT_WIDTH);
+  menu->setHeight(TFT_HEIGHT * 2 - 2);
+  return menu;
 }
 
 Label* WidgetCreator::getStatusMsgLable(uint16_t id, const char* text, uint8_t text_size)
