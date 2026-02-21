@@ -7,41 +7,25 @@ namespace pixeler
 {
   UdpPacket::UdpPacket(AsyncUDPPacket& packet) : DataStream(packet.length() < 2 ? 2 : packet.length() + 1)
   {
-    try
-    {
-      _buffer[0] = TYPE_DATA;
-      _buffer[_size - 1] = '\0';
+    _buffer[0] = TYPE_DATA;
+    _buffer[_size - 1] = '\0';
 
-      --_size;
-      _index = 1;
+    --_size;
+    _index = 1;
 
-      memcpy(_buffer, packet.data(), _size);
+    memcpy(_buffer, packet.data(), _size);
 
-      _remote_ip = packet.remoteIP();
-      _port = packet.remotePort();
-    }
-    catch (std::exception& e)
-    {
-      log_e("%s", e.what());
-      esp_restart();
-    }
+    _remote_ip = packet.remoteIP();
+    _port = packet.remotePort();
   }
 
   UdpPacket::UdpPacket(size_t data_len) : DataStream(data_len + 2)
   {
-    try
-    {
-      _buffer[0] = TYPE_DATA;
-      _buffer[_size - 1] = '\0';
+    _buffer[0] = TYPE_DATA;
+    _buffer[_size - 1] = '\0';
 
-      --_size;  // Hide \0
-      _index = 1;
-    }
-    catch (std::bad_alloc& e)
-    {
-      log_e("%s", e.what());
-      esp_restart();
-    }
+    --_size;  // Hide \0
+    _index = 1;
   }
 
   const char* UdpPacket::getData(uint16_t data_pos) const
