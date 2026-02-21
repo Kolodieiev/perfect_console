@@ -12,8 +12,8 @@ namespace pixeler
     explicit MutexGuard(SemaphoreHandle_t mutex)
         : _mutex(mutex)
     {
-      assert(mutex);
-      assert(xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE);
+      if (!mutex)
+        esp_restart();
     }
 
     ~MutexGuard()
