@@ -41,7 +41,7 @@ namespace pixeler
     WavTrack() : _data_buf{nullptr}, _data_size{0} {}
 
   private:
-    float _volume;
+    float _volume{10};
 
     const uint8_t* _data_buf{nullptr};
 
