@@ -12,12 +12,11 @@
 #include "pixeler/src/widget/menu/DynamicMenu.h"
 #include "pixeler/src/widget/menu/item/MenuItem.h"
 #include "pixeler/src/widget/text/Label.h"
+#include "resources/ch32_pins_def.h"
 #include "resources/colors.h"
 #include "resources/kb_btn_id.h"
 #include "resources/strings.h"
 #include "resources/ui_const.h"
-#include "resources/ch32_pins_def.h"
-
 
 using namespace pixeler;
 
