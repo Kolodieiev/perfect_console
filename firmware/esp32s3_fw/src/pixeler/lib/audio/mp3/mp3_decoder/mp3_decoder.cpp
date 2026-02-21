@@ -6289,6 +6289,12 @@ int32_t DecodeHuffmanPairs(int32_t* xy, int32_t nVals, uint32_t tabIdx, int32_t 
   if (nVals < 1)
     return 0;
 
+  if (nVals & 0x01)
+  {
+    log_e("assert(!(nVals & 0x01))");
+    return -1;
+  }
+
   if (bitsLeft < 0)
     return -1;
   startBits = bitsLeft;
@@ -6297,29 +6303,9 @@ int32_t DecodeHuffmanPairs(int32_t* xy, int32_t nVals, uint32_t tabIdx, int32_t 
   linBits = huffTabLookup[tabIdx].linBits;
   tabType = (HuffTabType_t)huffTabLookup[tabIdx].tabType;
 
-  //    assert(!(nVals & 0x01));
-  //    assert(tabIdx < m_HUFF_PAIRTABS);
-  //    assert(tabIdx >= 0);
-  //    assert(tabType != invalidTab);
-
-  if ((nVals & 0x01))
+  if (tabType == invalidTab)
   {
-    log_d("assert(!(nVals & 0x01))");
-    return -1;
-  }
-  if (!(tabIdx < m_HUFF_PAIRTABS))
-  {
-    log_d("assert(tabIdx < m_HUFF_PAIRTABS)");
-    return -1;
-  }
-  if (!(tabIdx >= 0))
-  {
-    log_d("(tabIdx >= 0)");
-    return -1;
-  }
-  if (!(tabType != invalidTab))
-  {
-    log_d("(tabType != invalidTab)");
+    log_e("assert(tabType != invalidTab)");
     return -1;
   }
 
