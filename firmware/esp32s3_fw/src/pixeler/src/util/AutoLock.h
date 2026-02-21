@@ -12,7 +12,8 @@ namespace pixeler
     explicit AutoLock(SemaphoreHandle_t mutex)
         : _mutex(mutex)
     {
-      xSemaphoreTake(_mutex, portMAX_DELAY);
+      assert(mutex);
+      assert(xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE);
     }
 
     ~AutoLock()
