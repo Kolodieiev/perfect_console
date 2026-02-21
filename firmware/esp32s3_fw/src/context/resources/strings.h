@@ -61,6 +61,7 @@ const char STR_PREF_AUDIO_AMP[] = "audioamp";
 const char STR_PREF_LED_GREET[] = "ledgreeting";
 const char STR_PREF_FS_AP_SSID[] = "fs_ap_ssid";
 const char STR_PREF_FS_AP_PWD[] = "fs_ap_pwd";
+const char STR_PREF_WIFI_POWER[] = "wifi_power";
 
 //
 
@@ -84,6 +85,7 @@ const char STR_AUDIO_MONO[] = "Монозвук";
 const char STR_AUDIO_AMP[] = "Підсилювач звуку";
 const char STR_LED_GREET[] = "Привітання LED";
 const char STR_FILE_SERVER[] = "Файловий сервер";
+const char STR_WIFI_POWER[] = "Потужність WiFi";
 
 //
 
@@ -101,19 +103,6 @@ const char STR_SERV_PWD[] = "Пароль від сервера";
 const char STR_ENTER_SERV_PWD[] = "Введіть пароль від сервера";
 
 //
-
 const char STR_EMPTY_BAT[] = "0.00";
-
-//
-const char STR_CHANN_TITLE[] = "Канал:";
-const char STR_ENCRYPT_TITLE[] = "Шифрування:";
-//
-const char STR_LORA_PRESET[] = "LRE_PRESET";
-const char STR_LORA_SETS_DIR[] = "LRE";
-const char STR_LORA_SETS_EXT[] = ".lset";
-
-const char STR_CODEC_SETS_DIR[] = "codec";
-const char STR_CODEC_SETS_NAME[] = "codec.sets";
-
 //
 const char STR_WALLPP_FILENAME[] = "wallpp";
