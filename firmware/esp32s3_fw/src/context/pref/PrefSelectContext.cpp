@@ -15,15 +15,7 @@ void PrefSelectContext::showSDErrTmpl()
 
   EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
-
-  Label* err_lbl = new Label(ID_ERR_LBL);
-  layout->addWidget(err_lbl);
-  err_lbl->setText(STR_SD_ERR);
-  err_lbl->setAlign(IWidget::ALIGN_CENTER);
-  err_lbl->setGravity(IWidget::GRAVITY_CENTER);
-  err_lbl->setBackColor(COLOR_MAIN_BACK);
-  err_lbl->setWidth(TFT_WIDTH);
-  err_lbl->setHeight(TFT_HEIGHT);
+  layout->addWidget(WidgetCreator::getStatusMsgLable(ID_ERR_LBL, STR_SD_ERR));
 }
 
 PrefSelectContext::PrefSelectContext()

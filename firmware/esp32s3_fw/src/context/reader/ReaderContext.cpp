@@ -236,9 +236,7 @@ void ReaderContext::showSDErrTmpl()
 
   IWidgetContainer* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
-
-  Label* msg_lbl = WidgetCreator::getStatusMsgLable(ID_MSG_LBL, STR_SD_ERR);
-  layout->addWidget(msg_lbl);
+  layout->addWidget(WidgetCreator::getStatusMsgLable(ID_MSG_LBL, STR_SD_ERR));
 }
 
 void ReaderContext::indexDirs()
