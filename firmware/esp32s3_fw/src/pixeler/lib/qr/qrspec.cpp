@@ -388,14 +388,10 @@ static void QRspec_putAlignmentPattern(int version, unsigned char* frame, int wi
     return;
 
   d = alignmentPattern[version][1] - alignmentPattern[version][0];
-  if (d < 0)
-  {
-    w = 2;
-  }
-  else
-  {
+  if (d > 0)
     w = (width - alignmentPattern[version][0]) / d + 2;
-  }
+  else
+    w = 2;
 
   if (w * w - 3 == 1)
   {

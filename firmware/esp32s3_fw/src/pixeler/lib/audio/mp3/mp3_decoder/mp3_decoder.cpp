@@ -6275,15 +6275,18 @@ void MP3Decoder_FreeBuffers()
  *                necessarily all linBits outputs for x,y > 15)
  **********************************************************************************************************************/
 // no improvement with section=data
-int32_t DecodeHuffmanPairs(int32_t* xy, int32_t nVals, int32_t tabIdx, int32_t bitsLeft, uint8_t* buf, int32_t bitOffset)
+int32_t DecodeHuffmanPairs(int32_t* xy, int32_t nVals, uint32_t tabIdx, int32_t bitsLeft, uint8_t* buf, int32_t bitOffset)
 {
+  if (tabIdx > 31)
+    return -1;
+
   int32_t i, x, y;
   int32_t cachedBits, padBits, len, startBits, linBits, maxBits, minBits;
   HuffTabType_t tabType;
   uint16_t cw, *tBase, *tCurr;
   uint32_t cache;
 
-  if (nVals <= 0)
+  if (nVals < 1)
     return 0;
 
   if (bitsLeft < 0)
@@ -7940,18 +7943,12 @@ void imdct12(int32_t* x, int32_t* out)
   int32_t a0, a1, a2;
   int32_t x0, x1, x2, x3, x4, x5;
 
-  x0 = *x;
-  x += 3;
-  x1 = *x;
-  x += 3;
-  x2 = *x;
-  x += 3;
-  x3 = *x;
-  x += 3;
-  x4 = *x;
-  x += 3;
-  x5 = *x;
-  x += 3;
+  x0 = x[0];
+  x1 = x[3];
+  x2 = x[6];
+  x3 = x[9];
+  x4 = x[12];
+  x5 = x[15];
 
   x4 -= x5;
   x3 -= x4;
@@ -7980,17 +7977,12 @@ void imdct12(int32_t* x, int32_t* out)
   x3 = MULSHIFT32(c6[1], a2) << 2;
   x5 = MULSHIFT32(c6[2], a1 - a0) << 2;
 
-  *out = x0 + x1;
-  out++;
-  *out = x2 + x3;
-  out++;
-  *out = x4 + x5;
-  out++;
-  *out = x4 - x5;
-  out++;
-  *out = x2 - x3;
-  out++;
-  *out = x0 - x1;
+  out[0] = x0 + x1;
+  out[1] = x2 + x3;
+  out[2] = x4 + x5;
+  out[3] = x4 - x5;
+  out[4] = x2 - x3;
+  out[5] = x0 - x1;
 }
 
 /***********************************************************************************************************************

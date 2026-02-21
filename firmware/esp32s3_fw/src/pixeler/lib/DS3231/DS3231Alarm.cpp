@@ -31,10 +31,8 @@ namespace pixeler
 
     buffer[0] = REG_ALARMTWO;
 
-    // cppcheck-suppress badBitmaskCheck
     buffer[1] = uint8ToBcd(alarmData.minute) | ((flags & 0x01) << 7);
 
-    // cppcheck-suppress badBitmaskCheck
     buffer[2] = uint8ToBcd(alarmData.hour) | ((flags & 0x02) << 6);  // 24 hour mode only
 
     return _i2c.write(DS3231_ADDR, buffer, 3);
