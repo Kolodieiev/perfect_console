@@ -502,3 +502,16 @@ Keyboard* WidgetCreator::getCapsdEnKeyboard(uint16_t id)
 
   return _keyboard;
 }
+
+Label* WidgetCreator::getWindowHeader(uint16_t id, const char* text)
+{
+  Label* header_lbl = new Label(id);
+  header_lbl->setText(text);
+  header_lbl->setWidth(TFT_WIDTH);
+  header_lbl->setBackColor(COLOR_MAIN_BACK);
+  header_lbl->setTextColor(COLOR_WHITE);
+  header_lbl->setAlign(IWidget::ALIGN_CENTER);
+  header_lbl->setGravity(IWidget::GRAVITY_CENTER);
+
+  return header_lbl;
+}
