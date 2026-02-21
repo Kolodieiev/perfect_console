@@ -655,7 +655,6 @@ uint32_t Audio::stopSong()
   _fs.closeFile(audiofile);
 
   memset(m_outBuff, 0, m_outbuffSize);            // Clear OutputBuffer
-  memset(m_filterBuff, 0, sizeof(m_filterBuff));  // Clear FilterBuffer
   m_validSamples = 0;
   m_audioCurrentTime = 0;
   m_audioFileDuration = 0;
@@ -1313,8 +1312,6 @@ void Audio::reconfigI2S()
     _i2s_out.reconfigSampleRate(getSampleRate() * 2);
   else
     _i2s_out.reconfigSampleRate(getSampleRate());
-
-  memset(m_filterBuff, 0, sizeof(m_filterBuff));  // Clear FilterBuffer
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

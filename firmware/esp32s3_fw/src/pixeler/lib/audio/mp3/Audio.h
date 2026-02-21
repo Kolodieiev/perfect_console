@@ -117,8 +117,8 @@ private:
   size_t universal_tmp{0};
   uint8_t ID3version{0};
   int ehsz{0};
-  char tag[5];
-  char frameid[5];
+  char tag[5]{' '};
+  char frameid[5]{' '};
   size_t framesize{0};
   bool compressed{false};
   uint8_t numID3Header{0};
@@ -136,16 +136,6 @@ private:
   uint8_t cnt0{0}, cnt1{0}, cnt2{0}, cnt3{0}, cnt4{0};
   bool f_vu{false};
   //
-  int16_t iir_out[2];
-  int16_t iir_out1[2];
-  int16_t iir_out2[2];
-  //
-
-#ifndef ESP_ARDUINO_VERSION_VAL
-#define ESP_ARDUINO_VERSION_MAJOR 0
-#define ESP_ARDUINO_VERSION_MINOR 0
-#define ESP_ARDUINO_VERSION_PATCH 0
-#endif
 
   void UTF8toASCII(char* str);
   void setDefaults();  // free buffers and set defaults
@@ -308,7 +298,6 @@ private:
   uint8_t m_curve = 0;           // volume characteristic
   uint8_t m_bitsPerSample = 16;  // bitsPerSample
   uint8_t m_channels = 2;
-  uint8_t m_filterType[2];       // lowpass, highpass
   uint8_t m_vuLeft = 0;          // average value of samples, left channel
   uint8_t m_vuRight = 0;         // average value of samples, right channel
   int16_t* m_outBuff = NULL;     // Interleaved L/R
@@ -331,10 +320,8 @@ private:
   float m_audioCurrentTime = 0;
   uint32_t m_audioDataStart = 0;   // in bytes
   size_t m_audioDataSize = 0;      //
-  float m_filterBuff[3][2][2][2];  // IIR filters memory for Audio DSP
   size_t m_i2s_bytesWritten = 0;   // set in i2s_write() but not used
   size_t m_fileSize = 0;           // size of the file
-  uint16_t m_filterFrequency[2];
   int8_t m_gain0 = 0;  // cut or boost filters (EQ)
   int8_t m_gain1 = 0;
   int8_t m_gain2 = 0;
