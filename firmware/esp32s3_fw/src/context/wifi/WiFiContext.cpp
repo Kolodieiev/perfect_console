@@ -26,6 +26,18 @@ WiFiContext::WiFiContext()
     return;
   }
 
+  String wifi_power = SettingsManager::get(STR_PREF_WIFI_POWER);
+
+  if (wifi_power.isEmpty())
+  {
+    _wifi.setPower(WiFiManager::WIFI_POWER_MIN);
+  }
+  else
+  {
+    int power_val = std::atoi(wifi_power.c_str());
+    _wifi.setPower(static_cast<WiFiManager::WiFiPowerLevel>(power_val));
+  }
+
   showMainTmpl();
 }
 
@@ -97,15 +109,7 @@ void WiFiContext::showSDErrTmpl()
 
   EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
-
-  Label* err_lbl = new Label(ID_ERR_LBL);
-  layout->addWidget(err_lbl);
-  err_lbl->setText(STR_SD_ERR);
-  err_lbl->setAlign(IWidget::ALIGN_CENTER);
-  err_lbl->setGravity(IWidget::GRAVITY_CENTER);
-  err_lbl->setBackColor(COLOR_MAIN_BACK);
-  err_lbl->setWidth(TFT_WIDTH);
-  err_lbl->setHeight(TFT_HEIGHT);
+  layout->addWidget(WidgetCreator::getStatusMsgLable(ID_ERR_LBL, STR_SD_ERR));
 }
 
 void WiFiContext::showMainTmpl()
