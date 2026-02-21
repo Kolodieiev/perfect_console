@@ -6,23 +6,23 @@
 
 namespace pixeler
 {
-  class AutoLock
+  class MutexGuard
   {
   public:
-    explicit AutoLock(SemaphoreHandle_t mutex)
+    explicit MutexGuard(SemaphoreHandle_t mutex)
         : _mutex(mutex)
     {
       assert(mutex);
       assert(xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE);
     }
 
-    ~AutoLock()
+    ~MutexGuard()
     {
       xSemaphoreGive(_mutex);
     }
 
-    AutoLock(const AutoLock&) = delete;
-    AutoLock& operator=(const AutoLock&) = delete;
+    MutexGuard(const MutexGuard&) = delete;
+    MutexGuard& operator=(const MutexGuard&) = delete;
 
   private:
     SemaphoreHandle_t _mutex;

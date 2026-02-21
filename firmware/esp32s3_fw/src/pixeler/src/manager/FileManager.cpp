@@ -12,7 +12,7 @@
 
 #include "pixeler/setup/sd_setup.h"
 #include "pixeler/src/manager/SPI_Manager.h"
-#include "pixeler/src/util/AutoLock.h"
+#include "pixeler/src/util/MutexGuard.h"
 
 #define IDLE_WD_GUARD_TIME 250U
 #define OPT_BLOCK_SIZE 16384
@@ -67,7 +67,7 @@ namespace pixeler
 
   size_t FileManager::getFileSize(const char* path)
   {
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     return getFileSizeUnlocked(path);
   }
 
@@ -85,7 +85,7 @@ namespace pixeler
   {
     String full_path = makeFullPath(path);
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     if (stat(full_path.c_str(), &out_stat) != 0)
       return false;
 
@@ -96,7 +96,7 @@ namespace pixeler
   {
     String full_path = makeFullPath(path);
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     bool result = getEntryTypeUnlocked(full_path.c_str()) == DT_REG;
 
     if (!result && !silently)
@@ -109,7 +109,7 @@ namespace pixeler
   {
     String full_path = makeFullPath(path);
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     bool result = getEntryTypeUnlocked(full_path.c_str()) == DT_DIR;
 
     if (!result && !silently)
@@ -121,7 +121,7 @@ namespace pixeler
   bool FileManager::exists(const char* path, bool silently)
   {
     String full_path = makeFullPath(path);
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     uint8_t type = getEntryTypeUnlocked(full_path.c_str());
 
     if (type == DT_REG || type == DT_DIR)
@@ -137,7 +137,7 @@ namespace pixeler
 
     errno = 0;
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     bool result = !mkdir(full_path.c_str(), 0777);
 
     if (!result)
@@ -154,7 +154,7 @@ namespace pixeler
   {
     String full_path = makeFullPath(path);
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
 
     int fd = open(full_path.c_str(), O_RDONLY);
     if (fd < 0)
@@ -202,7 +202,7 @@ namespace pixeler
 
     int fd = fileno(file);
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
 
     if (seek_pos > 0)
     {
@@ -245,7 +245,7 @@ namespace pixeler
 
     String full_path = makeFullPath(path);
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
 
     int fd = open(full_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666);
     if (fd < 0)
@@ -273,7 +273,7 @@ namespace pixeler
       return 0;
     }
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     int fd = fileno(file);
     return writeOptimalUnlocked(fd, buffer, len);
   }
@@ -319,7 +319,7 @@ namespace pixeler
   {
     String full_path = makeFullPath(path);
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     FILE* f = fopen(full_path.c_str(), mode);
 
     if (!f)
@@ -332,7 +332,7 @@ namespace pixeler
   {
     if (file)
     {
-      AutoLock lock(_sd_mutex);
+      MutexGuard lock(_sd_mutex);
       closeFileUnlocked(file);
     }
   }
@@ -352,7 +352,7 @@ namespace pixeler
 
     int fd = fileno(file);
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
 
     off_t result = lseek(fd, pos, mode);
     if (result == -1)
@@ -371,7 +371,7 @@ namespace pixeler
 
     int fd = fileno(file);
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
 
     off_t pos = lseek(fd, 0, SEEK_CUR);
     if (pos == -1)
@@ -382,7 +382,7 @@ namespace pixeler
 
   size_t FileManager::available(FILE* file, size_t file_size)
   {
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     return availableUnlocked(file, file_size);
   }
 
@@ -417,7 +417,7 @@ namespace pixeler
     bool is_dir = dirExist(_rm_path.c_str(), true);
 
     {
-      AutoLock lock(_sd_mutex);
+      MutexGuard lock(_sd_mutex);
       if (!is_dir)
         result = rmFileUnlocked(full_path.c_str());
       else
@@ -530,13 +530,13 @@ namespace pixeler
 
   bool FileManager::rmFile(const char* path)
   {
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     return rmFileUnlocked(path, true);
   }
 
   bool FileManager::rmDir(const char* path)
   {
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     _is_canceled = false;
     return rmDirUnlocked(path, true);
   }
@@ -592,7 +592,7 @@ namespace pixeler
       return false;
     }
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     return !::rename(old_n.c_str(), new_n.c_str());
   }
 
@@ -699,7 +699,7 @@ namespace pixeler
     bool result;
 
     {
-      AutoLock lock(_sd_mutex);
+      MutexGuard lock(_sd_mutex);
       result = copyFileUnlocked(from, to);
     }
 
@@ -774,7 +774,7 @@ namespace pixeler
 
     String full_path = makeFullPath(dir_path);
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     DIR* dir = opendir(full_path.c_str());
     if (!dir)
     {
@@ -911,7 +911,7 @@ namespace pixeler
       return false;
     }
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     return isMountedUnlocked();
   }
 
@@ -947,7 +947,7 @@ namespace pixeler
       return false;
     }
 
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     _pdrv = sdcard_init(SD_PIN_CS, spi, SD_FREQUENCY);
     if (_pdrv == 0xFF)
     {
@@ -976,7 +976,7 @@ namespace pixeler
 
   void FileManager::unmount()
   {
-    AutoLock lock(_sd_mutex);
+    MutexGuard lock(_sd_mutex);
     sdcard_unmount(_pdrv);
     sdcard_uninit(_pdrv);
     _pdrv = 0xFF;
