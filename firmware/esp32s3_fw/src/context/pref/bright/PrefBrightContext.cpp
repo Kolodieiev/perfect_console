@@ -18,14 +18,7 @@ PrefBrightContext::PrefBrightContext()
   EmptyLayout* layout = WidgetCreator::getEmptyLayout();
   setLayout(layout);
   //
-  Label* header_lbl = new Label(ID_HEADER);
-  layout->addWidget(header_lbl);
-  header_lbl->setText(STR_BRIGHT);
-  header_lbl->setWidth(TFT_WIDTH);
-  header_lbl->setBackColor(COLOR_MAIN_BACK);
-  header_lbl->setTextColor(COLOR_WHITE);
-  header_lbl->setAlign(IWidget::ALIGN_CENTER);
-  header_lbl->setGravity(IWidget::GRAVITY_CENTER);
+  layout->addWidget(WidgetCreator::getWindowHeader(ID_HEADER, STR_BRIGHT));
   //
   _progress = new ProgressBar(ID_PROGRESSBAR);
   layout->addWidget(_progress);
