@@ -12691,7 +12691,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "NMOS"
+		(property "Value" "A09T"
 			(at 243.84 370.8399 0)
 			(effects
 				(font
@@ -12926,7 +12926,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "NMOS"
+		(property "Value" "A09T"
 			(at 448.3099 337.82 0)
 			(effects
 				(font
@@ -13821,7 +13821,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "NMOS"
+		(property "Value" "A09T"
 			(at 588.0101 209.55 0)
 			(effects
 				(font
@@ -14741,7 +14741,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "NMOS"
+		(property "Value" "A09T"
 			(at 158.75 377.1899 0)
 			(effects
 				(font
@@ -15316,7 +15316,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "NMOS"
+		(property "Value" "A09T"
 			(at 339.0899 363.22 0)
 			(effects
 				(font
@@ -15417,7 +15417,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "NMOS"
+		(property "Value" "A09T"
 			(at 562.6101 200.66 0)
 			(effects
 				(font
