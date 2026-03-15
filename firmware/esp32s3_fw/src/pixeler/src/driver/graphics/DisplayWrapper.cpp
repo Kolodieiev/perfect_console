@@ -270,6 +270,8 @@ namespace pixeler
       esp_restart();
     }
 
+    _output->invertDisplay(INVERT_COLORS);
+
 #ifdef DIRECT_DRAWING
     _output->begin(BUSS_FREQUENCY);
     _output->setUTF8Print(true);

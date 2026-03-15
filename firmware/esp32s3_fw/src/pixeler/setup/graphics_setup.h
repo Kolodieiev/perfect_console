@@ -44,6 +44,7 @@
 #define DISPLAY_ROTATION 0  // Стартова орієнтація дисплея.
 
 #define IS_IPS_DISPLAY true  // Тип матриці дисплея.
+#define INVERT_COLORS false // Чи потрібно інвертувати кольори пікселів.
 
 #define BUS_TYPE Arduino_ESP32SPI                                                         // Клас шини.
 #define IS_COMMON_BUS false                                                               // Парапор, який вказує чи є шина спільною для декількох пристроїв.
@@ -77,6 +78,7 @@
 // #define DISPLAY_ROTATION 0 // Стартова орієнтація дисплея.
 
 // #define IS_IPS_DISPLAY true // Тип матриці дисплея.
+// #define INVERT_COLORS true // Чи потрібно інвертувати кольори пікселів.
 
 // #define BUS_TYPE Arduino_ESP32QSPI                                                      // Клас шини.
 // #define IS_COMMON_BUS false                                                            // Парапор, який вказує чи є шина спільною для декількох пристроїв.
