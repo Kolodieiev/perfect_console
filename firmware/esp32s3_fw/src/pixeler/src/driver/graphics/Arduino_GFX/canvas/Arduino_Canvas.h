@@ -21,7 +21,7 @@ public:
   void writeFastHLineCore(int16_t x, int16_t y, int16_t w, uint16_t color);
   void writeFillRectPreclipped(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) override;
   void draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h) override;
-  void draw16bitRGBBitmapWithTranColor(int16_t x, int16_t y, const uint16_t* bitmap, uint16_t transparent_color, int16_t w, int16_t h) override;  // TODO const bitmap
+  void draw16bitRGBBitmapWithTranColor(int16_t x, int16_t y, const uint16_t* bitmap, uint16_t transparent_color, int16_t w, int16_t h) override;
   void flushMainBuff() override;
   virtual void duplicateMainBuff() override;
   virtual void flushSecondBuff() override;
