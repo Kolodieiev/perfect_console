@@ -22,110 +22,185 @@ namespace pixeler
 
   void DisplayWrapper::fillScreen(uint16_t color)
   {
+#ifdef DIRECT_DRAWING
+    _output->fillScreen(color);
+#else
     _canvas.fillScreen(color);
     _is_buff_changed = true;
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::setCursor(int16_t x, int16_t y)
   {
+#ifdef DIRECT_DRAWING
+    _output->setCursor(x, y);
+#else
     _canvas.setCursor(x, y);
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::setTextWrap(bool state)
   {
+#ifdef DIRECT_DRAWING
+    _output->setTextWrap(state);
+#else
     _canvas.setTextWrap(state);
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   size_t DisplayWrapper::print(const char* str)
   {
-    return _canvas.print(str);
+#ifdef DIRECT_DRAWING
+    return _output->print(str);
+#else
     _is_buff_changed = true;
+    return _canvas.print(str);
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::setFont(const uint8_t* font)
   {
+#ifdef DIRECT_DRAWING
+    _output->setFont(font);
+#else
     _canvas.setFont(font);
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::setTextSize(uint8_t size)
   {
+#ifdef DIRECT_DRAWING
+    _output->setTextSize(size, size, 0);
+#else
     _canvas.setTextSize(size, size, 0);
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::setTextColor(uint16_t color)
   {
+#ifdef DIRECT_DRAWING
+    _output->setTextColor(color);
+#else
     _canvas.setTextColor(color);
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::calcTextBounds(const char* str, int16_t x, int16_t y, int16_t& x_out, int16_t& y_out, uint16_t& w_out, uint16_t& h_out)
   {
+#ifdef DIRECT_DRAWING
+    _output->getTextBounds(str, x, y, x_out, y_out, w_out, h_out);
+#else
     _canvas.getTextBounds(str, x, y, x_out, y_out, w_out, h_out);
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::setRotation(uint8_t rotation)
   {
+#ifndef DIRECT_DRAWING
+    _canvas.setRotation(rotation);
+#endif  // #ifndef DIRECT_DRAWING
     _output->setRotation(rotation);
     delay(10);
   }
 
   void DisplayWrapper::drawPixel(int16_t x, int16_t y, uint16_t color)
   {
+#ifdef DIRECT_DRAWING
+    _output->drawPixel(x, y, color);
+#else
     _canvas.drawPixel(x, y, color);
     _is_buff_changed = true;
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color)
   {
+#ifdef DIRECT_DRAWING
+    _output->drawLine(x0, y0, x1, y1, color);
+#else
     _canvas.drawLine(x0, y0, x1, y1, color);
     _is_buff_changed = true;
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::drawCircle(int16_t x, int16_t y, int16_t r, uint16_t color)
   {
+#ifdef DIRECT_DRAWING
+    _output->drawCircle(x, y, r, color);
+#else
     _canvas.drawCircle(x, y, r, color);
     _is_buff_changed = true;
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::fillCircle(int16_t x, int16_t y, int16_t r, uint16_t color)
   {
+#ifdef DIRECT_DRAWING
+    _output->fillCircle(x, y, r, color);
+#else
     _canvas.fillCircle(x, y, r, color);
     _is_buff_changed = true;
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::drawRect(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t color)
   {
+#ifdef DIRECT_DRAWING
+    _output->drawRect(x, y, w, h, color);
+#else
     _canvas.drawRect(x, y, w, h, color);
     _is_buff_changed = true;
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t color)
   {
+#ifdef DIRECT_DRAWING
+    _output->fillRect(x, y, w, h, color);
+#else
     _canvas.fillRect(x, y, w, h, color);
     _is_buff_changed = true;
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::drawRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t radius, uint16_t color)
   {
+#ifdef DIRECT_DRAWING
+    _output->drawRoundRect(x, y, w, h, radius, color);
+#else
     _canvas.drawRoundRect(x, y, w, h, radius, color);
     _is_buff_changed = true;
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::fillRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t radius, uint16_t color)
   {
+#ifdef DIRECT_DRAWING
+    _output->fillRoundRect(x, y, w, h, radius, color);
+#else
     _canvas.fillRoundRect(x, y, w, h, radius, color);
     _is_buff_changed = true;
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::drawBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h)
   {
+#ifdef DIRECT_DRAWING
+    _output->draw16bitRGBBitmap(x, y, bitmap, w, h);
+#else
     _canvas.draw16bitRGBBitmap(x, y, bitmap, w, h);
     _is_buff_changed = true;
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::drawBitmapTransp(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h)
   {
+#ifdef DIRECT_DRAWING
+    _output->draw16bitRGBBitmapWithTranColor(x, y, bitmap, COLOR_TRANSPARENT, w, h);
+#else
     _canvas.draw16bitRGBBitmapWithTranColor(x, y, bitmap, COLOR_TRANSPARENT, w, h);
     _is_buff_changed = true;
+#endif  // #ifdef DIRECT_DRAWING
   }
 
   void DisplayWrapper::drawBitmapRotated(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h, int16_t piv_x, int16_t piv_y, float angle)
@@ -169,7 +244,11 @@ namespace pixeler
       }
     }
 
+#ifdef DIRECT_DRAWING
+    _output->draw16bitRGBBitmapWithTranColor(x, y, rotated, COLOR_TRANSPARENT, w, h);
+#else
     _canvas.draw16bitRGBBitmapWithTranColor(x, y, rotated, COLOR_TRANSPARENT, w, h);
+#endif  // #ifdef DIRECT_DRAWING
     free(rotated);
   }
 
@@ -191,9 +270,15 @@ namespace pixeler
       esp_restart();
     }
 
+#ifdef DIRECT_DRAWING
+    _output->begin(BUSS_FREQUENCY);
+    _output->setUTF8Print(true);
+    _output->setTextWrap(false);
+#else
     _canvas.begin(BUSS_FREQUENCY);
     _canvas.setUTF8Print(true);
     _canvas.setTextWrap(false);
+#endif  // #ifdef DIRECT_DRAWING
 
     setRotation(DISPLAY_ROTATION);
 
@@ -261,6 +346,7 @@ namespace pixeler
 #endif  // HAS_BL_PWM
 #endif  // BACKLIGHT_PIN
 
+#ifndef DIRECT_DRAWING
   void DisplayWrapper::__flush()
   {
     if (_is_buff_changed)
@@ -315,6 +401,7 @@ namespace pixeler
 #endif  // ENABLE_SCREENSHOTER
     }
   }
+#endif  // #ifndef DIRECT_DRAWING
 
 #ifdef DOUBLE_BUFFERRING
   void DisplayWrapper::displayRendererTask(void* params)

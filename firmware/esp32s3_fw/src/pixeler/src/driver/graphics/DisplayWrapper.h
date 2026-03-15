@@ -12,8 +12,8 @@
 #pragma GCC optimize("O3")
 #include <stdint.h>
 
-#include "pixeler/setup/graphics_setup.h"
 #include "Arduino_GFX/Arduino_GFX_Library.h"
+#include "pixeler/setup/graphics_setup.h"
 
 #define WDT_GUARD_TIME 1000UL
 
@@ -33,6 +33,7 @@ namespace pixeler
      */
     void __init();
 
+#ifndef DIRECT_DRAWING
     /**
      * @brief Надсилає буфер канвасу до дисплею.
      *
@@ -40,6 +41,7 @@ namespace pixeler
      *
      */
     void __flush();
+#endif  // #ifndef DIRECT_DRAWING
 
     /**
      * @brief Заливає канвас вказаним кольором.
@@ -291,7 +293,9 @@ namespace pixeler
   private:
     BUS_TYPE _bus{BUS_PARAMS};
     Arduino_GFX* _output = new DISP_DRIVER_TYPE(&_bus, DISP_DRIVER_PARAMS);
+#ifndef DIRECT_DRAWING
     Arduino_Canvas _canvas{TFT_WIDTH, TFT_HEIGHT, _output, 0, 0, 0};
+#endif  // #ifndef DIRECT_DRAWING
 
 #ifdef DOUBLE_BUFFERRING
     volatile xSemaphoreHandle _sync_mutex{nullptr};

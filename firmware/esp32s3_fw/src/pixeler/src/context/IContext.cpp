@@ -38,7 +38,9 @@ namespace pixeler
           }
           xSemaphoreGive(_layout_mutex);
 
+#ifndef DIRECT_DRAWING
           _display.__flush();
+#endif  // #ifndef DIRECT_DRAWING
         }
 #endif  // GRAPHICS_ENABLED
       }
