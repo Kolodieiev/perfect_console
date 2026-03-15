@@ -922,7 +922,6 @@ void Mp3Context::changeBackLight()
   else
   {
     _display.setBrightness(0);
-    _display.__flush();
     _gui_enabled = false;
 
     uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_OFF, CH_PIN_DISPLAY_PWR};
