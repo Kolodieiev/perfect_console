@@ -10,9 +10,9 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
+#include "pixeler/setup/sd_setup.h"
 #include "pixeler/src/defines.h"
 #include "pixeler/src/util/file/FileInfo.h"
-#include "pixeler/setup/sd_setup.h"
 
 namespace pixeler
 {
@@ -128,7 +128,7 @@ namespace pixeler
      * @return true - якщо задачу було успішно створено та запущено.
      * @return false - якщо вже працює будь-яка інша задача файлового менеджера або не вдалося створити нову задачу за будь-якої причини.
      */
-    bool startCopyFile(const char* from, const char* to);
+    bool startCopyingFile(const char* from, const char* to);
 
     /**
      * @brief Відміняє будь-яку запущену поточну задачу файлового менеджера.
@@ -216,7 +216,7 @@ namespace pixeler
      * @param path Шлях до бінарного файла, вказаний без точки монтування.
      * @param buffer Буфер, з якого байти будуть записані до бінарного файлу.
      * @param len Кількість байтів, які повинні бути записані до файлу.
-     * @return size_t - кількість успішно записаних байтів. 
+     * @return size_t - кількість успішно записаних байтів.
      * @return 0 - якщо операція завершилася невдачею.
      */
     size_t writeFile(const char* path, const void* buffer, size_t len);
@@ -228,7 +228,7 @@ namespace pixeler
      * @param file Вказівник на відкритий бінарний файл.
      * @param buffer Буфер, з якого байти будуть записані до бінарного файлу.
      * @param len Кількість байтів, які повинні бути записані до файлу.
-     * @return size_t - кількість успішно записаних байтів. 
+     * @return size_t - кількість успішно записаних байтів.
      * @return 0 - якщо операція завершилася невдачею.
      */
     size_t writeToFile(FILE* file, const void* buffer, size_t len);
@@ -265,7 +265,7 @@ namespace pixeler
      * @brief Повертає поточну позицію каретки у відкритому бінарному файлі.
      *
      * @param file Вказівник на відкритий бінарний файл.
-     * @return size_t - позиція каретки. 
+     * @return size_t - позиція каретки.
      * @return 0 - якщо операція завершилася невдачею або каретка ще не була переміщена.
      */
     size_t getPos(FILE* file);
@@ -275,7 +275,7 @@ namespace pixeler
      *
      * @param file Вказівник на відкритий бінарний файл.
      * @param file_size Розмір файла у байтах.
-     * @return size_t - кількість байтів, які лишилися до кінця бінарного файла від поточної позиції каретки. 
+     * @return size_t - кількість байтів, які лишилися до кінця бінарного файла від поточної позиції каретки.
      * @return 0 -  якщо операція завершилася невдачею.
      */
     size_t available(FILE* file, size_t file_size);
@@ -321,12 +321,13 @@ namespace pixeler
     String makeUniqueFilename(const String& file_path);
 
     /**
-     * @brief Монтує карту пам'яті до, вказаної в налаштуваннях Pixeler, шини SPI.
+     * @brief  Монтує карту пам'яті до, вказаної в налаштуваннях Pixeler, шини SPI.
      *
+     * @param bus_mutex Мютекс шини SPI.
      * @return true - Якщо карту пам'яті було успішно примонтовано зараз або раніше.
      * @return false - Якщо під час монтування виникла помилка.
      */
-    bool mount();
+    bool mount(SemaphoreHandle_t bus_mutex = nullptr);
 
     /**
      * @brief Відмонтовує примонтовану раніше карту пам'яті.
@@ -372,15 +373,15 @@ namespace pixeler
     //
     size_t writeOptimalUnlocked(int file_desc, const void* buffer, size_t len);
     bool rmFileUnlocked(const char* path, bool make_full = false);
-    bool rmDirUnlocked(const char* path, bool make_full = false);
+    bool rmDirRecursively(const char* path, bool& was_mutex_taken, bool make_full = false);
     size_t getFileSizeUnlocked(const char* path);
     size_t availableUnlocked(FILE* file, size_t file_size);
-    bool copyFileUnlocked(const String& from, const String& to);
+    bool createFileCopy(const String& from, const String& to);
     void closeFileUnlocked(FILE*& file);
     bool isMountedUnlocked() const;
 
   private:
-    SemaphoreHandle_t _sd_mutex;
+    SemaphoreHandle_t _sd_mutex{nullptr};
     TaskDoneHandler _doneHandler{nullptr};
 
     String _rm_path;
@@ -388,6 +389,8 @@ namespace pixeler
     String _copy_to_path;
 
     void* _doneArg{nullptr};
+
+    unsigned long _ts{0};
 
     const uint32_t TASK_SIZE{(1024 / 2) * 30};
 
@@ -397,7 +400,8 @@ namespace pixeler
 
     bool _is_working{false};
     bool _is_canceled{false};
-    bool _last_task_result = true;
+    bool _last_task_result{true};
+    bool _is_ext_lock{false};
   };
 
   /**

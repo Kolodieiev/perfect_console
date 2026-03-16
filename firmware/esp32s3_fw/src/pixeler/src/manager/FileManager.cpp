@@ -44,7 +44,7 @@ namespace pixeler
     return unique_filename;
   }
 
-  FileManager::FileManager() : _sd_mutex{xSemaphoreCreateMutex()}
+  FileManager::FileManager()
   {
   }
 
@@ -416,18 +416,128 @@ namespace pixeler
 
     bool is_dir = dirExist(_rm_path.c_str(), true);
 
+    if (!is_dir)
     {
       MutexGuard lock(_sd_mutex);
-      if (!is_dir)
-        result = rmFileUnlocked(full_path.c_str());
-      else
-        result = rmDirUnlocked(full_path.c_str());
+      result = rmFileUnlocked(full_path.c_str());
+    }
+    else
+    {
+      bool was_mutex_taken = false;
+      result = rmDirRecursively(full_path.c_str(), was_mutex_taken);
+      if (was_mutex_taken)
+        xSemaphoreGive(_sd_mutex);
     }
 
     if (result)
       log_i("Успішно видалено: %s", full_path.c_str());
 
     taskDone(result);
+  }
+
+  bool FileManager::rmDirRecursively(const char* path, bool& was_mutex_taken, bool make_full)
+  {
+    bool result = false;
+
+    dirent* dir_entry{nullptr};
+    DIR* dir;
+
+    if (!was_mutex_taken)
+    {
+      xSemaphoreTake(_sd_mutex, portMAX_DELAY);
+      was_mutex_taken = true;
+    }
+
+    if (make_full)
+    {
+      String full_path = makeFullPath(path);
+      dir = opendir(full_path.c_str());
+    }
+    else
+    {
+      dir = opendir(path);
+    }
+
+    if (dir)
+    {
+      errno = 0;
+      _ts = millis();
+      while (!_is_canceled)
+      {
+        if (!was_mutex_taken)
+        {
+          xSemaphoreTake(_sd_mutex, portMAX_DELAY);
+          was_mutex_taken = true;
+        }
+
+        dir_entry = readdir(dir);
+        if (!dir_entry)
+        {
+          if (!errno)
+            result = true;
+          break;
+        }
+
+        if (std::strcmp(dir_entry->d_name, ".") == 0 || std::strcmp(dir_entry->d_name, "..") == 0)
+          continue;
+
+        String full_path = path;
+        full_path += "/";
+        full_path += dir_entry->d_name;
+
+        uint8_t entr_type = getEntryTypeUnlocked(full_path.c_str(), dir_entry);
+
+        if (entr_type == DT_REG)
+        {
+          result = rmFileUnlocked(full_path.c_str());
+        }
+        else if (entr_type == DT_DIR)
+        {
+          result = rmDirRecursively(full_path.c_str(), was_mutex_taken);
+        }
+        else
+        {
+          log_e("Невідомий тип або не вдалося прочитати: %s", full_path.c_str());
+          result = false;
+        }
+
+        if (!result)
+          break;
+
+        if (millis() - _ts > IDLE_WD_GUARD_TIME)
+        {
+          xSemaphoreGive(_sd_mutex);
+          was_mutex_taken = false;
+          delay(1);
+          _ts = millis();
+        }
+      }
+
+      closedir(dir);
+    }
+
+    if (result)
+      result = !remove(path);
+    else
+      log_e("Помилка під час видалення: %s", path);
+
+    return result;
+  }
+
+  bool FileManager::rmDir(const char* path)
+  {
+    _is_canceled = false;
+    bool was_mutex_taken = false;
+    bool result = rmDirRecursively(path, was_mutex_taken, true);
+    if (was_mutex_taken)
+      xSemaphoreGive(_sd_mutex);
+    return result;
+  }
+
+  bool FileManager::rmFile(const char* path)
+  {
+    MutexGuard lock(_sd_mutex);
+    return rmFileUnlocked(path, true);
   }
 
   bool FileManager::rmFileUnlocked(const char* path, bool make_full)
@@ -451,94 +561,6 @@ namespace pixeler
     }
 
     return result;
-  }
-
-  bool FileManager::rmDirUnlocked(const char* path, bool make_full)
-  {
-    bool result = false;
-
-    dirent* dir_entry{nullptr};
-    DIR* dir;
-
-    if (make_full)
-    {
-      String full_path = makeFullPath(path);
-      dir = opendir(full_path.c_str());
-    }
-    else
-    {
-      dir = opendir(path);
-    }
-
-    if (!dir)
-      goto exit;
-
-    errno = 0;
-
-    while (!_is_canceled)
-    {
-      dir_entry = readdir(dir);
-      if (!dir_entry)
-      {
-        if (!errno)
-          result = true;
-        break;
-      }
-
-      if (std::strcmp(dir_entry->d_name, ".") == 0 || std::strcmp(dir_entry->d_name, "..") == 0)
-        continue;
-
-      String full_path = path;
-      full_path += "/";
-      full_path += dir_entry->d_name;
-
-      uint8_t entr_type = getEntryTypeUnlocked(full_path.c_str(), dir_entry);
-
-      if (entr_type == DT_REG)
-      {
-        result = rmFileUnlocked(full_path.c_str());
-        if (!result)
-          goto exit;
-      }
-      else if (entr_type == DT_DIR)
-      {
-        result = rmDirUnlocked(full_path.c_str());
-
-        if (!result)
-          goto exit;
-      }
-      else
-      {
-        log_e("Невідомий тип або не вдалося прочитати: %s", full_path.c_str());
-        goto exit;
-      }
-
-      delay(1);
-    }
-
-  exit:
-    if (dir)
-      closedir(dir);
-
-    if (result)
-      result = !remove(path);
-    else
-      log_e("Помилка під час видалення: %s", path);
-
-    return result;
-  }
-
-  bool FileManager::rmFile(const char* path)
-  {
-    MutexGuard lock(_sd_mutex);
-    return rmFileUnlocked(path, true);
-  }
-
-  bool FileManager::rmDir(const char* path)
-  {
-    MutexGuard lock(_sd_mutex);
-    _is_canceled = false;
-    return rmDirUnlocked(path, true);
   }
 
   void FileManager::rmTask(void* params)
@@ -596,13 +618,17 @@ namespace pixeler
     return !::rename(old_n.c_str(), new_n.c_str());
   }
 
-  bool FileManager::copyFileUnlocked(const String& from, const String& to)
+  bool FileManager::createFileCopy(const String& from, const String& to)
   {
+    xSemaphoreTake(_sd_mutex, portMAX_DELAY);
+    bool was_mutex_taken = true;
+
     int n_fd = open(to.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0666);
 
     if (n_fd < 0)
     {
       log_e("Помилка створення файлу: %s", to.c_str());
+      xSemaphoreGive(_sd_mutex);
       return false;
     }
 
@@ -612,6 +638,7 @@ namespace pixeler
     {
       log_e("Помилка читання файлу: %s", from.c_str());
       close(n_fd);
+      xSemaphoreGive(_sd_mutex);
       return false;
     }
 
@@ -639,6 +666,7 @@ namespace pixeler
     }
 
     size_t file_size = getFileSizeUnlocked(_copy_from_path.c_str());
+    size_t writed_bytes_counter{0};
 
     if (file_size > 0)
     {
@@ -646,15 +674,19 @@ namespace pixeler
       log_i("З: %s", from.c_str());
       log_i("До: %s", to.c_str());
 
-      size_t writed_bytes_counter{0};
       ssize_t bytes_read;
 
       off_t current_pos = lseek(o_fd, 0, SEEK_CUR);
-      size_t byte_aval = (current_pos != -1 && file_size > static_cast<size_t>(current_pos)) ? file_size - current_pos : 0;
+      size_t byte_aval = file_size;
 
-      unsigned long ts = millis();
+      _ts = millis();
       while (!_is_canceled && byte_aval > 0)
       {
+        if (!was_mutex_taken)
+        {
+          xSemaphoreTake(_sd_mutex, portMAX_DELAY);
+          was_mutex_taken = true;
+        }
         size_t to_read = (byte_aval < buf_size) ? byte_aval : buf_size;
         bytes_read = read(o_fd, buffer, to_read);
 
@@ -667,10 +699,12 @@ namespace pixeler
         current_pos = lseek(o_fd, 0, SEEK_CUR);
         byte_aval = (current_pos != -1 && file_size > static_cast<size_t>(current_pos)) ? file_size - current_pos : 0;
 
-        if (millis() - ts > IDLE_WD_GUARD_TIME)
+        if (millis() - _ts > IDLE_WD_GUARD_TIME)
         {
+          xSemaphoreGive(_sd_mutex);
+          was_mutex_taken = false;
           delay(1);
-          ts = millis();
+          _ts = millis();
         }
       }
     }
@@ -686,7 +720,10 @@ namespace pixeler
     close(n_fd);
     close(o_fd);
 
-    return true;
+    if (was_mutex_taken)
+      xSemaphoreGive(_sd_mutex);
+
+    return writed_bytes_counter == file_size;
   }
 
   void FileManager::copyFile()
@@ -696,17 +733,17 @@ namespace pixeler
     String from = makeFullPath(_copy_from_path.c_str());
     String to = makeFullPath(_copy_to_path.c_str());
 
-    bool result;
-
-    {
-      MutexGuard lock(_sd_mutex);
-      result = copyFileUnlocked(from, to);
-    }
+    bool result = createFileCopy(from, to);
 
     if (_is_canceled)
     {
       log_i("Копіювання скасовано: %s", from.c_str());
-      rmFileUnlocked(to.c_str());
+
+      {
+        MutexGuard lock(_sd_mutex);
+        rmFileUnlocked(to.c_str());
+      }
+
       taskDone(false);
     }
     else
@@ -726,7 +763,7 @@ namespace pixeler
     instance->copyFile();
   }
 
-  bool FileManager::startCopyFile(const char* from, const char* to)
+  bool FileManager::startCopyingFile(const char* from, const char* to)
   {
     if (!from || !to)
     {
@@ -930,7 +967,7 @@ namespace pixeler
     return S_ISDIR(st.st_mode);
   }
 
-  bool FileManager::mount()
+  bool FileManager::mount(SemaphoreHandle_t bus_mutex)
   {
     if (_pdrv != 0xFF)
     {
@@ -938,8 +975,29 @@ namespace pixeler
       return true;
     }
 
+    if (!bus_mutex)
+    {
+      _sd_mutex = xSemaphoreCreateMutex();
+      if (!_sd_mutex)
+      {
+        log_e("Помилка створення SD-мютекса");
+        esp_restart();
+      }
+
+      _is_ext_lock = false;
+    }
+    else
+    {
+      _sd_mutex = bus_mutex;
+      _is_ext_lock = true;
+    }
+
+    MutexGuard lock(_sd_mutex);
+
     SPI_Manager::initBus(SD_SPI_BUS, SD_PIN_SCLK, SD_PIN_MISO, SD_PIN_MOSI);
     SPIClass* spi = SPI_Manager::getSpi4Bus(SD_SPI_BUS);
+
+    spi->bus();
 
     if (!spi || !spi->begin())
     {
@@ -947,7 +1005,6 @@ namespace pixeler
       return false;
     }
 
-    MutexGuard lock(_sd_mutex);
     _pdrv = sdcard_init(SD_PIN_CS, spi, SD_FREQUENCY);
     if (_pdrv == 0xFF)
     {
@@ -976,11 +1033,21 @@ namespace pixeler
 
   void FileManager::unmount()
   {
-    MutexGuard lock(_sd_mutex);
-    sdcard_unmount(_pdrv);
-    sdcard_uninit(_pdrv);
-    _pdrv = 0xFF;
-    delay(10);
+    if (_pdrv == 0xFF)
+      return;
+
+    {
+      MutexGuard lock(_sd_mutex);
+      sdcard_unmount(_pdrv);
+      sdcard_uninit(_pdrv);
+      _pdrv = 0xFF;
+      delay(10);
+    }
+
+    if (!_is_ext_lock)
+      vSemaphoreDelete(_sd_mutex);
+
+    _sd_mutex = nullptr;
   }
 
   FileManager _fs;
