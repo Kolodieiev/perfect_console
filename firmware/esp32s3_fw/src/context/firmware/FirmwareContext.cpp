@@ -8,6 +8,10 @@
 const char STR_FIRMWARE_FN[] = "/firmware.bin";
 const char STR_UPDATE_FIRMWARE[] = "Оновлення прошивки";
 
+extern "C" bool verifyRollbackLater() {
+    return true;
+}
+
 FirmwareContext::FirmwareContext()
 {
   EmptyLayout* layout = WidgetCreator::getEmptyLayout();
