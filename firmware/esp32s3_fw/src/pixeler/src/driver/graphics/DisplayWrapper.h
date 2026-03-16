@@ -294,7 +294,7 @@ namespace pixeler
     BUS_TYPE _bus{BUS_PARAMS};
     Arduino_GFX* _output = new DISP_DRIVER_TYPE(&_bus, DISP_DRIVER_PARAMS);
 #ifndef DIRECT_DRAWING
-    Arduino_Canvas _canvas{TFT_WIDTH, TFT_HEIGHT, _output, 0, 0, 0};
+    Arduino_Canvas _canvas{TFT_WIDTH, TFT_HEIGHT, _output};
 #endif  // #ifndef DIRECT_DRAWING
 
 #ifdef DOUBLE_BUFFERRING

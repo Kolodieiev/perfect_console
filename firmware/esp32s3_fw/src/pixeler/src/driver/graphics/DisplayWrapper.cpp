@@ -96,11 +96,7 @@ namespace pixeler
 
   void DisplayWrapper::setRotation(uint8_t rotation)
   {
-#ifndef DIRECT_DRAWING
-    _canvas.setRotation(rotation);
-#endif  // #ifndef DIRECT_DRAWING
     _output->setRotation(rotation);
-    delay(10);
   }
 
   void DisplayWrapper::drawPixel(int16_t x, int16_t y, uint16_t color)
@@ -281,7 +277,7 @@ namespace pixeler
 #endif  // #ifdef DIRECT_DRAWING
 
     _output->invertDisplay(INVERT_COLORS);
-    setRotation(DISPLAY_ROTATION);
+    _output->setRotation(DISPLAY_ROTATION);
 
 #ifdef DOUBLE_BUFFERRING
     _sync_mutex = xSemaphoreCreateMutex();
