@@ -13,13 +13,12 @@ namespace pixeler
         : _mutex(mutex)
     {
       if (!mutex)
-        esp_restart();
-
-      if (xSemaphoreTake(_mutex, portMAX_DELAY) != pdPASS)
       {
-        log_e("Спроба взяти видалений мютекс");
+        log_e("Спроба взяти nullptr-мютекс");
         esp_restart();
       }
+
+      xSemaphoreTake(_mutex, portMAX_DELAY);
     }
 
     ~MutexGuard()
