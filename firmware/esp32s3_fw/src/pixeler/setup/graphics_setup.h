@@ -12,7 +12,6 @@
 #ifdef GRAPHICS_ENABLED
 
 #define UI_UPDATE_DELAY 25  // Затримка (мс) між фреймами
-#define DISPLAY_ROTATION 0  // Стартова орієнтація екрану
 
 #ifndef DIRECT_DRAWING
 #define DOUBLE_BUFFERRING  // Подвійна буферизація. Працює тільки за наявності PSRAM. Інакше буде викликано рестарт МК
