@@ -258,6 +258,15 @@ namespace pixeler
     return h;
   }
 
+  SemaphoreHandle_t DisplayWrapper::getMutex()
+  {
+#ifdef DIRECT_DRAWING
+    return nullptr;
+#else
+    return _sync_mutex;
+#endif  // #ifdef DIRECT_DRAWING
+  }
+
   void DisplayWrapper::__init()
   {
     if (BUSS_FREQUENCY < 10000000)

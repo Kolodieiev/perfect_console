@@ -246,6 +246,14 @@ namespace pixeler
      */
     uint16_t getFontHeight(const uint8_t* font, uint8_t size = 1);
 
+    /**
+     * @brief Повертає мютекс, який захищає буфер кадру та вивід зображення по SPI.
+     * 
+     * @return SemaphoreHandle_t - якщо драйвер ініціалізовано в режимі буферизованого виводу зображення. 
+     * @return nullptr - інакше. 
+     */
+    SemaphoreHandle_t getMutex();
+
 #ifdef ENABLE_SCREENSHOTER
     void takeScreenshot();
 #endif  // ENABLE_SCREENSHOTER
