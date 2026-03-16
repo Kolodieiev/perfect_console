@@ -248,9 +248,9 @@ namespace pixeler
 
     /**
      * @brief Повертає мютекс, який захищає буфер кадру та вивід зображення по SPI.
-     * 
-     * @return SemaphoreHandle_t - якщо драйвер ініціалізовано в режимі буферизованого виводу зображення. 
-     * @return nullptr - інакше. 
+     *
+     * @return SemaphoreHandle_t - якщо драйвер ініціалізовано в режимі буферизованого виводу зображення.
+     * @return nullptr - інакше.
      */
     SemaphoreHandle_t getMutex();
 
