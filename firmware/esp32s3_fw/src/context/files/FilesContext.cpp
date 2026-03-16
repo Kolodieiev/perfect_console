@@ -541,7 +541,7 @@ void FilesContext::pasteFile()
   }
   else if (_has_copying_file)
   {
-    if (!_fs.startCopyFile(old_file_path.c_str(), new_file_path.c_str()))
+    if (!_fs.startCopyingFile(old_file_path.c_str(), new_file_path.c_str()))
     {
       showResultToast(false);
     }

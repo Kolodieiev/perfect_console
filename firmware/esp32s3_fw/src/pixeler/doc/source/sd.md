@@ -330,13 +330,13 @@ else
  * @return false - якщо вже працює будь-яка інша задача файлового менеджера 
  * або не вдалося створити нову задачу за будь-якої причини.
  */
-bool startCopyFile(const char* from, const char* to);
+bool startCopyingFile(const char* from, const char* to);
 ```
 <br>
 <br>
 
 ::: {warning}
-Повернення `true` з виклику `startCopyFile` не означає загальний успіх операції. 
+Повернення `true` з виклику `startCopyingFile` не означає загальний успіх операції. 
 Це лише означає, що задача копіювання була успішно запущена.
 ::: 
 <br>
@@ -345,7 +345,7 @@ bool startCopyFile(const char* from, const char* to);
 
 ```cpp
 bool result = false;
-if (_fs.startCopyFile(path_from, paath_to))
+if (_fs.startCopyingFile(path_from, path_to))
 {
   while (_fs.isWorking())
   {
