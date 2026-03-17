@@ -633,7 +633,7 @@ namespace pixeler
         _has_autoscroll_in_focus = false;
 
         _display.setTextWrap(true);
-        _display.setCursor(0, _y_pos + y_offset + _char_hgt);
+        _display.setCursor(x_offset, _y_pos + y_offset + _char_hgt + 2);
         _display.print(_text.c_str());
         _display.setTextWrap(false);
       }
