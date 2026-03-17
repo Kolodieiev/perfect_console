@@ -45,7 +45,6 @@ namespace test_server
 {
   TestServerContext::TestServerContext()
   {
-    sizeof(_conn_client_wrap);
     showMainMenu();
   }
 
