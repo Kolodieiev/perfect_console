@@ -2,11 +2,11 @@
 
 #include "pixeler/src/game/DataStream.h"
 //
+#include "pixeler/src/context/IContext.h"
 #include "pixeler/src/game/IGameScene.h"
 #include "pixeler/src/game/online/GameClient.h"
 #include "pixeler/src/game/online/GameServer.h"
 #include "pixeler/src/manager/WiFiManager.h"
-#include "pixeler/src/context/IContext.h"
 #include "pixeler/src/widget/keyboard/Keyboard.h"
 #include "pixeler/src/widget/menu/FixedMenu.h"
 #include "pixeler/src/widget/scrollbar/ScrollBar.h"
@@ -146,18 +146,18 @@ namespace test_server
     DataStream _stored_objs{1};  // Перенесення об'єктів між сценами не буде відбуватися. Тому виділяємо тільки 1 байт
 
     const ClientWrapper* _conn_client_wrap{nullptr};
-    TextBox* _dialog_txt;
-    Keyboard* _keyboard;
-    Image* _img_back_normal;
-    Image* _img_back_hover;
-    FixedMenu* _main_menu;
-    FixedMenu* _role_menu;
-    FixedMenu* _lobby_menu;
-    FixedMenu* _pref_menu;
-    FixedMenu* _wifi_list_menu;
-    FixedMenu* _clients_list_menu;
-    FixedMenu* _lobby_context_menu;
-    IGameScene* _scene;
+    TextBox* _dialog_txt{nullptr};
+    Keyboard* _keyboard{nullptr};
+    Image* _img_back_normal{nullptr};
+    Image* _img_back_hover{nullptr};
+    FixedMenu* _main_menu{nullptr};
+    FixedMenu* _role_menu{nullptr};
+    FixedMenu* _lobby_menu{nullptr};
+    FixedMenu* _pref_menu{nullptr};
+    FixedMenu* _wifi_list_menu{nullptr};
+    FixedMenu* _clients_list_menu{nullptr};
+    FixedMenu* _lobby_context_menu{nullptr};
+    IGameScene* _scene{nullptr};
 
     ContextID _context_id{ID_CONT_MAIN};
 
