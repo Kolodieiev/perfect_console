@@ -21,12 +21,12 @@
 
 #else
 
-#define PIN_I2S_OUT_LRC (uint8_t)15
-#define PIN_I2S_OUT_DOUT (uint8_t)5
-#define PIN_I2S_OUT_BCLK (uint8_t)18
+#define PIN_I2S_OUT_LRC 15
+#define PIN_I2S_OUT_DOUT 5
+#define PIN_I2S_OUT_BCLK 18
 
-#define PIN_I2S_IN_SD (uint8_t)14
-#define PIN_I2S_IN_SCK (uint8_t)27
-#define PIN_I2S_IN_WS (uint8_t)26
+#define PIN_I2S_IN_SD 14
+#define PIN_I2S_IN_SCK 27
+#define PIN_I2S_IN_WS 26
 
 #endif
