@@ -33,9 +33,9 @@ int lua_pwm_detach(lua_State* L)
 
 int lua_pwm_set(lua_State* L)
 {
-  int channel = luaL_checkinteger(L, 1);
-  int value = luaL_checkinteger(L, 2);
-  ledcWrite(channel, value);
+  int pin = luaL_checkinteger(L, 1);
+  int duty = luaL_checkinteger(L, 2);
+  ledcWrite(pin, duty);
   return 0;
 }
 
