@@ -997,8 +997,6 @@ namespace pixeler
     SPI_Manager::initBus(SD_SPI_BUS, SD_PIN_SCLK, SD_PIN_MISO, SD_PIN_MOSI);
     SPIClass* spi = SPI_Manager::getSpi4Bus(SD_SPI_BUS);
 
-    spi->bus();
-
     if (!spi || !spi->begin())
     {
       log_e("Некоректна шина SPI або помилка ініціалізації шини");
