@@ -6,10 +6,8 @@
 
 #pragma once
 #pragma GCC optimize("O3")
-#include "pixeler/src/defines.h"
 #include "pixeler/setup/i2c_setup.h"
-
-
+#include "pixeler/src/defines.h"
 
 namespace pixeler
 {
@@ -137,6 +135,13 @@ namespace pixeler
      * @return false - Інакше.
      */
     bool isInited() const;
+
+    /**
+     * @brief Запускає сканування пристроїв на шині I2C.
+     * Адреси виявлених пристроїв буде виведено до терміналу.
+     *
+     */
+    void scanBus() const;
 
     I2C_Manager() {}
 

@@ -62,7 +62,7 @@ namespace pixeler
       return false;
 
     Wire.beginTransmission(addr);
-    Wire.write(const_cast<uint8_t*>(static_cast<const uint8_t*>(data_buff)), data_size);
+    Wire.write(static_cast<const uint8_t*>(data_buff), data_size);
     return !Wire.endTransmission();
   }
 
@@ -73,7 +73,7 @@ namespace pixeler
 
     Wire.beginTransmission(addr);
     Wire.write(reg);
-    Wire.write(const_cast<uint8_t*>(static_cast<const uint8_t*>(data_buff)), data_size);
+    Wire.write(static_cast<const uint8_t*>(data_buff), data_size);
     return !Wire.endTransmission();
   }
 
@@ -81,7 +81,7 @@ namespace pixeler
   {
     if (!isInited())
       return false;
-    return Wire.write(const_cast<uint8_t*>(static_cast<const uint8_t*>(data_buff)), data_size) == data_size;
+    return Wire.write(static_cast<const uint8_t*>(data_buff), data_size) == data_size;
   }
 
   bool I2C_Manager::readRegister(uint8_t addr, uint8_t reg, void* out_data_buff, uint8_t data_size) const
@@ -162,6 +162,42 @@ namespace pixeler
     }
 
     return true;
+  }
+
+  void I2C_Manager::scanBus() const
+  {
+    if (!isInited())
+      return;
+
+    log_i("Розпочато сканування шини I2C");
+
+    uint8_t error;
+    int devices_num = 0;
+
+    for (uint8_t address = 1; address < 127; ++address)
+    {
+      Wire.beginTransmission(address);
+      error = Wire.endTransmission();
+
+      if (error == 0)
+      {
+        log_i("Виявлено пристрій за адресою: 0x%02X", address);
+        ++devices_num;
+      }
+      else if (error == 4)
+      {
+        log_i("Невідома помилка за адресою: 0x%02X", address);
+      }
+    }
+
+    if (devices_num == 0)
+    {
+      log_i("I2C-пристроїв не виявлено");
+    }
+    else
+    {
+      log_i("Сканування завершено");
+    }
   }
 
   I2C_Manager _i2c;

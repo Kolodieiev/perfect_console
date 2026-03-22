@@ -22,6 +22,12 @@ int lua_i2c_has_connect(lua_State* L)
   return 1;
 }
 
+int lua_i2c_scan_bus(lua_State* L)
+{
+  pixeler::_i2c.scanBus();
+  return 0;
+}
+
 int lua_i2c_write(lua_State* L)
 {
   int addr = luaL_checkinteger(L, 1);
@@ -99,6 +105,7 @@ const struct luaL_Reg LIB_I2C[] = {
     {"begin", lua_i2c_begin},
     {"end", lua_i2c_end},
     {"hasConnect", lua_i2c_has_connect},
+    {"scanBus", lua_i2c_scan_bus},
     {"write", lua_i2c_write},
     {"read", lua_i2c_read},
     {"beginTr", lua_i2c_begin_tr},
