@@ -11,20 +11,30 @@ namespace pixeler
     if (it != _spi_map.end())
       return true;
 
+    SPIClass* spi = nullptr;
     try
     {
-      SPIClass* spi = new SPIClass(bus_num);
-      spi->begin(sclk_pin, miso_pin, mosi_pin);
-      spiSSDisable(spi->bus());
-      spiSSClear(spi->bus());
-
-      _spi_map.insert({bus_num, spi});
-      return true;
+      spi = new SPIClass(bus_num);
     }
     catch (const std::bad_alloc& e)
     {
       log_e("%s", e.what());
+      esp_restart();
+      return false;  // Для cpp-check
+    }
+
+    if (!spi->begin(sclk_pin, miso_pin, mosi_pin))
+    {
+      log_i("Помилка ініціалізації SPI для порту %u. SCLK: %i, MISO: %i, MOSI: %i", bus_num, sclk_pin, miso_pin, mosi_pin);
       return false;
+    }
+    else
+    {
+      spiSSDisable(spi->bus());
+      spiSSClear(spi->bus());
+      _spi_map.insert({bus_num, spi});
+      log_i("SPI успішно ініціалізовано для порту %u. SCLK: %i, MISO: %i, MOSI: %i", bus_num, sclk_pin, miso_pin, mosi_pin);
+      return true;
     }
   }
 
