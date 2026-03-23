@@ -13,6 +13,23 @@
 #define EXT_INPUT_B_NUM 1  // Кількість байт(які будуть прочитані по I2C) що містять інформацію про стан кнопок. 1 байт == 8 кнопок.
 #endif
 
+#define TOUCHSCREEN_SUPPORT  // Увімкнути підтримку сенсорного екрану
+
+#ifdef TOUCHSCREEN_SUPPORT
+#define TOUCH_ROTATION ROTATION_0  // Може мати значення ROTATION_0/ROTATION_90/ROTATION_180/ROTATION_270
+#define TOUCH_WIDTH 320
+#define TOUCH_HEIGHT 480
+
+// -------------------------------- Обрати драйвер сенсорного екрану
+#define GT911_DRIVER
+// #define AXS15231B_DRIVER
+
+// -------------------------------- Налаштуй піни, до яких підключено драйвер тачскріна
+#define PIN_TOUCH_INT 21
+#define PIN_TOUCH_RST 25
+
+#endif  // TOUCHSCREEN_SUPPORT
+
 // -------------------------------- Закріплення віртуальних назв кнопок до виводів МК
 //
 // Якщо стан кнопок зчитується з іншого МК,
