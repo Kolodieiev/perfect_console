@@ -42,7 +42,7 @@ namespace pixeler
 
   bool IWidgetContainer::delWidgetByID(uint16_t widget_ID)
   {
-    for (auto i_b = _widgets.begin(), i_e = _widgets.end(); i_b < i_e; ++i_b)
+    for (auto i_b = _widgets.begin(), i_e = _widgets.end(); i_b != i_e; ++i_b)
     {
       if ((*i_b)->getID() == widget_ID)
       {
@@ -57,9 +57,9 @@ namespace pixeler
     return false;
   }
 
-  IWidget* IWidgetContainer::getWidgetByID(uint16_t widget_ID) const
+  IWidget* IWidgetContainer::getWidgetByID(uint16_t widget_ID)
   {
-    for (const auto& widget_ptr : _widgets)
+    for (auto& widget_ptr : _widgets)
     {
       if (widget_ptr->getID() == widget_ID)
       {
@@ -70,7 +70,7 @@ namespace pixeler
     return nullptr;
   }
 
-  IWidget* IWidgetContainer::getWidgetByIndx(uint16_t widget_indx) const
+  IWidget* IWidgetContainer::getWidgetByIndx(uint16_t widget_indx)
   {
     IWidget* result{nullptr};
 
@@ -78,6 +78,29 @@ namespace pixeler
       result = _widgets[widget_indx];
 
     return result;
+  }
+
+  IWidget* IWidgetContainer::getWidgetByPos(uint16_t x, uint16_t y)
+  {
+    if (!contains(x, y))
+      return nullptr;
+
+    for (auto i_b = _widgets.rbegin(), i_e = _widgets.rend(); i_b != i_e; ++i_b)
+    {
+      auto& widget_ptr = *i_b;
+      if (widget_ptr->isContainer())
+      {
+        auto* container = static_cast<IWidgetContainer*>(widget_ptr);
+        if (IWidget* found = container->getWidgetByPos(x, y))
+          return found;
+      }
+      else if (widget_ptr->contains(x, y))
+      {
+        return widget_ptr;
+      }
+    }
+
+    return this;
   }
 
   void IWidgetContainer::delWidgets()

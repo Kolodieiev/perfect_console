@@ -297,7 +297,7 @@ namespace pixeler
     return _visibility;
   }
 
-  bool IWidget::hasIntersectWithCoords(uint16_t x, uint16_t y) const
+  bool IWidget::contains(uint16_t x, uint16_t y) const
   {
     if (_parent)
       return (x > _parent->getXPos() + _x_pos && x < _parent->getXPos() + _x_pos + _width) &&

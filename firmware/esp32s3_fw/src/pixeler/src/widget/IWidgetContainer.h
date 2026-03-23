@@ -47,7 +47,7 @@ namespace pixeler
      * @return IWidget* - Вказівник на віджет у разі успіху операції.
      * @return nullptr - Інкаше.
      */
-    IWidget* getWidgetByID(uint16_t widget_ID) const;
+    IWidget* getWidgetByID(uint16_t widget_ID);
 
     /**
      * @brief Повертає вказівник на віджет за його порядковим номером у контейнері.
@@ -56,7 +56,17 @@ namespace pixeler
      * @return IWidget* - Вказівник на віджет.
      * @return nullptr - Якщо віджет за вказаною позицією відсутній.
      */
-    IWidget* getWidgetByIndx(uint16_t widget_indx) const;
+    IWidget* getWidgetByIndx(uint16_t widget_indx);
+
+    /**
+     * @brief Повертає вказівник на самий верхній віджет, що пересікається з вказаною точкою.
+     *
+     * @param x - Координата точки.
+     * @param y - Координата точки.
+     * @return IWidget* - Вказівник на вкладений віджет або на самого себе, якщо виявлено пересічення з точкою.
+     * @return nullptr - Інакше.
+     */
+    IWidget* getWidgetByPos(uint16_t x, uint16_t y);
 
     /**
      * @brief Видаляє усі віджети з контейнера та очищує пам'ять, яку вони займали.

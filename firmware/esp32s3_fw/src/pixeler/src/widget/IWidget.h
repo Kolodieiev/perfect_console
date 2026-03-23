@@ -329,7 +329,7 @@ namespace pixeler
      * @return true - Якщо віджет пересікається з цими координатами.
      * @return false - Інакше.
      */
-    bool hasIntersectWithCoords(uint16_t x, uint16_t y) const;
+    bool contains(uint16_t x, uint16_t y) const;
 
     /**
      * @brief Повертає стан прапору, який вказує на те, чи являється цей віджет контейнером для інших віджетів.
