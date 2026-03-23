@@ -9,6 +9,12 @@
 #include "soc/gpio_struct.h"
 #include "soc/io_mux_reg.h"
 
+#ifdef GT911_DRIVER
+#include "./touch_driver/GT911.h"
+#elifdef AXS15231B_DRIVER
+#include "./touch_driver/AXS15231B.h"
+#endif
+
 const char STR_UNKNOWN_PIN[] = "Незареєстрована віртуальна кнопка";
 
 namespace pixeler
@@ -20,10 +26,24 @@ namespace pixeler
 #ifdef EXT_INPUT
     _ext_input.init();
 #endif  // EXT_INPUT
+
+#ifdef TOUCHSCREEN_SUPPORT
+#ifdef GT911_DRIVER
+    _touchscreen = new GT911();
+#elifdef AXS15231B_DRIVER
+    _touchscreen = new AXS15231B();
+#endif  // GT911_DRIVER
+    _touchscreen->__begin();
+    _touchscreen->setRotation(ITouchscreen::TOUCH_ROTATION);
+#endif  // TOUCHSCREEN_SUPPORT
   }
 
   void Input::__update()
   {
+#ifdef TOUCHSCREEN_SUPPORT
+    _touchscreen->__update();
+#endif  // TOUCHSCREEN_SUPPORT
+
 #ifdef EXT_INPUT
     _ext_input.update();
 
@@ -37,6 +57,10 @@ namespace pixeler
 
   void Input::reset()
   {
+#ifdef TOUCHSCREEN_SUPPORT
+    _touchscreen->reset();
+#endif  // TOUCHSCREEN_SUPPORT
+
     for (auto&& btn : _buttons)
       btn.second.reset();
   }
@@ -141,6 +165,44 @@ namespace pixeler
       log_e("%s", STR_UNKNOWN_PIN);
     }
   }
+
+#ifdef TOUCHSCREEN_SUPPORT
+  bool Input::isHolded() const
+  {
+    return _touchscreen->isHolded();
+  }
+
+  bool Input::isPressed() const
+  {
+    return _touchscreen->isPressed();
+  }
+
+  bool Input::isReleased() const
+  {
+    return _touchscreen->isReleased();
+  }
+
+  void Input::lock(unsigned long lock_duration)
+  {
+    _touchscreen->lock(lock_duration);
+  }
+
+  ITouchscreen::Swipe Input::getSwipe()
+  {
+    return _touchscreen->getSwipe();
+  }
+
+  uint16_t Input::getTouchX() const
+  {
+    return _touchscreen->getTouchX();
+  }
+
+  uint16_t Input::getTouchY() const
+  {
+    return _touchscreen->getTouchY();
+  }
+
+#endif  // TOUCHSCREEN_SUPPORT
 
   Input _input;
 }  // namespace pixeler

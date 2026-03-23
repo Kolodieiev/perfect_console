@@ -13,6 +13,7 @@
 #include <unordered_map>
 
 #include "Button.h"
+#include "ITouchscreen.h"
 #include "external_input/ExtInput.h"
 #include "pixeler/setup/input_setup.h"
 #include "pixeler/src/defines.h"
@@ -111,11 +112,70 @@ namespace pixeler
      */
     void __printPinMode(BtnID pin_id);
 
+#ifdef TOUCHSCREEN_SUPPORT
+    /**
+     * @brief Повертає значення, яке вказує, чи фіксується в даний момент дотик до сенсорного екрану.
+     *
+     * @return true - Якщо на сенсорному екрані зафіксовано дотик.
+     * @return false - Інакше.
+     */
+    bool isHolded() const;
+
+    /**
+     * @brief Повертає значення, яке вказує, чи утримується сенсорний екран тривалий час.
+     *
+     * @return true - Якщо на сенсорному екрані зафіксовано тривалий дотик.
+     * @return false - Інакше.
+     */
+    bool isPressed() const;
+
+    /**
+     * @brief Повертає значення, яке вказує, чи було зафіксовано дотик на сенсорному екрані раніше.
+     *
+     * @return true - Якщо на сенсорному екрані було раніше зафіксовано дотик, але тепер дотик не фіксується.
+     * @return false - Інакше.
+     */
+    bool isReleased() const;
+
+    /**
+     * @brief Блокує розпізнавання жестів на сенсорному екрані на вказаний час.
+     *
+     * @param lock_duration час в мілісекундах, на який буде заблоковано розпізнавання жестів.
+     */
+    void lock(unsigned long lock_duration);
+
+    /**
+     * @brief Повертає останній розпізнаний на сенсорному екрані жест.
+     *
+     * @return ITouchscreen::Swipe
+     */
+    ITouchscreen::Swipe getSwipe();
+
+    /**
+     * @brief Повертає X-координату останнього дотика, зафіксованого на сенсорному екрані.
+     *
+     * @return uint16_t
+     */
+    uint16_t getTouchX() const;
+
+    /**
+     * @brief Повертає Y-координату останнього дотика, зафіксованого на сенсорному екрані.
+     *
+     * @return uint16_t
+     */
+    uint16_t getTouchY() const;
+
+#endif  // TOUCHSCREEN_SUPPORT
+
   private:
     std::unordered_map<BtnID, Button> _buttons BUTTONS_TMPL;
 
 #ifdef EXT_INPUT
     ExtInput _ext_input;
+#endif
+
+#ifdef TOUCHSCREEN_SUPPORT
+    ITouchscreen* _touchscreen{nullptr};
 #endif
   };
 
