@@ -59,7 +59,7 @@ namespace pixeler
     bool write(uint8_t addr, const void* data_buff, size_t data_size) const;
 
     /**
-     * @brief Записує дані до регістра I2C-пристрою за вказаними адресами.
+     * @brief Записує дані до 8-бітного регістра I2C-пристрою за вказаними адресами.
      *
      * @param addr Адреса I2C-пристрою.
      * @param data_buff Буфер з даними.
@@ -68,19 +68,43 @@ namespace pixeler
      * @return true - Якщо дані було успішно записано.
      * @return false - Інакше.
      */
-    bool writeRegister(uint8_t addr, uint8_t reg, const void* data_buff, size_t data_size) const;
+    bool writeRegister8(uint8_t addr, uint8_t reg, const void* data_buff, size_t data_size) const;
 
     /**
-     * @brief Читає дані з регістра I2C-пристрою за вказаними адресами.
+     * @brief Записує дані до 16-бітного регістра I2C-пристрою за вказаними адресами.
      *
      * @param addr Адреса I2C-пристрою.
-     * @param out_data_buff Буфер для вхідних даних.
+     * @param data_buff Буфер з даними.
      * @param reg Адреса регістра.
+     * @param data_size Розмір даних.
+     * @return true - Якщо дані було успішно записано.
+     * @return false - Інакше.
+     */
+    bool writeRegister16(uint8_t addr, uint16_t reg, const void* data_buff, size_t data_size) const;
+
+    /**
+     * @brief Читає дані з 8-бітного регістра I2C-пристрою за вказаними адресами.
+     *
+     * @param addr Адреса I2C-пристрою.
+     * @param reg Адреса регістра.
+     * @param out_data_buff Буфер для вхідних даних.
      * @param data_size Розмір даних.
      * @return true - Якщо дані було успішно прочитано.
      * @return false - Інакше.
      */
-    bool readRegister(uint8_t addr, uint8_t reg, void* out_data_buff, uint8_t data_size = 1) const;
+    bool readRegister8(uint8_t addr, uint8_t reg, void* out_data_buff, uint8_t data_size = 1) const;
+
+    /**
+     * @brief Читає дані з 16-бітного регістра I2C-пристрою за вказаними адресами.
+     *
+     * @param addr Адреса I2C-пристрою.
+     * @param reg Адреса регістра.
+     * @param out_data_buff Буфер для вхідних даних.
+     * @param data_size Розмір даних.
+     * @return true - Якщо дані було успішно прочитано.
+     * @return false - Інакше.
+     */
+    bool readRegister16(uint8_t addr, uint16_t reg, void* out_data_buff, uint8_t data_size = 1) const;
 
     /**
      * @brief Читає дані з I2C-пристрою за вказаною адресою.
@@ -142,6 +166,13 @@ namespace pixeler
      *
      */
     void scanBus() const;
+
+    /**
+     * @brief Встановлює розмір буферів шини I2C.
+     * 
+     * @param buffer_size 
+     */
+    void setBufferSize(size_t buffer_size);
 
     I2C_Manager() {}
 
