@@ -7,7 +7,7 @@ namespace pixeler
   bool DS3231Alarm::isEnabled() const
   {
     uint8_t ctrl_reg;
-    if (!_i2c.readRegister(DS3231_ADDR, DS3231_REG_CTRL, &ctrl_reg, sizeof(ctrl_reg)))
+    if (!_i2c.readRegister8(DS3231_ADDR, DS3231_REG_CTRL, &ctrl_reg, sizeof(ctrl_reg)))
       return false;
 
     return ctrl_reg &= _BV(DS3231_AIFMASK);
@@ -17,7 +17,7 @@ namespace pixeler
   {
     uint8_t status_reg;
 
-    if (!_i2c.readRegister(DS3231_ADDR, DS3231_REG_STATUS, &status_reg, sizeof(status_reg)))
+    if (!_i2c.readRegister8(DS3231_ADDR, DS3231_REG_STATUS, &status_reg, sizeof(status_reg)))
       return false;
 
     return status_reg &= _BV(DS3231_CNTRL_BIT_A2IE);
@@ -41,13 +41,13 @@ namespace pixeler
   bool DS3231Alarm::enable(bool enableWithoutExternalPower) const
   {
     uint16_t data{0b00000110};
-    return _i2c.writeRegister(DS3231_ADDR, DS3231_REG_CTRL, &data, sizeof(data));
+    return _i2c.writeRegister8(DS3231_ADDR, DS3231_REG_CTRL, &data, sizeof(data));
   }
 
   bool DS3231Alarm::disable() const
   {
     uint16_t data{0b00000000};
-    return _i2c.writeRegister(DS3231_ADDR, DS3231_REG_CTRL, &data, sizeof(data));
+    return _i2c.writeRegister8(DS3231_ADDR, DS3231_REG_CTRL, &data, sizeof(data));
   }
 
   DS3231AlarmTime DS3231Alarm::getAlarmTime() const
@@ -70,10 +70,10 @@ namespace pixeler
   bool DS3231Alarm::procAlarm() const
   {
     uint8_t s_reg;
-    if (!_i2c.readRegister(DS3231_ADDR, DS3231_REG_STATUS, &s_reg, sizeof(s_reg)))
+    if (!_i2c.readRegister8(DS3231_ADDR, DS3231_REG_STATUS, &s_reg, sizeof(s_reg)))
       return false;
 
     s_reg &= ~DS3231_AIFMASK;  // clear the flags
-    return _i2c.writeRegister(DS3231_ADDR, DS3231_REG_STATUS, &s_reg, sizeof(s_reg));
+    return _i2c.writeRegister8(DS3231_ADDR, DS3231_REG_STATUS, &s_reg, sizeof(s_reg));
   }
 }  // namespace pixeler

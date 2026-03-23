@@ -16,17 +16,17 @@ namespace pixeler
 
     bool success = true;
 
-    success &= _i2c.readRegister(DS3231_ADDR, DS3231_REG_STATUS, &status_reg, sizeof(status_reg));
+    success &= _i2c.readRegister8(DS3231_ADDR, DS3231_REG_STATUS, &status_reg, sizeof(status_reg));
 
     // Вимкунути 32kHz пін
     status_reg &= ~_BV(STS_BIT_EN32KHZ);
-    success &= _i2c.writeRegister(DS3231_ADDR, DS3231_REG_STATUS, &status_reg, sizeof(status_reg));
+    success &= _i2c.writeRegister8(DS3231_ADDR, DS3231_REG_STATUS, &status_reg, sizeof(status_reg));
 
     // Встановити 24год формат
-    success &= _i2c.readRegister(DS3231_ADDR, 0x02, &status_reg, sizeof(status_reg));
+    success &= _i2c.readRegister8(DS3231_ADDR, 0x02, &status_reg, sizeof(status_reg));
     status_reg &= ~_BV(6);
 
-    success &= _i2c.writeRegister(DS3231_ADDR, 0x02, &status_reg, sizeof(status_reg));
+    success &= _i2c.writeRegister8(DS3231_ADDR, 0x02, &status_reg, sizeof(status_reg));
 
     if (!success)
       log_e("Помилка ініціалізації DS3231");
@@ -37,7 +37,7 @@ namespace pixeler
   bool DS3231::isDateTimeValid() const
   {
     uint8_t status_reg;
-    if (!_i2c.readRegister(DS3231_ADDR, DS3231_REG_STATUS, &status_reg, sizeof(status_reg)))
+    if (!_i2c.readRegister8(DS3231_ADDR, DS3231_REG_STATUS, &status_reg, sizeof(status_reg)))
       return false;
 
     return !(status_reg & _BV(STS_BIT_OSF));
@@ -46,7 +46,7 @@ namespace pixeler
   bool DS3231::isRunning() const
   {
     uint8_t ctrl_reg;
-    if (!_i2c.readRegister(DS3231_ADDR, DS3231_REG_CTRL, &ctrl_reg, sizeof(ctrl_reg)))
+    if (!_i2c.readRegister8(DS3231_ADDR, DS3231_REG_CTRL, &ctrl_reg, sizeof(ctrl_reg)))
       return false;
 
     return !(ctrl_reg & _BV(CNTRL_BIT_EOSC));
@@ -55,32 +55,32 @@ namespace pixeler
   bool DS3231::enable() const
   {
     uint8_t ctrl_reg;
-    if (!_i2c.readRegister(DS3231_ADDR, DS3231_REG_CTRL, &ctrl_reg, sizeof(ctrl_reg)))
+    if (!_i2c.readRegister8(DS3231_ADDR, DS3231_REG_CTRL, &ctrl_reg, sizeof(ctrl_reg)))
       return false;
 
     ctrl_reg &= ~_BV(CNTRL_BIT_EOSC);
-    return _i2c.writeRegister(DS3231_ADDR, DS3231_REG_CTRL, &ctrl_reg, sizeof(ctrl_reg));
+    return _i2c.writeRegister8(DS3231_ADDR, DS3231_REG_CTRL, &ctrl_reg, sizeof(ctrl_reg));
   }
 
   bool DS3231::disable() const
   {
     uint8_t ctrl_reg;
-    if (!_i2c.readRegister(DS3231_ADDR, DS3231_REG_CTRL, &ctrl_reg, sizeof(ctrl_reg)))
+    if (!_i2c.readRegister8(DS3231_ADDR, DS3231_REG_CTRL, &ctrl_reg, sizeof(ctrl_reg)))
       return false;
 
     ctrl_reg |= _BV(CNTRL_BIT_EOSC);
-    return _i2c.writeRegister(DS3231_ADDR, DS3231_REG_CTRL, &ctrl_reg, sizeof(ctrl_reg));
+    return _i2c.writeRegister8(DS3231_ADDR, DS3231_REG_CTRL, &ctrl_reg, sizeof(ctrl_reg));
   }
 
   bool DS3231::setDateTime(const DS3231DateTime& date_time) const
   {
     uint8_t status_reg;
-    if (!_i2c.readRegister(DS3231_ADDR, DS3231_REG_STATUS, &status_reg, sizeof(status_reg)))
+    if (!_i2c.readRegister8(DS3231_ADDR, DS3231_REG_STATUS, &status_reg, sizeof(status_reg)))
       return false;
 
     status_reg &= ~_BV(STS_BIT_OSF);
 
-    _i2c.writeRegister(DS3231_ADDR, DS3231_REG_STATUS, &status_reg, sizeof(status_reg));
+    _i2c.writeRegister8(DS3231_ADDR, DS3231_REG_STATUS, &status_reg, sizeof(status_reg));
 
     uint8_t buffer[8];
     buffer[0] = REG_TIMEDATE;
