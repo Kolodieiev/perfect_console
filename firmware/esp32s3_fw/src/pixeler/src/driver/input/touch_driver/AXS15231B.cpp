@@ -21,14 +21,14 @@ namespace pixeler
 {
   void AXS15231B::resetChip()
   {
-    pinMode(TOUCH_RST_PIN, OUTPUT);
-    pinMode(TOUCH_INT_PIN, INPUT);
+    pinMode(PIN_TOUCH_RST, OUTPUT);
+    pinMode(PIN_TOUCH_INT, INPUT);
 
-    digitalWrite(TOUCH_RST_PIN, 1);
+    digitalWrite(PIN_TOUCH_RST, 1);
     delay(10);
-    digitalWrite(TOUCH_RST_PIN, 0);
+    digitalWrite(PIN_TOUCH_RST, 0);
     delay(20);
-    digitalWrite(TOUCH_RST_PIN, 1);
+    digitalWrite(PIN_TOUCH_RST, 1);
     delay(50);
   }
 
@@ -57,7 +57,7 @@ namespace pixeler
       _is_locked = false;
     }
 
-    bool int_active = (digitalRead(TOUCH_INT_PIN) == LOW);
+    bool int_active = (digitalRead(PIN_TOUCH_INT) == LOW);
     if (!int_active && !_is_holded)
       return;
 

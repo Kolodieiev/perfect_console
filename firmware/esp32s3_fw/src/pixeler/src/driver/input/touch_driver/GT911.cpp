@@ -25,20 +25,20 @@ namespace pixeler
 
   void GT911::resetChip()
   {
-    pinMode(TOUCH_INT_PIN, OUTPUT);
-    pinMode(TOUCH_RST_PIN, OUTPUT);
+    pinMode(PIN_TOUCH_INT, OUTPUT);
+    pinMode(PIN_TOUCH_RST, OUTPUT);
 
     // Послідовність вибору I2C адреси
-    digitalWrite(TOUCH_INT_PIN, 0);
-    digitalWrite(TOUCH_RST_PIN, 0);
+    digitalWrite(PIN_TOUCH_INT, 0);
+    digitalWrite(PIN_TOUCH_RST, 0);
     delay(10);
-    digitalWrite(TOUCH_INT_PIN, 0);
+    digitalWrite(PIN_TOUCH_INT, 0);
     delay(1);
-    digitalWrite(TOUCH_RST_PIN, 1);
+    digitalWrite(PIN_TOUCH_RST, 1);
     delay(5);
-    digitalWrite(TOUCH_INT_PIN, 0);
+    digitalWrite(PIN_TOUCH_INT, 0);
     delay(50);
-    pinMode(TOUCH_INT_PIN, INPUT);
+    pinMode(PIN_TOUCH_INT, INPUT);
     delay(50);
   }
 
@@ -70,7 +70,7 @@ namespace pixeler
       _is_locked = false;
     }
 
-    bool int_active = (digitalRead(TOUCH_INT_PIN) == HIGH);
+    bool int_active = (digitalRead(PIN_TOUCH_INT) == HIGH);
     if (!int_active && !_is_holded)
       return;
 
