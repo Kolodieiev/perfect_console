@@ -5,6 +5,8 @@
 #include "pixeler/setup/input_setup.h"
 #include "pixeler/src/manager/I2C_Manager.h"
 
+#ifdef TOUCHSCREEN_SUPPORT
+
 namespace pixeler
 {
   class ITouchscreen
@@ -81,3 +83,5 @@ namespace pixeler
     bool _was_pressed{false};
   };
 }  // namespace pixeler
+
+#endif  // #ifdef TOUCHSCREEN_SUPPORT

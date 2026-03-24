@@ -1,6 +1,8 @@
 #pragma GCC optimize("O3")
 #include "ITouchscreen.h"
 
+#ifdef TOUCHSCREEN_SUPPORT
+
 namespace pixeler
 {
   ITouchscreen::ITouchscreen() : _width{TOUCH_WIDTH}, _height{TOUCH_HEIGHT}
@@ -159,3 +161,5 @@ namespace pixeler
   }
 
 }  // namespace pixeler
+
+#endif  // #ifdef TOUCHSCREEN_SUPPORT

@@ -13,10 +13,12 @@
 #include <unordered_map>
 
 #include "Button.h"
-#include "ITouchscreen.h"
 #include "external_input/ExtInput.h"
 #include "pixeler/setup/input_setup.h"
 #include "pixeler/src/defines.h"
+#ifdef TOUCHSCREEN_SUPPORT
+#include "ITouchscreen.h"
+#endif  // #ifdef TOUCHSCREEN_SUPPORT
 
 namespace pixeler
 {
