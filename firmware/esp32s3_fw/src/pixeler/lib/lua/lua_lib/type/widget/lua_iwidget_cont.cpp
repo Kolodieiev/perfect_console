@@ -59,6 +59,16 @@ int lua_cont_get_widget_by_indx(lua_State* L)
   return 1;
 }
 
+int lua_cont_get_widget_by_pos(lua_State* L)
+{
+  IWidgetContainer* container = *static_cast<IWidgetContainer**>(lua_check_instance(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
+  uint16_t x = luaL_checkinteger(L, 2);
+  uint16_t y = luaL_checkinteger(L, 3);
+  IWidget* widget = container->getWidgetByPos(x, y);
+  lua_push_widget_or_nil(L, widget);
+  return 1;
+}
+
 int lua_cont_delete_widgets(lua_State* L)
 {
   IWidgetContainer* container = *static_cast<IWidgetContainer**>(lua_check_instance(L, 1, STR_TYPE_NAME_IWIDGET_CONT));
@@ -95,6 +105,7 @@ const struct luaL_Reg TYPE_METH_IWIDGET_CONT[] = {
     {"delWidgetByID", lua_cont_delete_widget_by_id},
     {"getWidgetByID", lua_cont_get_widget_by_id},
     {"getWidgetByIndx", lua_cont_get_widget_by_indx},
+    {"getWidgetByPos", lua_cont_get_widget_by_pos},
     {"delWidgets", lua_cont_delete_widgets},
     {"getSize", lua_cont_get_size},
     {"enable", lua_cont_enable},

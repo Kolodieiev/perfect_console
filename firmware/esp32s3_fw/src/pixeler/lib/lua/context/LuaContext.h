@@ -70,6 +70,11 @@ namespace pixeler
     static int lua_input_is_released(lua_State* L);
     static int lua_input_lock(lua_State* L);
 
+#ifdef TOUCHSCREEN_SUPPORT
+    static int lua_input_get_swipe(lua_State* L);
+    static int lua_input_get_x(lua_State* L);
+    static int lua_input_get_y(lua_State* L);
+#endif  // #ifdef TOUCHSCREEN_SUPPORT
     //---------------------------------------------------------------------------------- helper
 
     static int lua_init_type(lua_State* L);

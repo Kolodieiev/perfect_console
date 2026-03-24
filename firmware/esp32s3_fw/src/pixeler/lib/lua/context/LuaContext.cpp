@@ -40,6 +40,11 @@ namespace pixeler
       {"is_pressed", lua_input_is_pressed},
       {"is_released", lua_input_is_released},
       {"lock", lua_input_lock},
+#ifdef TOUCHSCREEN_SUPPORT
+      {"getSwipe", lua_input_get_swipe},
+      {"getTouchX", lua_input_get_x},
+      {"getTouchY", lua_input_get_y},
+#endif  // #ifdef TOUCHSCREEN_SUPPORT
       {nullptr, nullptr},
   };
 
@@ -108,6 +113,19 @@ namespace pixeler
 
     lua_register(_lua, "loadImg", lua_load_img);
     lua_register(_lua, "deleteImg", lua_delete_img);
+
+#ifdef TOUCHSCREEN_SUPPORT
+    lua_pushinteger(_lua, ITouchscreen::SWIPE_NONE);
+    lua_setglobal(_lua, "SWIPE_NONE");
+    lua_pushinteger(_lua, ITouchscreen::SWIPE_L);
+    lua_setglobal(_lua, "SWIPE_L");
+    lua_pushinteger(_lua, ITouchscreen::SWIPE_R);
+    lua_setglobal(_lua, "SWIPE_R");
+    lua_pushinteger(_lua, ITouchscreen::SWIPE_U);
+    lua_setglobal(_lua, "SWIPE_U");
+    lua_pushinteger(_lua, ITouchscreen::SWIPE_D);
+    lua_setglobal(_lua, "SWIPE_D");
+#endif  // #ifdef TOUCHSCREEN_SUPPORT
 
     _msg = "";
     return true;
@@ -287,45 +305,119 @@ namespace pixeler
   int LuaContext::lua_input_enable_btn(lua_State* L)
   {
     int btn = luaL_checkinteger(L, 1);
-    _input.enableBtn((BtnID)btn);
+    _input.enableBtn(static_cast<BtnID>(btn));
     return 0;
   }
 
   int LuaContext::lua_input_disable_btn(lua_State* L)
   {
     int btn = luaL_checkinteger(L, 1);
-    _input.disableBtn((BtnID)btn);
+    _input.disableBtn(static_cast<BtnID>(btn));
     return 0;
   }
 
   int LuaContext::lua_input_is_holded(lua_State* L)
   {
-    int btn = luaL_checkinteger(L, 1);
-    lua_pushboolean(L, _input.isHolded((BtnID)btn));
+#ifdef TOUCHSCREEN_SUPPORT
+    int args_num = lua_gettop(L);
+
+    if (args_num == 0)
+    {
+      lua_pushboolean(L, _input.isHolded());
+    }
+    else
+    {
+#endif  // #ifdef TOUCHSCREEN_SUPPORT
+      int btn = luaL_checkinteger(L, 1);
+      lua_pushboolean(L, _input.isHolded(static_cast<BtnID>(btn)));
+#ifdef TOUCHSCREEN_SUPPORT
+    }
+#endif  // #ifdef TOUCHSCREEN_SUPPORT
+
     return 1;
   }
 
   int LuaContext::lua_input_is_pressed(lua_State* L)
   {
-    int btn = luaL_checkinteger(L, 1);
-    lua_pushboolean(L, _input.isPressed((BtnID)btn));
+#ifdef TOUCHSCREEN_SUPPORT
+    int args_num = lua_gettop(L);
+
+    if (args_num == 0)
+    {
+      lua_pushboolean(L, _input.isPressed());
+    }
+    else
+    {
+#endif  // #ifdef TOUCHSCREEN_SUPPORT
+      int btn = luaL_checkinteger(L, 1);
+      lua_pushboolean(L, _input.isPressed(static_cast<BtnID>(btn)));
+#ifdef TOUCHSCREEN_SUPPORT
+    }
+#endif  // #ifdef TOUCHSCREEN_SUPPORT
     return 1;
   }
 
   int LuaContext::lua_input_is_released(lua_State* L)
   {
-    int btn = luaL_checkinteger(L, 1);
-    lua_pushboolean(L, _input.isReleased((BtnID)btn));
+#ifdef TOUCHSCREEN_SUPPORT
+    int args_num = lua_gettop(L);
+
+    if (args_num == 0)
+    {
+      lua_pushboolean(L, _input.isReleased());
+    }
+    else
+    {
+#endif  // #ifdef TOUCHSCREEN_SUPPORT
+      int btn = luaL_checkinteger(L, 1);
+      lua_pushboolean(L, _input.isReleased(static_cast<BtnID>(btn)));
+#ifdef TOUCHSCREEN_SUPPORT
+    }
+#endif  // #ifdef TOUCHSCREEN_SUPPORT
     return 1;
   }
 
   int LuaContext::lua_input_lock(lua_State* L)
   {
-    int btn = luaL_checkinteger(L, 1);
-    int lock_time = luaL_checkinteger(L, 2);
-    _input.lock((BtnID)btn, lock_time);
+#ifdef TOUCHSCREEN_SUPPORT
+    int args_num = lua_gettop(L);
+
+    if (args_num == 1)
+    {
+      int lock_time = luaL_checkinteger(L, 1);
+      _input.lock(lock_time);
+    }
+    else
+    {
+#endif  // #ifdef TOUCHSCREEN_SUPPORT
+      int btn = luaL_checkinteger(L, 1);
+      int lock_time = luaL_checkinteger(L, 2);
+      _input.lock(static_cast<BtnID>(btn), lock_time);
+#ifdef TOUCHSCREEN_SUPPORT
+    }
+#endif  // #ifdef TOUCHSCREEN_SUPPORT
     return 0;
   }
+
+#ifdef TOUCHSCREEN_SUPPORT
+  int LuaContext::lua_input_get_swipe(lua_State* L)
+  {
+    lua_pushinteger(L, _input.getSwipe());
+    return 1;
+  }
+
+  int LuaContext::lua_input_get_x(lua_State* L)
+  {
+    lua_pushinteger(L, _input.getTouchX());
+    return 1;
+  }
+
+  int LuaContext::lua_input_get_y(lua_State* L)
+  {
+    lua_pushinteger(L, _input.getTouchY());
+    return 1;
+  }
+#endif  // #ifdef TOUCHSCREEN_SUPPORT
 
   int LuaContext::lua_init_type(lua_State* L)
   {
