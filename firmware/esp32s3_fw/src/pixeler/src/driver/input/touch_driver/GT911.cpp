@@ -70,19 +70,26 @@ namespace pixeler
       _is_locked = false;
     }
 
-    bool int_active = (digitalRead(PIN_TOUCH_INT) == HIGH);
-    if (!int_active && !_is_holded)
-      return;
+    // bool int_active = (digitalRead(PIN_TOUCH_INT) == HIGH);
+    // if (!int_active && !_is_holded)
+    //   return;
 
     uint8_t point_info = 0;
-    _i2c.readRegister16(_chip_addr, GT911_POINT_INFO, &point_info, 1);
+    if (!_i2c.readRegister16(_chip_addr, GT911_POINT_INFO, &point_info, 1))
+      return;
+
     bool buffer_status = (point_info >> 7) & 1;
     uint8_t points = point_info & 0x0F;
 
     if (buffer_status && points > 0)
     {
       uint8_t data[7];
-      _i2c.readRegister16(_chip_addr, GT911_POINT_1, data, 7);
+      if (!_i2c.readRegister16(_chip_addr, GT911_POINT_1, data, 7))
+        return;
+
+      if (data[0] == 0x0A && data[1] == 0x0A)
+        return;
+
       uint16_t x = data[1] | (data[2] << 8);
       uint16_t y = data[3] | (data[4] << 8);
       setTouchPos(x, y);
@@ -125,7 +132,8 @@ namespace pixeler
   void GT911::reflashConfig(uint8_t* out_conf_buf)
   {
     calculateChecksum(out_conf_buf);
-    _i2c.writeRegister16(_chip_addr, GT911_CONFIG_CHKSUM, &out_conf_buf[GT911_CONFIG_CHKSUM - GT911_CONFIG_START], 1);
+    if (!_i2c.writeRegister16(_chip_addr, GT911_CONFIG_CHKSUM, &out_conf_buf[GT911_CONFIG_CHKSUM - GT911_CONFIG_START], 1))
+      return;
     uint8_t reflash_val = 1;
     _i2c.writeRegister16(_chip_addr, GT911_CONFIG_FRESH, &reflash_val, sizeof(reflash_val));
   }
