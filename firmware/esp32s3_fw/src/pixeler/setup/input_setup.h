@@ -13,7 +13,7 @@
 #define EXT_INPUT_B_NUM 1  // Кількість байт(які будуть прочитані по I2C) що містять інформацію про стан кнопок. 1 байт == 8 кнопок.
 #endif
 
-#define TOUCHSCREEN_SUPPORT  // Увімкнути підтримку сенсорного екрану
+// #define TOUCHSCREEN_SUPPORT  // Увімкнути підтримку сенсорного екрану
 
 #ifdef TOUCHSCREEN_SUPPORT
 #define TOUCH_ROTATION ROTATION_0  // Може мати значення ROTATION_0/ROTATION_90/ROTATION_180/ROTATION_270
