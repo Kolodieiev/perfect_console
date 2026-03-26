@@ -36,7 +36,7 @@ namespace pixeler
     _width = TFT_WIDTH;
     _title_lbl->setWidth(_width - 4);
     _msg_lbl->setWidth(_title_lbl->getWidth());
-    _left_lbl->setWidth((float)(_title_lbl->getWidth()) * 0.5);
+    _left_lbl->setWidth(_title_lbl->getWidth() / 2);
     _right_lbl->setWidth(_left_lbl->getWidth());
     //
     _x_pos = 0;
