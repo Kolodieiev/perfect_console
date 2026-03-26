@@ -23,6 +23,16 @@ namespace pixeler
     virtual ~IWidgetContainer();
 
     /**
+     * @brief Повертає вказівник на самий верхній віджет, який підтримує дотики та пересікається з вказаною точкою.
+     *
+     * @param x - Координата точки.
+     * @param y - Координата точки.
+     * @return IWidget* - Вказівник на вкладений віджет або на самого себе, якщо виявлено пересічення з точкою.
+     * @return nullptr - Інакше.
+     */
+    virtual IWidget* findTouchableAt(uint16_t x, uint16_t y) override;
+
+    /**
      * @brief Додає вказівник на віджет до контейнера.
      * Віджет повинен мати уникальний ідентифікатор для цього контейнера.
      * Ідентифікатор віджета повинен бути більшим за 0.
@@ -59,16 +69,6 @@ namespace pixeler
     IWidget* getWidgetByIndx(uint16_t widget_indx);
 
     /**
-     * @brief Повертає вказівник на самий верхній віджет, що пересікається з вказаною точкою.
-     *
-     * @param x - Координата точки.
-     * @param y - Координата точки.
-     * @return IWidget* - Вказівник на вкладений віджет або на самого себе, якщо виявлено пересічення з точкою.
-     * @return nullptr - Інакше.
-     */
-    IWidget* getWidgetByPos(uint16_t x, uint16_t y);
-
-    /**
      * @brief Видаляє усі віджети з контейнера та очищує пам'ять, яку вони займали.
      *
      */
@@ -101,6 +101,14 @@ namespace pixeler
      */
     bool isEnabled() const;
 
+  protected:
+    /**
+     * @brief Копіює поля до іншого віджета.
+     *
+     * @param widget
+     */
+    virtual void copyTo(IWidget* widget) const override;
+    
   protected:
     std::vector<IWidget*> _widgets;
     bool _is_enabled{true};

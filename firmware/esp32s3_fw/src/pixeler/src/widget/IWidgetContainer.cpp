@@ -80,27 +80,18 @@ namespace pixeler
     return result;
   }
 
-  IWidget* IWidgetContainer::getWidgetByPos(uint16_t x, uint16_t y)
+  IWidget* IWidgetContainer::findTouchableAt(uint16_t x, uint16_t y)
   {
-    if (!contains(x, y))
+    if (!hitTest(x, y))
       return nullptr;
 
     for (auto i_b = _widgets.rbegin(), i_e = _widgets.rend(); i_b != i_e; ++i_b)
     {
-      auto& widget_ptr = *i_b;
-      if (widget_ptr->isContainer())
-      {
-        auto* container = static_cast<IWidgetContainer*>(widget_ptr);
-        if (IWidget* found = container->getWidgetByPos(x, y))
-          return found;
-      }
-      else if (widget_ptr->contains(x, y))
-      {
-        return widget_ptr;
-      }
+      if (IWidget* found = (*i_b)->findTouchableAt(x, y))
+        return found;
     }
 
-    return this;
+    return _is_touchable ? this : nullptr;
   }
 
   void IWidgetContainer::delWidgets()
@@ -131,5 +122,16 @@ namespace pixeler
   bool IWidgetContainer::isEnabled() const
   {
     return _is_enabled;
+  }
+
+  void IWidgetContainer::copyTo(IWidget* widget) const
+  {
+    IWidget::copyTo(widget);
+
+    IWidgetContainer* clone = static_cast<IWidgetContainer*>(widget);
+    clone->_is_enabled = _is_enabled;
+
+    for (const auto& widget_ptr : _widgets)
+      clone->addWidget(widget_ptr->clone(widget_ptr->getID()));
   }
 }  // namespace pixeler
