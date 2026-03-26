@@ -41,15 +41,14 @@ namespace pixeler
     WavTrack() : _data_buf{nullptr}, _data_size{0} {}
 
   private:
-    float _volume{10};
-
     const uint8_t* _data_buf{nullptr};
 
     const uint32_t _data_size;
     uint32_t _current_sample{0};
 
     uint16_t _filtration_lvl{1};
-
+    uint16_t _cached_threshold = 0;
+    uint8_t _volume;
     bool _is_playing{true};
     bool _on_repeate{false};
   };
