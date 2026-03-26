@@ -102,7 +102,7 @@ public:
   uint8_t getChannels();
   uint32_t getBitRate(bool avg = false);
   uint32_t getAudioFileDuration();
-  uint32_t getAudioCurrentTime();
+  uint64_t getAudioCurrentTime();
   uint32_t getTotalPlayingTime();
   uint16_t getVUlevel();
 
@@ -317,7 +317,7 @@ private:
   bool m_f_loop = false;              // Set if audio file should loop
   bool m_f_forceMono = false;         // if true stereo -> mono
   uint32_t m_audioFileDuration = 0;
-  float m_audioCurrentTime = 0;
+  uint64_t m_audioCurrentTime = 0;
   uint32_t m_audioDataStart = 0;   // in bytes
   size_t m_audioDataSize = 0;      //
   size_t m_i2s_bytesWritten = 0;   // set in i2s_write() but not used

@@ -654,7 +654,7 @@ uint32_t Audio::stopSong()
   // added this before putting 'm_f_localfile = false' in stopSong(); shoulf never occur....
   _fs.closeFile(audiofile);
 
-  memset(m_outBuff, 0, m_outbuffSize);            // Clear OutputBuffer
+  memset(m_outBuff, 0, m_outbuffSize);  // Clear OutputBuffer
   m_validSamples = 0;
   m_audioCurrentTime = 0;
   m_audioFileDuration = 0;
@@ -1140,13 +1140,18 @@ void Audio::computeAudioTime(uint16_t bytesDecoderIn)
     uint32_t delta_t = t - _timeStamp;  //    ---"---
     _timeStamp = t;                     //    ---"---
 
-    uint32_t bitRate = (float)(_deltaBytesIn * 8000) / delta_t;  // we know the time and bytesIn to compute the bitrate
+    uint32_t bitRate = (static_cast<uint64_t>(_deltaBytesIn) * 8000) / delta_t;
 
     _sumBitRate += bitRate;
     ++_frame_counter;
 
-    m_avr_bitrate = (float)_sumBitRate / _frame_counter;
-    m_audioFileDuration = round((float)(m_audioDataSize * 8) / m_avr_bitrate);
+    m_avr_bitrate = _sumBitRate / _frame_counter;
+
+    if (m_avr_bitrate > 0)
+    {
+      uint64_t totalBits = static_cast<uint64_t>(m_audioDataSize) * 8;
+      m_audioFileDuration = (totalBits + m_avr_bitrate / 2) / m_avr_bitrate;
+    }
 
     _deltaBytesIn = 0;
     _need_calc_br = false;
@@ -1192,9 +1197,9 @@ uint32_t Audio::getAudioFileDuration()
   return m_audioFileDuration;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-uint32_t Audio::getAudioCurrentTime()
+uint64_t Audio::getAudioCurrentTime()
 {  // return current time in seconds
-  return round(m_audioCurrentTime);
+  return m_audioCurrentTime;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 bool Audio::setAudioPlayPosition(uint16_t sec)
