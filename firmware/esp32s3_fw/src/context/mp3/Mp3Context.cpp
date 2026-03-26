@@ -323,7 +323,7 @@ void Mp3Context::fillTracks(uint16_t track_pos)
     --track_pos;
 
   std::vector<MenuItem*> items;
-  makeMenuTracksItems(items, track_pos, _tracks_list->getItemsNumOnScreen());
+  makeMenuTracksItems(items, track_pos, _tracks_list->getItemsPerPage());
 
   size_t items_size = items.size();
 

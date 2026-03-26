@@ -163,7 +163,7 @@ void ReaderContext::fillBooks(uint16_t pos)
     --pos;
 
   std::vector<MenuItem*> items;
-  makeBooksItems(items, pos, _books_list_menu->getItemsNumOnScreen());
+  makeBooksItems(items, pos, _books_list_menu->getItemsPerPage());
 
   uint16_t size = items.size();
 

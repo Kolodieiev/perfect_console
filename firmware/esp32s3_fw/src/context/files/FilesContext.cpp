@@ -869,7 +869,7 @@ void FilesContext::fillFilesTmpl()
 
   std::vector<MenuItem*> items;
 
-  makeMenuFilesItems(items, 0, _files_list->getItemsNumOnScreen());
+  makeMenuFilesItems(items, 0, _files_list->getItemsPerPage());
 
   for (size_t i = 0; i < items.size(); ++i)
     _files_list->addItem(items[i]);
