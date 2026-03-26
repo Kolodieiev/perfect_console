@@ -231,6 +231,13 @@ namespace pixeler
     void setFullAutoscroll(bool state);
 
   protected:
+    /**
+     * @brief Копіює поля до іншого віджета.
+     *
+     * @param widget
+     */
+    virtual void copyTo(IWidget* widget) const override;
+
     uint16_t calcXStrOffset(uint16_t str_pix_num) const;
     uint16_t calcYStrOffset() const;
     uint32_t calcRealStrLen(const String& str) const;

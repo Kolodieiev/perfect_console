@@ -11,54 +11,43 @@ namespace pixeler
     updateHeight();
   }
 
+  void Label::copyTo(IWidget* widget) const
+  {
+    IWidget::copyTo(widget);
+
+    Label* clone = static_cast<Label*>(widget);
+    clone->_is_multiline = _is_multiline;
+    clone->_text_size = _text_size;
+    clone->_text_color = _text_color;
+    clone->_font_ptr = _font_ptr;
+    clone->_char_hgt = _char_hgt;
+    clone->_h_padding = _h_padding;
+    clone->_text_gravity = _text_gravity;
+    clone->_text_alignment = _text_alignment;
+    clone->_has_autoscroll = _has_autoscroll;
+    clone->_temp_has_autoscroll = _temp_has_autoscroll;
+    clone->_has_full_autoscroll = _has_full_autoscroll;
+    clone->_has_autoscroll_in_focus = _has_autoscroll_in_focus;
+    clone->_temp_has_autoscroll_in_focus = _temp_has_autoscroll_in_focus;
+    clone->_temp_width = _temp_width;
+    clone->_autoscroll_update_delay = _autoscroll_update_delay;
+    clone->_is_reverse_autoscroll = _is_reverse_autoscroll;
+
+    clone->setText(_text);
+
+    if (_back_img)
+    {
+      clone->_back_img = _back_img->clone(_back_img->getID());
+    }
+  }
+
   Label* Label::clone(uint16_t id) const
   {
     try
     {
-      Label* cln = new Label(id);
-      cln->_has_border = _has_border;
-      cln->_x_pos = _x_pos;
-      cln->_y_pos = _y_pos;
-      cln->_width = _width;
-      cln->_height = _height;
-      cln->_back_color = _back_color;
-      cln->_border_color = _border_color;
-      cln->_corner_radius = _corner_radius;
-      cln->_is_transparent = _is_transparent;
-      cln->_visibility = _visibility;
-      cln->_has_focus = _has_focus;
-      cln->_old_border_state = _old_border_state;
-      cln->_need_clear_border = _need_clear_border;
-      cln->_need_change_border = _need_change_border;
-      cln->_need_change_back = _need_change_back;
-      cln->_focus_border_color = _focus_border_color;
-      cln->_old_border_color = _old_border_color;
-      cln->_focus_back_color = _focus_back_color;
-      cln->_old_back_color = _old_back_color;
-      cln->_parent = _parent;
-
-      cln->_is_multiline = _is_multiline;
-      cln->setText(_text);
-      cln->_text_size = _text_size;
-      cln->_text_color = _text_color;
-      cln->_font_ptr = _font_ptr;
-      cln->_char_hgt = _char_hgt;
-      cln->_h_padding = _h_padding;
-      cln->_text_gravity = _text_gravity;
-      cln->_text_alignment = _text_alignment;
-      cln->_has_autoscroll = _has_autoscroll;
-      cln->_temp_has_autoscroll = _temp_has_autoscroll;
-      cln->_has_full_autoscroll = _has_full_autoscroll;
-      cln->_has_autoscroll_in_focus = _has_autoscroll_in_focus;
-      cln->_temp_has_autoscroll_in_focus = _temp_has_autoscroll_in_focus;
-      cln->_temp_width = _temp_width;
-
-      if (_back_img)
-      {
-        cln->_back_img = _back_img->clone(_back_img->getID());
-      }
-
-      return cln;
+      Label* clone = new Label(id);
+      copyTo(clone);
+      return clone;
     }
     catch (const std::bad_alloc& e)
     {
