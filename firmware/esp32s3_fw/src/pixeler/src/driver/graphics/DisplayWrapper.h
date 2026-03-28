@@ -19,7 +19,6 @@
 
 namespace pixeler
 {
-#ifdef GRAPHICS_ENABLED
   class DisplayWrapper
   {
   public:
@@ -299,11 +298,13 @@ namespace pixeler
 #endif  // ENABLE_SCREENSHOTER
 
   private:
+#ifdef GRAPHICS_ENABLED
     BUS_TYPE _bus{BUS_PARAMS};
     Arduino_GFX* _output = new DISP_DRIVER_TYPE(&_bus, DISP_DRIVER_PARAMS);
 #ifndef DIRECT_DRAWING
     Arduino_Canvas _canvas{TFT_WIDTH, TFT_HEIGHT, _output};
 #endif  // #ifndef DIRECT_DRAWING
+#endif  // #ifdef GRAPHICS_ENABLED
 
 #ifdef DOUBLE_BUFFERRING
     volatile xSemaphoreHandle _sync_mutex{nullptr};
@@ -332,5 +333,4 @@ namespace pixeler
    *
    */
   extern DisplayWrapper _display;
-#endif  // GRAPHICS_ENABLED
 }  // namespace pixeler
