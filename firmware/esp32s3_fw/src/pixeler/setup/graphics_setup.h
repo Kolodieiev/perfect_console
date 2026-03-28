@@ -6,12 +6,12 @@
 
 #pragma once
 
+#define UI_UPDATE_DELAY 25  // Затримка (мс) між фреймами
+
 #define GRAPHICS_ENABLED  // Увімкнути підтримку графічного драйвера. Закоментуй, якщо в проєкті не використовується дисплей.
 // #define DIRECT_DRAWING       // Увімкнути пряме малювання на дисплей замість буферу. Закоментуй, для формування зображення через буфер.
 
 #ifdef GRAPHICS_ENABLED
-
-#define UI_UPDATE_DELAY 25  // Затримка (мс) між фреймами
 
 #ifndef DIRECT_DRAWING
 #define DOUBLE_BUFFERRING  // Подвійна буферизація. Працює тільки за наявності PSRAM. Інакше буде викликано рестарт МК
