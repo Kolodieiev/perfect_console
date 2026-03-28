@@ -1033,6 +1033,7 @@ void FilesContext::showResultToast(bool result)
 void FilesContext::createNotificationObj()
 {
   _notification = new Notification(1);
+  _notification->setWidth(TFT_WIDTH);
   _notification->setLeftBackColor(COLOR_DARKCYAN);
   _notification->setRightBackColor(COLOR_DARKCYAN);
   _notification->setTitleText(STR_NOTIFICATION);

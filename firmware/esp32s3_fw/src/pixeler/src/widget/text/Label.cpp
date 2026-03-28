@@ -140,10 +140,6 @@ namespace pixeler
   void Label::setMultiline(bool state)
   {
     _is_multiline = state;
-
-    if (_is_multiline)
-      _width = TFT_WIDTH;
-
     _is_changed = true;
   }
 
