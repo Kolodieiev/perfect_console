@@ -994,6 +994,18 @@ namespace pixeler
 
     MutexGuard lock(_sd_mutex);
 
+    pinMode(SD_PIN_CS, OUTPUT);
+    digitalWrite(SD_PIN_CS, HIGH);
+
+#ifdef SD_PIN_PWR_ON
+    pinMode(SD_PIN_PWR_ON, OUTPUT);
+    digitalWrite(SD_PIN_PWR_ON, !SD_PWR_ON_LVL);
+    delay(200);
+
+    digitalWrite(SD_PIN_PWR_ON, SD_PWR_ON_LVL);
+    delay(200);
+#endif  // #ifdef SD_PIN_PWR_ON
+
     SPI_Manager::initBus(SD_SPI_BUS, SD_PIN_SCLK, SD_PIN_MISO, SD_PIN_MOSI);
     SPIClass* spi = SPI_Manager::getSpi4Bus(SD_SPI_BUS);
 
@@ -1040,6 +1052,11 @@ namespace pixeler
       sdcard_uninit(_pdrv);
       _pdrv = 0xFF;
       delay(10);
+
+#ifdef SD_PIN_PWR_ON
+      digitalWrite(SD_PIN_PWR_ON, !SD_PWR_ON_LVL);
+      pinMode(SD_PIN_PWR_ON, INPUT);
+#endif  // #ifdef SD_PIN_PWR_ON
     }
 
     if (!_is_ext_lock)
