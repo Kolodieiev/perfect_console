@@ -25,6 +25,9 @@ namespace pixeler
 
   void GT911::resetChip()
   {
+    if (PIN_TOUCH_INT < 0 && PIN_TOUCH_RST < 0)
+      return;
+
     pinMode(PIN_TOUCH_INT, OUTPUT);
     pinMode(PIN_TOUCH_RST, OUTPUT);
 
