@@ -276,6 +276,9 @@ namespace pixeler
 
   int LuaContext::lua_context_get_layout(lua_State* L)
   {
+#ifndef GRAPHICS_ENABLED
+    lua_pushnil(L);
+#else   // GRAPHICS_ENABLED
     IWidgetContainer* layout = _self->getLayout();
     if (!layout)
     {
@@ -289,7 +292,7 @@ namespace pixeler
       luaL_getmetatable(L, STR_TYPE_NAME_IWIDGET_CONT);
       lua_setmetatable(L, -2);
     }
-
+#endif  // #ifdef GRAPHICS_ENABLED
     return 1;
   }
 
@@ -519,21 +522,21 @@ namespace pixeler
     _self->showNotification(_self->_notification);
 
 #else
-    int stack_msg_pos = 1;
+    int stack_msg_pos{0};
     if (arg_num == 1)
     {
-      lua_stack_pos = 1;
+      stack_msg_pos = 1;
     }
     else if (arg_num == 4)
     {
-      lua_stack_pos = 2;
+      stack_msg_pos = 2;
     }
     else
     {
       return 0;
     }
 
-    const char* notification_msg = luaL_checkstring(L, lua_stack_pos);
+    const char* notification_msg = luaL_checkstring(L, stack_msg_pos);
     log_i("%s", notification_msg);
 
 #endif
@@ -543,7 +546,9 @@ namespace pixeler
 
   int LuaContext::lua_hide_notification(lua_State* L)
   {
+#ifdef GRAPHICS_ENABLED
     _self->hideNotification();
+#endif
     return 0;
   }
 

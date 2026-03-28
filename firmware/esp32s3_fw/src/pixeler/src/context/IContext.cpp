@@ -57,6 +57,23 @@ namespace pixeler
     return _is_released;
   }
 
+  void IContext::openContextByID(ContextID context_ID)
+  {
+    _input.reset();
+    _next_context_ID = context_ID;
+    _is_released = true;
+  }
+
+  void IContext::release()
+  {
+    openContextByID(static_cast<ContextID>(0));
+  }
+
+#ifndef GRAPHICS_ENABLED
+  IContext::IContext() {}
+  IContext::~IContext() {}
+#else  // GRAPHICS_ENABLED
+
   IContext::IContext() : _layout_mutex{xSemaphoreCreateMutex()},
                          _layout{new EmptyLayout(1)}
   {
@@ -95,18 +112,6 @@ namespace pixeler
   IWidgetContainer* IContext::getLayout() const
   {
     return _layout;
-  }
-
-  void IContext::openContextByID(ContextID context_ID)
-  {
-    _input.reset();
-    _next_context_ID = context_ID;
-    _is_released = true;
-  }
-
-  void IContext::release()
-  {
-    openContextByID(static_cast<ContextID>(0));
   }
 
   void IContext::showToast(const char* msg_txt, unsigned long duration)
@@ -189,4 +194,6 @@ namespace pixeler
     if (_layout)
       _layout->forcedDraw();
   }
+
+#endif  // #ifdef GRAPHICS_ENABLED
 }  // namespace pixeler
