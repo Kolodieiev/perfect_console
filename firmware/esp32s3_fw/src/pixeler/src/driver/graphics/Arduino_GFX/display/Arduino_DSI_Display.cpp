@@ -4,295 +4,653 @@
 
 #include "../Arduino_GFX.h"
 #include "Arduino_DSI_Display.h"
+#include "pixeler/setup/graphics_setup.h"
 
-#define TAG "Arduino_ESP32DSIPanel"
+#ifdef LCD_DRIVER_EK79007
+static const lcd_init_cmd_t ek79007_init_operations[] = {
+    {0xB2, (uint8_t[]){0x10}, 1, 0},
+    {0x80, (uint8_t[]){0x8B}, 1, 0},
+    {0x81, (uint8_t[]){0x78}, 1, 0},
+    {0x82, (uint8_t[]){0x84}, 1, 0},
+    {0x83, (uint8_t[]){0x88}, 1, 0},
+    {0x84, (uint8_t[]){0xA8}, 1, 0},
+    {0x85, (uint8_t[]){0xE3}, 1, 0},
+    {0x86, (uint8_t[]){0x88}, 1, 0},
+    {0x11, (uint8_t[]){0x00}, 0, 120},
+    {0x29, (uint8_t[]){0x00}, 0, 20}};
+
+#elifdef LCD_DRIVER_JD9365
+static const lcd_init_cmd_t jd9365_init_operations[] = {
+    //  {cmd, { data }, data_size, delay_ms}
+    {0xE0, (uint8_t[]){0x00}, 1, 0},
+    {0xE1, (uint8_t[]){0x93}, 1, 0},
+    {0xE2, (uint8_t[]){0x65}, 1, 0},
+    {0xE3, (uint8_t[]){0xF8}, 1, 0},
+    {0x80, (uint8_t[]){0x01}, 1, 0},
+
+    {0xE0, (uint8_t[]){0x01}, 1, 0},
+    {0x00, (uint8_t[]){0x00}, 1, 0},
+    {0x01, (uint8_t[]){0x39}, 1, 0},
+    {0x03, (uint8_t[]){0x10}, 1, 0},
+    {0x04, (uint8_t[]){0x41}, 1, 0},
+
+    {0x0C, (uint8_t[]){0x74}, 1, 0},
+    {0x17, (uint8_t[]){0x00}, 1, 0},
+    {0x18, (uint8_t[]){0xD7}, 1, 0},
+    {0x19, (uint8_t[]){0x00}, 1, 0},
+    {0x1A, (uint8_t[]){0x00}, 1, 0},
+
+    {0x1B, (uint8_t[]){0xD7}, 1, 0},
+    {0x1C, (uint8_t[]){0x00}, 1, 0},
+    {0x24, (uint8_t[]){0xFE}, 1, 0},
+    {0x35, (uint8_t[]){0x26}, 1, 0},
+    {0x37, (uint8_t[]){0x69}, 1, 0},
+
+    {0x38, (uint8_t[]){0x05}, 1, 0},
+    {0x39, (uint8_t[]){0x06}, 1, 0},
+    {0x3A, (uint8_t[]){0x08}, 1, 0},
+    {0x3C, (uint8_t[]){0x78}, 1, 0},
+    {0x3D, (uint8_t[]){0xFF}, 1, 0},
+
+    {0x3E, (uint8_t[]){0xFF}, 1, 0},
+    {0x3F, (uint8_t[]){0xFF}, 1, 0},
+    {0x40, (uint8_t[]){0x06}, 1, 0},
+    {0x41, (uint8_t[]){0xA0}, 1, 0},
+    {0x43, (uint8_t[]){0x14}, 1, 0},
+
+    {0x44, (uint8_t[]){0x0B}, 1, 0},
+    {0x45, (uint8_t[]){0x30}, 1, 0},
+    //{0x4A, (uint8_t[]){0x35}, 1, 0},//bist
+    {0x4B, (uint8_t[]){0x04}, 1, 0},
+    {0x55, (uint8_t[]){0x02}, 1, 0},
+    {0x57, (uint8_t[]){0x89}, 1, 0},
+
+    {0x59, (uint8_t[]){0x0A}, 1, 0},
+    {0x5A, (uint8_t[]){0x28}, 1, 0},
+
+    {0x5B, (uint8_t[]){0x15}, 1, 0},
+    {0x5D, (uint8_t[]){0x50}, 1, 0},
+    {0x5E, (uint8_t[]){0x37}, 1, 0},
+    {0x5F, (uint8_t[]){0x29}, 1, 0},
+    {0x60, (uint8_t[]){0x1E}, 1, 0},
+
+    {0x61, (uint8_t[]){0x1D}, 1, 0},
+    {0x62, (uint8_t[]){0x12}, 1, 0},
+    {0x63, (uint8_t[]){0x1A}, 1, 0},
+    {0x64, (uint8_t[]){0x08}, 1, 0},
+    {0x65, (uint8_t[]){0x25}, 1, 0},
+
+    {0x66, (uint8_t[]){0x26}, 1, 0},
+    {0x67, (uint8_t[]){0x28}, 1, 0},
+    {0x68, (uint8_t[]){0x49}, 1, 0},
+    {0x69, (uint8_t[]){0x3A}, 1, 0},
+    {0x6A, (uint8_t[]){0x43}, 1, 0},
+
+    {0x6B, (uint8_t[]){0x3A}, 1, 0},
+    {0x6C, (uint8_t[]){0x3B}, 1, 0},
+    {0x6D, (uint8_t[]){0x32}, 1, 0},
+    {0x6E, (uint8_t[]){0x1F}, 1, 0},
+    {0x6F, (uint8_t[]){0x0E}, 1, 0},
+
+    {0x70, (uint8_t[]){0x50}, 1, 0},
+    {0x71, (uint8_t[]){0x37}, 1, 0},
+    {0x72, (uint8_t[]){0x29}, 1, 0},
+    {0x73, (uint8_t[]){0x1E}, 1, 0},
+    {0x74, (uint8_t[]){0x1D}, 1, 0},
+
+    {0x75, (uint8_t[]){0x12}, 1, 0},
+    {0x76, (uint8_t[]){0x1A}, 1, 0},
+    {0x77, (uint8_t[]){0x08}, 1, 0},
+    {0x78, (uint8_t[]){0x25}, 1, 0},
+    {0x79, (uint8_t[]){0x26}, 1, 0},
+
+    {0x7A, (uint8_t[]){0x28}, 1, 0},
+    {0x7B, (uint8_t[]){0x49}, 1, 0},
+    {0x7C, (uint8_t[]){0x3A}, 1, 0},
+    {0x7D, (uint8_t[]){0x43}, 1, 0},
+    {0x7E, (uint8_t[]){0x3A}, 1, 0},
+
+    {0x7F, (uint8_t[]){0x3B}, 1, 0},
+    {0x80, (uint8_t[]){0x32}, 1, 0},
+    {0x81, (uint8_t[]){0x1F}, 1, 0},
+    {0x82, (uint8_t[]){0x0E}, 1, 0},
+    {0xE0, (uint8_t[]){0x02}, 1, 0},
+
+    {0x00, (uint8_t[]){0x1F}, 1, 0},
+    {0x01, (uint8_t[]){0x1F}, 1, 0},
+    {0x02, (uint8_t[]){0x52}, 1, 0},
+    {0x03, (uint8_t[]){0x51}, 1, 0},
+    {0x04, (uint8_t[]){0x50}, 1, 0},
+
+    {0x05, (uint8_t[]){0x4B}, 1, 0},
+    {0x06, (uint8_t[]){0x4A}, 1, 0},
+    {0x07, (uint8_t[]){0x49}, 1, 0},
+    {0x08, (uint8_t[]){0x48}, 1, 0},
+    {0x09, (uint8_t[]){0x47}, 1, 0},
+
+    {0x0A, (uint8_t[]){0x46}, 1, 0},
+    {0x0B, (uint8_t[]){0x45}, 1, 0},
+    {0x0C, (uint8_t[]){0x44}, 1, 0},
+    {0x0D, (uint8_t[]){0x40}, 1, 0},
+    {0x0E, (uint8_t[]){0x41}, 1, 0},
+
+    {0x0F, (uint8_t[]){0x1F}, 1, 0},
+    {0x10, (uint8_t[]){0x1F}, 1, 0},
+    {0x11, (uint8_t[]){0x1F}, 1, 0},
+    {0x12, (uint8_t[]){0x1F}, 1, 0},
+    {0x13, (uint8_t[]){0x1F}, 1, 0},
+
+    {0x14, (uint8_t[]){0x1F}, 1, 0},
+    {0x15, (uint8_t[]){0x1F}, 1, 0},
+    {0x16, (uint8_t[]){0x1F}, 1, 0},
+    {0x17, (uint8_t[]){0x1F}, 1, 0},
+    {0x18, (uint8_t[]){0x52}, 1, 0},
+
+    {0x19, (uint8_t[]){0x51}, 1, 0},
+    {0x1A, (uint8_t[]){0x50}, 1, 0},
+    {0x1B, (uint8_t[]){0x4B}, 1, 0},
+    {0x1C, (uint8_t[]){0x4A}, 1, 0},
+    {0x1D, (uint8_t[]){0x49}, 1, 0},
+
+    {0x1E, (uint8_t[]){0x48}, 1, 0},
+    {0x1F, (uint8_t[]){0x47}, 1, 0},
+    {0x20, (uint8_t[]){0x46}, 1, 0},
+    {0x21, (uint8_t[]){0x45}, 1, 0},
+    {0x22, (uint8_t[]){0x44}, 1, 0},
+
+    {0x23, (uint8_t[]){0x40}, 1, 0},
+    {0x24, (uint8_t[]){0x41}, 1, 0},
+    {0x25, (uint8_t[]){0x1F}, 1, 0},
+    {0x26, (uint8_t[]){0x1F}, 1, 0},
+    {0x27, (uint8_t[]){0x1F}, 1, 0},
+
+    {0x28, (uint8_t[]){0x1F}, 1, 0},
+    {0x29, (uint8_t[]){0x1F}, 1, 0},
+    {0x2A, (uint8_t[]){0x1F}, 1, 0},
+    {0x2B, (uint8_t[]){0x1F}, 1, 0},
+    {0x2C, (uint8_t[]){0x1F}, 1, 0},
+
+    {0x2D, (uint8_t[]){0x1F}, 1, 0},
+    {0x2E, (uint8_t[]){0x52}, 1, 0},
+    {0x2F, (uint8_t[]){0x40}, 1, 0},
+    {0x30, (uint8_t[]){0x41}, 1, 0},
+    {0x31, (uint8_t[]){0x48}, 1, 0},
+
+    {0x32, (uint8_t[]){0x49}, 1, 0},
+    {0x33, (uint8_t[]){0x4A}, 1, 0},
+    {0x34, (uint8_t[]){0x4B}, 1, 0},
+    {0x35, (uint8_t[]){0x44}, 1, 0},
+    {0x36, (uint8_t[]){0x45}, 1, 0},
+
+    {0x37, (uint8_t[]){0x46}, 1, 0},
+    {0x38, (uint8_t[]){0x47}, 1, 0},
+    {0x39, (uint8_t[]){0x51}, 1, 0},
+    {0x3A, (uint8_t[]){0x50}, 1, 0},
+    {0x3B, (uint8_t[]){0x1F}, 1, 0},
+
+    {0x3C, (uint8_t[]){0x1F}, 1, 0},
+    {0x3D, (uint8_t[]){0x1F}, 1, 0},
+    {0x3E, (uint8_t[]){0x1F}, 1, 0},
+    {0x3F, (uint8_t[]){0x1F}, 1, 0},
+    {0x40, (uint8_t[]){0x1F}, 1, 0},
+
+    {0x41, (uint8_t[]){0x1F}, 1, 0},
+    {0x42, (uint8_t[]){0x1F}, 1, 0},
+    {0x43, (uint8_t[]){0x1F}, 1, 0},
+    {0x44, (uint8_t[]){0x52}, 1, 0},
+    {0x45, (uint8_t[]){0x40}, 1, 0},
+
+    {0x46, (uint8_t[]){0x41}, 1, 0},
+    {0x47, (uint8_t[]){0x48}, 1, 0},
+    {0x48, (uint8_t[]){0x49}, 1, 0},
+    {0x49, (uint8_t[]){0x4A}, 1, 0},
+    {0x4A, (uint8_t[]){0x4B}, 1, 0},
+
+    {0x4B, (uint8_t[]){0x44}, 1, 0},
+    {0x4C, (uint8_t[]){0x45}, 1, 0},
+    {0x4D, (uint8_t[]){0x46}, 1, 0},
+    {0x4E, (uint8_t[]){0x47}, 1, 0},
+    {0x4F, (uint8_t[]){0x51}, 1, 0},
+
+    {0x50, (uint8_t[]){0x50}, 1, 0},
+    {0x51, (uint8_t[]){0x1F}, 1, 0},
+    {0x52, (uint8_t[]){0x1F}, 1, 0},
+    {0x53, (uint8_t[]){0x1F}, 1, 0},
+    {0x54, (uint8_t[]){0x1F}, 1, 0},
+
+    {0x55, (uint8_t[]){0x1F}, 1, 0},
+    {0x56, (uint8_t[]){0x1F}, 1, 0},
+    {0x57, (uint8_t[]){0x1F}, 1, 0},
+    {0x58, (uint8_t[]){0x40}, 1, 0},
+    {0x59, (uint8_t[]){0x00}, 1, 0},
+
+    {0x5A, (uint8_t[]){0x00}, 1, 0},
+    {0x5B, (uint8_t[]){0x10}, 1, 0},
+    {0x5C, (uint8_t[]){0x05}, 1, 0},
+    {0x5D, (uint8_t[]){0x50}, 1, 0},
+    {0x5E, (uint8_t[]){0x01}, 1, 0},
+
+    {0x5F, (uint8_t[]){0x02}, 1, 0},
+    {0x60, (uint8_t[]){0x50}, 1, 0},
+    {0x61, (uint8_t[]){0x06}, 1, 0},
+    {0x62, (uint8_t[]){0x04}, 1, 0},
+    {0x63, (uint8_t[]){0x03}, 1, 0},
+
+    {0x64, (uint8_t[]){0x64}, 1, 0},
+    {0x65, (uint8_t[]){0x65}, 1, 0},
+    {0x66, (uint8_t[]){0x0B}, 1, 0},
+    {0x67, (uint8_t[]){0x73}, 1, 0},
+    {0x68, (uint8_t[]){0x07}, 1, 0},
+
+    {0x69, (uint8_t[]){0x06}, 1, 0},
+    {0x6A, (uint8_t[]){0x64}, 1, 0},
+    {0x6B, (uint8_t[]){0x08}, 1, 0},
+    {0x6C, (uint8_t[]){0x00}, 1, 0},
+    {0x6D, (uint8_t[]){0x32}, 1, 0},
+
+    {0x6E, (uint8_t[]){0x08}, 1, 0},
+    {0xE0, (uint8_t[]){0x04}, 1, 0},
+    {0x2C, (uint8_t[]){0x6B}, 1, 0},
+    {0x35, (uint8_t[]){0x08}, 1, 0},
+    {0x37, (uint8_t[]){0x00}, 1, 0},
+
+    {0xE0, (uint8_t[]){0x00}, 1, 0},
+    {0x11, (uint8_t[]){0x00}, 1, 0},
+    {0x29, (uint8_t[]){0x00}, 1, 5},
+    {0x11, (uint8_t[]){0x00}, 1, 120},
+    {0x35, (uint8_t[]){0x00}, 1, 0},
+};
+
+#elifdef LCD_DRIVER_HX8394
+static const lcd_init_cmd_t hx8394_init_operations[] = {
+    //  {cmd, { data }, data_size, delay_ms}
+    // 720 * 1280
+    {0x36, (uint8_t[]){0x01}, 1, 0},
+    {0xB9, (uint8_t[]){0xFF, 0x83, 0x94}, 3, 0},
+    {0xBA, (uint8_t[]){0x61, 0x03, 0x68, 0x6B, 0xB2, 0xC0}, 6, 0},  // 0x61
+    {0xB1, (uint8_t[]){0x48, 0x12, 0x72, 0x09, 0x32, 0x54, 0x71, 0x71, 0x57, 0x47}, 10, 0},
+    {0xB2, (uint8_t[]){0x00, 0x80, 0x64, 0x0C, 0x0D, 0x2F}, 6, 0},
+    {0xB4, (uint8_t[]){0x73, 0x74, 0x73, 0x74, 0x73, 0x74, 0x01, 0x0C, 0x86, 0x75, 0x00, 0x3F, 0x73, 0x74, 0x73, 0x74, 0x73, 0x74, 0x01, 0x0C, 0x86}, 21, 0},
+    {0xD3, (uint8_t[]){0x00, 0x00, 0x07, 0x07, 0x40, 0x07, 0x0C, 0x00, 0x08, 0x10, 0x08, 0x00, 0x08, 0x54, 0x15, 0x0A, 0x05, 0x0A, 0x02, 0x15, 0x06, 0x05, 0x06, 0x47, 0x44, 0x0A, 0x0A, 0x4B, 0x10, 0x07, 0x07, 0x0C, 0x40}, 33, 0},
+    {0xD5, (uint8_t[]){0x1C, 0x1C, 0x1D, 0x1D, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x24, 0x25, 0x18, 0x18, 0x26, 0x27, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x20, 0x21, 0x18, 0x18, 0x18, 0x18}, 44, 0},
+    {0xD6, (uint8_t[]){0x1C, 0x1C, 0x1D, 0x1D, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00, 0x0B, 0x0A, 0x09, 0x08, 0x21, 0x20, 0x18, 0x18, 0x27, 0x26, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x25, 0x24, 0x18, 0x18, 0x18, 0x18}, 44, 0},
+    {0xB6, (uint8_t[]){0x6E, 0x6E}, 2, 0},  // caiji
+    {0xE0, (uint8_t[]){0x00, 0x0A, 0x15, 0x1B, 0x1E, 0x21, 0x24, 0x22, 0x47, 0x56, 0x65, 0x66, 0x6E, 0x82, 0x88, 0x8B, 0x9A, 0x9D, 0x98, 0xA8, 0xB9, 0x5D, 0x5C, 0x61, 0x66, 0x6A, 0x6F, 0x7F, 0x7F, 0x00, 0x0A, 0x15, 0x1B, 0x1E, 0x21, 0x24, 0x22, 0x47, 0x56, 0x65, 0x65, 0x6E, 0x81, 0x87, 0x8B, 0x98, 0x9D, 0x99, 0xA8, 0xBA, 0x5D, 0x5D, 0x62, 0x67, 0x6B, 0x72, 0x7F, 0x7F}, 58, 0},
+    {0xC0, (uint8_t[]){0x1F, 0x31}, 2, 0},
+    {0xCC, (uint8_t[]){0x03}, 1, 0},
+    {0xD4, (uint8_t[]){0x02}, 1, 0},
+    {0xBD, (uint8_t[]){0x02}, 1, 0},
+    {0xD8, (uint8_t[]){0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}, 12, 0},
+    {0xBD, (uint8_t[]){0x00}, 1, 0},
+    {0xBD, (uint8_t[]){0x01}, 1, 0},
+    {0xB1, (uint8_t[]){0x00}, 1, 0},
+    {0xBD, (uint8_t[]){0x00}, 1, 0},
+    {0xBF, (uint8_t[]){0x40, 0x81, 0x50, 0x00, 0x1A, 0xFC, 0x01}, 7, 0},
+    {0xC6, (uint8_t[]){0xED}, 1, 0},
+    {0x11, (uint8_t[]){0x00}, 0, 120},
+    {0x29, (uint8_t[]){0x00}, 0, 0},
+};
+
+#elifdef LCD_DRIVER_JD9165
+static const lcd_init_cmd_t jd9165_init_operations[] = {
+    //  {cmd, { data }, data_size, delay_ms}
+    //{0x11, (uint8_t []){0x00}, 1, 120},
+    //{0x29, (uint8_t []){0x00}, 1, 20},
+
+    {0x30, (uint8_t[]){0x00}, 1, 0},
+    {0xF7, (uint8_t[]){0x49, 0x61, 0x02, 0x00}, 4, 0},
+    {0x30, (uint8_t[]){0x01}, 1, 0},
+    {0x04, (uint8_t[]){0x0C}, 1, 0},
+    {0x05, (uint8_t[]){0x00}, 1, 0},
+    {0x06, (uint8_t[]){0x00}, 1, 0},
+    {0x0B, (uint8_t[]){0x11}, 1, 0},
+    {0x17, (uint8_t[]){0x00}, 1, 0},
+    {0x20, (uint8_t[]){0x04}, 1, 0},
+    {0x1F, (uint8_t[]){0x05}, 1, 0},
+    {0x23, (uint8_t[]){0x00}, 1, 0},
+    {0x25, (uint8_t[]){0x19}, 1, 0},
+    {0x28, (uint8_t[]){0x18}, 1, 0},
+    {0x29, (uint8_t[]){0x04}, 1, 0},
+    {0x2A, (uint8_t[]){0x01}, 1, 0},
+    {0x2B, (uint8_t[]){0x04}, 1, 0},
+    {0x2C, (uint8_t[]){0x01}, 1, 0},
+    {0x30, (uint8_t[]){0x02}, 1, 0},
+    {0x01, (uint8_t[]){0x22}, 1, 0},
+    {0x03, (uint8_t[]){0x12}, 1, 0},
+    {0x04, (uint8_t[]){0x00}, 1, 0},
+    {0x05, (uint8_t[]){0x64}, 1, 0},
+    {0x0A, (uint8_t[]){0x08}, 1, 0},
+    {0x0B, (uint8_t[]){0x0A, 0x1A, 0x0B, 0x0D, 0x0D, 0x11, 0x10, 0x06, 0x08, 0x1F, 0x1D}, 11, 0},
+    {0x0C, (uint8_t[]){0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D}, 11, 0},
+    {0x0D, (uint8_t[]){0x16, 0x1B, 0x0B, 0x0D, 0x0D, 0x11, 0x10, 0x07, 0x09, 0x1E, 0x1C}, 11, 0},
+    {0x0E, (uint8_t[]){0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D}, 11, 0},
+    {0x0F, (uint8_t[]){0x16, 0x1B, 0x0D, 0x0B, 0x0D, 0x11, 0x10, 0x1C, 0x1E, 0x09, 0x07}, 11, 0},
+    {0x10, (uint8_t[]){0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D}, 11, 0},
+    {0x11, (uint8_t[]){0x0A, 0x1A, 0x0D, 0x0B, 0x0D, 0x11, 0x10, 0x1D, 0x1F, 0x08, 0x06}, 11, 0},
+    {0x12, (uint8_t[]){0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D}, 11, 0},
+    {0x14, (uint8_t[]){0x00, 0x00, 0x11, 0x11}, 4, 0},
+    {0x18, (uint8_t[]){0x99}, 1, 0},
+    {0x30, (uint8_t[]){0x06}, 1, 0},
+    {0x12, (uint8_t[]){0x36, 0x2C, 0x2E, 0x3C, 0x38, 0x35, 0x35, 0x32, 0x2E, 0x1D, 0x2B, 0x21, 0x16, 0x29}, 14, 0},
+    {0x13, (uint8_t[]){0x36, 0x2C, 0x2E, 0x3C, 0x38, 0x35, 0x35, 0x32, 0x2E, 0x1D, 0x2B, 0x21, 0x16, 0x29}, 14, 0},
+
+    // {0x30, (uint8_t[]){0x08}, 1, 0},
+    // {0x05, (uint8_t[]){0x01}, 1, 0},
+    // {0x0C, (uint8_t[]){0x1A}, 1, 0},
+    // {0x0D, (uint8_t[]){0x0E}, 1, 0},
+
+    // {0x30, (uint8_t[]){0x07}, 1, 0},
+    // {0x01, (uint8_t[]){0x04}, 1, 0},
+
+    {0x30, (uint8_t[]){0x0A}, 1, 0},
+    {0x02, (uint8_t[]){0x4F}, 1, 0},
+    {0x0B, (uint8_t[]){0x40}, 1, 0},
+    {0x12, (uint8_t[]){0x3E}, 1, 0},
+    {0x13, (uint8_t[]){0x78}, 1, 0},
+    {0x30, (uint8_t[]){0x0D}, 1, 0},
+    {0x0D, (uint8_t[]){0x04}, 1, 0},
+    {0x10, (uint8_t[]){0x0C}, 1, 0},
+    {0x11, (uint8_t[]){0x0C}, 1, 0},
+    {0x12, (uint8_t[]){0x0C}, 1, 0},
+    {0x13, (uint8_t[]){0x0C}, 1, 0},
+    {0x30, (uint8_t[]){0x00}, 1, 0},
+
+    {0X3A, (uint8_t[]){0x55}, 1, 0},
+    {0x11, (uint8_t[]){0x00}, 1, 120},
+    {0x29, (uint8_t[]){0x00}, 1, 50},
+};
+
+#elifdef LCD_DRIVER_ST7701
+static const lcd_init_cmd_t st7701_init_operations[] = {
+    // {cmd, { data }, data_size, delay_ms}
+    {0xFF, (uint8_t[]){0x77, 0x01, 0x00, 0x00, 0x13}, 5, 0},
+    {0xEF, (uint8_t[]){0x08}, 1, 0},
+    {0xFF, (uint8_t[]){0x77, 0x01, 0x00, 0x00, 0x10}, 5, 0},
+    {0xC0, (uint8_t[]){0x63, 0x00}, 2, 0},
+    {0xC1, (uint8_t[]){0x0D, 0x02}, 2, 0},
+    {0xC2, (uint8_t[]){0x10, 0x08}, 2, 0},
+    {0xCC, (uint8_t[]){0x10}, 1, 0},
+    {0xB0, (uint8_t[]){0x80, 0x09, 0x53, 0x0C, 0xD0, 0x07, 0x0C, 0x09, 0x09, 0x28, 0x06, 0xD4, 0x13, 0x69, 0x2B, 0x71}, 16, 0},
+    {0xB1, (uint8_t[]){0x80, 0x94, 0x5A, 0x10, 0xD3, 0x06, 0x0A, 0x08, 0x08, 0x25, 0x03, 0xD3, 0x12, 0x66, 0x6A, 0x0D}, 16, 0},
+    {0xFF, (uint8_t[]){0x77, 0x01, 0x00, 0x00, 0x11}, 5, 0},
+    {0xB0, (uint8_t[]){0x5D}, 1, 0},
+    {0xB1, (uint8_t[]){0x58}, 1, 0},
+    {0xB2, (uint8_t[]){0x87}, 1, 0},
+    {0xB3, (uint8_t[]){0x80}, 1, 0},
+    {0xB5, (uint8_t[]){0x4E}, 1, 0},
+    {0xB7, (uint8_t[]){0x85}, 1, 0},
+    {0xB8, (uint8_t[]){0x21}, 1, 0},
+    {0xB9, (uint8_t[]){0x10, 0x1F}, 2, 0},
+    {0xBB, (uint8_t[]){0x03}, 1, 0},
+    {0xBC, (uint8_t[]){0x00}, 1, 0},
+    {0xC1, (uint8_t[]){0x78}, 1, 0},
+    {0xC2, (uint8_t[]){0x78}, 1, 0},
+    {0xD0, (uint8_t[]){0x88}, 1, 0},
+    {0xE0, (uint8_t[]){0x00, 0x3A, 0x02}, 3, 0},
+    {0xE1, (uint8_t[]){0x04, 0xA0, 0x00, 0xA0, 0x05, 0xA0, 0x00, 0xA0, 0x00, 0x40, 0x40}, 11, 0},
+    {0xE2, (uint8_t[]){0x30, 0x00, 0x40, 0x40, 0x32, 0xA0, 0x00, 0xA0, 0x00, 0xA0, 0x00, 0xA0, 0x00}, 13, 0},
+    {0xE3, (uint8_t[]){0x00, 0x00, 0x33, 0x33}, 4, 0},
+    {0xE4, (uint8_t[]){0x44, 0x44}, 2, 0},
+    {0xE5, (uint8_t[]){0x09, 0x2E, 0xA0, 0xA0, 0x0B, 0x30, 0xA0, 0xA0, 0x05, 0x2A, 0xA0, 0xA0, 0x07, 0x2C, 0xA0, 0xA0}, 16, 0},
+    {0xE6, (uint8_t[]){0x00, 0x00, 0x33, 0x33}, 4, 0},
+    {0xE7, (uint8_t[]){0x44, 0x44}, 2, 0},
+    {0xE8, (uint8_t[]){0x08, 0x2D, 0xA0, 0xA0, 0x0A, 0x2F, 0xA0, 0xA0, 0x04, 0x29, 0xA0, 0xA0, 0x06, 0x2B, 0xA0, 0xA0}, 16, 0},
+    {0xEB, (uint8_t[]){0x00, 0x00, 0x4E, 0x4E, 0x00, 0x00, 0x00}, 7, 0},
+    {0xEC, (uint8_t[]){0x08, 0x01}, 2, 0},
+    {0xED, (uint8_t[]){0xB0, 0x2B, 0x98, 0xA4, 0x56, 0x7F, 0xFF, 0xFF, 0xFF, 0xFF, 0xF7, 0x65, 0x4A, 0x89, 0xB2, 0x0B}, 16, 0},
+    {0xEF, (uint8_t[]){0x08, 0x08, 0x08, 0x45, 0x3F, 0x54}, 6, 0},
+    {0xFF, (uint8_t[]){0x77, 0x01, 0x00, 0x00, 0x00}, 5, 0},
+    {0x11, (uint8_t[]){0x00}, 1, 120},  // Sleep Out - delay de 120ms
+    {0x29, (uint8_t[]){0x00}, 1, 20},   // Display On - delay de 20ms
+};
+#endif  // #ifdef LCD_DRIVER_EK79007
 
 Arduino_DSI_Display::Arduino_DSI_Display(
-    int16_t w,
-    int16_t h,
-    Arduino_ESP32DSIPanel* dsipanel,
-    uint8_t r,
-    int8_t rst,
-    const lcd_init_cmd_t* init_operations,
-    size_t init_operations_len,
-    uint8_t col_offset1,
-    uint8_t row_offset1,
-    uint8_t col_offset2,
-    uint8_t row_offset2)
-    : Arduino_GFX(w, h), _dsipanel(dsipanel), _rst(rst), _init_operations(init_operations), _init_operations_len(init_operations_len), COL_OFFSET1(col_offset1), ROW_OFFSET1(row_offset1), COL_OFFSET2(col_offset2), ROW_OFFSET2(row_offset2)
+    Arduino_ESP32DSIPanel* dsi_panel,
+    uint16_t w,
+    uint16_t h,
+    uint8_t rotation,
+    int8_t rst)
+    : Arduino_GFX(w, h),
+      _dsi_panel(dsi_panel),
+      _pin_rst(rst),
+      MAX_X{static_cast<uint16_t>(WIDTH - 1)},
+      MAX_Y{static_cast<uint16_t>(HEIGHT - 1)},
+      _framebuffer_size{w * h * sizeof(uint16_t)}
 {
-  _fb_width = COL_OFFSET1 + WIDTH + COL_OFFSET2;
-  _fb_height = ROW_OFFSET1 + HEIGHT + ROW_OFFSET2;
-  _fb_max_x = _fb_width - 1;
-  _fb_max_y = _fb_height - 1;
-  _framebuffer_size = _fb_width * _fb_height * 2;
-  MAX_X = WIDTH - 1;
-  MAX_Y = HEIGHT - 1;
-  setRotation(r);
+  setRotation(rotation);
 }
 
 bool Arduino_DSI_Display::begin(int32_t speed)
 {
-  if (_rst != GFX_NOT_DEFINED)
+  (void)speed;
+
+  _dsi_semaphore = xSemaphoreCreateBinary();
+
+  if (!_dsi_semaphore)
   {
-    pinMode(_rst, OUTPUT);
-    digitalWrite(_rst, HIGH);
-    delay(5);
-    digitalWrite(_rst, LOW);
-    delay(10);
-    digitalWrite(_rst, HIGH);
-    delay(120);
+    log_e("Помилка створення м'ютекса DSI");
+    esp_restart();
   }
 
-  _dsipanel->begin(_fb_width, _fb_height, speed, _init_operations, _init_operations_len);
-  _framebuffer = _dsipanel->getFrameBuffer();
+  xSemaphoreGive(_dsi_semaphore);
 
-  if (!_framebuffer)
+  if (_pin_rst != GFX_NOT_DEFINED)
   {
-    return false;
+    pinMode(_pin_rst, OUTPUT);
+    digitalWrite(_pin_rst, HIGH);
+    delay(100);
+    digitalWrite(_pin_rst, LOW);
+    delay(20);
+    digitalWrite(_pin_rst, HIGH);
+    delay(200);
+    log_i("Викликано скидання дисплея");
   }
+
+  const lcd_init_cmd_t* init_operations;
+  size_t init_operations_len;
+
+#ifdef LCD_DRIVER_EK79007
+  init_operations = ek79007_init_operations;
+  init_operations_len = sizeof(ek79007_init_operations) / sizeof(ek79007_init_operations[0]);
+
+#elifdef LCD_DRIVER_JD9365
+  init_operations = jd9365_init_operations;
+  init_operations_len = sizeof(jd9365_init_operations) / sizeof(jd9365_init_operations[0]);
+
+#elifdef LCD_DRIVER_HX8394
+  init_operations = hx8394_init_operations;
+  init_operations_len = sizeof(hx8394_init_operations) / sizeof(hx8394_init_operations[0]);
+
+#elifdef LCD_DRIVER_JD9165
+  init_operations = jd9165_init_operations;
+  init_operations_len = sizeof(jd9165_init_operations) / sizeof(jd9165_init_operations[0]);
+
+#elifdef LCD_DRIVER_ST7701
+  init_operations = st7701_init_operations;
+  init_operations_len = sizeof(st7701_init_operations) / sizeof(st7701_init_operations[0]);
+
+#endif  // #ifdef LCD_DRIVER_EK79007
+
+  //----------------------------------------------------------------------------------------------
+
+  _dsi_panel->begin(WIDTH, HEIGHT, init_operations, init_operations_len);
+  _panel_handle = _dsi_panel->getPanelHandle();
+  if (!_panel_handle)
+  {
+    log_e("Помилка отримання DSI panel handle");
+    esp_restart();
+  }
+
+  //----------------------------------------------------------------------------------------------
+
+  if (esp_err_t ret = esp_lcd_dpi_panel_get_frame_buffer(_panel_handle, 2, &_lcd_draw_buffers[0], &_lcd_draw_buffers[1]) != ESP_OK)
+  {
+    log_e("Не вдалося отримати буфери: %s", esp_err_to_name(ret));
+    esp_restart();
+  }
+  log_i("Буфери малювання отримано: FB0=%p, FB1=%p", _lcd_draw_buffers[0], _lcd_draw_buffers[1]);
+
+  _draw_buffer = _lcd_draw_buffers[0];
+
+  //----------------------------------------------------------------------------------------------
+
+  esp_lcd_dpi_panel_event_callbacks_t cbs = {
+      .on_color_trans_done = lcd_trans_done_cb,
+      .on_refresh_done = nullptr};
+
+  if (esp_err_t ret = esp_lcd_dpi_panel_register_event_callbacks(_panel_handle, &cbs, this) != ESP_OK)
+  {
+    log_e("Не вдалося зареєструвати колбеки: %s", esp_err_to_name(ret));
+    esp_restart();
+  }
+
+  log_i("LCD колбеки успішно зареєстровано");
+
+  //----------------------------------------------------------------------------------------------
+
+  // Клієнт для заливки
+  ppa_client_config_t ppa_config = {
+      .oper_type = PPA_OPERATION_FILL,
+      .max_pending_trans_num = 1,
+      .data_burst_length = PPA_DATA_BURST_LENGTH_128};
+
+  if (esp_err_t ret = ppa_register_client(&ppa_config, &ppa_fill_client) != ESP_OK)
+  {
+    log_e("PPA Client Error: %s", esp_err_to_name(ret));
+    esp_restart();
+  }
+
+  // Клієнт для масштабування та конвертації
+  ppa_client_config_t srm_config = {
+      .oper_type = PPA_OPERATION_SRM,
+      .max_pending_trans_num = 1,
+      .data_burst_length = PPA_DATA_BURST_LENGTH_128};
+
+  if (ppa_register_client(&srm_config, &ppa_srm_client) != ESP_OK)
+  {
+    log_e("PPA SRM Client Error");
+    esp_restart();
+  }
+
+  log_i("PPA ініціалізовано");
+
+  //----------------------------------------------------------------------------------------------
 
   return true;
 }
 
-void Arduino_DSI_Display::writePixelPreclipped(int16_t x, int16_t y, uint16_t color)
+uint32_t color16to24(uint16_t color565)
 {
-  x += COL_OFFSET1;
-  y += ROW_OFFSET1;
-  uint16_t* fb = _framebuffer;
-  switch (_rotation)
-  {
-    case 1:
-      fb += (int32_t)x * _fb_width;
-      fb += _fb_max_x - y;
-      *fb = color;
-      break;
-    case 2:
-      fb += (int32_t)(_fb_max_y - y) * _fb_width;
-      fb += _fb_max_x - x;
-      *fb = color;
-      break;
-    case 3:
-      fb += (int32_t)(_fb_max_y - x) * _fb_width;
-      fb += y;
-      *fb = color;
-      break;
-    default:  // case 0:
-      fb += (int32_t)y * _fb_width;
-      fb += x;
-      *fb = color;
-  }
-}
+  // Розпаковуємо і відразу зсуваємо на потрібні позиції для 24-біт (8-8-8)
+  uint32_t r = (color565 & 0xF800) >> 8;  // Беремо 5 біт Red і зсуваємо в 0..7
+  uint32_t g = (color565 & 0x07E0) >> 3;  // Беремо 6 біт Green і зсуваємо в 8..15
+  uint32_t b = (color565 & 0x001F) << 3;  // Беремо 5 біт Blue і зсуваємо в 16..23
 
-void Arduino_DSI_Display::writeFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color)
-{
-  // log_i("writeFastVLine(x: %d, y: %d, h: %d)", x, y, h);
-  switch (_rotation)
-  {
-    case 1:
-      writeFastHLineCore(_height - y - h, x, h, color);
-      break;
-    case 2:
-      writeFastVLineCore(_max_x - x, _height - y - h, h, color);
-      break;
-    case 3:
-      writeFastHLineCore(y, _max_x - x, h, color);
-      break;
-    default:  // case 0:
-      writeFastVLineCore(x, y, h, color);
-  }
-}
-
-void Arduino_DSI_Display::writeFastVLineCore(int16_t x, int16_t y, int16_t h, uint16_t color)
-{
-  // log_i("writeFastVLineCore(x: %d, y: %d, h: %d)", x, y, h);
-  if (_ordered_in_range(x, 0, MAX_X) && h)
-  {  // X on screen, nonzero height
-    if (h < 0)
-    {              // If negative height...
-      y += h + 1;  //   Move Y to top edge
-      h = -h;      //   Use positive height
-    }
-    if (y <= MAX_Y)
-    {  // Not off bottom
-      int16_t y2 = y + h - 1;
-      if (y2 >= 0)
-      {  // Not off top
-        // Line partly or fully overlaps screen
-        if (y < 0)
-        {
-          y = 0;
-          h = y2 + 1;
-        }  // Clip top
-        if (y2 > MAX_Y)
-        {
-          h = MAX_Y - y + 1;
-        }  // Clip bottom
-
-        x += COL_OFFSET1;
-        y += ROW_OFFSET1;
-        uint16_t* fb = _framebuffer + ((int32_t)y * _fb_width) + x;
-
-        while (h--)
-        {
-          *fb = color;
-          fb += _fb_width;
-        }
-      }
-    }
-  }
-}
-
-void Arduino_DSI_Display::writeFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
-{
-  // log_i("writeFastHLine(x: %d, y: %d, w: %d)", x, y, w);
-  switch (_rotation)
-  {
-    case 1:
-      writeFastVLineCore(_max_y - y, x, w, color);
-      break;
-    case 2:
-      writeFastHLineCore(_width - x - w, _max_y - y, w, color);
-      break;
-    case 3:
-      writeFastVLineCore(y, _width - x - w, w, color);
-      break;
-    default:  // case 0:
-      writeFastHLineCore(x, y, w, color);
-  }
-}
-
-void Arduino_DSI_Display::writeFastHLineCore(int16_t x, int16_t y, int16_t w, uint16_t color)
-{
-  // log_i("writeFastHLineCore(x: %d, y: %d, w: %d)", x, y, w);
-  if (_ordered_in_range(y, 0, MAX_Y) && w)
-  {  // Y on screen, nonzero width
-    if (w < 0)
-    {              // If negative width...
-      x += w + 1;  //   Move X to left edge
-      w = -w;      //   Use positive width
-    }
-    if (x <= MAX_X)
-    {  // Not off right
-      int16_t x2 = x + w - 1;
-      if (x2 >= 0)
-      {  // Not off left
-        // Line partly or fully overlaps screen
-        if (x < 0)
-        {
-          x = 0;
-          w = x2 + 1;
-        }  // Clip left
-        if (x2 > MAX_X)
-        {
-          w = MAX_X - x + 1;
-        }  // Clip right
-
-        x += COL_OFFSET1;
-        y += ROW_OFFSET1;
-        uint16_t* fb = _framebuffer + ((int32_t)y * _fb_width) + x;
-        uint16_t* cachePos = fb;
-        int16_t writeSize = w * 2;
-        while (w--)
-        {
-          *(fb++) = color;
-        }
-      }
-    }
-  }
-}
-
-void Arduino_DSI_Display::writeFillRectPreclipped(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
-{
-  // log_i("writeFillRectPreclipped(x: %d, y: %d, w: %d, h: %d)", x, y, w, h);
-  if (_rotation > 0)
-  {
-    int16_t t = x;
-    switch (_rotation)
-    {
-      case 1:
-        x = WIDTH - y - h;
-        y = t;
-        t = w;
-        w = h;
-        h = t;
-        break;
-      case 2:
-        x = WIDTH - x - w;
-        y = HEIGHT - y - h;
-        break;
-      case 3:
-        x = y;
-        y = HEIGHT - t - w;
-        t = w;
-        w = h;
-        h = t;
-        break;
-    }
-  }
-  // log_i("adjusted writeFillRectPreclipped(x: %d, y: %d, w: %d, h: %d)", x, y, w, h);
-  x += COL_OFFSET1;
-  y += ROW_OFFSET1;
-  uint16_t* row = _framebuffer;
-  row += y * _fb_width;
-  uint16_t* cachePos = row;
-  row += x;
-  for (int j = 0; j < h; j++)
-  {
-    for (int i = 0; i < w; i++)
-    {
-      row[i] = color;
-    }
-    row += _fb_width;
-  }
+  // Пакуємо в один uint32_t (BGR порядок для PPA Fill)
+  return (b << 16) | (g << 8) | r;
 }
 
 void Arduino_DSI_Display::draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h)
 {
-  if (_isRoundMode)
-  {
-    if (
-        ((y + h - 1) < 0) ||  // Outside top
-        (y > _max_y) ||       // Outside bottom
-        (
-            (x > _roundMaxX[y + h - 1]) &&         // top left
-            ((x + w - 1) < _roundMinX[y]) &&       // top right
-            (x > _roundMaxX[y + h - 1]) &&         // bottom left
-            ((x + w - 1) < _roundMinX[y + h - 1])  // bottom right
-            ))
-    {
-      return;
-    }
-  }
+  xSemaphoreTake(_dsi_semaphore, portMAX_DELAY);
 
-  bool result;
+  _draw_buffer = _lcd_draw_buffers[_back_fb_i];
+  _back_fb_i = 1 - _back_fb_i;
 
-  x += COL_OFFSET1;
-  y += ROW_OFFSET1;
-  switch (_rotation)
-  {
-    case 1:
-      result = gfx_draw_bitmap_to_framebuffer_rotate_1(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
-      break;
-    case 2:
-      result = gfx_draw_bitmap_to_framebuffer_rotate_2(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
-      break;
-    case 3:
-      result = gfx_draw_bitmap_to_framebuffer_rotate_3(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
-      break;
-    default:  // case 0:
-      result = gfx_draw_bitmap_to_framebuffer(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
-  }
+  // uint16_t color565 = __bswap16(color++);
+  //
+  // ppa_out_pic_blk_config_t canvas_cfg = {
+  //     .buffer = _draw_buffer,
+  //     .buffer_size = 1024 * 600 * 2,
+  //     .pic_w = 1024,
+  //     .pic_h = 600,
+  //     .block_offset_x = 0,
+  //     .block_offset_y = 0,
+  //     .fill_cm = PPA_FILL_COLOR_MODE_RGB565,
+  // };
+  // ppa_fill_oper_config_t fill_oper = {
+  //     .out = canvas_cfg,
+  //     .fill_block_w = 1024,
+  //     .fill_block_h = 600,
+  //     .fill_color_val = color16to24(color565),
+  //     .mode = PPA_TRANS_MODE_BLOCKING,
+  // };
+  // ppa_do_fill(ppa_fill_client, &fill_oper);
+
+  // ppa_srm_oper_config_t srm_cfg = {
+  //     .in = {
+  //         .buffer = bitmap,
+  //         .pic_w = static_cast<uint32_t>(w),
+  //         .pic_h = static_cast<uint32_t>(h),
+  //         .block_w = static_cast<uint32_t>(w),
+  //         .block_h = static_cast<uint32_t>(h),
+  //         .srm_cm = PPA_SRM_COLOR_MODE_RGB565,
+  //     },
+  //     .out = {
+  //         .buffer = _draw_buffer,
+  //         .buffer_size = w * h * sizeof(uint16_t),
+  //         .pic_w = static_cast<uint32_t>(w),
+  //         .pic_h = static_cast<uint32_t>(h),
+  //         .srm_cm = PPA_SRM_COLOR_MODE_RGB565,
+  //     },
+  //     .rotation_angle = PPA_SRM_ROTATION_ANGLE_0,
+  //     .scale_x = 1.0f,
+  //     .scale_y = 1.0f,
+  //     .mode = PPA_TRANS_MODE_BLOCKING,
+  // };
+
+  // ppa_do_scale_rotate_mirror(ppa_srm_client, &srm_cfg);
+
+  memcpy(_draw_buffer, bitmap, w * h * sizeof(uint16_t));
+
+  esp_lcd_panel_draw_bitmap(_panel_handle, 0, 0, WIDTH, HEIGHT, _draw_buffer);
+
+  // if (_isRoundMode)
+  // {
+  //   if (
+  //       ((y + h - 1) < 0) ||  // Outside top
+  //       (y > _max_y) ||       // Outside bottom
+  //       (
+  //           (x > _roundMaxX[y + h - 1]) &&         // top left
+  //           ((x + w - 1) < _roundMinX[y]) &&       // top right
+  //           (x > _roundMaxX[y + h - 1]) &&         // bottom left
+  //           ((x + w - 1) < _roundMinX[y + h - 1])  // bottom right
+  //           ))
+  //   {
+  //     return;
+  //   }
+  // }
+
+  // x += COL_OFFSET1;
+  // y += ROW_OFFSET1;
+  // switch (_rotation)
+  // {
+  //   case 1:
+  //     drawBitmapToFramebufferRotate1(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
+  //     break;
+  //   case 2:
+  //     drawBitmapToFramebufferRotate2(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
+  //     break;
+  //   case 3:
+  //     drawBitmapToFramebufferRotate3(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
+  //     break;
+  //   default:  // case 0:
+  //     drawBitmapToFramebuffer(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
+  // }
 }
 
-void Arduino_DSI_Display::flushMainBuff()
+void Arduino_DSI_Display::writePixelPreclipped(int16_t x, int16_t y, uint16_t color)
 {
-  esp_cache_msync(_framebuffer, _framebuffer_size, ESP_CACHE_MSYNC_FLAG_DIR_C2M | ESP_CACHE_MSYNC_FLAG_UNALIGNED);
+  // TODO
 }
 
-uint16_t* Arduino_DSI_Display::getFramebuffer()
+bool IRAM_ATTR Arduino_DSI_Display::lcd_trans_done_cb(esp_lcd_panel_handle_t panel, esp_lcd_dpi_panel_event_data_t* edata, void* user_ctx)
 {
-  return _framebuffer;
+  Arduino_DSI_Display* self = static_cast<Arduino_DSI_Display*>(user_ctx);
+  BaseType_t high_task_wakeup = pdFALSE;
+  xSemaphoreGiveFromISR(self->_dsi_semaphore, &high_task_wakeup);
+  return high_task_wakeup == pdTRUE;
 }
 
 #endif  // #if defined(ESP32) && (CONFIG_IDF_TARGET_ESP32P4)

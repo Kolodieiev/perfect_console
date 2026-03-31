@@ -1,15 +1,13 @@
 #pragma GCC optimize("O3")
-#include "../Arduino_DataBus.h"
-#if !defined(LITTLE_FOOT_PRINT)
-
-#include "pixeler/setup/graphics_setup.h"
-#include "../Arduino_GFX.h"
 #include "Arduino_Canvas.h"
+
+#include "../Arduino_DataBus.h"
+#include "../Arduino_GFX.h"
 
 Arduino_Canvas::Arduino_Canvas(
     int16_t w,
     int16_t h,
-    Arduino_G* output,
+    Arduino_GFX* output,
     int16_t output_x,
     int16_t output_y,
     uint8_t r)
@@ -20,7 +18,6 @@ Arduino_Canvas::Arduino_Canvas(
 
 Arduino_Canvas::~Arduino_Canvas()
 {
-  free(_framebuffer);
   free(_framebuffer2);
 }
 
@@ -28,25 +25,27 @@ bool Arduino_Canvas::begin(int32_t speed)
 {
   if (!_output->begin(speed))
   {
-    log_e("Помилка ініціалізації драйвера дисплею");
+    log_e("Помилка ініціалізації драйвера дисплея");
     esp_restart();
   }
 
-  _buff_size = _width * _height * sizeof(uint16_t);
+  _buff_size = WIDTH * HEIGHT * sizeof(uint16_t);
 
   free(_framebuffer);
   _framebuffer = nullptr;
 
   if (psramInit())
-    _framebuffer = static_cast<uint16_t*>(ps_malloc(_buff_size));
+    _framebuffer = static_cast<uint16_t*>(heap_caps_aligned_alloc(64, _buff_size, MALLOC_CAP_SPIRAM));
   else
-    _framebuffer = static_cast<uint16_t*>(aligned_alloc(16, _buff_size));
+    _framebuffer = static_cast<uint16_t*>(aligned_alloc(64, _buff_size));
 
   if (!_framebuffer)
   {
-    log_e("Помилка виділення пам'яті для буферів дисплею");
+    log_e("Помилка виділення пам'яті для буферів дисплея");
     esp_restart();
   }
+
+  log_i("Пам'ять для канвасу виділено");
 
 #ifdef DOUBLE_BUFFERRING
   if (!psramInit())
@@ -61,7 +60,7 @@ bool Arduino_Canvas::begin(int32_t speed)
 
   if (!_framebuffer2)
   {
-    log_e("Помилка виділення пам'яті для буферів дисплею");
+    log_e("Помилка виділення пам'яті для буферів дисплея");
     esp_restart();
   }
 
@@ -255,19 +254,20 @@ void Arduino_Canvas::draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_t* bi
   switch (_rotation)
   {
     case 1:
-      gfx_draw_bitmap_to_framebuffer_rotate_1(bitmap, w, h, _framebuffer, x, y, _width, _height);
+      drawBitmapToFramebufferRotate1(bitmap, w, h, _framebuffer, x, y, _width, _height);
       break;
     case 2:
-      gfx_draw_bitmap_to_framebuffer_rotate_2(bitmap, w, h, _framebuffer, x, y, _width, _height);
+      drawBitmapToFramebufferRotate2(bitmap, w, h, _framebuffer, x, y, _width, _height);
       break;
     case 3:
-      gfx_draw_bitmap_to_framebuffer_rotate_3(bitmap, w, h, _framebuffer, x, y, _width, _height);
+      drawBitmapToFramebufferRotate3(bitmap, w, h, _framebuffer, x, y, _width, _height);
       break;
     default:  // case 0:
-      gfx_draw_bitmap_to_framebuffer(bitmap, w, h, _framebuffer, x, y, _width, _height);
+      drawBitmapToFramebuffer(bitmap, w, h, _framebuffer, x, y, _width, _height);
   }
 }
 
+// TODO ppa
 void Arduino_Canvas::draw16bitRGBBitmapWithTranColor(int16_t x, int16_t y, const uint16_t* bitmap, uint16_t transparent_color, int16_t w, int16_t h)
 {
   if (_rotation > 0)
@@ -354,12 +354,12 @@ void Arduino_Canvas::draw16bitRGBBitmapWithTranColor(int16_t x, int16_t y, const
   }
 }
 
-void Arduino_Canvas::flushMainBuff()
+void Arduino_Canvas::flushMainBuff()  // TODO
 {
   _output->draw16bitRGBBitmap(_output_x, _output_y, _framebuffer, WIDTH, HEIGHT);
 }
 
-void Arduino_Canvas::duplicateMainBuff()
+void Arduino_Canvas::duplicateMainBuff()  // TODO
 {
 #ifdef DOUBLE_BUFFERRING
   memcpy(_framebuffer2, _framebuffer, _buff_size);
@@ -369,7 +369,7 @@ void Arduino_Canvas::duplicateMainBuff()
 #endif  // DOUBLE_BUFFERRING
 }
 
-void Arduino_Canvas::flushSecondBuff()
+void Arduino_Canvas::flushSecondBuff()  // TODO
 {
 #ifdef DOUBLE_BUFFERRING
   _output->draw16bitRGBBitmap(_output_x, _output_y, _framebuffer2, WIDTH, HEIGHT);
@@ -383,15 +383,3 @@ uint16_t* Arduino_Canvas::getFramebuffer()
 {
   return _framebuffer;
 }
-
-uint16_t* Arduino_Canvas::getDupFramebuffer()
-{
-#ifdef DOUBLE_BUFFERRING
-  return _framebuffer2;
-#else
-  log_e("Подвійну буферизацію не було увімкнуто в налаштуваннях прошивки");
-  esp_restart();
-#endif  // DOUBLE_BUFFERRING
-}
-
-#endif  // !defined(LITTLE_FOOT_PRINT)
