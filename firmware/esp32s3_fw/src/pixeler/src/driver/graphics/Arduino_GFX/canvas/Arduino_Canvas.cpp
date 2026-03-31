@@ -3,6 +3,7 @@
 
 #include "../Arduino_DataBus.h"
 #include "../Arduino_GFX.h"
+#include "pixeler/setup/graphics_setup.h"
 
 Arduino_Canvas::Arduino_Canvas(
     int16_t w,
