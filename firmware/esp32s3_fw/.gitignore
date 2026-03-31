@@ -2,6 +2,7 @@
 
 !partitions.csv
 !partitions-s3.csv
+!partitions-p4.csv
 !platformio.ini
 
 !.gitignore
