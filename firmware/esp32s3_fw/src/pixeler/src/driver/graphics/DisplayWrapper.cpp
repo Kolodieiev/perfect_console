@@ -335,10 +335,12 @@ namespace pixeler
     _canvas.setTextWrap(false);
 #endif  // #ifdef DIRECT_DRAWING
 
+#ifdef INVERT_COLORS
     _output->invertDisplay(INVERT_COLORS);
+#endif  //  #ifdef INVERT_COLORS
+
     _output->setRotation(DISPLAY_ROTATION);
 
-#ifdef DOUBLE_BUFFERRING
     _sync_mutex = xSemaphoreCreateMutex();
 
     if (!_sync_mutex)
@@ -347,6 +349,7 @@ namespace pixeler
       esp_restart();
     }
 
+#ifdef DOUBLE_BUFFERRING
     BaseType_t result = xTaskCreatePinnedToCore(displayRendererTask, "dRend", 5 * 512, this, 11, nullptr, 0);
 
     if (result != pdPASS)
@@ -366,24 +369,24 @@ namespace pixeler
   }
 #endif  // ENABLE_SCREENSHOTER
 
-#ifdef BACKLIGHT_PIN
+#ifdef PIN_DISPLAY_BL
   void DisplayWrapper::enableBackLight()
   {
 #ifdef HAS_BL_PWM
-    ledcAttach(BACKLIGHT_PIN, PWM_FREQ, PWM_RESOLUTION);
-    ledcWrite(BACKLIGHT_PIN, _cur_brightness);
+    ledcAttach(PIN_DISPLAY_BL, DISPLAY_BL_PWM_FREQ, DISPLAY_BL_PWM_RES);
+    ledcWrite(PIN_DISPLAY_BL, _cur_brightness);
 #else
-    pinMode(BACKLIGHT_PIN, OUTPUT);
-    digitalWrite(BACKLIGHT_PIN, HIGH);
+    pinMode(PIN_DISPLAY_BL, OUTPUT);
+    digitalWrite(PIN_DISPLAY_BL, HIGH);
 #endif  // HAS_BL_PWM
   }
 
   void DisplayWrapper::disableBackLight()
   {
 #ifdef HAS_BL_PWM
-    ledcDetach(BACKLIGHT_PIN);
+    ledcDetach(PIN_DISPLAY_BL);
 #endif  // HAS_BL_PWM
-    digitalWrite(BACKLIGHT_PIN, LOW);
+    digitalWrite(PIN_DISPLAY_BL, LOW);
   }
 
 #ifdef HAS_BL_PWM
@@ -393,7 +396,7 @@ namespace pixeler
       fillScreen(COLOR_BLACK);
 
     _cur_brightness = value;
-    ledcWrite(BACKLIGHT_PIN, value);
+    ledcWrite(PIN_DISPLAY_BL, value);
   }
 
   uint8_t DisplayWrapper::getBrightness() const
@@ -401,7 +404,7 @@ namespace pixeler
     return _cur_brightness;
   }
 #endif  // HAS_BL_PWM
-#endif  // BACKLIGHT_PIN
+#endif  // PIN_DISPLAY_BL
 
 #ifdef GRAPHICS_ENABLED
 #ifndef DIRECT_DRAWING
@@ -444,14 +447,14 @@ namespace pixeler
       _canvas.print(fps_str);
 #endif  // SHOW_FPS
 
-#ifdef DOUBLE_BUFFERRING
       xSemaphoreTake(_sync_mutex, portMAX_DELAY);
+#ifdef DOUBLE_BUFFERRING
       _has_frame = true;
       _canvas.duplicateMainBuff();
-      xSemaphoreGive(_sync_mutex);
 #else
       _canvas.flushMainBuff();
 #endif  // DOUBLE_BUFFERRING
+      xSemaphoreGive(_sync_mutex);
 
 #ifdef ENABLE_SCREENSHOTER
       if (_take_screenshot)
