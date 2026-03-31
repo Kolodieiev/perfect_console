@@ -9,11 +9,11 @@
 #include "Arduino_GFX.h"
 
 #include <pgmspace.h>
-#include "pixeler/setup/graphics_setup.h"
 
 #include "Arduino_DataBus.h"
 #include "float.h"
 #include "font/glcdfont.h"
+#include "pixeler/setup/graphics_setup.h"
 
 /**************************************************************************/
 /*!
@@ -22,11 +22,7 @@
   @param  h   Display height, in pixels
 */
 /**************************************************************************/
-#if defined(LITTLE_FOOT_PRINT)
-Arduino_GFX::Arduino_GFX(int16_t w, int16_t h) : WIDTH(w), HEIGHT(h)
-#else
-Arduino_GFX::Arduino_GFX(int16_t w, int16_t h) : Arduino_G(w, h)
-#endif  // !defined(LITTLE_FOOT_PRINT)
+Arduino_GFX::Arduino_GFX(uint16_t w, uint16_t h) : WIDTH{w}, HEIGHT{h}
 {
   _width = WIDTH;
   _height = HEIGHT;
@@ -45,12 +41,13 @@ Arduino_GFX::Arduino_GFX(int16_t w, int16_t h) : Arduino_G(w, h)
   text_pixel_margin = 0;
   _rotation = 0;
   wrap = true;
-#if !defined(ATTINY_CORE)
   gfxFont = NULL;
-#if defined(U8G2_FONT_SUPPORT)
   u8g2Font = NULL;
-#endif  // defined(U8G2_FONT_SUPPORT)
-#endif  // !defined(ATTINY_CORE)
+}
+
+Arduino_GFX::~Arduino_GFX()
+{
+  free(_framebuffer);
 }
 
 /**************************************************************************/
@@ -1293,13 +1290,9 @@ void Arduino_GFX::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color
             xAdvance = pgm_read_byte(&glyph->xAdvance),
             yAdvance = pgm_read_byte(&gfxFont->yAdvance),
             baseline = yAdvance * 2 / 3;  // TODO: baseline is an arbitrary currently, may be define in font file
-#ifdef __AVR__
-    int8_t xo = pgm_read_byte(&glyph->xOffset),
-           yo = pgm_read_byte(&glyph->yOffset);
-#else
+
     int8_t xo = pgm_read_sbyte(&glyph->xOffset),
            yo = pgm_read_sbyte(&glyph->yOffset);
-#endif
     uint8_t xx, yy, bits = 0, bit = 0;
     int16_t xo16 = xo, yo16 = yo;
 
@@ -2279,6 +2272,292 @@ bool Arduino_GFX::enableRoundMode()
     }
     // endWrite();
 
+    return true;
+  }
+}
+
+bool Arduino_GFX::drawBitmapToFramebuffer(
+    const uint16_t* from_bitmap,
+    int16_t bitmap_w,
+    int16_t bitmap_h,
+    uint16_t* framebuffer,
+    int16_t x,
+    int16_t y,
+    int16_t framebuffer_w,
+    int16_t framebuffer_h) const
+{
+  int16_t max_X = framebuffer_w - 1;
+  int16_t max_Y = framebuffer_h - 1;
+  if (
+      ((x + bitmap_w - 1) < 0) ||  // Outside left
+      ((y + bitmap_h - 1) < 0) ||  // Outside top
+      (x > max_X) ||               // Outside right
+      (y > max_Y)                  // Outside bottom
+  )
+  {
+    return false;
+  }
+  else
+  {
+    int16_t x_skip = 0;
+    if ((y + bitmap_h - 1) > max_Y)
+    {
+      bitmap_h -= (y + bitmap_h - 1) - max_Y;
+    }
+    if (y < 0)
+    {
+      from_bitmap -= y * bitmap_w;
+      bitmap_h += y;
+      y = 0;
+    }
+    if ((x + bitmap_w - 1) > max_X)
+    {
+      x_skip = (x + bitmap_w - 1) - max_X;
+      bitmap_w -= x_skip;
+    }
+    if (x < 0)
+    {
+      from_bitmap -= x;
+      x_skip -= x;
+      bitmap_w += x;
+      x = 0;
+    }
+
+    uint16_t* row = framebuffer;
+    row += y * framebuffer_w;  // shift framebuffer to y offset
+    row += x;                  // shift framebuffer to x offset
+    if (((framebuffer_w & 1) == 0) && ((x_skip & 1) == 0) && ((bitmap_w & 1) == 0))
+    {
+      uint32_t* row2 = (uint32_t*)row;
+      uint32_t* from_bitmap2 = (uint32_t*)from_bitmap;
+      int16_t framebuffer_w2 = framebuffer_w >> 1;
+      int16_t xskip2 = x_skip >> 1;
+      int16_t w2 = bitmap_w >> 1;
+
+      int16_t j = bitmap_h;
+      while (j--)
+      {
+        for (int16_t i = 0; i < w2; ++i)
+        {
+          row2[i] = *from_bitmap2++;
+        }
+        from_bitmap2 += xskip2;
+        row2 += framebuffer_w2;
+      }
+    }
+    else
+    {
+      int16_t j = bitmap_h;
+      while (j--)
+      {
+        for (int i = 0; i < bitmap_w; ++i)
+        {
+          row[i] = *from_bitmap++;
+        }
+        from_bitmap += x_skip;
+        row += framebuffer_w;
+      }
+    }
+    return true;
+  }
+}
+
+bool Arduino_GFX::drawBitmapToFramebufferRotate1(
+    const uint16_t* from_bitmap,
+    int16_t bitmap_w,
+    int16_t bitmap_h,
+    uint16_t* framebuffer,
+    int16_t x,
+    int16_t y,
+    int16_t framebuffer_w,
+    int16_t framebuffer_h) const
+{
+  int16_t max_X = framebuffer_w - 1;
+  int16_t max_Y = framebuffer_h - 1;
+  if (
+      ((x + bitmap_w - 1) < 0) ||  // Outside left
+      ((y + bitmap_h - 1) < 0) ||  // Outside top
+      (x > max_X) ||               // Outside right
+      (y > max_Y)                  // Outside bottom
+  )
+  {
+    return false;
+  }
+  else
+  {
+    int16_t x_skip = 0;
+    if ((y + bitmap_h - 1) > max_Y)
+    {
+      bitmap_h -= (y + bitmap_h - 1) - max_Y;
+    }
+    if (y < 0)
+    {
+      from_bitmap -= y * bitmap_w;
+      bitmap_h += y;
+      y = 0;
+    }
+    if ((x + bitmap_w - 1) > max_X)
+    {
+      x_skip = (x + bitmap_w - 1) - max_X;
+      bitmap_w -= x_skip;
+    }
+    if (x < 0)
+    {
+      from_bitmap -= x;
+      x_skip -= x;
+      bitmap_w += x;
+      x = 0;
+    }
+
+    uint16_t* p;
+    int16_t i;
+    for (int16_t j = 0; j < bitmap_h; j++)
+    {
+      p = framebuffer;
+      p += (x * framebuffer_h);          // shift framebuffer to y offset
+      p += (framebuffer_h - y - j - 1);  // shift framebuffer to x offset
+
+      i = bitmap_w;
+      while (i--)
+      {
+        *p = *from_bitmap++;
+        p += framebuffer_h;
+      }
+      from_bitmap += x_skip;
+    }
+    return true;
+  }
+}
+
+bool Arduino_GFX::drawBitmapToFramebufferRotate2(
+    const uint16_t* from_bitmap,
+    int16_t bitmap_w,
+    int16_t bitmap_h,
+    uint16_t* framebuffer,
+    int16_t x,
+    int16_t y,
+    int16_t framebuffer_w,
+    int16_t framebuffer_h) const
+{
+  int16_t max_X = framebuffer_w - 1;
+  int16_t max_Y = framebuffer_h - 1;
+  if (
+      ((x + bitmap_w - 1) < 0) ||  // Outside left
+      ((y + bitmap_h - 1) < 0) ||  // Outside top
+      (x > max_X) ||               // Outside right
+      (y > max_Y)                  // Outside bottom
+  )
+  {
+    return false;
+  }
+  else
+  {
+    int16_t x_skip = 0;
+    if ((y + bitmap_h - 1) > max_Y)
+    {
+      bitmap_h -= (y + bitmap_h - 1) - max_Y;
+    }
+    if (y < 0)
+    {
+      from_bitmap -= y * bitmap_w;
+      bitmap_h += y;
+      y = 0;
+    }
+    if ((x + bitmap_w - 1) > max_X)
+    {
+      x_skip = (x + bitmap_w - 1) - max_X;
+      bitmap_w -= x_skip;
+    }
+    if (x < 0)
+    {
+      from_bitmap -= x;
+      x_skip -= x;
+      bitmap_w += x;
+      x = 0;
+    }
+
+    uint16_t* row = framebuffer;
+    row += (max_Y - y) * framebuffer_w;   // shift framebuffer to y offset
+    row += framebuffer_w - x - bitmap_w;  // shift framebuffer to x offset
+    int16_t i;
+    int16_t j = bitmap_h;
+    while (j--)
+    {
+      i = bitmap_w;
+      while (i--)
+      {
+        row[i] = *from_bitmap++;
+      }
+      from_bitmap += x_skip;
+      row -= framebuffer_w;
+    }
+    return true;
+  }
+}
+
+bool Arduino_GFX::drawBitmapToFramebufferRotate3(
+    const uint16_t* from_bitmap,
+    int16_t bitmap_w,
+    int16_t bitmap_h,
+    uint16_t* framebuffer,
+    int16_t x,
+    int16_t y,
+    int16_t framebuffer_w,
+    int16_t framebuffer_h) const
+{
+  int16_t max_X = framebuffer_w - 1;
+  int16_t max_Y = framebuffer_h - 1;
+  if (
+      ((x + bitmap_w - 1) < 0) ||  // Outside left
+      ((y + bitmap_h - 1) < 0) ||  // Outside top
+      (x > max_X) ||               // Outside right
+      (y > max_Y)                  // Outside bottom
+  )
+  {
+    return false;
+  }
+  else
+  {
+    int16_t x_skip = 0;
+    if ((y + bitmap_h - 1) > max_Y)
+    {
+      bitmap_h -= (y + bitmap_h - 1) - max_Y;
+    }
+    if (y < 0)
+    {
+      from_bitmap -= y * bitmap_w;
+      bitmap_h += y;
+      y = 0;
+    }
+    if ((x + bitmap_w - 1) > max_X)
+    {
+      x_skip = (x + bitmap_w - 1) - max_X;
+      bitmap_w -= x_skip;
+    }
+    if (x < 0)
+    {
+      from_bitmap -= x;
+      x_skip -= x;
+      bitmap_w += x;
+      x = 0;
+    }
+
+    uint16_t* p;
+    int16_t i;
+    for (int16_t j = 0; j < bitmap_h; j++)
+    {
+      p = framebuffer;
+      p += ((max_X - x) * framebuffer_h);  // shift framebuffer to y offset
+      p += y + j;                          // shift framebuffer to x offset
+
+      i = bitmap_w;
+      while (i--)
+      {
+        *p = *from_bitmap++;
+        p -= framebuffer_h;
+      }
+      from_bitmap += x_skip;
+    }
     return true;
   }
 }

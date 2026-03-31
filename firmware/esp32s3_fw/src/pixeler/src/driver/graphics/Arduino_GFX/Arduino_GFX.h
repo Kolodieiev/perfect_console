@@ -9,11 +9,7 @@
 #include <Print.h>
 
 #include "Arduino_DataBus.h"
-#include "Arduino_G.h"
-
-#if !defined(ATTINY_CORE)
 #include "gfxfont.h"
-#endif  // !defined(ATTINY_CORE)
 
 #ifndef DEGTORAD
 #define DEGTORAD 0.017453292519943295769236907684886F
@@ -52,30 +48,7 @@
 
 #define COLOR_TRANSPARENT 0xF81F  // Колір rgb(255, 0, 255)
 
-// Many (but maybe not all) non-AVR board installs define macros
-// for compatibility with existing PROGMEM-reading AVR code.
-// Do our own checks and defines here for good measure...
-
-#ifndef pgm_read_byte
-#define pgm_read_byte(addr) (*(const unsigned char*)(addr))
-#endif
-#ifndef pgm_read_sbyte
 #define pgm_read_sbyte(addr) (*(const signed char*)(addr))
-#endif
-#ifndef pgm_read_word
-#define pgm_read_word(addr) (*(const unsigned short*)(addr))
-#endif
-#ifndef pgm_read_dword
-#define pgm_read_dword(addr) (*(const unsigned long*)(addr))
-#endif
-// workaround of a15 asm compile error
-#ifdef ESP8266
-#undef pgm_read_word
-#define pgm_read_word(addr) (*(const unsigned short*)(addr))
-#endif
-
-// Pointers are a peculiar case...typically 16-bit on AVR boards,
-// 32 bits elsewhere.  Try to accommodate both...
 
 #if !defined(__INT_MAX__) || (__INT_MAX__ > 0xFFFF)
 #define pgm_read_pointer(addr) ((void*)pgm_read_dword(addr))
@@ -143,15 +116,17 @@ GFX_INLINE static uint8_t* pgm_read_bitmap_ptr(const GFXfont* gfxFont)
 #if defined(LITTLE_FOOT_PRINT)
 class Arduino_GFX : public Print
 #else
-class Arduino_GFX : public Print, public Arduino_G
+class Arduino_GFX : public Print
 #endif  // !defined(LITTLE_FOOT_PRINT)
 {
 public:
-  Arduino_GFX(int16_t w, int16_t h);  // Constructor
+  Arduino_GFX(uint16_t w, uint16_t h);  // Constructor
+  virtual ~Arduino_GFX();
 
   // This MUST be defined by the subclass:
   virtual bool begin(int32_t speed = GFX_NOT_DEFINED) = 0;
   virtual void writePixelPreclipped(int16_t x, int16_t y, uint16_t color) = 0;
+  virtual void draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h) = 0;
 
   // TRANSACTION API / CORE DRAW API
   // These MAY be overridden by the subclass to provide device-specific
@@ -196,20 +171,16 @@ public:
   void setTextSize(uint8_t sx, uint8_t sy);
   void setTextSize(uint8_t sx, uint8_t sy, uint8_t pixel_margin);
 
-#if !defined(ATTINY_CORE)
   void setFont(const GFXfont* f = NULL);
-#if defined(U8G2_FONT_SUPPORT)
   void setFont(const uint8_t* font);
   void setUTF8Print(bool isEnable);
   uint16_t u8g2_font_get_word(const uint8_t* font, uint8_t offset);
   uint8_t u8g2_font_decode_get_unsigned_bits(uint8_t cnt);
   int8_t u8g2_font_decode_get_signed_bits(uint8_t cnt);
   void u8g2_font_decode_len(uint8_t len, uint8_t is_foreground, uint16_t color, uint16_t bg);
-#endif  // defined(U8G2_FONT_SUPPORT)
   virtual void flushMainBuff();
   virtual void duplicateMainBuff();
   virtual void flushSecondBuff();
-#endif  // !defined(ATTINY_CORE)
 
   // adopt from LovyanGFX
   void drawEllipse(int16_t x, int16_t y, int16_t rx, int16_t ry, uint16_t color);
@@ -221,7 +192,6 @@ public:
   void writeFillArcHelper(int16_t cx, int16_t cy, int16_t oradius, int16_t iradius, float start, float end, uint16_t color);
 
   virtual void writeSlashLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
-  virtual void draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h);
   virtual void draw16bitRGBBitmapWithTranColor(int16_t x, int16_t y, const uint16_t* bitmap, uint16_t transparent_color, int16_t w, int16_t h);
   virtual void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg);
   /**********************************************************************/
@@ -364,11 +334,52 @@ public:
   }
 
 protected:
-#if !defined(ATTINY_CORE)
-  GFXfont* gfxFont;  ///< Pointer to special font
-#endif               // !defined(ATTINY_CORE)
+  // TODO virtual виводити через PPA ?
+  bool drawBitmapToFramebuffer(
+      const uint16_t* from_bitmap,
+      int16_t bitmap_w,
+      int16_t bitmap_h,
+      uint16_t* framebuffer,
+      int16_t x,
+      int16_t y,
+      int16_t framebuffer_w,
+      int16_t framebuffer_h) const;
 
-#if defined(U8G2_FONT_SUPPORT)
+  bool drawBitmapToFramebufferRotate1(
+      const uint16_t* from_bitmap,
+      int16_t bitmap_w,
+      int16_t bitmap_h,
+      uint16_t* framebuffer,
+      int16_t x,
+      int16_t y,
+      int16_t framebuffer_w,
+      int16_t framebuffer_h) const;
+
+  bool drawBitmapToFramebufferRotate2(
+      const uint16_t* from_bitmap,
+      int16_t bitmap_w,
+      int16_t bitmap_h,
+      uint16_t* framebuffer,
+      int16_t x,
+      int16_t y,
+      int16_t framebuffer_w,
+      int16_t framebuffer_h) const;
+
+  bool drawBitmapToFramebufferRotate3(
+      const uint16_t* from_bitmap,
+      int16_t bitmap_w,
+      int16_t bitmap_h,
+      uint16_t* framebuffer,
+      int16_t x,
+      int16_t y,
+      int16_t framebuffer_w,
+      int16_t framebuffer_h) const;
+
+protected:
+  uint16_t* _framebuffer{nullptr};
+
+  GFXfont* gfxFont;  ///< Pointer to special font
+
   const uint8_t* u8g2Font;
   const uint8_t* _u8g2_decode_ptr;
   int16_t* _roundMinX;
@@ -380,17 +391,10 @@ protected:
   uint16_t _u8g2_start_pos_unicode;
   int16_t _u8g2_target_x;
   int16_t _u8g2_target_y;
-#if defined(LITTLE_FOOT_PRINT)
-  int16_t
-      WIDTH,   ///< This is the 'raw' display width - never changes
-      HEIGHT;  ///< This is the 'raw' display height - never changes
-#endif         // defined(LITTLE_FOOT_PRINT)
 
   int16_t
-      _width,   ///< Display width as modified by current rotation
-      _height,  ///< Display height as modified by current rotation
-      _max_x,   ///< x zero base bound (_width - 1)
-      _max_y,   ///< y zero base bound (_height - 1)
+      _max_x,  ///< x zero base bound (_width - 1)
+      _max_y,  ///< y zero base bound (_height - 1)
       _min_text_x,
       _min_text_y,
       _max_text_x,
@@ -401,7 +405,12 @@ protected:
       textcolor,    ///< 16-bit background color for print()
       textbgcolor;  ///< 16-bit text color for print()
 
-  uint8_t _utf8_state = 0;
+  uint16_t _width;        ///< Display width as modified by current rotation
+  uint16_t _height;       ///< Display height as modified by current rotation
+  uint16_t const WIDTH;   ///< This is the 'raw' display width - never changes
+  uint16_t const HEIGHT;  ///< This is the 'raw' display height - never changes
+
+  uint8_t _utf8_state{0};
   uint8_t _u8g2_glyph_cnt;
   uint8_t _u8g2_bits_per_0;
   uint8_t _u8g2_bits_per_1;
@@ -428,7 +437,6 @@ protected:
       _rotation;          ///< Display rotation (0 thru 3)
 
   uint8_t _u8g2_decode_bit_pos;
-#endif  // defined(U8G2_FONT_SUPPORT)
 
   bool _isRoundMode = false;
   bool _enableUTF8Print = false;
