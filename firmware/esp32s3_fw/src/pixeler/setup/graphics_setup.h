@@ -91,7 +91,7 @@
 // #define BUSS_FREQUENCY 60000000
 // #define LANE_BITRATE 1200
 
-// #define CLOCK_SOURCE MIPI_DSI_PHY_PLLREF_CLK_SRC_PLL_F20M
+// #define CLOCK_SOURCE MIPI_DSI_PHY_PLLREF_CLK_SRC_PLL_F20M // Для ревізії чіпа P4 3+ Потрібно задати інше джерело тактування
 
 // #define PIN_LCD_RESET 27
 
