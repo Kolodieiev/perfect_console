@@ -10,7 +10,7 @@ void setup()
   if (!pixeler::_ccpu.connect())
     esp_restart();
 
-  // Увімкнути живлення дисплею з допоміжного МК.
+  // Увімкнути живлення дисплея з допоміжного МК.
   uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_ON, CH_PIN_DISPLAY_PWR};
   _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data));
 
