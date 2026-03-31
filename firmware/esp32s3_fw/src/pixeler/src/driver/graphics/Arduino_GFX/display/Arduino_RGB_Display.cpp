@@ -299,16 +299,16 @@ void Arduino_RGB_Display::draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_
   switch (_rotation)
   {
     case 1:
-      result = gfx_draw_bitmap_to_framebuffer_rotate_1(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
+      result = drawBitmapToFramebufferRotate1(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
       break;
     case 2:
-      result = gfx_draw_bitmap_to_framebuffer_rotate_2(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
+      result = drawBitmapToFramebufferRotate2(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
       break;
     case 3:
-      result = gfx_draw_bitmap_to_framebuffer_rotate_3(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
+      result = drawBitmapToFramebufferRotate3(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
       break;
     default:  // case 0:
-      result = gfx_draw_bitmap_to_framebuffer(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
+      result = drawBitmapToFramebuffer(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
   }
 }
 
