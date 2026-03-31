@@ -42,7 +42,7 @@ namespace pixeler
     /**
      * @brief Повертає ідентифікатор контексту, який було встановлено методом openContextByID.
      *
-     * @return ContextID - унікальний ідентифікатор дисплею.
+     * @return ContextID - унікальний ідентифікатор дисплея.
      */
     ContextID getNextContextID() const;
 
