@@ -147,7 +147,7 @@ void deinit_color_constants(lua_State* L)
 int lua_iwgt_forced_draw(lua_State* L)
 {
   IWidget* widget = *static_cast<IWidget**>(lua_check_instance(L, 1, STR_TYPE_NAME_IWIDGET));
-  widget->forcedDraw();
+  widget->drawForced();
   return 0;
 }
 
@@ -317,7 +317,7 @@ int lua_iwgt_set_back_color(lua_State* L)
 // -------------------------------------------------------------------------------------------------------------
 
 const struct luaL_Reg TYPE_METH_IWIDGET[] = {
-    {"forcedDraw", lua_iwgt_forced_draw},
+    {"drawForced", lua_iwgt_forced_draw},
     {"setPos", lua_iwgt_set_pos},
     {"setHeight", lua_iwgt_set_height},
     {"getHeight", lua_iwgt_get_hight},

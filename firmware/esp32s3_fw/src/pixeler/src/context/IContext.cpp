@@ -34,7 +34,7 @@ namespace pixeler
             if (millis() - _toast_birthtime > _toast_lifetime)
               removeToast();
             else
-              _toast_label->forcedDraw();
+              _toast_label->drawForced();
           }
           xSemaphoreGive(_layout_mutex);
 
@@ -173,7 +173,7 @@ namespace pixeler
     _notification = nullptr;
 
     if (_layout)
-      _layout->forcedDraw();
+      _layout->drawForced();
   }
 
   bool IContext::takeLayoutMutex()
@@ -192,7 +192,7 @@ namespace pixeler
     _toast_label = nullptr;
 
     if (_layout)
-      _layout->forcedDraw();
+      _layout->drawForced();
   }
 
 #endif  // #ifdef GRAPHICS_ENABLED

@@ -38,7 +38,7 @@ bool FilesContext::loop()
       else
       {
         _mode = MODE_NAVIGATION;
-        getLayout()->forcedDraw();
+        getLayout()->drawForced();
       }
 
       delete _lua_context;
@@ -737,7 +737,7 @@ void FilesContext::ok()
   {
     hideNotification();
     _mode = MODE_NAVIGATION;
-    getLayout()->forcedDraw();
+    getLayout()->drawForced();
   }
 }
 

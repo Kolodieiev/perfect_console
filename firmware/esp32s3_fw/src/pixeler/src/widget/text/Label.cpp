@@ -553,7 +553,7 @@ namespace pixeler
     if (_back_img)
     {
       _back_img->setParent(this);
-      _back_img->forcedDraw();
+      _back_img->drawForced();
     }
 
     if (str_pix_num + _h_padding * 2 - 2 < _width)

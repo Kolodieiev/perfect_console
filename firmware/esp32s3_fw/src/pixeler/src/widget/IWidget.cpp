@@ -21,7 +21,7 @@ namespace pixeler
     return _type_ID;
   }
 
-  void IWidget::forcedDraw()
+  void IWidget::drawForced()
   {
     _is_changed = true;
     onDraw();

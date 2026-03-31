@@ -60,10 +60,10 @@ namespace pixeler
   {
     clear();
 
-    _title_lbl->forcedDraw();
-    _msg_lbl->forcedDraw();
-    _left_lbl->forcedDraw();
-    _right_lbl->forcedDraw();
+    _title_lbl->drawForced();
+    _msg_lbl->drawForced();
+    _left_lbl->drawForced();
+    _right_lbl->drawForced();
   }
 
   Notification* Notification::clone(uint16_t id) const

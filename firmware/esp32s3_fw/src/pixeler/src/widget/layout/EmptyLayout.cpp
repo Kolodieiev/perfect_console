@@ -30,7 +30,7 @@ namespace pixeler
       clear();
 
       for (size_t i{0}; i < _widgets.size(); ++i)
-        _widgets[i]->forcedDraw();
+        _widgets[i]->drawForced();
     }
   }
 

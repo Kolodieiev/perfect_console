@@ -83,5 +83,5 @@ void HomeContext::updateBattVoltage()
   String volt_str = String(bat_voltage);
   _batt_volt_lbl->setText(volt_str);
 
-  getLayout()->forcedDraw();
+  getLayout()->drawForced();
 }

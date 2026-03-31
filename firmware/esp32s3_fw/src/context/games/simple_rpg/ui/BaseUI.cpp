@@ -20,7 +20,7 @@ namespace simple_rpg
   {
     // Відмальовуємо лічильник кроликів через примусове малювання.
     // Через звичайне малювання, оптимізатор не дасть відмалюватися Label-у.
-    _bunny_counter_lbl->forcedDraw();
+    _bunny_counter_lbl->drawForced();
   }
 
   void BaseUI::updBunnyNum(uint16_t value)
