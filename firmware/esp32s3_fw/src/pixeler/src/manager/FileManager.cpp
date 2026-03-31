@@ -1,18 +1,33 @@
 #pragma GCC optimize("O3")
 #include "FileManager.h"
 
-#include <dirent.h>
+#include <SPI.h>
 #include <errno.h>
 #include <esp_task_wdt.h>
 #include <sd_diskio.h>
-#include <sys/stat.h>
 
 #include <cstring>
 #include <vector>
 
-#include "pixeler/setup/sd_setup.h"
 #include "pixeler/src/manager/SPI_Manager.h"
 #include "pixeler/src/util/MutexGuard.h"
+
+#ifdef SD_TYPE_MMC
+// clang-format off
+#include <ff.h>
+#include <diskio_sdmmc.h>
+// clang-format on
+#include <driver/sdmmc_default_configs.h>
+#include <driver/sdmmc_defs.h>
+#include <driver/sdmmc_host.h>
+#include <esp_vfs_fat.h>
+#include <pins_arduino.h>
+#include <sdmmc_cmd.h>
+#if SOC_SDMMC_IO_POWER_EXTERNAL
+#include <sd_pwr_ctrl.h>
+#include <sd_pwr_ctrl_by_on_chip_ldo.h>
+#endif
+#endif  // #ifdef SD_TYPE_MMC
 
 #define IDLE_WD_GUARD_TIME 250U
 #define OPT_BLOCK_SIZE 16384
@@ -914,7 +929,7 @@ namespace pixeler
     if (_doneHandler)
       _doneHandler(result, _doneArg);
 
-    vTaskDelete(NULL);
+    vTaskDelete(nullptr);
   }
 
   void FileManager::cancel()
@@ -967,6 +982,18 @@ namespace pixeler
     return S_ISDIR(st.st_mode);
   }
 
+  void FileManager::enableSdPower()
+  {
+#ifdef SD_PIN_PWR_ON
+    pinMode(SD_PIN_PWR_ON, OUTPUT);
+    digitalWrite(SD_PIN_PWR_ON, !SD_PWR_ON_LVL);
+    delay(200);
+
+    digitalWrite(SD_PIN_PWR_ON, SD_PWR_ON_LVL);
+    delay(200);
+#endif  // #ifdef SD_PIN_PWR_ON
+  }
+
   bool FileManager::mount(SemaphoreHandle_t bus_mutex)
   {
     if (_pdrv != 0xFF)
@@ -974,6 +1001,9 @@ namespace pixeler
       log_i("Карту пам'яті було примонтовано раніше");
       return true;
     }
+
+    if (_sd_mutex && !_is_ext_lock)
+      vSemaphoreDelete(_sd_mutex);
 
     if (!bus_mutex)
     {
@@ -994,20 +1024,14 @@ namespace pixeler
 
     MutexGuard lock(_sd_mutex);
 
-    pinMode(SD_PIN_CS, OUTPUT);
-    digitalWrite(SD_PIN_CS, HIGH);
+#ifdef SD_TYPE_SPI
+    enableSdPower();
 
-#ifdef SD_PIN_PWR_ON
-    pinMode(SD_PIN_PWR_ON, OUTPUT);
-    digitalWrite(SD_PIN_PWR_ON, !SD_PWR_ON_LVL);
-    delay(200);
+    pinMode(SDSPI_PIN_CS, OUTPUT);
+    digitalWrite(SDSPI_PIN_CS, HIGH);
 
-    digitalWrite(SD_PIN_PWR_ON, SD_PWR_ON_LVL);
-    delay(200);
-#endif  // #ifdef SD_PIN_PWR_ON
-
-    SPI_Manager::initBus(SD_SPI_BUS, SD_PIN_SCLK, SD_PIN_MISO, SD_PIN_MOSI);
-    SPIClass* spi = SPI_Manager::getSpi4Bus(SD_SPI_BUS);
+    SPI_Manager::initBus(SDSPI_BUS, SDSPI_PIN_SCLK, SDSPI_PIN_MISO, SDSPI_PIN_MOSI);
+    SPIClass* spi = SPI_Manager::getSpi4Bus(SDSPI_BUS);
 
     if (!spi || !spi->begin())
     {
@@ -1015,7 +1039,7 @@ namespace pixeler
       return false;
     }
 
-    _pdrv = sdcard_init(SD_PIN_CS, spi, SD_FREQUENCY);
+    _pdrv = sdcard_init(SDSPI_PIN_CS, spi, SDSPI_FREQUENCY);
     if (_pdrv == 0xFF)
     {
       log_e("Помилка ініціалізації SD");
@@ -1031,12 +1055,115 @@ namespace pixeler
       return false;
     }
 
-    delay(10);
+#else  // #ifdef SD_TYPE_MMC
+    sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();
+    sdmmc_host_t host = SDMMC_HOST_DEFAULT();
 
+#ifdef SDMMC_MODE_1_BIT
+    host.flags = SDMMC_HOST_FLAG_1BIT;
+    slot_config.width = 1;
+#else
+    host.flags = SDMMC_HOST_FLAG_4BIT;
+    slot_config.width = 4;
+#endif  //  #ifdef SDMMC_MODE_1_BIT
+
+#ifndef SDMMC_SLOT
+#error "Не вказано слот SDMMC"
+#elif SDMMC_SLOT != SDMMC_HOST_SLOT_0 && defined(CONFIG_IDF_TARGET_ESP32S3)
+#error "Чіп підтримує SDMMC тільки на 0-вому слоті"
+#elif defined(CONFIG_IDF_TARGET_ESP32S3) || (SDMMC_SLOT != SDMMC_HOST_SLOT_0 && defined(CONFIG_IDF_TARGET_ESP32P4))  // S3 на 0-вому слоті або P4 на 1-му
+    host.slot = SDMMC_HOST_SLOT_1;
+    slot_config.clk = static_cast<gpio_num_t>(SDMMC_PIN_CLK);
+    slot_config.cmd = static_cast<gpio_num_t>(SDMMC_PIN_CMD);
+    slot_config.d0 = static_cast<gpio_num_t>(SDMMC_PIN_D0);
+
+#ifndef SDMMC_MODE_1_BIT
+    slot_config.d1 = static_cast<gpio_num_t>(SDMMC_PIN_D1);
+    slot_config.d2 = static_cast<gpio_num_t>(SDMMC_PIN_D2);
+    slot_config.d3 = static_cast<gpio_num_t>(SDMMC_PIN_D3);
+
+#else  // Якщо 1 бітний режим
+    slot_config.d1 = GPIO_NUM_0;
+    slot_config.d2 = GPIO_NUM_0;
+    slot_config.d3 = GPIO_NUM_0;
+
+#endif  //  #ifndef SDMMC_MODE_1_BIT
+
+#else  // P4 на 0-вому або ESP32 на 1-му слоті
+    host.slot = SDMMC_HOST_SLOT_0;
+    slot_config.clk = GPIO_NUM_0;
+    slot_config.cmd = GPIO_NUM_0;
+    slot_config.d0 = GPIO_NUM_0;
+    slot_config.d1 = GPIO_NUM_0;
+    slot_config.d2 = GPIO_NUM_0;
+    slot_config.d3 = GPIO_NUM_0;
+
+#endif  // #ifndef SDMMC_SLOT
+
+    slot_config.d4 = GPIO_NUM_0;
+    slot_config.d5 = GPIO_NUM_0;
+    slot_config.d6 = GPIO_NUM_0;
+    slot_config.d7 = GPIO_NUM_0;
+
+    // ---------------------------------------------
+#if defined(SDMMC_POWER_CHANNEL) && SDMMC_POWER_CHANNEL != GPIO_NUM_NC
+    sd_pwr_ctrl_ldo_config_t ldo_config = {
+        .ldo_chan_id = SDMMC_POWER_CHANNEL,
+    };
+    sd_pwr_ctrl_handle_t pwr_ctrl_handle = nullptr;
+
+    if (esp_err_t ret = sd_pwr_ctrl_new_on_chip_ldo(&ldo_config, &pwr_ctrl_handle) != ESP_OK)
+    {
+      log_e("Помилка створення sd_pwr_ctrl драйвера: %s. Підключіть зовнішнє живлення.", ret);
+      return false;
+    }
+    host.pwr_ctrl_handle = pwr_ctrl_handle;
+
+#endif  // SDMMC_POWER_CHANNEL != GPIO_NUM_NC
+
+    enableSdPower();
+
+    // ---------------------------------------------
+
+    esp_vfs_fat_sdmmc_mount_config_t mount_config = {
+        .format_if_mount_failed = false,
+        .max_files = SD_MAX_FILES,
+        .allocation_unit_size = 0,
+        .disk_status_check_enable = false,
+        .use_one_fat = false};
+
+    if (esp_err_t ret = esp_vfs_fat_sdmmc_mount(SD_MOUNTPOINT, &host, &slot_config, &mount_config, &_card) != ESP_OK)
+    {
+      if (ret == ESP_FAIL)
+      {
+        log_e("Помилка монтування файлової системи. Відформатуйте карту пам'яті в FAT32.");
+      }
+      else if (ret == ESP_ERR_INVALID_STATE)
+      {
+        log_i("SD Вже примонтовано");
+        return true;
+      }
+      else
+      {
+        log_e("Помилка ініціалізації. Карта пам'яті відсутня або пошкоджена.");
+      }
+      _card = nullptr;
+      return false;
+    }
+
+    _pdrv = ff_diskio_get_pdrv_card(_card);
+
+#endif  // #ifdef SD_TYPE_MMC
+
+    // ---------------------------------------------
+
+    delay(10);
     bool result = isMountedUnlocked();
 
     if (result)
       log_i("Карту пам'яті примонтовано");
+    else
+      log_e("Помилка перевірки стану монтування SD");
 
     return result;
   }
@@ -1048,14 +1175,27 @@ namespace pixeler
 
     {
       MutexGuard lock(_sd_mutex);
+
+#ifdef SD_TYPE_SPI
       sdcard_unmount(_pdrv);
       sdcard_uninit(_pdrv);
+
+#else  // #ifdef SD_TYPE_MMC
+      if (_card)
+      {
+        esp_vfs_fat_sdcard_unmount(SD_MOUNTPOINT, _card);
+        _card = nullptr;
+      }
+
+#endif  // #ifdef SD_TYPE_MMC
+
       _pdrv = 0xFF;
       delay(10);
 
 #ifdef SD_PIN_PWR_ON
       digitalWrite(SD_PIN_PWR_ON, !SD_PWR_ON_LVL);
       pinMode(SD_PIN_PWR_ON, INPUT);
+
 #endif  // #ifdef SD_PIN_PWR_ON
     }
 

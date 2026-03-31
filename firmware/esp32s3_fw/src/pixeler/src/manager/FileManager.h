@@ -1,18 +1,22 @@
 /**
  * @file FileManager.h
- * @brief Абстракція для взаємодії з картою пам'яті по шині SPI
- * @details Не потребує додаткової реалізації. Доступ до методів можна отримати через глобальний об'єкт "_fs".
+ * @brief Абстракція для взаємодії з картою пам'яті
+ * @details Не потребує додаткової реалізації.
+ * Доступ до методів можна отримати через глобальний об'єкт "_fs".
  */
 
 #pragma once
 #pragma GCC optimize("O3")
-#include <SPI.h>
 #include <dirent.h>
 #include <sys/stat.h>
 
 #include "pixeler/setup/sd_setup.h"
 #include "pixeler/src/defines.h"
 #include "pixeler/src/util/file/FileInfo.h"
+
+#ifdef SD_TYPE_MMC
+#include <sd_protocol_types.h>
+#endif  // #ifdef SD_TYPE_MMC
 
 namespace pixeler
 {
@@ -380,15 +384,20 @@ namespace pixeler
     void closeFileUnlocked(FILE*& file);
     bool isMountedUnlocked() const;
 
-  private:
-    SemaphoreHandle_t _sd_mutex{nullptr};
-    TaskDoneHandler _doneHandler{nullptr};
+    void enableSdPower();
 
+  private:
     String _rm_path;
     String _copy_from_path;
     String _copy_to_path;
 
+    TaskDoneHandler _doneHandler{nullptr};
     void* _doneArg{nullptr};
+    SemaphoreHandle_t _sd_mutex{nullptr};
+
+#ifdef SD_TYPE_MMC
+    sdmmc_card_t* _card{nullptr};
+#endif  // #ifdef SD_TYPE_MMC
 
     unsigned long _ts{0};
 
