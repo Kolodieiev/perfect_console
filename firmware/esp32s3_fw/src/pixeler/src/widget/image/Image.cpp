@@ -70,9 +70,26 @@ namespace pixeler
     if (_img_ptr)
     {
       if (!_has_transparency)
-        _display.drawBitmap(_x_pos + x_offset, _y_pos + y_offset, _img_ptr, _width, _height);
+      {
+#if CONFIG_IDF_TARGET_ESP32P4
+        if (_width * _height > PPA_IMG_SIZE_TRIGG)
+        {
+          bool old_state = _display.isPPAEnabled();
+
+          _display.setPPAState(true);
+          _display.drawBitmap(_x_pos + x_offset, _y_pos + y_offset, _img_ptr, _width, _height);
+          _display.setPPAState(old_state);
+        }
+        else
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+        {
+          _display.drawBitmap(_x_pos + x_offset, _y_pos + y_offset, _img_ptr, _width, _height);
+        }
+      }
       else
+      {
         _display.drawBitmapTransp(_x_pos + x_offset, _y_pos + y_offset, _img_ptr, _width, _height);
+      }
     }
     else
     {

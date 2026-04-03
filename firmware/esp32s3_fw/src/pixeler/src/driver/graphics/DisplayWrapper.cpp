@@ -67,6 +67,22 @@ namespace pixeler
 #endif  // #ifdef GRAPHICS_ENABLED
   }
 
+  void DisplayWrapper::setPPAState(bool state)
+  {
+#ifdef GRAPHICS_ENABLED
+    _canvas.setPPAState(state);
+#endif  // #ifdef GRAPHICS_ENABLED
+  }
+
+  bool DisplayWrapper::isPPAEnabled() const
+  {
+#ifdef GRAPHICS_ENABLED
+    return _canvas.isPPAEnabled();
+#else
+    return false;
+#endif  // #ifdef GRAPHICS_ENABLED
+  }
+
   void DisplayWrapper::setFont(const uint8_t* font)
   {
 #ifdef GRAPHICS_ENABLED
@@ -108,13 +124,6 @@ namespace pixeler
 #else
     _canvas.getTextBounds(str, x, y, x_out, y_out, w_out, h_out);
 #endif  // #ifdef DIRECT_DRAWING
-#endif  // #ifdef GRAPHICS_ENABLED
-  }
-
-  void DisplayWrapper::setRotation(uint8_t rotation)
-  {
-#ifdef GRAPHICS_ENABLED
-    _output->setRotation(rotation);
 #endif  // #ifdef GRAPHICS_ENABLED
   }
 
@@ -248,9 +257,9 @@ namespace pixeler
     uint16_t* rotated{nullptr};
 
     if (psramInit())
-      rotated = static_cast<uint16_t*>(ps_malloc(w * h * sizeof(uint16_t)));
+      rotated = static_cast<uint16_t*>(heap_caps_aligned_alloc(64, w * h * sizeof(uint16_t), MALLOC_CAP_SPIRAM));
     else
-      rotated = static_cast<uint16_t*>(malloc(w * h * sizeof(uint16_t)));
+      rotated = static_cast<uint16_t*>(aligned_alloc(64, w * h * sizeof(uint16_t)));
 
     if (!rotated)
     {
@@ -340,6 +349,10 @@ namespace pixeler
 #endif  //  #ifdef INVERT_COLORS
 
     _output->setRotation(DISPLAY_ROTATION);
+
+#if ROTATE_CANVAS
+    _canvas.setRotation(DISPLAY_ROTATION);
+#endif  // #if ROTATE_CANVAS
 
     _sync_mutex = xSemaphoreCreateMutex();
 

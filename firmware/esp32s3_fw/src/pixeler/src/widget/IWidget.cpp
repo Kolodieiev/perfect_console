@@ -97,7 +97,20 @@ namespace pixeler
 
     if (_corner_radius == 0)
     {
-      _display.fillRect(_x_pos + x_offset, _y_pos + y_offset, _width, _height, _back_color);
+#if CONFIG_IDF_TARGET_ESP32P4
+      if (_width * _height > PPA_FILL_SIZE_TRIGG)
+      {
+        bool old_state = _display.isPPAEnabled();
+
+        _display.setPPAState(true);
+        _display.fillRect(_x_pos + x_offset, _y_pos + y_offset, _width, _height, _back_color);
+        _display.setPPAState(old_state);
+      }
+      else
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+      {
+        _display.fillRect(_x_pos + x_offset, _y_pos + y_offset, _width, _height, _back_color);
+      }
 
       if (keep_border && _has_border)
         _display.drawRect(_x_pos + x_offset, _y_pos + y_offset, _width, _height, _border_color);

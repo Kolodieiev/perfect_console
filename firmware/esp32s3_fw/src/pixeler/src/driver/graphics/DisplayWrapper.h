@@ -16,6 +16,8 @@
 #include "pixeler/setup/graphics_setup.h"
 
 #define WDT_GUARD_TIME 1000UL
+#define PPA_FILL_SIZE_TRIGG 67599U
+#define PPA_IMG_SIZE_TRIGG 51983U
 
 namespace pixeler
 {
@@ -95,6 +97,23 @@ namespace pixeler
     size_t print(const char* str);
 
     /**
+     * @brief Має ефект, тільки якщо підтримується на МК.
+     * Встановлює стан активності модуля апаратного прискорення для операцій заповнення кольором
+     * та копіювання зображень в буфер кадру.
+     * НЕ ЕФЕКТИВНЕ ДЛЯ МАЛИХ БЛОКІВ.
+     * @param state
+     */
+    void setPPAState(bool state);
+
+    /**
+     * @brief Повертає стан активності PPA модуля.
+     *
+     * @return true - Якщо PPA увімкнено.
+     * @return false - Інакше.
+     */
+    bool isPPAEnabled() const;
+
+    /**
      * @brief Розраховує межі, до яких займатиме місце на канвасі вказаний текст.
      *
      * @param str Текст, для якого необхідно виконати розрахунок.
@@ -106,13 +125,6 @@ namespace pixeler
      * @param[out] h_out Кількість пікселів, яку займатиме текст по висоті.
      */
     void calcTextBounds(const char* str, int16_t x, int16_t y, int16_t& x_out, int16_t& y_out, uint16_t& w_out, uint16_t& h_out);
-
-    /**
-     * @brief Встановлює поточний поворот канвасу відносно дисплея.
-     *
-     * @param rotation
-     */
-    void setRotation(uint8_t rotation);
 
     /**
      * @brief Встановлює колір пікселя на канвасі.
@@ -302,7 +314,7 @@ namespace pixeler
     BUS_TYPE _bus{BUS_PARAMS};
     Arduino_GFX* _output = new DISP_DRIVER_TYPE(&_bus, DISP_DRIVER_PARAMS);
 #ifndef DIRECT_DRAWING
-    Arduino_Canvas _canvas{TFT_WIDTH, TFT_HEIGHT, _output};
+    Arduino_Canvas _canvas{UI_WIDTH, UI_HEIGHT, _output};
 #endif  // #ifndef DIRECT_DRAWING
 #endif  // #ifdef GRAPHICS_ENABLED
 
