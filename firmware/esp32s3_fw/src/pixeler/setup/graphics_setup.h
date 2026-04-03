@@ -23,11 +23,8 @@
 
 #define BUSS_FREQUENCY 80000000  // Частота шини дисплея.
 
-#define UI_WIDTH   // Ширина дисплея(канвасу).
-#define UI_HEIGHT  // Висота дисплея(канвасу).
-
-#define UI_WIDTH 240   // Ширина UI.
-#define UI_HEIGHT 320  // Висота UI.
+#define UI_WIDTH 240   // Ширина UI(канвасу).
+#define UI_HEIGHT 320  // Висота UI(канвасу).
 
 #define ROTATE_CANVAS false  // Зазвичай не потрібно встановлювати в true. Можна спробувати, якщо нічого не допомогло.
 
