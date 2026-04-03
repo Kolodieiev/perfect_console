@@ -8,8 +8,8 @@ namespace simple_rpg
     // Створюємо та налаштовуємо Label
     _bunny_counter_lbl = new Label(1);
     _bunny_counter_lbl->setText(STR_BUNN_COUNTER);
-    _bunny_counter_lbl->setPos(0, TFT_HEIGHT - _bunny_counter_lbl->getHeight());
-    _bunny_counter_lbl->setWidth(TFT_WIDTH);
+    _bunny_counter_lbl->setPos(0, UI_HEIGHT - _bunny_counter_lbl->getHeight());
+    _bunny_counter_lbl->setWidth(UI_WIDTH);
     _bunny_counter_lbl->setAlign(IWidget::ALIGN_CENTER);
     _bunny_counter_lbl->setGravity(IWidget::GRAVITY_CENTER);
     _bunny_counter_lbl->setBackColor(COLOR_BLACK);

@@ -44,7 +44,7 @@ void ReaderContext::showContextMenuTmpl()
   _context_menu->setItemHeight(20);
   _context_menu->setWidth(120);
   _context_menu->setHeight(44);
-  _context_menu->setPos(TFT_WIDTH - _context_menu->getWidth(), TFT_HEIGHT - _context_menu->getHeight());
+  _context_menu->setPos(UI_WIDTH - _context_menu->getWidth(), UI_HEIGHT - _context_menu->getHeight());
 
   if (_books_list_menu->getCurrItemID() != 0)
   {
@@ -76,15 +76,15 @@ void ReaderContext::showBookDirsTmpl()
   _book_dirs_menu = new FixedMenu(ID_F_MENU);
   layout->addWidget(_book_dirs_menu);
   _book_dirs_menu->setBackColor(COLOR_MENU_ITEM);
-  _book_dirs_menu->setWidth(TFT_WIDTH - SCROLLBAR_WIDTH);
-  _book_dirs_menu->setHeight(TFT_HEIGHT);
+  _book_dirs_menu->setWidth(UI_WIDTH - SCROLLBAR_WIDTH);
+  _book_dirs_menu->setHeight(UI_HEIGHT);
   _book_dirs_menu->setItemHeight((_book_dirs_menu->getHeight()) / BOOK_DIR_ITEMS_NUM);
 
   _scrollbar = new ScrollBar(ID_SCROLL);
   layout->addWidget(_scrollbar);
   _scrollbar->setWidth(SCROLLBAR_WIDTH);
-  _scrollbar->setHeight(TFT_HEIGHT);
-  _scrollbar->setPos(TFT_WIDTH - SCROLLBAR_WIDTH, 0);
+  _scrollbar->setHeight(UI_HEIGHT);
+  _scrollbar->setPos(UI_WIDTH - SCROLLBAR_WIDTH, 0);
 
   if (!_book_name.isEmpty())
   {
@@ -140,8 +140,8 @@ void ReaderContext::showBooksListTmpl()
 
   _books_list_menu = WidgetCreator::getDynamicMenu(ID_D_MENU);
   layout->addWidget(_books_list_menu);
-  _books_list_menu->setWidth(TFT_WIDTH - SCROLLBAR_WIDTH);
-  _books_list_menu->setHeight(TFT_HEIGHT);
+  _books_list_menu->setWidth(UI_WIDTH - SCROLLBAR_WIDTH);
+  _books_list_menu->setHeight(UI_HEIGHT);
   _books_list_menu->setItemHeight((_books_list_menu->getHeight() - 2) / BOOKS_ITEMS_NUM);
 
   _books_list_menu->setOnNextItemsLoadHandler(onNextItemsLoad, this);
@@ -150,8 +150,8 @@ void ReaderContext::showBooksListTmpl()
   _scrollbar = new ScrollBar(ID_SCROLL);
   layout->addWidget(_scrollbar);
   _scrollbar->setWidth(SCROLLBAR_WIDTH);
-  _scrollbar->setHeight(TFT_HEIGHT);
-  _scrollbar->setPos(TFT_WIDTH - SCROLLBAR_WIDTH, 0);
+  _scrollbar->setHeight(UI_HEIGHT);
+  _scrollbar->setPos(UI_WIDTH - SCROLLBAR_WIDTH, 0);
 }
 
 void ReaderContext::fillBooks(uint16_t pos)
@@ -214,8 +214,8 @@ void ReaderContext::showReadTmpl()
   _page = new Label(ID_PAGE_LBL);
   layout->addWidget(_page);
   _page->setMultiline(true);
-  _page->setWidth(TFT_WIDTH);
-  _page->setHeight(TFT_HEIGHT - 16);
+  _page->setWidth(UI_WIDTH);
+  _page->setHeight(UI_HEIGHT - 16);
   _page->setBackColor(COLOR_DARKGREY);
   _page->setTextColor(COLOR_WHITE);
 
@@ -225,7 +225,7 @@ void ReaderContext::showReadTmpl()
   _progress_lbl->setTextColor(COLOR_WHITE);
   _progress_lbl->setBackColor(COLOR_DARKGREY);
   _progress_lbl->initWidthToFit(5);
-  _progress_lbl->setPos(0, TFT_HEIGHT - _progress_lbl->getHeight());
+  _progress_lbl->setPos(0, UI_HEIGHT - _progress_lbl->getHeight());
 
   _display.setBrightness(_brightness);
 }
@@ -420,7 +420,7 @@ void ReaderContext::showLoadBookTmpl()
   Label* load_msg = new Label(1);
   layout->addWidget(load_msg);
   load_msg->setText(STR_LOADING);
-  load_msg->setWidth(TFT_WIDTH);
+  load_msg->setWidth(UI_WIDTH);
   load_msg->setFont(font_10x20);
   load_msg->setTextSize(2);
   load_msg->setAlign(IWidget::ALIGN_CENTER);

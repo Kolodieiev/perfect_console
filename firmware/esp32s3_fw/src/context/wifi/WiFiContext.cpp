@@ -121,8 +121,8 @@ void WiFiContext::showMainTmpl()
 
   _main_menu = new FixedMenu(ID_MAIN_MENU);
   layout->addWidget(_main_menu);
-  _main_menu->setWidth(TFT_WIDTH);
-  _main_menu->setHeight(TFT_HEIGHT);
+  _main_menu->setWidth(UI_WIDTH);
+  _main_menu->setHeight(UI_HEIGHT);
   _main_menu->setItemHeight(40);
   _main_menu->setLoopState(true);
 
@@ -165,7 +165,7 @@ void WiFiContext::showEnterPwdTmpl()
   _pwd_txt = new TextBox(ID_PWD_TXT);
   layout->addWidget(_pwd_txt);
   _pwd_txt->setHPadding(5);
-  _pwd_txt->setWidth(TFT_WIDTH - 10);
+  _pwd_txt->setWidth(UI_WIDTH - 10);
   _pwd_txt->setHeight(40);
   _pwd_txt->setBackColor(COLOR_WHITE);
   _pwd_txt->setTextColor(COLOR_BLACK);
@@ -387,7 +387,7 @@ void WiFiContext::showContextMenuTmpl()
     _mode = MODE_CONTEXT_MENU;
     getLayout()->addWidget(_context_menu);
     _context_menu->setHeight(_context_menu->getItemHeight() * _context_menu->getSize() + 4);
-    _context_menu->setPos(TFT_WIDTH - _context_menu->getWidth(), TFT_HEIGHT - _context_menu->getHeight());
+    _context_menu->setPos(UI_WIDTH - _context_menu->getWidth(), UI_HEIGHT - _context_menu->getHeight());
   }
 }
 

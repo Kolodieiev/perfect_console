@@ -55,8 +55,8 @@ namespace pixeler
 #ifdef GRAPHICS_ENABLED
     EmptyLayout* layout = new EmptyLayout(1);
     layout->setBackColor(COLOR_BLUE);
-    layout->setWidth(TFT_WIDTH);
-    layout->setHeight(TFT_HEIGHT);
+    layout->setWidth(UI_WIDTH);
+    layout->setHeight(UI_HEIGHT);
     setLayout(layout);
 
     _notification = new Notification(1);

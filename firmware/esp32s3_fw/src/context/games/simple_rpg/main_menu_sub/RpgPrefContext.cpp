@@ -72,8 +72,8 @@ namespace simple_rpg
     _pref_menu = new FixedMenu(ID_MENU_MAIN);
     layout->addWidget(_pref_menu);
     _pref_menu->setBackColor(COLOR_MAIN_BACK);
-    _pref_menu->setWidth(TFT_WIDTH);
-    _pref_menu->setHeight(TFT_HEIGHT);
+    _pref_menu->setWidth(UI_WIDTH);
+    _pref_menu->setHeight(UI_HEIGHT);
     _pref_menu->setItemHeight(40);
     _pref_menu->setLoopState(true);
 
@@ -245,7 +245,7 @@ namespace simple_rpg
     title_lbl->setText(title_txt);
     title_lbl->setAlign(IWidget::ALIGN_CENTER);
     title_lbl->setGravity(IWidget::GRAVITY_CENTER);
-    title_lbl->setWidth(TFT_WIDTH);
+    title_lbl->setWidth(UI_WIDTH);
     title_lbl->setBackColor(COLOR_MAIN_BACK);
     title_lbl->setTextColor(COLOR_WHITE);
     title_lbl->setAutoscroll(true);
@@ -255,7 +255,7 @@ namespace simple_rpg
     layout->addWidget(_dialog_txt);
     _dialog_txt->setText(start_txt);
     _dialog_txt->setHPadding(5);
-    _dialog_txt->setWidth(TFT_WIDTH - 10);
+    _dialog_txt->setWidth(UI_WIDTH - 10);
     _dialog_txt->setHeight(40);
     _dialog_txt->setBackColor(COLOR_WHITE);
     _dialog_txt->setTextColor(COLOR_BLACK);

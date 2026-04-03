@@ -37,7 +37,7 @@ Arduino_GFX* _output = new DISP_DRIVER_TYPE(&_bus, DISP_DRIVER_PARAMS);
 #define DISP_DRIVER_TYPE Arduino_ST7789
 // Параметри класу драйвера дисплея БЕЗ адреси шини. 
 // Адреса об'єкта шини підставляється в коді ініціалізації.                                           
-#define DISP_DRIVER_PARAMS TFT_RST, DISPLAY_ROTATION, IS_IPS_DISPLAY, TFT_WIDTH, TFT_HEIGHT  
+#define DISP_DRIVER_PARAMS TFT_RST, DISPLAY_ROTATION, IS_IPS_DISPLAY, DISPLAY_WIDTH, DISPLAY_HEIGHT  
 ```
 <br>
 

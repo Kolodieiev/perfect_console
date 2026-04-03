@@ -118,7 +118,7 @@ namespace test_server
     title_lbl->setText(title_txt);
     title_lbl->setAlign(IWidget::ALIGN_CENTER);
     title_lbl->setGravity(IWidget::GRAVITY_CENTER);
-    title_lbl->setWidth(TFT_WIDTH);
+    title_lbl->setWidth(UI_WIDTH);
     title_lbl->setBackColor(COLOR_MAIN_BACK);
     title_lbl->setTextColor(COLOR_WHITE);
     title_lbl->setAutoscroll(true);
@@ -127,7 +127,7 @@ namespace test_server
     layout->addWidget(_dialog_txt);
     _dialog_txt->setText(start_txt);
     _dialog_txt->setHPadding(5);
-    _dialog_txt->setWidth(TFT_WIDTH - 10);
+    _dialog_txt->setWidth(UI_WIDTH - 10);
     _dialog_txt->setHeight(40);
     _dialog_txt->setBackColor(COLOR_WHITE);
     _dialog_txt->setTextColor(COLOR_BLACK);
@@ -308,7 +308,7 @@ namespace test_server
     title_lbl->setText(STR_SELECT_ROLE_TITLE);
     title_lbl->setAlign(IWidget::ALIGN_CENTER);
     title_lbl->setGravity(IWidget::GRAVITY_CENTER);
-    title_lbl->setWidth(TFT_WIDTH);
+    title_lbl->setWidth(UI_WIDTH);
     title_lbl->setBackColor(COLOR_MAIN_BACK);
     title_lbl->setTextColor(COLOR_WHITE);
 
@@ -396,7 +396,7 @@ namespace test_server
     title_lbl->setText(STR_WAITING_GAME);
     title_lbl->setAlign(IWidget::ALIGN_CENTER);
     title_lbl->setGravity(IWidget::GRAVITY_CENTER);
-    title_lbl->setWidth(TFT_WIDTH);
+    title_lbl->setWidth(UI_WIDTH);
     title_lbl->setBackColor(COLOR_MAIN_BACK);
     title_lbl->setTextColor(COLOR_WHITE);
     title_lbl->setAutoscroll(true);
@@ -417,14 +417,14 @@ namespace test_server
     title_lbl->setText(STR_SERVER_SCANNING);
     title_lbl->setAlign(IWidget::ALIGN_CENTER);
     title_lbl->setGravity(IWidget::GRAVITY_CENTER);
-    title_lbl->setWidth(TFT_WIDTH);
+    title_lbl->setWidth(UI_WIDTH);
     title_lbl->setBackColor(COLOR_MAIN_BACK);
     title_lbl->setTextColor(COLOR_WHITE);
 
     _wifi_list_menu = new FixedMenu(ID_WIFI_LIST_MENU);
     layout->addWidget(_wifi_list_menu);
     _wifi_list_menu->setBackColor(COLOR_MAIN_BACK);
-    _wifi_list_menu->setWidth(TFT_WIDTH);
+    _wifi_list_menu->setWidth(UI_WIDTH);
     _wifi_list_menu->setHeight(IMG_H * 4 + 4);
     _wifi_list_menu->setItemHeight(IMG_H);
     _wifi_list_menu->setPos(0, 30);
@@ -499,7 +499,7 @@ namespace test_server
     title_lbl->setText(STR_CONNECTING_TO + _serv_ssid);
     title_lbl->setAlign(IWidget::ALIGN_CENTER);
     title_lbl->setGravity(IWidget::GRAVITY_CENTER);
-    title_lbl->setWidth(TFT_WIDTH);
+    title_lbl->setWidth(UI_WIDTH);
     title_lbl->setPos(0, 30);
     title_lbl->setBackColor(COLOR_MAIN_BACK);
     title_lbl->setTextColor(COLOR_WHITE);
@@ -639,14 +639,14 @@ namespace test_server
     title_lbl->setText(STR_WAITING_CLIENT);
     title_lbl->setAlign(IWidget::ALIGN_CENTER);
     title_lbl->setGravity(IWidget::GRAVITY_CENTER);
-    title_lbl->setWidth(TFT_WIDTH);
+    title_lbl->setWidth(UI_WIDTH);
     title_lbl->setBackColor(COLOR_MAIN_BACK);
     title_lbl->setTextColor(COLOR_WHITE);
 
     _clients_list_menu = new FixedMenu(ID_CLIENT_LIST_MENU);
     layout->addWidget(_clients_list_menu);
     _clients_list_menu->setBackColor(COLOR_MAIN_BACK);
-    _clients_list_menu->setWidth(TFT_WIDTH);
+    _clients_list_menu->setWidth(UI_WIDTH);
     _clients_list_menu->setHeight(IMG_H * 4 + 4);
     _clients_list_menu->setItemHeight(IMG_H);
     _clients_list_menu->setPos(0, 30);
@@ -737,7 +737,7 @@ namespace test_server
     _lobby_context_menu = new FixedMenu(ID_LOBBY_CONTEXT_MENU);
     getLayout()->addWidget(_lobby_context_menu);
     _lobby_context_menu->setItemHeight(18);
-    _lobby_context_menu->setWidth((float)TFT_WIDTH / 2.2);
+    _lobby_context_menu->setWidth((float)UI_WIDTH / 2.2);
     _lobby_context_menu->setBackColor(COLOR_BLACK);
     _lobby_context_menu->setBorder(true);
     _lobby_context_menu->setBorderColor(COLOR_ORANGE);
@@ -794,8 +794,8 @@ namespace test_server
     start_lbl->setHPadding(1);
 
     _lobby_context_menu->setHeight(_lobby_context_menu->getSize() * _lobby_context_menu->getItemHeight() + 4);
-    _lobby_context_menu->setPos(TFT_WIDTH - _lobby_context_menu->getWidth() - 2,
-                                TFT_HEIGHT - _lobby_context_menu->getHeight() - 2);
+    _lobby_context_menu->setPos(UI_WIDTH - _lobby_context_menu->getWidth() - 2,
+                                UI_HEIGHT - _lobby_context_menu->getHeight() - 2);
   }
 
   void TestServerContext::hideServLobbyContMenu()
@@ -896,7 +896,7 @@ namespace test_server
     title_lbl->setText(msg_str.c_str());
     title_lbl->setAlign(IWidget::ALIGN_CENTER);
     title_lbl->setGravity(IWidget::GRAVITY_CENTER);
-    title_lbl->setWidth(TFT_WIDTH);
+    title_lbl->setWidth(UI_WIDTH);
     title_lbl->setBackColor(COLOR_MAIN_BACK);
     title_lbl->setTextColor(COLOR_WHITE);
     title_lbl->setPos(0, 40);
@@ -939,8 +939,8 @@ namespace test_server
     _pref_menu = new FixedMenu(ID_PREF_MAIN_MENU);
     layout->addWidget(_pref_menu);
     _pref_menu->setBackColor(COLOR_MAIN_BACK);
-    _pref_menu->setWidth(TFT_WIDTH);
-    _pref_menu->setHeight(TFT_HEIGHT);
+    _pref_menu->setWidth(UI_WIDTH);
+    _pref_menu->setHeight(UI_HEIGHT);
     _pref_menu->setItemHeight(IMG_H);
     _pref_menu->setLoopState(true);
 

@@ -78,8 +78,8 @@ namespace pixeler
                          _layout{new EmptyLayout(1)}
   {
     _layout->setBackColor(COLOR_YELLOW);
-    _layout->setWidth(TFT_WIDTH);
-    _layout->setHeight(TFT_HEIGHT);
+    _layout->setWidth(UI_WIDTH);
+    _layout->setHeight(UI_HEIGHT);
   }
 
   IContext::~IContext()
@@ -145,22 +145,22 @@ namespace pixeler
     _toast_label->setHeight(25);
     _toast_label->setHPadding(4);
 
-    if (TFT_WIDTH < 120)
-      _toast_label->setWidth(TFT_WIDTH - 6);
+    if (UI_WIDTH < 120)
+      _toast_label->setWidth(UI_WIDTH - 6);
     else
       _toast_label->setWidth(120);
 
-    _toast_label->setPos(getCenterX(_toast_label), TFT_HEIGHT - _toast_label->getHeight() - 15);
+    _toast_label->setPos(getCenterX(_toast_label), UI_HEIGHT - _toast_label->getHeight() - 15);
   }
 
   uint16_t IContext::getCenterX(const IWidget* widget) const
   {
-    return widget ? (TFT_WIDTH - widget->getWidth()) / 2 : 0;
+    return widget ? (UI_WIDTH - widget->getWidth()) / 2 : 0;
   }
 
   uint16_t IContext::getCenterY(const IWidget* widget) const
   {
-    return widget ? (TFT_HEIGHT - widget->getHeight()) / 2 : 0;
+    return widget ? (UI_HEIGHT - widget->getHeight()) / 2 : 0;
   }
 
   void IContext::showNotification(Notification* notification)

@@ -26,10 +26,10 @@ PrefBrightContext::PrefBrightContext()
   _progress->setProgressColor(COLOR_ORANGE);
   _progress->setBorderColor(COLOR_WHITE);
   _progress->setMax(MAX_BRIGHT);
-  _progress->setWidth(TFT_WIDTH - 5 * 8);
+  _progress->setWidth(UI_WIDTH - 5 * 8);
   _progress->setHeight(20);
   _progress->setProgress(_old_bright);
-  _progress->setPos((TFT_WIDTH - _progress->getWidth()) / 2, 40);
+  _progress->setPos((UI_WIDTH - _progress->getWidth()) / 2, 40);
 }
 
 bool PrefBrightContext::loop()

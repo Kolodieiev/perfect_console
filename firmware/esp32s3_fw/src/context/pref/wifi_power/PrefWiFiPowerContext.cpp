@@ -38,8 +38,8 @@ void PrefWiFiPowerContext::showMainTmpl()
   _menu = new FixedMenu(ID_MENU);
   layout->addWidget(_menu);
   _menu->setBackColor(COLOR_MENU_ITEM);
-  _menu->setWidth(TFT_WIDTH - SCROLLBAR_WIDTH - 2);
-  _menu->setHeight(TFT_HEIGHT);
+  _menu->setWidth(UI_WIDTH - SCROLLBAR_WIDTH - 2);
+  _menu->setHeight(UI_HEIGHT);
   _menu->setItemHeight((_menu->getHeight() - 2) / 5);
   //
   MenuItem* min_item = WidgetCreator::getMenuItem(ITEM_ID_MIN);

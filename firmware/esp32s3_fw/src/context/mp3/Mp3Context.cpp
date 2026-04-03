@@ -131,7 +131,7 @@ void Mp3Context::showPlaying()
   _track_name_lbl->setGravity(IWidget::GRAVITY_CENTER);
   _track_name_lbl->setBackColor(COLOR_BLACK);
   _track_name_lbl->setTextColor(COLOR_ORANGE);
-  _track_name_lbl->setWidth(TFT_WIDTH);
+  _track_name_lbl->setWidth(UI_WIDTH);
   _track_name_lbl->setHeight(20);
   _track_name_lbl->setAutoscroll(true);
   _track_name_lbl->setPos(getCenterX(_track_name_lbl), 0);
@@ -142,10 +142,10 @@ void Mp3Context::showPlaying()
   _progress->setProgressColor(COLOR_ORANGE);
   _progress->setBorderColor(COLOR_WHITE);
   _progress->setMax(9999);
-  _progress->setWidth(TFT_WIDTH - 20);
+  _progress->setWidth(UI_WIDTH - 20);
   _progress->setHeight(10);
   _progress->setProgress(1);
-  _progress->setPos(paddings, TFT_HEIGHT - _progress->getHeight());
+  _progress->setPos(paddings, UI_HEIGHT - _progress->getHeight());
 
   _cur_track_time_lbl = _track_name_lbl->clone(ID_CUR_TRACK_TIME);
   layout->addWidget(_cur_track_time_lbl);
@@ -160,7 +160,7 @@ void Mp3Context::showPlaying()
   layout->addWidget(_gen_track_time_lbl);
   _gen_track_time_lbl->setText(STR_ZERO_TRACK_TIME);
   _gen_track_time_lbl->initWidthToFit();
-  _gen_track_time_lbl->setPos(TFT_WIDTH - _cur_track_time_lbl->getWidth() - paddings, _cur_track_time_lbl->getYPos());
+  _gen_track_time_lbl->setPos(UI_WIDTH - _cur_track_time_lbl->getWidth() - paddings, _cur_track_time_lbl->getYPos());
 
   //
 
@@ -230,8 +230,8 @@ void Mp3Context::showTracksTmpl()
 
   _tracks_list = WidgetCreator::getDynamicMenu(ID_D_MENU);
   layout->addWidget(_tracks_list);
-  _tracks_list->setWidth(TFT_WIDTH - SCROLLBAR_WIDTH);
-  _tracks_list->setHeight(TFT_HEIGHT);
+  _tracks_list->setWidth(UI_WIDTH - SCROLLBAR_WIDTH);
+  _tracks_list->setHeight(UI_HEIGHT);
   _tracks_list->setItemHeight((_tracks_list->getHeight() - 2) / TRACKS_ITEMS_NUM);
 
   _tracks_list->setOnNextItemsLoadHandler(onNextItemsLoad, this);
@@ -240,8 +240,8 @@ void Mp3Context::showTracksTmpl()
   _scrollbar = new ScrollBar(ID_SCROLL);
   layout->addWidget(_scrollbar);
   _scrollbar->setWidth(SCROLLBAR_WIDTH);
-  _scrollbar->setHeight(TFT_HEIGHT);
-  _scrollbar->setPos(TFT_WIDTH - SCROLLBAR_WIDTH, 0);
+  _scrollbar->setHeight(UI_HEIGHT);
+  _scrollbar->setPos(UI_WIDTH - SCROLLBAR_WIDTH, 0);
 
   _mode = MODE_TRACK_SEL;
 
@@ -255,15 +255,15 @@ void Mp3Context::showPlaylistsTmpl()
   _playlists_list = new FixedMenu(ID_F_MENU);
   layout->addWidget(_playlists_list);
   _playlists_list->setBackColor(COLOR_MENU_ITEM);
-  _playlists_list->setWidth(TFT_WIDTH - SCROLLBAR_WIDTH);
-  _playlists_list->setHeight(TFT_HEIGHT);
-  _playlists_list->setItemHeight((TFT_HEIGHT - 2) / PLAYLIST_ITEMS_NUM);
+  _playlists_list->setWidth(UI_WIDTH - SCROLLBAR_WIDTH);
+  _playlists_list->setHeight(UI_HEIGHT);
+  _playlists_list->setItemHeight((UI_HEIGHT - 2) / PLAYLIST_ITEMS_NUM);
 
   _scrollbar = new ScrollBar(ID_SCROLL);
   layout->addWidget(_scrollbar);
   _scrollbar->setWidth(SCROLLBAR_WIDTH);
-  _scrollbar->setHeight(TFT_HEIGHT);
-  _scrollbar->setPos(TFT_WIDTH - SCROLLBAR_WIDTH, 0);
+  _scrollbar->setHeight(UI_HEIGHT);
+  _scrollbar->setPos(UI_WIDTH - SCROLLBAR_WIDTH, 0);
 
   if (!_track_name.isEmpty())
   {
@@ -375,7 +375,7 @@ void Mp3Context::showPlMenu()
   _context_menu->setItemHeight(20);
   _context_menu->setWidth(120);
   _context_menu->setHeight(44);
-  _context_menu->setPos(TFT_WIDTH - _context_menu->getWidth(), TFT_HEIGHT - _context_menu->getHeight());
+  _context_menu->setPos(UI_WIDTH - _context_menu->getWidth(), UI_HEIGHT - _context_menu->getHeight());
 
   if (_tracks_list->getCurrItemID() != 0)
   {

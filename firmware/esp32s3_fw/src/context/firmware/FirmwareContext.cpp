@@ -20,7 +20,7 @@ FirmwareContext::FirmwareContext()
   Label* title = new Label(ID_TITLE);
   layout->addWidget(title);
   title->setText(STR_UPDATE_FIRMWARE);
-  title->setWidth(TFT_WIDTH);
+  title->setWidth(UI_WIDTH);
   title->setHeight(30);
   title->setGravity(IWidget::GRAVITY_CENTER);
   title->setAlign(IWidget::ALIGN_CENTER);
@@ -83,8 +83,8 @@ void FirmwareContext::showUpdating()
   Label* updating_msg = new Label(1);
   layout->addWidget(updating_msg);
   updating_msg->setText(STR_WAIT);
-  updating_msg->setWidth(TFT_WIDTH);
-  updating_msg->setHeight(TFT_HEIGHT);
+  updating_msg->setWidth(UI_WIDTH);
+  updating_msg->setHeight(UI_HEIGHT);
   updating_msg->setGravity(IWidget::GRAVITY_CENTER);
   updating_msg->setAlign(IWidget::ALIGN_CENTER);
   updating_msg->setBackColor(COLOR_MAIN_BACK);
