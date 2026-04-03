@@ -20,7 +20,16 @@ Arduino_RGB_Display::Arduino_RGB_Display(
     uint8_t row_offset1,
     uint8_t col_offset2,
     uint8_t row_offset2)
-    : Arduino_GFX(w, h), _rgbpanel(rgbpanel), _bus(bus), _rst(rst), _init_operations(init_operations), _init_operations_len(init_operations_len), COL_OFFSET1(col_offset1), ROW_OFFSET1(row_offset1), COL_OFFSET2(col_offset2), ROW_OFFSET2(row_offset2)
+    : Arduino_GFX(w, h),
+      _rgbpanel(rgbpanel),
+      _bus(bus),
+      _rst(rst),
+      _init_operations(init_operations),
+      _init_operations_len(init_operations_len),
+      COL_OFFSET1(col_offset1),
+      ROW_OFFSET1(row_offset1),
+      COL_OFFSET2(col_offset2),
+      ROW_OFFSET2(row_offset2)
 {
   _fb_width = COL_OFFSET1 + WIDTH + COL_OFFSET2;
   _fb_height = ROW_OFFSET1 + HEIGHT + ROW_OFFSET2;
@@ -218,7 +227,6 @@ void Arduino_RGB_Display::writeFastHLineCore(int16_t x, int16_t y, int16_t w, ui
         x += COL_OFFSET1;
         y += ROW_OFFSET1;
         uint16_t* fb = _framebuffer + ((int32_t)y * _fb_width) + x;
-        uint32_t cachePos = (uint32_t)fb;
         int16_t writeSize = w * 2;
         while (w--)
         {
@@ -262,11 +270,10 @@ void Arduino_RGB_Display::writeFillRectPreclipped(int16_t x, int16_t y, int16_t 
   y += ROW_OFFSET1;
   uint16_t* row = _framebuffer;
   row += y * _fb_width;
-  uint32_t cachePos = (uint32_t)row;
   row += x;
-  for (int j = 0; j < h; j++)
+  for (int j = 0; j < h; ++j)
   {
-    for (int i = 0; i < w; i++)
+    for (int i = 0; i < w; ++i)
     {
       row[i] = color;
     }
@@ -276,39 +283,30 @@ void Arduino_RGB_Display::writeFillRectPreclipped(int16_t x, int16_t y, int16_t 
 
 void Arduino_RGB_Display::draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h)
 {
-  if (_isRoundMode)
-  {
-    if (
-        ((y + h - 1) < 0) ||  // Outside top
-        (y > _max_y) ||       // Outside bottom
-        (
-            (x > _roundMaxX[y + h - 1]) &&         // top left
-            ((x + w - 1) < _roundMinX[y]) &&       // top right
-            (x > _roundMaxX[y + h - 1]) &&         // bottom left
-            ((x + w - 1) < _roundMinX[y + h - 1])  // bottom right
-            ))
-    {
-      return;
-    }
-  }
-
-  bool result;
-
   x += COL_OFFSET1;
   y += ROW_OFFSET1;
+
+  if (
+      ((x + w - 1) < 0) ||  // Outside left
+      ((y + h - 1) < 0) ||  // Outside top
+      (x > MAX_X) ||        // Outside right
+      (y > MAX_Y)           // Outside bottom
+  )
+    return;
+
   switch (_rotation)
   {
     case 1:
-      result = drawBitmapToFramebufferRotate1(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
+      drawBitmapToFramebufferRotate1(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
       break;
     case 2:
-      result = drawBitmapToFramebufferRotate2(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
+      drawBitmapToFramebufferRotate2(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
       break;
     case 3:
-      result = drawBitmapToFramebufferRotate3(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
+      drawBitmapToFramebufferRotate3(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
       break;
     default:  // case 0:
-      result = drawBitmapToFramebuffer(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
+      drawBitmapToFramebuffer(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
   }
 }
 
