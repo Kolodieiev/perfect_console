@@ -205,9 +205,6 @@ void Arduino_TFT::writeColor(uint16_t color)
   _bus->write16(color);
 }
 
-// TFT optimization code, too big for ATMEL family
-#if !defined(LITTLE_FOOT_PRINT)
-
 void Arduino_TFT::writeBytes(const uint8_t* data, uint32_t len)
 {
   _bus->writeBytes(data, len);
@@ -293,18 +290,6 @@ void Arduino_TFT::draw16bitRGBBitmap(
   {
     return;
   }
-  else if (_isRoundMode)
-  {
-    if (
-        (x > _roundMaxX[y + h - 1]) &&         // top left
-        ((x + w - 1) < _roundMinX[y]) &&       // top right
-        (x > _roundMaxX[y + h - 1]) &&         // bottom left
-        ((x + w - 1) < _roundMinX[y + h - 1])  // bottom right
-    )
-    {
-      return;
-    }
-  }
   else if (
       ((x + w - 1) < 0) ||  // Outside left
       (x > _max_x)          // Outside right
@@ -359,175 +344,11 @@ void Arduino_TFT::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color
   uint16_t block_w;
   uint16_t block_h;
 
-#if !defined(ATTINY_CORE)
-  if (gfxFont)  // custom font
-  {
-    // Character is assumed previously filtered by write() to eliminate
-    // newlines, returns, non-printable characters, etc.  Calling
-    // drawChar() directly with 'bad' characters of font may cause mayhem!
-    uint8_t first = pgm_read_byte(&gfxFont->first);
-    GFXglyph* glyph = pgm_read_glyph_ptr(gfxFont, c - first);
-    uint8_t* bitmap = pgm_read_bitmap_ptr(gfxFont);
-
-    uint16_t bo = pgm_read_word(&glyph->bitmapOffset);
-    uint8_t w = pgm_read_byte(&glyph->width),
-            h = pgm_read_byte(&glyph->height),
-            xAdvance = pgm_read_byte(&glyph->xAdvance),
-            yAdvance = pgm_read_byte(&gfxFont->yAdvance),
-            baseline = yAdvance * 2 / 3;  // TODO: baseline is an arbitrary currently, may be define in font file
-    int8_t xo = pgm_read_sbyte(&glyph->xOffset),
-           yo = pgm_read_sbyte(&glyph->yOffset);
-    // urgly workaround for the character not fit in the box
-    if ((bg != color)              // have background color
-        && ((xo + w) > xAdvance))  // if character draw outside the box
-    {
-      xo = xAdvance - w;  // pad inside the box
-    }
-
-    uint8_t xx, yy, bits = 0, bit = 0;
-    int16_t xo16 = xo, yo16 = yo;
-
-    if (xAdvance < w)
-    {
-      xAdvance = w;  // Don't know why it exists
-    }
-
-    block_w = xAdvance * textsize_x;
-    block_h = yAdvance * textsize_y;
-    int16_t x1 = (xo < 0) ? (x + xo) : x;
-    if (
-        (x1 < _min_text_x) ||                         // Clip left
-        ((y - baseline) < _min_text_y) ||             // Clip top
-        ((x1 + block_w - 1) > _max_text_x) ||         // Clip right
-        ((y - baseline + block_h - 1) > _max_text_y)  // Clip bottom
-    )
-    {
-      // partial draw char by parent class
-      Arduino_GFX::drawChar(x, y, c, color, bg);
-    }
-    else
-    {
-      // NOTE: Different from Adafruit_GFX design, Adruino_GFX also cater background.
-      // Since it may introduce many ugly output, it should limited using on mono font only.
-      if (xo < 0)  // padding X offset to >= 0
-      {
-        x += xo;
-        xo = 0;
-      }
-
-      startWrite();
-      if (bg != color)  // have background color
-      {
-        writeAddrWindow(x, y - (baseline * textsize_y), block_w, block_h);
-
-        uint16_t line_buf[block_w];
-        int8_t i;
-        bool draw_dot;
-        for (yy = 0; yy < yAdvance; yy++)
-        {
-          if ((yy < (baseline + yo)) || (yy > (baseline + yo + h - 1)))
-          {
-            writeRepeat(bg, block_w * textsize_y);
-          }
-          else
-          {
-            i = 0;
-            for (xx = 0; xx < xAdvance; xx++)
-            {
-              if ((xx < xo) || (xx > (xo + w - 1)))
-              {
-                draw_dot = false;
-              }
-              else
-              {
-                if (!(bit++ & 7))
-                {
-                  bits = pgm_read_byte(&bitmap[bo++]);
-                }
-                draw_dot = bits & 0x80;
-                bits <<= 1;
-              }
-
-              if (textsize_x == 1)
-              {
-                line_buf[i++] = draw_dot ? color : bg;
-              }
-              else
-              {
-                if (draw_dot)
-                {
-                  for (int8_t k = 0; k < textsize_x; k++)
-                  {
-                    line_buf[i++] = (k < (textsize_x - text_pixel_margin)) ? color : bg;
-                  }
-                }
-                else
-                {
-                  for (int8_t k = 0; k < textsize_x; k++)
-                  {
-                    line_buf[i++] = bg;
-                  }
-                }
-              }
-            }
-            if (textsize_y == 1)
-            {
-              writePixels(line_buf, block_w);
-            }
-            else
-            {
-              for (int8_t l = 0; l < textsize_y; l++)
-              {
-                if (l < (textsize_y - text_pixel_margin))
-                {
-                  writePixels(line_buf, block_w);
-                }
-                else
-                {
-                  writeRepeat(bg, block_w);
-                }
-              }
-            }
-          }
-        }
-      }
-      else  // (bg == color), no background color
-      {
-        for (yy = 0; yy < h; yy++)
-        {
-          for (xx = 0; xx < w; xx++)
-          {
-            if (!(bit++ & 7))
-            {
-              bits = pgm_read_byte(&bitmap[bo++]);
-            }
-            if (bits & 0x80)
-            {
-              if (textsize_x == 1 && textsize_y == 1)
-              {
-                writePixelPreclipped(x + xo + xx, y + yo + yy, color);
-              }
-              else
-              {
-                writeFillRectPreclipped(x + (xo16 + xx) * textsize_x, y + (yo16 + yy) * textsize_y, textsize_x - text_pixel_margin, textsize_y - text_pixel_margin, color);
-              }
-            }
-            bits <<= 1;
-          }
-        }
-      }
-      endWrite();
-    }
-  }
-  else  // not gfxFont
-#endif  // !defined(ATTINY_CORE)
-#if defined(U8G2_FONT_SUPPORT)
-      if (u8g2Font)
+  if (u8g2Font)
   {
     Arduino_GFX::drawChar(x, y, c, color, bg);
   }
   else  // not u8g2Font
-#endif  // defined(U8G2_FONT_SUPPORT)
   {
     block_w = 6 * textsize_x;
     block_h = 8 * textsize_y;
@@ -642,5 +463,3 @@ void Arduino_TFT::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color
     }
   }
 }
-
-#endif  // !defined(LITTLE_FOOT_PRINT)
