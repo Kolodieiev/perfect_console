@@ -6992,7 +6992,6 @@ public:
   uint16_t* getFramebuffer();
 
 protected:
-  uint16_t* _framebuffer;
   size_t _framebuffer_size;
   Arduino_ESP32RGBPanel* _rgbpanel;
   Arduino_DataBus* _bus;
