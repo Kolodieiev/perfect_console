@@ -56,9 +56,6 @@ void Arduino_TFT_18bit::writeRepeat(uint16_t color, uint32_t len)
 #endif
 }
 
-// TFT optimization code, too big for ATMEL family
-#if !defined(LITTLE_FOOT_PRINT)
-
 void Arduino_TFT_18bit::writePixels(uint16_t* data, uint32_t len)
 {
   uint16_t d;
@@ -116,5 +113,3 @@ void Arduino_TFT_18bit::draw16bitRGBBitmap(
     endWrite();
   }
 }
-
-#endif  // !defined(LITTLE_FOOT_PRINT)

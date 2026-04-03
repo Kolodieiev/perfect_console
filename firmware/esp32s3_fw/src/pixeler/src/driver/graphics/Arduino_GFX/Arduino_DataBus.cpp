@@ -134,7 +134,6 @@ void Arduino_DataBus::batchOperation(const uint8_t* operations, size_t len)
   }
 }
 
-#if !defined(LITTLE_FOOT_PRINT)
 void Arduino_DataBus::writePattern(const uint8_t* data, uint8_t len, uint32_t repeat)
 {
   while (repeat--)
@@ -142,5 +141,3 @@ void Arduino_DataBus::writePattern(const uint8_t* data, uint8_t len, uint32_t re
     writeBytes(data, len);
   }
 }
-
-#endif  // !defined(LITTLE_FOOT_PRINT)

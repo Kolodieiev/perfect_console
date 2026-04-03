@@ -33,18 +33,13 @@ public:
 
   void setAddrWindow(int16_t x, int16_t y, uint16_t w, uint16_t h);
   virtual void writeColor(uint16_t color);
-
-// TFT optimization code, too big for ATMEL family
-#if !defined(LITTLE_FOOT_PRINT)
   virtual void writePixels(uint16_t* data, uint32_t size);
-
   void writeBytes(const uint8_t* data, uint32_t size);
   void pushColor(uint16_t color);
 
   void writeSlashLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) override;
   void draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h) override;
   void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg) override;
-#endif  // !defined(LITTLE_FOOT_PRINT)
 
 protected:
   virtual void tftInit() = 0;

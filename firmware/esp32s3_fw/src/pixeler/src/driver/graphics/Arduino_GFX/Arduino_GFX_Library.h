@@ -2,9 +2,6 @@
 #ifndef _ARDUINO_GFX_LIBRARIES_H_
 #define _ARDUINO_GFX_LIBRARIES_H_
 
-#define U8G2_FONT_SUPPORT
-
-#include "pixeler/setup/graphics_setup.h"
 #include "Arduino_DataBus.h"
 #include "Arduino_GFX.h"  // Core graphics library
 #include "databus/Arduino_ESP32DSIPanel.h"
@@ -22,10 +19,8 @@
 #include "databus/Arduino_ESP32S2PAR8.h"
 #include "databus/Arduino_ESP32S2PAR8Q.h"
 #include "databus/Arduino_ESP32SPI.h"
-#if !defined(LITTLE_FOOT_PRINT)
+#include "pixeler/setup/graphics_setup.h"
 #include "canvas/Arduino_Canvas.h"
-#endif  // !defined(LITTLE_FOOT_PRINT)
-
 #include "display/Arduino_AXS15231B.h"
 #include "display/Arduino_DSI_Display.h"
 #include "display/Arduino_GC9106.h"

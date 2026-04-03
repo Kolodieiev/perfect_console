@@ -18,13 +18,8 @@ public:
   void writeColor(uint16_t color) override;
   void writePixelPreclipped(int16_t x, int16_t y, uint16_t color) override;
   void writeRepeat(uint16_t color, uint32_t len) override;
-
-// TFT optimization code, too big for ATMEL family
-#if !defined(LITTLE_FOOT_PRINT)
   void writePixels(uint16_t* data, uint32_t len) override;
-
   void draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h) override;
-#endif  // !defined(LITTLE_FOOT_PRINT)
 
 protected:
 private:
