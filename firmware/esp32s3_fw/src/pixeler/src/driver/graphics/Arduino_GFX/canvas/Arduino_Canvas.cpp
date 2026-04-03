@@ -30,23 +30,19 @@ bool Arduino_Canvas::begin(int32_t speed)
     esp_restart();
   }
 
-  _buff_size = WIDTH * HEIGHT * sizeof(uint16_t);
-
   free(_framebuffer);
   _framebuffer = nullptr;
 
   if (psramInit())
-    _framebuffer = static_cast<uint16_t*>(heap_caps_aligned_alloc(64, _buff_size, MALLOC_CAP_SPIRAM));
+    _framebuffer = static_cast<uint16_t*>(heap_caps_aligned_alloc(64, FRAMEBUFF_SIZE, MALLOC_CAP_SPIRAM));
   else
-    _framebuffer = static_cast<uint16_t*>(aligned_alloc(64, _buff_size));
+    _framebuffer = static_cast<uint16_t*>(aligned_alloc(64, FRAMEBUFF_SIZE));
 
   if (!_framebuffer)
   {
     log_e("Помилка виділення пам'яті для буферів дисплея");
     esp_restart();
   }
-
-  log_i("Пам'ять для канвасу виділено");
 
 #ifdef DOUBLE_BUFFERRING
   if (!psramInit())
@@ -57,7 +53,7 @@ bool Arduino_Canvas::begin(int32_t speed)
 
   free(_framebuffer2);
   _framebuffer2 = nullptr;
-  _framebuffer2 = static_cast<uint16_t*>(ps_malloc(_buff_size));
+  _framebuffer2 = static_cast<uint16_t*>(heap_caps_aligned_alloc(64, FRAMEBUFF_SIZE, MALLOC_CAP_SPIRAM));
 
   if (!_framebuffer2)
   {
@@ -236,22 +232,39 @@ void Arduino_Canvas::writeFillRectPreclipped(int16_t x, int16_t y, int16_t w, in
         break;
     }
   }
-  // log_i("adjusted writeFillRectPreclipped(x: %d, y: %d, w: %d, h: %d)", x, y, w, h);
-  uint16_t* row = _framebuffer;
-  row += y * WIDTH;
-  row += x;
-  for (int j = 0; j < h; j++)
+
+#if CONFIG_IDF_TARGET_ESP32P4
+  if (_ppa_enabled)
   {
-    for (int i = 0; i < w; i++)
+    ppaFill(x, y, w, h, color);
+  }
+  else
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  {
+    uint16_t* row = _framebuffer;
+    row += y * WIDTH;
+    row += x;
+    for (int j = 0; j < h; j++)
     {
-      row[i] = color;
+      for (int i = 0; i < w; i++)
+      {
+        row[i] = color;
+      }
+      row += WIDTH;
     }
-    row += WIDTH;
   }
 }
 
 void Arduino_Canvas::draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h)
 {
+  if (
+      ((x + w - 1) < 0) ||  // Outside left
+      ((y + h - 1) < 0) ||  // Outside top
+      (x > MAX_X) ||        // Outside right
+      (y > MAX_Y)           // Outside bottom
+  )
+    return;
+
   switch (_rotation)
   {
     case 1:
@@ -268,7 +281,6 @@ void Arduino_Canvas::draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_t* bi
   }
 }
 
-// TODO ppa
 void Arduino_Canvas::draw16bitRGBBitmapWithTranColor(int16_t x, int16_t y, const uint16_t* bitmap, uint16_t transparent_color, int16_t w, int16_t h)
 {
   if (_rotation > 0)
@@ -355,22 +367,22 @@ void Arduino_Canvas::draw16bitRGBBitmapWithTranColor(int16_t x, int16_t y, const
   }
 }
 
-void Arduino_Canvas::flushMainBuff()  // TODO
+void Arduino_Canvas::flushMainBuff()
 {
   _output->draw16bitRGBBitmap(_output_x, _output_y, _framebuffer, WIDTH, HEIGHT);
 }
 
-void Arduino_Canvas::duplicateMainBuff()  // TODO
+void Arduino_Canvas::duplicateMainBuff()
 {
 #ifdef DOUBLE_BUFFERRING
-  memcpy(_framebuffer2, _framebuffer, _buff_size);
+  memcpy(_framebuffer2, _framebuffer, FRAMEBUFF_SIZE);
 #else
   log_e("Подвійну буферизацію не було увімкнуто в налаштуваннях прошивки");
   esp_restart();
 #endif  // DOUBLE_BUFFERRING
 }
 
-void Arduino_Canvas::flushSecondBuff()  // TODO
+void Arduino_Canvas::flushSecondBuff()
 {
 #ifdef DOUBLE_BUFFERRING
   _output->draw16bitRGBBitmap(_output_x, _output_y, _framebuffer2, WIDTH, HEIGHT);
