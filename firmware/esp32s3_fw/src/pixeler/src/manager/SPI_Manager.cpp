@@ -20,7 +20,6 @@ namespace pixeler
     {
       log_e("%s", e.what());
       esp_restart();
-      return false;  // Для cpp-check
     }
 
     if (!spi->begin(sclk_pin, miso_pin, mosi_pin))
