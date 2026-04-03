@@ -27,9 +27,7 @@ public:
 
 protected:
   uint16_t* _framebuffer2{nullptr};
-
   Arduino_GFX* _output{nullptr};
-  size_t _buff_size{0};
   int16_t _output_x{0};
   int16_t _output_y{0};
   const uint16_t MAX_X{0};
