@@ -15,6 +15,10 @@
 #include "font/glcdfont.h"
 #include "pixeler/setup/graphics_setup.h"
 
+#if CONFIG_IDF_TARGET_ESP32P4 && defined(DIRECT_DRAWING)
+#error "Пряме малювання не підтримуєтсья на ESP32P4. Використовуй канву!"
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4 && defined(DIRECT_DRAWING)
+
 /**************************************************************************/
 /*!
   @brief  Instatiate a GFX context for graphics! Can only be done by a superclass
@@ -22,7 +26,9 @@
   @param  h   Display height, in pixels
 */
 /**************************************************************************/
-Arduino_GFX::Arduino_GFX(uint16_t w, uint16_t h) : WIDTH{w}, HEIGHT{h}
+Arduino_GFX::Arduino_GFX(int16_t w, int16_t h) : FRAMEBUFF_SIZE{static_cast<uint32_t>(w * h * sizeof(uint16_t))},
+                                                 WIDTH(w),
+                                                 HEIGHT(h)
 {
   _width = WIDTH;
   _height = HEIGHT;
@@ -41,14 +47,132 @@ Arduino_GFX::Arduino_GFX(uint16_t w, uint16_t h) : WIDTH{w}, HEIGHT{h}
   text_pixel_margin = 0;
   _rotation = 0;
   wrap = true;
-  gfxFont = NULL;
   u8g2Font = NULL;
+
+#if CONFIG_IDF_TARGET_ESP32P4
+  ppa_client_config_t ppa_config = {
+      .oper_type = PPA_OPERATION_FILL,
+      .max_pending_trans_num = 1,
+      .data_burst_length = PPA_DATA_BURST_LENGTH_128};
+
+  if (esp_err_t ret = ppa_register_client(&ppa_config, &_ppa_fill) != ESP_OK)
+  {
+    log_e("Помилка реєстрації FILL клієнта: %s", esp_err_to_name(ret));
+    esp_restart();
+  }
+
+  ppa_client_config_t srm_config = {
+      .oper_type = PPA_OPERATION_SRM,
+      .max_pending_trans_num = 1,
+      .data_burst_length = PPA_DATA_BURST_LENGTH_128};
+
+  if (esp_err_t ret = ppa_register_client(&srm_config, &_ppa_srm) != ESP_OK)
+  {
+    log_e("Помилка реєстрації SRM клієнта: %s", esp_err_to_name(ret));
+    esp_restart();
+  }
+
+  log_i("PPA ініціалізовано");
+
+  _fill_oper = {
+      .out = {
+          .buffer = nullptr,
+          .buffer_size = FRAMEBUFF_SIZE,
+          .pic_w = 0,
+          .pic_h = 0,
+          .block_offset_x = 0,
+          .block_offset_y = 0,
+          .fill_cm = PPA_FILL_COLOR_MODE_RGB565,
+      },
+      .fill_block_w = 0,
+      .fill_block_h = 0,
+      .fill_color_val = 0,
+      .mode = PPA_TRANS_MODE_BLOCKING,
+  };
+
+  _srm_oper = {
+      .in = {
+          .buffer = nullptr,
+          .pic_w = 0,
+          .pic_h = 0,
+          .block_w = 0,
+          .block_h = 0,
+          .srm_cm = PPA_SRM_COLOR_MODE_RGB565,
+      },
+      .out = {
+          .buffer = nullptr,
+          .buffer_size = FRAMEBUFF_SIZE,
+          .pic_w = 0,
+          .pic_h = 0,
+          .block_offset_x = 0,
+          .block_offset_y = 0,
+          .srm_cm = PPA_SRM_COLOR_MODE_RGB565,
+      },
+      .rotation_angle = PPA_SRM_ROTATION_ANGLE_0,
+      .scale_x = 1.0f,
+      .scale_y = 1.0f,
+      .mode = PPA_TRANS_MODE_BLOCKING,
+  };
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
 }
 
-Arduino_GFX::~Arduino_GFX()
+#if CONFIG_IDF_TARGET_ESP32P4
+void Arduino_GFX::ppaFill(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color)
 {
-  free(_framebuffer);
+  _fill_oper.out.buffer = _framebuffer;
+  _fill_oper.out.pic_w = WIDTH;
+  _fill_oper.out.pic_h = HEIGHT;
+  _fill_oper.out.block_offset_x = x;
+  _fill_oper.out.block_offset_y = y;
+  _fill_oper.fill_block_w = w;
+  _fill_oper.fill_block_h = h;
+  _fill_oper.fill_color_val = color16RGBTo24RGB(color);
+
+  ppa_do_fill(_ppa_fill, &_fill_oper);
 }
+
+void Arduino_GFX::ppaRotate(const void* buff_from,
+                            uint16_t buff_f_w,
+                            uint16_t buff_f_h,
+                            uint16_t x,
+                            uint16_t y,
+                            void* buff_to,
+                            uint16_t buff_t_w,
+                            uint16_t buff_t_h,
+                            ppa_srm_rotation_angle_t angle)
+{
+  _srm_oper.in.buffer = buff_from;
+  _srm_oper.in.pic_w = buff_f_w;
+  _srm_oper.in.pic_h = buff_f_h;
+  _srm_oper.in.block_w = buff_f_w;
+  _srm_oper.in.block_h = buff_f_h;
+
+  _srm_oper.out.buffer = buff_to;
+  _srm_oper.out.buffer_size = FRAMEBUFF_SIZE;
+  _srm_oper.out.pic_w = buff_t_w;
+  _srm_oper.out.pic_h = buff_t_h;
+  _srm_oper.out.block_offset_x = x;
+  _srm_oper.out.block_offset_y = y;
+
+  _srm_oper.rotation_angle = angle;
+
+  ppa_do_scale_rotate_mirror(_ppa_srm, &_srm_oper);
+}
+
+uint32_t Arduino_GFX::color16RGBTo24RGB(uint16_t color565)
+{
+  uint32_t r = (color565 >> 11) & 0x1F;
+  uint32_t g = (color565 >> 5) & 0x3F;
+  uint32_t b = color565 & 0x1F;
+
+  r = (r * 521) >> 6;
+  g = (g * 1025) >> 8;
+  b = (b * 521) >> 6;
+
+  return (r << 16) | (g << 8) | b;
+}
+
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
 
 /**************************************************************************/
 /*!
@@ -144,20 +268,8 @@ GFX_INLINE void Arduino_GFX::startWrite()
 
 void Arduino_GFX::writePixel(int16_t x, int16_t y, uint16_t color)
 {
-  if (_ordered_in_range(y, 0, _max_y))
-  {
-    if (_isRoundMode)
-    {
-      if (_ordered_in_range(x, _roundMinX[y], _roundMaxX[y]))
-      {
-        writePixelPreclipped(x, y, color);
-      }
-    }
-    else if (_ordered_in_range(x, 0, _max_x))
-    {
-      writePixelPreclipped(x, y, color);
-    }
-  }
+  if (_ordered_in_range(y, 0, _max_y) && _ordered_in_range(x, 0, _max_x))
+    writePixelPreclipped(x, y, color);
 }
 
 /**************************************************************************/
@@ -292,10 +404,17 @@ void Arduino_GFX::writeFillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint
 /**************************************************************************/
 void Arduino_GFX::writeFillRectPreclipped(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
 {
-  // Overwrite in subclasses if desired!
-  for (int16_t i = y; i < y + h; i++)
+#if CONFIG_IDF_TARGET_ESP32P4
+  if (_ppa_enabled)
   {
-    writeFastHLine(x, i, w, color);
+    ppaFill(x, y, w, h, color);
+  }
+  else
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  {
+    // Overwrite in subclasses if desired!
+    for (int16_t i = y; i < y + h; ++i)
+      writeFastHLine(x, i, w, color);
   }
 }
 
@@ -1094,7 +1213,6 @@ void Arduino_GFX::draw16bitRGBBitmapWithTranColor(
   endWrite();
 }
 
-#if defined(U8G2_FONT_SUPPORT)
 uint16_t Arduino_GFX::u8g2_font_get_word(const uint8_t* font, uint8_t offset)
 {
   uint16_t pos;
@@ -1239,8 +1357,6 @@ void Arduino_GFX::u8g2_font_decode_len(uint8_t len, uint8_t is_foreground, uint1
   _u8g2_dy = ly;
 }
 
-#endif  // defined(U8G2_FONT_SUPPORT)
-
 void Arduino_GFX::flushMainBuff()
 {
   log_e("Відсутня реалізація методу");
@@ -1252,6 +1368,11 @@ void Arduino_GFX::duplicateMainBuff()
 }
 
 void Arduino_GFX::flushSecondBuff()
+{
+  log_e("Відсутня реалізація методу");
+}
+
+void Arduino_GFX::writePixelPreclipped(int16_t x, int16_t y, uint16_t color)
 {
   log_e("Відсутня реалізація методу");
 }
@@ -1273,120 +1394,7 @@ void Arduino_GFX::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color
 {
   int16_t block_w, block_h, curX, curY, curW, curH;
 
-#if !defined(ATTINY_CORE)
-  if (gfxFont)  // custom font
-  {
-    // Character is assumed previously filtered by write() to eliminate
-    // newlines, returns, non-printable characters, etc.  Calling
-    // drawChar() directly with 'bad' characters of font may cause mayhem!
-
-    c -= pgm_read_byte(&gfxFont->first);
-    GFXglyph* glyph = pgm_read_glyph_ptr(gfxFont, c);
-    uint8_t* bitmap = pgm_read_bitmap_ptr(gfxFont);
-
-    uint16_t bo = pgm_read_word(&glyph->bitmapOffset);
-    uint8_t w = pgm_read_byte(&glyph->width),
-            h = pgm_read_byte(&glyph->height),
-            xAdvance = pgm_read_byte(&glyph->xAdvance),
-            yAdvance = pgm_read_byte(&gfxFont->yAdvance),
-            baseline = yAdvance * 2 / 3;  // TODO: baseline is an arbitrary currently, may be define in font file
-
-    int8_t xo = pgm_read_sbyte(&glyph->xOffset),
-           yo = pgm_read_sbyte(&glyph->yOffset);
-    uint8_t xx, yy, bits = 0, bit = 0;
-    int16_t xo16 = xo, yo16 = yo;
-
-    if (xAdvance < w)
-    {
-      xAdvance = w;  // Don't know why it exists
-    }
-
-    block_w = xAdvance * textsize_x;
-    block_h = yAdvance * textsize_y;
-    curY = y - (baseline * textsize_y);
-    if (
-        (x > _max_text_x) ||                  // Clip right
-        (curY > _max_text_y) ||               // Clip bottom
-        ((x + block_w - 1) < _min_text_x) ||  // Clip left
-        ((y + block_h - 1) < _min_text_y)     // Clip top
-    )
-    {
-      return;
-    }
-
-    // NOTE: Different from Adafruit_GFX design, Arduino_GFX also cater background.
-    // Since it may introduce many ugly output, it should limited using on mono font only.
-    startWrite();
-    if (bg != color)  // have background color
-    {
-      curW = block_w;
-      while ((x + curW - 1) > _max_text_x)
-      {
-        curW -= textsize_x;
-      }
-      curH = block_h;
-      while ((curY + curH - 1) > _max_text_y)
-      {
-        curH -= textsize_y;
-      }
-      writeFillRect(x, curY, curW, curH, bg);
-    }
-    if (textsize_x == 1 && textsize_y == 1)
-    {
-      curY = y + yo;
-      for (yy = 0; yy < h; ++yy, ++curY)
-      {
-        if (curY <= _max_text_y)
-        {
-          curX = x + xo;
-          for (xx = 0; xx < w; ++xx, ++curX, bits <<= 1)
-          {
-            if (!(bit++ & 7))
-            {
-              bits = pgm_read_byte(&bitmap[bo++]);
-            }
-            if (curX <= _max_text_x)
-            {
-              if (bits & 0x80)
-              {
-                writePixel(curX, curY, color);
-              }
-            }
-          }
-        }
-      }
-    }
-    else  // (textsize_x > 1 || textsize_y > 1)
-    {
-      curY = y + (yo16 * textsize_y);
-      for (yy = 0; yy < h; ++yy, curY += textsize_y)
-      {
-        if ((curY + textsize_y - 1) <= _max_text_y)
-        {
-          curX = x + (xo16 * textsize_x);
-          for (xx = 0; xx < w; ++xx, curX += textsize_x, bits <<= 1)
-          {
-            if (!(bit++ & 7))
-            {
-              bits = pgm_read_byte(&bitmap[bo++]);
-            }
-            if ((curX + textsize_x - 1) <= _max_text_x)
-            {
-              if (bits & 0x80)
-              {
-                writeFillRect(curX, curY, textsize_x - text_pixel_margin, textsize_y - text_pixel_margin, color);
-              }
-            }
-          }
-        }
-      }
-    }
-    endWrite();
-  }
-  else  // 'Classic' built-in font
-#endif  // !defined(ATTINY_CORE)
-#if defined(U8G2_FONT_SUPPORT)
-      if (u8g2Font)
+  if (u8g2Font)
   {
     _u8g2_target_y = y - ((_u8g2_char_height + _u8g2_char_y) * textsize_y);
     if (_u8g2_target_y > _max_text_y)
@@ -1424,7 +1432,6 @@ void Arduino_GFX::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color
     }
   }
   else  // glcdfont
-#endif  // defined(U8G2_FONT_SUPPORT)
   {
     block_w = 6 * textsize_x;
     block_h = 8 * textsize_y;
@@ -1526,6 +1533,24 @@ void Arduino_GFX::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color
   }
 }
 
+void Arduino_GFX::setPPAState(bool state)
+{
+#if CONFIG_IDF_TARGET_ESP32P4
+  _ppa_enabled = state;
+#else
+  log_e("Модуль PPA відсутній на даному чіпі");
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+}
+
+bool Arduino_GFX::isPPAEnabled() const
+{
+#if CONFIG_IDF_TARGET_ESP32P4
+  return _ppa_enabled;
+#else
+  return false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+}
+
 /**************************************************************************/
 /*!
   @brief  Print one byte/character of data, used to support print()
@@ -1534,38 +1559,7 @@ void Arduino_GFX::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color
 /**************************************************************************/
 size_t Arduino_GFX::write(uint8_t c)
 {
-#if !defined(ATTINY_CORE)
-  if (gfxFont)  // custom font
-  {
-    if (c == '\n')  // Newline
-    {
-      cursor_x = _min_text_x;  // Reset x to zero, advance y by one line
-      cursor_y += (int16_t)textsize_y * pgm_read_byte(&gfxFont->yAdvance);
-    }
-    else if (c != '\r')  // Not a carriage return; is normal char
-    {
-      uint16_t first = pgm_read_word(&gfxFont->first),
-               last = pgm_read_word(&gfxFont->last);
-      if ((c >= first) && (c <= last))  // Char present in this font?
-      {
-        GFXglyph* glyph = pgm_read_glyph_ptr(gfxFont, c - first);
-        uint8_t gw = pgm_read_byte(&glyph->width),
-                xa = pgm_read_byte(&glyph->xAdvance);
-        int8_t xo = pgm_read_sbyte(&glyph->xOffset);
-        if (wrap && ((cursor_x + ((xo + gw) * textsize_x) - 1) > _max_text_x))
-        {
-          cursor_x = _min_text_x;  // Reset x to zero, advance y by one line
-          cursor_y += (int16_t)textsize_y * pgm_read_byte(&gfxFont->yAdvance);
-        }
-        drawChar(cursor_x, cursor_y, c, textcolor, textbgcolor);
-        cursor_x += (int16_t)textsize_x * xa;
-      }
-    }
-  }
-  else  // not gfxFont
-#endif  // !defined(ATTINY_CORE)
-#if defined(U8G2_FONT_SUPPORT)
-      if (u8g2Font)
+  if (u8g2Font)
   {
     _u8g2_decode_ptr = 0;
 
@@ -1650,7 +1644,6 @@ size_t Arduino_GFX::write(uint8_t c)
             font += pgm_read_byte(font + 1);
           }
         }
-#ifdef U8G2_WITH_UNICODE
         else
         {
           uint16_t e;
@@ -1680,7 +1673,6 @@ size_t Arduino_GFX::write(uint8_t c)
             font += pgm_read_byte(font + 2);
           }
         }
-#endif
 
         if (glyph_data)
         {
@@ -1712,7 +1704,6 @@ size_t Arduino_GFX::write(uint8_t c)
     }
   }
   else  // glcdfont
-#endif  // defined(U8G2_FONT_SUPPORT)
   {
     if (c == '\n')
     {                              // Newline?
@@ -1805,26 +1796,8 @@ void Arduino_GFX::setRotation(uint8_t r)
   setTextBound(0, 0, _width, _height);
 }
 
-#if !defined(ATTINY_CORE)
-/**************************************************************************/
-/*!
-  @brief  Set the font to display when print()ing, either custom or default
-  @param  f   The GFXfont object, if NULL use built in 6x8 font
-*/
-/**************************************************************************/
-void Arduino_GFX::setFont(const GFXfont* f)
-{
-  gfxFont = (GFXfont*)f;
-#if defined(U8G2_FONT_SUPPORT)
-  u8g2Font = NULL;
-#endif  // defined(U8G2_FONT_SUPPORT)
-}
-#endif  // !defined(ATTINY_CORE)
-
-#if defined(U8G2_FONT_SUPPORT)
 void Arduino_GFX::setFont(const uint8_t* font)
 {
-  gfxFont = NULL;
   u8g2Font = font;
 
   // extract from u8g2_read_font_info()
@@ -1871,9 +1844,7 @@ void Arduino_GFX::setFont(const uint8_t* font)
   /* offset 17 */
   _u8g2_start_pos_upper_A = u8g2_font_get_word(font, 17);
   _u8g2_start_pos_lower_a = u8g2_font_get_word(font, 19);
-#ifdef U8G2_WITH_UNICODE
   _u8g2_start_pos_unicode = u8g2_font_get_word(font, 21);
-#endif
   _u8g2_first_char = pgm_read_byte(font + 23);
   // log_d("_u8g2_start_pos_upper_A: %d, _u8g2_start_pos_lower_a: %d, _u8g2_start_pos_unicode: %d, _u8g2_first_char: %d",
   //       _u8g2_start_pos_upper_A, _u8g2_start_pos_lower_a, _u8g2_start_pos_unicode, _u8g2_first_char);
@@ -1883,7 +1854,6 @@ void Arduino_GFX::setUTF8Print(bool isEnable)
 {
   _enableUTF8Print = isEnable;
 }
-#endif  // defined(U8G2_FONT_SUPPORT)
 
 /**************************************************************************/
 /*!
@@ -1910,253 +1880,201 @@ void Arduino_GFX::getTextBounds(const char* str, int16_t x, int16_t y, int16_t& 
 
   while ((c = *str++))
   {
-    // Інлайн тіло charBounds - тепер працюємо з curr_x і curr_y
-    if (gfxFont)  // custom font
+    if (u8g2Font)
     {
-      if (c == '\n')  // Newline
-      {
-        curr_x = _min_text_x;  // Reset x to zero, advance y by one line
-        curr_y += (int16_t)textsize_y * (uint8_t)pgm_read_byte(&gfxFont->yAdvance);
-      }
-      else if (c != '\r')  // Not a carriage return; is normal char
-      {
-        uint8_t first = pgm_read_byte(&gfxFont->first),
-                last = pgm_read_byte(&gfxFont->last);
-        if ((c >= first) && (c <= last))  // Char present in this font?
-        {
-          GFXglyph* glyph = pgm_read_glyph_ptr(gfxFont, c - first);
-          uint8_t gw = pgm_read_byte(&glyph->width),
-                  gh = pgm_read_byte(&glyph->height),
-                  xa = pgm_read_byte(&glyph->xAdvance);
-          int8_t xo = pgm_read_sbyte(&glyph->xOffset),
-                 yo = pgm_read_sbyte(&glyph->yOffset);
-          if (wrap && ((curr_x + ((xo + gw) * textsize_x) - 1) > _max_text_x))
-          {
-            curr_x = _min_text_x;  // Reset x to zero, advance y by one line
-            curr_y += (int16_t)textsize_y * (uint8_t)pgm_read_byte(&gfxFont->yAdvance);
-          }
-          int16_t x1_tmp = curr_x + ((int16_t)xo * textsize_x),
-                  y1_tmp = curr_y + ((int16_t)yo * textsize_y),
-                  x2 = x1_tmp + ((int16_t)gw * textsize_x) - 1,
-                  y2 = y1_tmp + ((int16_t)gh * textsize_y) - 1;
-          if (x1_tmp < minx)
-          {
-            minx = x1_tmp;
-          }
-          if (y1_tmp < miny)
-          {
-            miny = y1_tmp;
-          }
-          if (x2 > maxx)
-          {
-            maxx = x2;
-          }
-          if (y2 > maxy)
-          {
-            maxy = y2;
-          }
-          curr_x += (int16_t)textsize_x * xa;
-        }
-      }
-    }
-    else  // not gfxFont
-    {
-      if (u8g2Font)
-      {
-        _u8g2_decode_ptr = 0;
+      _u8g2_decode_ptr = 0;
 
-        if (_enableUTF8Print)
+      if (_enableUTF8Print)
+      {
+        if (_utf8_state == 0)
         {
-          if (_utf8_state == 0)
+          if (c >= 0xfc) /* 6 byte sequence */
           {
-            if (c >= 0xfc) /* 6 byte sequence */
+            _utf8_state = 5;
+            c &= 1;
+          }
+          else if (c >= 0xf8)
+          {
+            _utf8_state = 4;
+            c &= 3;
+          }
+          else if (c >= 0xf0)
+          {
+            _utf8_state = 3;
+            c &= 7;
+          }
+          else if (c >= 0xe0)
+          {
+            _utf8_state = 2;
+            c &= 15;
+          }
+          else if (c >= 0xc0)
+          {
+            _utf8_state = 1;
+            c &= 0x01f;
+          }
+          _encoding = c;
+        }
+        else
+        {
+          _utf8_state--;
+          /* The case b < 0x080 (an illegal UTF8 encoding) is not checked here. */
+          _encoding <<= 6;
+          c &= 0x03f;
+          _encoding |= c;
+        }
+      }  // _enableUTF8Print
+      else
+      {
+        _encoding = c;
+      }
+
+      if (_utf8_state == 0)
+      {
+        if (_encoding == '\n')
+        {
+          curr_x = _min_text_x;
+          curr_y += (int16_t)textsize_y * _u8g2_max_char_height;
+        }
+        else if (_encoding != '\r')
+        {  // Ignore carriage returns
+          const uint8_t* font = u8g2Font;
+          const uint8_t* glyph_data = 0;
+
+          // extract from u8g2_font_get_glyph_data()
+          font += 23;  // U8G2_FONT_DATA_STRUCT_SIZE
+          if (_encoding <= 255)
+          {
+            if (_encoding >= 'a')
             {
-              _utf8_state = 5;
-              c &= 1;
+              font += _u8g2_start_pos_lower_a;
             }
-            else if (c >= 0xf8)
+            else if (_encoding >= 'A')
             {
-              _utf8_state = 4;
-              c &= 3;
+              font += _u8g2_start_pos_upper_A;
             }
-            else if (c >= 0xf0)
+
+            for (;;)
             {
-              _utf8_state = 3;
-              c &= 7;
+              if (pgm_read_byte(font + 1) == 0)
+                break;
+              if (pgm_read_byte(font) == _encoding)
+              {
+                glyph_data = font + 2; /* skip encoding and glyph size */
+              }
+              font += pgm_read_byte(font + 1);
             }
-            else if (c >= 0xe0)
-            {
-              _utf8_state = 2;
-              c &= 15;
-            }
-            else if (c >= 0xc0)
-            {
-              _utf8_state = 1;
-              c &= 0x01f;
-            }
-            _encoding = c;
           }
           else
           {
-            _utf8_state--;
-            /* The case b < 0x080 (an illegal UTF8 encoding) is not checked here. */
-            _encoding <<= 6;
-            c &= 0x03f;
-            _encoding |= c;
-          }
-        }  // _enableUTF8Print
-        else
-        {
-          _encoding = c;
-        }
+            uint16_t e;
+            font += _u8g2_start_pos_unicode;
+            const uint8_t* unicode_lookup_table = font;
 
-        if (_utf8_state == 0)
-        {
-          if (_encoding == '\n')
+            /* issue 596: search for the glyph start in the unicode lookup table */
+            do
+            {
+              font += u8g2_font_get_word(unicode_lookup_table, 0);
+              e = u8g2_font_get_word(unicode_lookup_table, 2);
+              unicode_lookup_table += 4;
+            } while (e < _encoding);
+
+            for (;;)
+            {
+              e = u8g2_font_get_word(font, 0);
+
+              if (e == 0)
+                break;
+
+              if (e == _encoding)
+              {
+                glyph_data = font + 3; /* skip encoding and glyph size */
+                break;
+              }
+              font += pgm_read_byte(font + 2);
+            }
+          }
+
+          if (glyph_data)
           {
-            curr_x = _min_text_x;
-            curr_y += (int16_t)textsize_y * _u8g2_max_char_height;
-          }
-          else if (_encoding != '\r')
-          {  // Ignore carriage returns
-            const uint8_t* font = u8g2Font;
-            const uint8_t* glyph_data = 0;
+            // u8g2_font_decode_glyph
+            _u8g2_decode_ptr = glyph_data;
+            _u8g2_decode_bit_pos = 0;
 
-            // extract from u8g2_font_get_glyph_data()
-            font += 23;  // U8G2_FONT_DATA_STRUCT_SIZE
-            if (_encoding <= 255)
+            _u8g2_char_width = u8g2_font_decode_get_unsigned_bits(_u8g2_bits_per_char_width);
+            _u8g2_char_height = u8g2_font_decode_get_unsigned_bits(_u8g2_bits_per_char_height);
+            _u8g2_char_x = u8g2_font_decode_get_signed_bits(_u8g2_bits_per_char_x);
+            _u8g2_char_y = u8g2_font_decode_get_signed_bits(_u8g2_bits_per_char_y);
+            _u8g2_delta_x = u8g2_font_decode_get_signed_bits(_u8g2_bits_per_delta_x);
+
+            if (_u8g2_char_width > 0)
             {
-              if (_encoding >= 'a')
+              if (wrap && ((curr_x + (textsize_x * _u8g2_char_width) - 1) > _max_text_x))
               {
-                font += _u8g2_start_pos_lower_a;
-              }
-              else if (_encoding >= 'A')
-              {
-                font += _u8g2_start_pos_upper_A;
-              }
-
-              for (;;)
-              {
-                if (pgm_read_byte(font + 1) == 0)
-                  break;
-                if (pgm_read_byte(font) == _encoding)
-                {
-                  glyph_data = font + 2; /* skip encoding and glyph size */
-                }
-                font += pgm_read_byte(font + 1);
-              }
-            }
-            else
-            {
-              uint16_t e;
-              font += _u8g2_start_pos_unicode;
-              const uint8_t* unicode_lookup_table = font;
-
-              /* issue 596: search for the glyph start in the unicode lookup table */
-              do
-              {
-                font += u8g2_font_get_word(unicode_lookup_table, 0);
-                e = u8g2_font_get_word(unicode_lookup_table, 2);
-                unicode_lookup_table += 4;
-              } while (e < _encoding);
-
-              for (;;)
-              {
-                e = u8g2_font_get_word(font, 0);
-
-                if (e == 0)
-                  break;
-
-                if (e == _encoding)
-                {
-                  glyph_data = font + 3; /* skip encoding and glyph size */
-                  break;
-                }
-                font += pgm_read_byte(font + 2);
+                curr_x = _min_text_x;
+                curr_y += (int16_t)textsize_y * _u8g2_max_char_height;
               }
             }
 
-            if (glyph_data)
+            int16_t x1_tmp = curr_x + ((int16_t)_u8g2_char_x * textsize_x),
+                    y1_tmp = curr_y - (((int16_t)_u8g2_char_height + _u8g2_char_y) * textsize_y),
+                    x2 = x1_tmp + ((int16_t)_u8g2_char_width * textsize_x) - 1,
+                    y2 = y1_tmp + ((int16_t)_u8g2_char_height * textsize_y) - 1;
+            if (x1_tmp < minx)
             {
-              // u8g2_font_decode_glyph
-              _u8g2_decode_ptr = glyph_data;
-              _u8g2_decode_bit_pos = 0;
-
-              _u8g2_char_width = u8g2_font_decode_get_unsigned_bits(_u8g2_bits_per_char_width);
-              _u8g2_char_height = u8g2_font_decode_get_unsigned_bits(_u8g2_bits_per_char_height);
-              _u8g2_char_x = u8g2_font_decode_get_signed_bits(_u8g2_bits_per_char_x);
-              _u8g2_char_y = u8g2_font_decode_get_signed_bits(_u8g2_bits_per_char_y);
-              _u8g2_delta_x = u8g2_font_decode_get_signed_bits(_u8g2_bits_per_delta_x);
-
-              if (_u8g2_char_width > 0)
-              {
-                if (wrap && ((curr_x + (textsize_x * _u8g2_char_width) - 1) > _max_text_x))
-                {
-                  curr_x = _min_text_x;
-                  curr_y += (int16_t)textsize_y * _u8g2_max_char_height;
-                }
-              }
-
-              int16_t x1_tmp = curr_x + ((int16_t)_u8g2_char_x * textsize_x),
-                      y1_tmp = curr_y - (((int16_t)_u8g2_char_height + _u8g2_char_y) * textsize_y),
-                      x2 = x1_tmp + ((int16_t)_u8g2_char_width * textsize_x) - 1,
-                      y2 = y1_tmp + ((int16_t)_u8g2_char_height * textsize_y) - 1;
-              if (x1_tmp < minx)
-              {
-                minx = x1_tmp;
-              }
-              if (y1_tmp < miny)
-              {
-                miny = y1_tmp;
-              }
-              if (x2 > maxx)
-              {
-                maxx = x2;
-              }
-              if (y2 > maxy)
-              {
-                maxy = y2;
-              }
-              curr_x += (int16_t)textsize_x * _u8g2_delta_x;
+              minx = x1_tmp;
             }
+            if (y1_tmp < miny)
+            {
+              miny = y1_tmp;
+            }
+            if (x2 > maxx)
+            {
+              maxx = x2;
+            }
+            if (y2 > maxy)
+            {
+              maxy = y2;
+            }
+            curr_x += (int16_t)textsize_x * _u8g2_delta_x;
           }
         }
       }
-      else  // glcdfont
+    }
+    else  // glcdfont
+    {
+      if (c == '\n')
+      {                            // Newline?
+        curr_x = _min_text_x;      // Reset x to zero,
+        curr_y += textsize_y * 8;  // advance y one line
+                                   // min/max x/y unchaged -- that waits for next 'normal' character
+      }
+      else if (c != '\r')  // Normal char; ignore carriage returns
       {
-        if (c == '\n')
-        {                            // Newline?
+        if (wrap && ((curr_x + (textsize_x * 6) - 1) > _max_text_x))  // Off right?
+        {
           curr_x = _min_text_x;      // Reset x to zero,
           curr_y += textsize_y * 8;  // advance y one line
-                                     // min/max x/y unchaged -- that waits for next 'normal' character
         }
-        else if (c != '\r')  // Normal char; ignore carriage returns
+        int16_t x2 = curr_x + textsize_x * 6 - 1;  // Lower-right pixel of char
+        int16_t y2 = curr_y + textsize_y * 8 - 1;
+        if (x2 > maxx)
         {
-          if (wrap && ((curr_x + (textsize_x * 6) - 1) > _max_text_x))  // Off right?
-          {
-            curr_x = _min_text_x;      // Reset x to zero,
-            curr_y += textsize_y * 8;  // advance y one line
-          }
-          int16_t x2 = curr_x + textsize_x * 6 - 1;  // Lower-right pixel of char
-          int16_t y2 = curr_y + textsize_y * 8 - 1;
-          if (x2 > maxx)
-          {
-            maxx = x2;  // Track max x, y
-          }
-          if (y2 > maxy)
-          {
-            maxy = y2;
-          }
-          if (curr_x < minx)
-          {
-            minx = curr_x;  // Track min x, y
-          }
-          if (curr_y < miny)
-          {
-            miny = curr_y;
-          }
-          curr_x += textsize_x * 6;  // Advance x one char
+          maxx = x2;  // Track max x, y
         }
+        if (y2 > maxy)
+        {
+          maxy = y2;
+        }
+        if (curr_x < minx)
+        {
+          minx = curr_x;  // Track min x, y
+        }
+        if (curr_y < miny)
+        {
+          miny = curr_y;
+        }
+        curr_x += textsize_x * 6;  // Advance x one char
       }
     }
   }
@@ -2202,81 +2120,7 @@ void Arduino_GFX::displayOff()
 {
 }
 
-/**************************************************************************/
-/*!
-  @brief  Enable Round Mode For Round Display
-*/
-/**************************************************************************/
-bool Arduino_GFX::enableRoundMode()
-{
-  if (WIDTH != HEIGHT)
-  {
-    return false;
-  }
-  else
-  {
-    // startWrite();
-    _isRoundMode = true;
-    _roundMinX = (int16_t*)malloc(HEIGHT * sizeof(int16_t));
-    _roundMaxX = (int16_t*)malloc(HEIGHT * sizeof(int16_t));
-
-    int32_t xt, yt, s;
-    int16_t r = (WIDTH >> 1);
-    int32_t r2 = r * r;
-
-    xt = 0;
-    yt = r;
-    s = (r2 << 1) + r2 * (1 - (r << 1));
-    do
-    {
-      while (s < 0)
-      {
-        s += r2 * ((++xt << 2) + 2);
-      }
-      // writePixelPreclipped(r - xt, r - yt, RGB565_RED);
-      _roundMinX[r - yt] = r - xt - 1;
-      // writePixelPreclipped(r - xt, r + yt - 1, RGB565_RED);
-      _roundMinX[r + yt - 1] = r - xt - 1;
-      // writePixelPreclipped(r + xt - 1, r - yt, RGB565_BLUE);
-      _roundMaxX[r - yt] = r + xt;
-      // writePixelPreclipped(r + xt - 1, r + yt - 1, RGB565_BLUE);
-      _roundMaxX[r + yt - 1] = r + xt;
-      s -= (--yt) * r2 << 2;
-    } while (r2 * xt <= r2 * yt);
-
-    s = 1 - r;
-    int16_t ddF_x = 1;
-    int16_t ddF_y = -2 * r;
-    xt = 0;
-    yt = r;
-    while (xt < yt)
-    {
-      if (s >= 0)
-      {
-        yt--;
-        ddF_y += 2;
-        s += ddF_y;
-      }
-      xt++;
-      ddF_x += 2;
-      s += ddF_x;
-
-      // writePixel(r - yt, r + xt - 1, RGB565_RED);
-      _roundMinX[r + xt - 1] = r - yt - 1;
-      // writePixel(r - yt, r - xt, RGB565_RED);
-      _roundMinX[r - xt] = r - yt - 1;
-      // writePixel(r + yt - 1, r + xt - 1, RGB565_BLUE);
-      _roundMaxX[r + xt - 1] = r + yt;
-      // writePixel(r + yt - 1, r - xt, RGB565_BLUE);
-      _roundMaxX[r - xt] = r + yt;
-    }
-    // endWrite();
-
-    return true;
-  }
-}
-
-bool Arduino_GFX::drawBitmapToFramebuffer(
+void Arduino_GFX::drawBitmapToFramebuffer(
     const uint16_t* from_bitmap,
     int16_t bitmap_w,
     int16_t bitmap_h,
@@ -2284,45 +2128,61 @@ bool Arduino_GFX::drawBitmapToFramebuffer(
     int16_t x,
     int16_t y,
     int16_t framebuffer_w,
-    int16_t framebuffer_h) const
+    int16_t framebuffer_h)
 {
+#if CONFIG_IDF_TARGET_ESP32P4
+  bool can_use_ppa = true;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
   int16_t max_X = framebuffer_w - 1;
   int16_t max_Y = framebuffer_h - 1;
-  if (
-      ((x + bitmap_w - 1) < 0) ||  // Outside left
-      ((y + bitmap_h - 1) < 0) ||  // Outside top
-      (x > max_X) ||               // Outside right
-      (y > max_Y)                  // Outside bottom
-  )
+  int16_t x_skip = 0;
+
+  if ((y + bitmap_h - 1) > max_Y)
   {
-    return false;
+    bitmap_h -= (y + bitmap_h - 1) - max_Y;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+  if (y < 0)
+  {
+    from_bitmap -= y * bitmap_w;
+    bitmap_h += y;
+    y = 0;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+  if ((x + bitmap_w - 1) > max_X)
+  {
+    x_skip = (x + bitmap_w - 1) - max_X;
+    bitmap_w -= x_skip;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+  if (x < 0)
+  {
+    from_bitmap -= x;
+    x_skip -= x;
+    bitmap_w += x;
+    x = 0;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+#if CONFIG_IDF_TARGET_ESP32P4
+  if (_ppa_enabled && can_use_ppa)
+  {
+    ppaRotate(from_bitmap, bitmap_w, bitmap_h, x, y, _framebuffer, WIDTH, HEIGHT, PPA_SRM_ROTATION_ANGLE_0);
   }
   else
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
   {
-    int16_t x_skip = 0;
-    if ((y + bitmap_h - 1) > max_Y)
-    {
-      bitmap_h -= (y + bitmap_h - 1) - max_Y;
-    }
-    if (y < 0)
-    {
-      from_bitmap -= y * bitmap_w;
-      bitmap_h += y;
-      y = 0;
-    }
-    if ((x + bitmap_w - 1) > max_X)
-    {
-      x_skip = (x + bitmap_w - 1) - max_X;
-      bitmap_w -= x_skip;
-    }
-    if (x < 0)
-    {
-      from_bitmap -= x;
-      x_skip -= x;
-      bitmap_w += x;
-      x = 0;
-    }
-
     uint16_t* row = framebuffer;
     row += y * framebuffer_w;  // shift framebuffer to y offset
     row += x;                  // shift framebuffer to x offset
@@ -2358,11 +2218,10 @@ bool Arduino_GFX::drawBitmapToFramebuffer(
         row += framebuffer_w;
       }
     }
-    return true;
   }
 }
 
-bool Arduino_GFX::drawBitmapToFramebufferRotate1(
+void Arduino_GFX::drawBitmapToFramebufferRotate1(
     const uint16_t* from_bitmap,
     int16_t bitmap_w,
     int16_t bitmap_h,
@@ -2370,45 +2229,65 @@ bool Arduino_GFX::drawBitmapToFramebufferRotate1(
     int16_t x,
     int16_t y,
     int16_t framebuffer_w,
-    int16_t framebuffer_h) const
+    int16_t framebuffer_h)
 {
+#if CONFIG_IDF_TARGET_ESP32P4
+  bool can_use_ppa = true;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+
   int16_t max_X = framebuffer_w - 1;
   int16_t max_Y = framebuffer_h - 1;
-  if (
-      ((x + bitmap_w - 1) < 0) ||  // Outside left
-      ((y + bitmap_h - 1) < 0) ||  // Outside top
-      (x > max_X) ||               // Outside right
-      (y > max_Y)                  // Outside bottom
-  )
+  int16_t x_skip = 0;
+
+  if ((y + bitmap_h - 1) > max_Y)
   {
-    return false;
+    bitmap_h -= (y + bitmap_h - 1) - max_Y;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+  if (y < 0)
+  {
+    from_bitmap -= y * bitmap_w;
+    bitmap_h += y;
+    y = 0;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+  if ((x + bitmap_w - 1) > max_X)
+  {
+    x_skip = (x + bitmap_w - 1) - max_X;
+    bitmap_w -= x_skip;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+  if (x < 0)
+  {
+    from_bitmap -= x;
+    x_skip -= x;
+    bitmap_w += x;
+    x = 0;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+#if CONFIG_IDF_TARGET_ESP32P4
+  if (_ppa_enabled && can_use_ppa)
+  {
+    uint16_t target_x = WIDTH - y - bitmap_h;
+    uint16_t target_y = x;
+
+    ppaRotate(from_bitmap, bitmap_w, bitmap_h, target_x, target_y, _framebuffer, WIDTH, HEIGHT, PPA_SRM_ROTATION_ANGLE_270);
   }
   else
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
   {
-    int16_t x_skip = 0;
-    if ((y + bitmap_h - 1) > max_Y)
-    {
-      bitmap_h -= (y + bitmap_h - 1) - max_Y;
-    }
-    if (y < 0)
-    {
-      from_bitmap -= y * bitmap_w;
-      bitmap_h += y;
-      y = 0;
-    }
-    if ((x + bitmap_w - 1) > max_X)
-    {
-      x_skip = (x + bitmap_w - 1) - max_X;
-      bitmap_w -= x_skip;
-    }
-    if (x < 0)
-    {
-      from_bitmap -= x;
-      x_skip -= x;
-      bitmap_w += x;
-      x = 0;
-    }
-
     uint16_t* p;
     int16_t i;
     for (int16_t j = 0; j < bitmap_h; j++)
@@ -2425,11 +2304,10 @@ bool Arduino_GFX::drawBitmapToFramebufferRotate1(
       }
       from_bitmap += x_skip;
     }
-    return true;
   }
 }
 
-bool Arduino_GFX::drawBitmapToFramebufferRotate2(
+void Arduino_GFX::drawBitmapToFramebufferRotate2(
     const uint16_t* from_bitmap,
     int16_t bitmap_w,
     int16_t bitmap_h,
@@ -2437,45 +2315,65 @@ bool Arduino_GFX::drawBitmapToFramebufferRotate2(
     int16_t x,
     int16_t y,
     int16_t framebuffer_w,
-    int16_t framebuffer_h) const
+    int16_t framebuffer_h)
 {
+#if CONFIG_IDF_TARGET_ESP32P4
+  bool can_use_ppa = true;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+
   int16_t max_X = framebuffer_w - 1;
   int16_t max_Y = framebuffer_h - 1;
-  if (
-      ((x + bitmap_w - 1) < 0) ||  // Outside left
-      ((y + bitmap_h - 1) < 0) ||  // Outside top
-      (x > max_X) ||               // Outside right
-      (y > max_Y)                  // Outside bottom
-  )
+  int16_t x_skip = 0;
+
+  if ((y + bitmap_h - 1) > max_Y)
   {
-    return false;
+    bitmap_h -= (y + bitmap_h - 1) - max_Y;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+  if (y < 0)
+  {
+    from_bitmap -= y * bitmap_w;
+    bitmap_h += y;
+    y = 0;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+  if ((x + bitmap_w - 1) > max_X)
+  {
+    x_skip = (x + bitmap_w - 1) - max_X;
+    bitmap_w -= x_skip;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+  if (x < 0)
+  {
+    from_bitmap -= x;
+    x_skip -= x;
+    bitmap_w += x;
+    x = 0;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+#if CONFIG_IDF_TARGET_ESP32P4
+  if (_ppa_enabled && can_use_ppa)
+  {
+    uint16_t target_x = WIDTH - x - bitmap_w;
+    uint16_t target_y = HEIGHT - y - bitmap_h;
+
+    ppaRotate(from_bitmap, bitmap_w, bitmap_h, target_x, target_y, _framebuffer, WIDTH, HEIGHT, PPA_SRM_ROTATION_ANGLE_180);
   }
   else
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
   {
-    int16_t x_skip = 0;
-    if ((y + bitmap_h - 1) > max_Y)
-    {
-      bitmap_h -= (y + bitmap_h - 1) - max_Y;
-    }
-    if (y < 0)
-    {
-      from_bitmap -= y * bitmap_w;
-      bitmap_h += y;
-      y = 0;
-    }
-    if ((x + bitmap_w - 1) > max_X)
-    {
-      x_skip = (x + bitmap_w - 1) - max_X;
-      bitmap_w -= x_skip;
-    }
-    if (x < 0)
-    {
-      from_bitmap -= x;
-      x_skip -= x;
-      bitmap_w += x;
-      x = 0;
-    }
-
     uint16_t* row = framebuffer;
     row += (max_Y - y) * framebuffer_w;   // shift framebuffer to y offset
     row += framebuffer_w - x - bitmap_w;  // shift framebuffer to x offset
@@ -2491,11 +2389,10 @@ bool Arduino_GFX::drawBitmapToFramebufferRotate2(
       from_bitmap += x_skip;
       row -= framebuffer_w;
     }
-    return true;
   }
 }
 
-bool Arduino_GFX::drawBitmapToFramebufferRotate3(
+void Arduino_GFX::drawBitmapToFramebufferRotate3(
     const uint16_t* from_bitmap,
     int16_t bitmap_w,
     int16_t bitmap_h,
@@ -2503,45 +2400,65 @@ bool Arduino_GFX::drawBitmapToFramebufferRotate3(
     int16_t x,
     int16_t y,
     int16_t framebuffer_w,
-    int16_t framebuffer_h) const
+    int16_t framebuffer_h)
 {
+#if CONFIG_IDF_TARGET_ESP32P4
+  bool can_use_ppa = true;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+
   int16_t max_X = framebuffer_w - 1;
   int16_t max_Y = framebuffer_h - 1;
-  if (
-      ((x + bitmap_w - 1) < 0) ||  // Outside left
-      ((y + bitmap_h - 1) < 0) ||  // Outside top
-      (x > max_X) ||               // Outside right
-      (y > max_Y)                  // Outside bottom
-  )
+  int16_t x_skip = 0;
+
+  if ((y + bitmap_h - 1) > max_Y)
   {
-    return false;
+    bitmap_h -= (y + bitmap_h - 1) - max_Y;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+  if (y < 0)
+  {
+    from_bitmap -= y * bitmap_w;
+    bitmap_h += y;
+    y = 0;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+  if ((x + bitmap_w - 1) > max_X)
+  {
+    x_skip = (x + bitmap_w - 1) - max_X;
+    bitmap_w -= x_skip;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+  if (x < 0)
+  {
+    from_bitmap -= x;
+    x_skip -= x;
+    bitmap_w += x;
+    x = 0;
+#if CONFIG_IDF_TARGET_ESP32P4
+    can_use_ppa = false;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+  }
+
+#if CONFIG_IDF_TARGET_ESP32P4
+  if (_ppa_enabled && can_use_ppa)
+  {
+    uint16_t target_x = y;
+    uint16_t target_y = HEIGHT - x - bitmap_w;
+
+    ppaRotate(from_bitmap, bitmap_w, bitmap_h, target_x, target_y, _framebuffer, WIDTH, HEIGHT, PPA_SRM_ROTATION_ANGLE_90);
   }
   else
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
   {
-    int16_t x_skip = 0;
-    if ((y + bitmap_h - 1) > max_Y)
-    {
-      bitmap_h -= (y + bitmap_h - 1) - max_Y;
-    }
-    if (y < 0)
-    {
-      from_bitmap -= y * bitmap_w;
-      bitmap_h += y;
-      y = 0;
-    }
-    if ((x + bitmap_w - 1) > max_X)
-    {
-      x_skip = (x + bitmap_w - 1) - max_X;
-      bitmap_w -= x_skip;
-    }
-    if (x < 0)
-    {
-      from_bitmap -= x;
-      x_skip -= x;
-      bitmap_w += x;
-      x = 0;
-    }
-
     uint16_t* p;
     int16_t i;
     for (int16_t j = 0; j < bitmap_h; j++)
@@ -2558,6 +2475,5 @@ bool Arduino_GFX::drawBitmapToFramebufferRotate3(
       }
       from_bitmap += x_skip;
     }
-    return true;
   }
 }

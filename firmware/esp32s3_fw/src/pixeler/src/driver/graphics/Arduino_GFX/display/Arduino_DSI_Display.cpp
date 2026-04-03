@@ -1,3 +1,5 @@
+#pragma GCC optimize("O3")
+
 #include "../Arduino_DataBus.h"
 
 #if defined(ESP32) && (CONFIG_IDF_TARGET_ESP32P4)
@@ -5,6 +7,10 @@
 #include "../Arduino_GFX.h"
 #include "Arduino_DSI_Display.h"
 #include "pixeler/setup/graphics_setup.h"
+
+#if defined(DOUBLE_BUFFERRING) && (defined(CLOCK_SOURCE) || defined(HSYNC_PULSE_WIDTH) || defined(VSYNC_PULSE_WIDTH) || defined(LANE_BITRATE))
+#error "Подвійну буферизацію реалізовано в драйвері дисплея. Закоментуй DOUBLE_BUFFERRING в graphics_setup.h!"
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4 && defined(DIRECT_DRAWING)
 
 #ifdef LCD_DRIVER_EK79007
 static const lcd_init_cmd_t ek79007_init_operations[] = {
@@ -413,7 +419,7 @@ Arduino_DSI_Display::Arduino_DSI_Display(
     int8_t rst)
     : Arduino_GFX(w, h),
       _dsi_panel(dsi_panel),
-      _pin_rst(rst),
+      PIN_RST{rst},
       MAX_X{static_cast<uint16_t>(WIDTH - 1)},
       MAX_Y{static_cast<uint16_t>(HEIGHT - 1)},
       _framebuffer_size{w * h * sizeof(uint16_t)}
@@ -435,14 +441,14 @@ bool Arduino_DSI_Display::begin(int32_t speed)
 
   xSemaphoreGive(_dsi_semaphore);
 
-  if (_pin_rst != GFX_NOT_DEFINED)
+  if (PIN_RST != GFX_NOT_DEFINED)
   {
-    pinMode(_pin_rst, OUTPUT);
-    digitalWrite(_pin_rst, HIGH);
+    pinMode(PIN_RST, OUTPUT);
+    digitalWrite(PIN_RST, HIGH);
     delay(100);
-    digitalWrite(_pin_rst, LOW);
+    digitalWrite(PIN_RST, LOW);
     delay(20);
-    digitalWrite(_pin_rst, HIGH);
+    digitalWrite(PIN_RST, HIGH);
     delay(200);
     log_i("Викликано скидання дисплея");
   }
@@ -509,46 +515,7 @@ bool Arduino_DSI_Display::begin(int32_t speed)
 
   //----------------------------------------------------------------------------------------------
 
-  // Клієнт для заливки
-  ppa_client_config_t ppa_config = {
-      .oper_type = PPA_OPERATION_FILL,
-      .max_pending_trans_num = 1,
-      .data_burst_length = PPA_DATA_BURST_LENGTH_128};
-
-  if (esp_err_t ret = ppa_register_client(&ppa_config, &ppa_fill_client) != ESP_OK)
-  {
-    log_e("PPA Client Error: %s", esp_err_to_name(ret));
-    esp_restart();
-  }
-
-  // Клієнт для масштабування та конвертації
-  ppa_client_config_t srm_config = {
-      .oper_type = PPA_OPERATION_SRM,
-      .max_pending_trans_num = 1,
-      .data_burst_length = PPA_DATA_BURST_LENGTH_128};
-
-  if (ppa_register_client(&srm_config, &ppa_srm_client) != ESP_OK)
-  {
-    log_e("PPA SRM Client Error");
-    esp_restart();
-  }
-
-  log_i("PPA ініціалізовано");
-
-  //----------------------------------------------------------------------------------------------
-
   return true;
-}
-
-uint32_t color16to24(uint16_t color565)
-{
-  // Розпаковуємо і відразу зсуваємо на потрібні позиції для 24-біт (8-8-8)
-  uint32_t r = (color565 & 0xF800) >> 8;  // Беремо 5 біт Red і зсуваємо в 0..7
-  uint32_t g = (color565 & 0x07E0) >> 3;  // Беремо 6 біт Green і зсуваємо в 8..15
-  uint32_t b = (color565 & 0x001F) << 3;  // Беремо 5 біт Blue і зсуваємо в 16..23
-
-  // Пакуємо в один uint32_t (BGR порядок для PPA Fill)
-  return (b << 16) | (g << 8) | r;
 }
 
 void Arduino_DSI_Display::draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h)
@@ -558,91 +525,16 @@ void Arduino_DSI_Display::draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_
   _draw_buffer = _lcd_draw_buffers[_back_fb_i];
   _back_fb_i = 1 - _back_fb_i;
 
-  // uint16_t color565 = __bswap16(color++);
-  //
-  // ppa_out_pic_blk_config_t canvas_cfg = {
-  //     .buffer = _draw_buffer,
-  //     .buffer_size = 1024 * 600 * 2,
-  //     .pic_w = 1024,
-  //     .pic_h = 600,
-  //     .block_offset_x = 0,
-  //     .block_offset_y = 0,
-  //     .fill_cm = PPA_FILL_COLOR_MODE_RGB565,
-  // };
-  // ppa_fill_oper_config_t fill_oper = {
-  //     .out = canvas_cfg,
-  //     .fill_block_w = 1024,
-  //     .fill_block_h = 600,
-  //     .fill_color_val = color16to24(color565),
-  //     .mode = PPA_TRANS_MODE_BLOCKING,
-  // };
-  // ppa_do_fill(ppa_fill_client, &fill_oper);
-
-  // ppa_srm_oper_config_t srm_cfg = {
-  //     .in = {
-  //         .buffer = bitmap,
-  //         .pic_w = static_cast<uint32_t>(w),
-  //         .pic_h = static_cast<uint32_t>(h),
-  //         .block_w = static_cast<uint32_t>(w),
-  //         .block_h = static_cast<uint32_t>(h),
-  //         .srm_cm = PPA_SRM_COLOR_MODE_RGB565,
-  //     },
-  //     .out = {
-  //         .buffer = _draw_buffer,
-  //         .buffer_size = w * h * sizeof(uint16_t),
-  //         .pic_w = static_cast<uint32_t>(w),
-  //         .pic_h = static_cast<uint32_t>(h),
-  //         .srm_cm = PPA_SRM_COLOR_MODE_RGB565,
-  //     },
-  //     .rotation_angle = PPA_SRM_ROTATION_ANGLE_0,
-  //     .scale_x = 1.0f,
-  //     .scale_y = 1.0f,
-  //     .mode = PPA_TRANS_MODE_BLOCKING,
-  // };
-
-  // ppa_do_scale_rotate_mirror(ppa_srm_client, &srm_cfg);
-
-  memcpy(_draw_buffer, bitmap, w * h * sizeof(uint16_t));
+  if (_rotation == 1)
+    ppaRotate(bitmap, w, h, 0, 0, _draw_buffer, WIDTH, HEIGHT, PPA_SRM_ROTATION_ANGLE_270);
+  else if (_rotation == 2)
+    ppaRotate(bitmap, w, h, 0, 0, _draw_buffer, WIDTH, HEIGHT, PPA_SRM_ROTATION_ANGLE_180);
+  else if (_rotation == 3)
+    ppaRotate(bitmap, w, h, 0, 0, _draw_buffer, WIDTH, HEIGHT, PPA_SRM_ROTATION_ANGLE_90);
+  else
+    ppaRotate(bitmap, w, h, 0, 0, _draw_buffer, WIDTH, HEIGHT, PPA_SRM_ROTATION_ANGLE_0);
 
   esp_lcd_panel_draw_bitmap(_panel_handle, 0, 0, WIDTH, HEIGHT, _draw_buffer);
-
-  // if (_isRoundMode)
-  // {
-  //   if (
-  //       ((y + h - 1) < 0) ||  // Outside top
-  //       (y > _max_y) ||       // Outside bottom
-  //       (
-  //           (x > _roundMaxX[y + h - 1]) &&         // top left
-  //           ((x + w - 1) < _roundMinX[y]) &&       // top right
-  //           (x > _roundMaxX[y + h - 1]) &&         // bottom left
-  //           ((x + w - 1) < _roundMinX[y + h - 1])  // bottom right
-  //           ))
-  //   {
-  //     return;
-  //   }
-  // }
-
-  // x += COL_OFFSET1;
-  // y += ROW_OFFSET1;
-  // switch (_rotation)
-  // {
-  //   case 1:
-  //     drawBitmapToFramebufferRotate1(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
-  //     break;
-  //   case 2:
-  //     drawBitmapToFramebufferRotate2(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
-  //     break;
-  //   case 3:
-  //     drawBitmapToFramebufferRotate3(bitmap, w, h, _framebuffer, x, y, _fb_height, _fb_width);
-  //     break;
-  //   default:  // case 0:
-  //     drawBitmapToFramebuffer(bitmap, w, h, _framebuffer, x, y, _fb_width, _fb_height);
-  // }
-}
-
-void Arduino_DSI_Display::writePixelPreclipped(int16_t x, int16_t y, uint16_t color)
-{
-  // TODO
 }
 
 bool IRAM_ATTR Arduino_DSI_Display::lcd_trans_done_cb(esp_lcd_panel_handle_t panel, esp_lcd_dpi_panel_event_data_t* edata, void* user_ctx)

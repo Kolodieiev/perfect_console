@@ -3,19 +3,20 @@
  * start rewrite from:
  * https://github.com/adafruit/Adafruit-GFX-Library.git
  */
-#ifndef _ARDUINO_GFX_H_
-#define _ARDUINO_GFX_H_
+#pragma once
 
 #include <Print.h>
 
+#if CONFIG_IDF_TARGET_ESP32P4
+#include <driver/ppa.h>
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+
 #include "Arduino_DataBus.h"
-#include "gfxfont.h"
 
 #ifndef DEGTORAD
 #define DEGTORAD 0.017453292519943295769236907684886F
 #endif
 
-#define U8G2_FONT_SUPPORT
 #include "U8g2/u8g2.h"
 
 // Default color definitions
@@ -48,13 +49,15 @@
 
 #define COLOR_TRANSPARENT 0xF81F  // Колір rgb(255, 0, 255)
 
-#define pgm_read_sbyte(addr) (*(const signed char*)(addr))
+// Many (but maybe not all) non-AVR board installs define macros
+// for compatibility with existing PROGMEM-reading AVR code.
+// Do our own checks and defines here for good measure...
 
-#if !defined(__INT_MAX__) || (__INT_MAX__ > 0xFFFF)
-#define pgm_read_pointer(addr) ((void*)pgm_read_dword(addr))
-#else
-#define pgm_read_pointer(addr) ((void*)pgm_read_word(addr))
+#ifndef pgm_read_sbyte
+#define pgm_read_sbyte(addr) (*(const signed char*)(addr))
 #endif
+
+#define pgm_read_pointer(addr) ((void*)pgm_read_dword(addr))
 
 #ifndef _swap_uint8_t
 #define _swap_uint8_t(a, b) \
@@ -86,47 +89,15 @@
 #define _in_range(v, a, b) ((a > b) ? _ordered_in_range(v, b, a) : _ordered_in_range(v, a, b))
 #endif
 
-#if !defined(ATTINY_CORE)
-GFX_INLINE static GFXglyph* pgm_read_glyph_ptr(const GFXfont* gfxFont, uint8_t c)
-{
-#ifdef __AVR__
-  return &(((GFXglyph*)pgm_read_pointer(&gfxFont->glyph))[c]);
-#else
-  // expression in __AVR__ section may generate "dereferencing type-punned pointer will break strict-aliasing rules" warning
-  // In fact, on other platforms (such as STM32) there is no need to do this pointer magic as program memory may be read in a usual way
-  // So expression may be simplified
-  return gfxFont->glyph + c;
-#endif  //__AVR__
-}
-
-GFX_INLINE static uint8_t* pgm_read_bitmap_ptr(const GFXfont* gfxFont)
-{
-#ifdef __AVR__
-  return (uint8_t*)pgm_read_pointer(&gfxFont->bitmap);
-#else
-  // expression in __AVR__ section generates "dereferencing type-punned pointer will break strict-aliasing rules" warning
-  // In fact, on other platforms (such as STM32) there is no need to do this pointer magic as program memory may be read in a usual way
-  // So expression may be simplified
-  return gfxFont->bitmap;
-#endif  //__AVR__
-}
-#endif  // !defined(ATTINY_CORE)
-
 /// A generic graphics superclass that can handle all sorts of drawing. At a minimum you can subclass and provide drawPixel(). At a maximum you can do a ton of overriding to optimize. Used for any/all Adafruit displays!
-#if defined(LITTLE_FOOT_PRINT)
 class Arduino_GFX : public Print
-#else
-class Arduino_GFX : public Print
-#endif  // !defined(LITTLE_FOOT_PRINT)
 {
 public:
-  Arduino_GFX(uint16_t w, uint16_t h);  // Constructor
-  virtual ~Arduino_GFX();
+  Arduino_GFX(int16_t w, int16_t h);  // Constructor
 
   // This MUST be defined by the subclass:
   virtual bool begin(int32_t speed = GFX_NOT_DEFINED) = 0;
-  virtual void writePixelPreclipped(int16_t x, int16_t y, uint16_t color) = 0;
-  virtual void draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h) = 0;
+  virtual void writePixelPreclipped(int16_t x, int16_t y, uint16_t color);
 
   // TRANSACTION API / CORE DRAW API
   // These MAY be overridden by the subclass to provide device-specific
@@ -145,7 +116,6 @@ public:
   virtual void invertDisplay(bool i);
   virtual void displayOn();
   virtual void displayOff();
-  bool enableRoundMode();
 
   // BASIC DRAW API
   // These MAY be overridden by the subclass to provide device-specific
@@ -171,7 +141,6 @@ public:
   void setTextSize(uint8_t sx, uint8_t sy);
   void setTextSize(uint8_t sx, uint8_t sy, uint8_t pixel_margin);
 
-  void setFont(const GFXfont* f = NULL);
   void setFont(const uint8_t* font);
   void setUTF8Print(bool isEnable);
   uint16_t u8g2_font_get_word(const uint8_t* font, uint8_t offset);
@@ -192,8 +161,27 @@ public:
   void writeFillArcHelper(int16_t cx, int16_t cy, int16_t oradius, int16_t iradius, float start, float end, uint16_t color);
 
   virtual void writeSlashLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
+  virtual void draw16bitRGBBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h);
   virtual void draw16bitRGBBitmapWithTranColor(int16_t x, int16_t y, const uint16_t* bitmap, uint16_t transparent_color, int16_t w, int16_t h);
   virtual void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg);
+
+  /**
+   * @brief Має ефект, тільки якщо підтримується на МК.
+   * Встановлює стан активності модуля апаратного прискорення для операцій заповнення кольором
+   * та копіювання зображень в буфер кадру.
+   * НЕ ЕФЕКТИВНЕ ДЛЯ МАЛИХ БЛОКІВ.
+   * @param state
+   */
+  void setPPAState(bool state);
+
+  /**
+   * @brief Повертає стан активності PPA модуля.
+   *
+   * @return true - Якщо PPA увімкнено.
+   * @return false - Інакше.
+   */
+  bool isPPAEnabled() const;
+
   /**********************************************************************/
   /*!
     @brief  Set text cursor location
@@ -333,57 +321,84 @@ public:
     return ((red & 0xF8) << 8) | ((green & 0xFC) << 3) | (blue >> 3);
   }
 
-protected:
-  // TODO virtual виводити через PPA ?
-  bool drawBitmapToFramebuffer(
-      const uint16_t* from_bitmap,
-      int16_t bitmap_w,
-      int16_t bitmap_h,
-      uint16_t* framebuffer,
-      int16_t x,
-      int16_t y,
-      int16_t framebuffer_w,
-      int16_t framebuffer_h) const;
+#if CONFIG_IDF_TARGET_ESP32P4
+  // void pushPPAImg();// TODO
 
-  bool drawBitmapToFramebufferRotate1(
-      const uint16_t* from_bitmap,
-      int16_t bitmap_w,
-      int16_t bitmap_h,
-      uint16_t* framebuffer,
-      int16_t x,
-      int16_t y,
-      int16_t framebuffer_w,
-      int16_t framebuffer_h) const;
-
-  bool drawBitmapToFramebufferRotate2(
-      const uint16_t* from_bitmap,
-      int16_t bitmap_w,
-      int16_t bitmap_h,
-      uint16_t* framebuffer,
-      int16_t x,
-      int16_t y,
-      int16_t framebuffer_w,
-      int16_t framebuffer_h) const;
-
-  bool drawBitmapToFramebufferRotate3(
-      const uint16_t* from_bitmap,
-      int16_t bitmap_w,
-      int16_t bitmap_h,
-      uint16_t* framebuffer,
-      int16_t x,
-      int16_t y,
-      int16_t framebuffer_w,
-      int16_t framebuffer_h) const;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
 
 protected:
+  void drawBitmapToFramebuffer(
+      const uint16_t* from_bitmap,
+      int16_t bitmap_w,
+      int16_t bitmap_h,
+      uint16_t* framebuffer,
+      int16_t x,
+      int16_t y,
+      int16_t framebuffer_w,
+      int16_t framebuffer_h);
+
+  void drawBitmapToFramebufferRotate1(
+      const uint16_t* from_bitmap,
+      int16_t bitmap_w,
+      int16_t bitmap_h,
+      uint16_t* framebuffer,
+      int16_t x,
+      int16_t y,
+      int16_t framebuffer_w,
+      int16_t framebuffer_h);
+
+  void drawBitmapToFramebufferRotate2(
+      const uint16_t* from_bitmap,
+      int16_t bitmap_w,
+      int16_t bitmap_h,
+      uint16_t* framebuffer,
+      int16_t x,
+      int16_t y,
+      int16_t framebuffer_w,
+      int16_t framebuffer_h);
+
+  void drawBitmapToFramebufferRotate3(
+      const uint16_t* from_bitmap,
+      int16_t bitmap_w,
+      int16_t bitmap_h,
+      uint16_t* framebuffer,
+      int16_t x,
+      int16_t y,
+      int16_t framebuffer_w,
+      int16_t framebuffer_h);
+
+#if CONFIG_IDF_TARGET_ESP32P4
+  void ppaFill(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color);
+  void ppaRotate(const void* buff_from,
+                 uint16_t buff_f_w,
+                 uint16_t buff_f_h,
+                 uint16_t x,
+                 uint16_t y,
+                 void* buff_to,
+                 uint16_t buff_t_w,
+                 uint16_t buff_t_h,
+                 ppa_srm_rotation_angle_t angle);
+
+  uint32_t color16RGBTo24RGB(uint16_t color565);
+
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+
+protected:
+#if CONFIG_IDF_TARGET_ESP32P4
+  ppa_client_handle_t _ppa_fill{nullptr};
+  ppa_client_handle_t _ppa_srm{nullptr};
+
+  ppa_fill_oper_config_t _fill_oper;
+  ppa_srm_oper_config_t _srm_oper;
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+
+  const uint8_t* u8g2Font{nullptr};
+  const uint8_t* _u8g2_decode_ptr{nullptr};
   uint16_t* _framebuffer{nullptr};
 
-  GFXfont* gfxFont;  ///< Pointer to special font
-
-  const uint8_t* u8g2Font;
-  const uint8_t* _u8g2_decode_ptr;
-  int16_t* _roundMinX;
-  int16_t* _roundMaxX;
+  const uint32_t FRAMEBUFF_SIZE;
+  const uint16_t WIDTH;   ///< This is the 'raw' display width - never changes
+  const uint16_t HEIGHT;  ///< This is the 'raw' display height - never changes
 
   uint16_t _encoding;
   uint16_t _u8g2_start_pos_upper_A;
@@ -392,25 +407,21 @@ protected:
   int16_t _u8g2_target_x;
   int16_t _u8g2_target_y;
 
-  int16_t
-      _max_x,  ///< x zero base bound (_width - 1)
-      _max_y,  ///< y zero base bound (_height - 1)
-      _min_text_x,
-      _min_text_y,
-      _max_text_x,
-      _max_text_y,
-      cursor_x,  ///< x location to start print()ing text
-      cursor_y;  ///< y location to start print()ing text
-  uint16_t
-      textcolor,    ///< 16-bit background color for print()
-      textbgcolor;  ///< 16-bit text color for print()
+  int16_t _width;   ///< Display width as modified by current rotation
+  int16_t _height;  ///< Display height as modified by current rotation
+  int16_t _max_x;   ///< x zero base bound (_width - 1)
+  int16_t _max_y;   ///< y zero base bound (_height - 1)
+  int16_t _min_text_x;
+  int16_t _min_text_y;
+  int16_t _max_text_x;
+  int16_t _max_text_y;
+  int16_t cursor_x;  ///< x location to start print()ing text
+  int16_t cursor_y;  ///< y location to start print()ing text
 
-  uint16_t _width;        ///< Display width as modified by current rotation
-  uint16_t _height;       ///< Display height as modified by current rotation
-  uint16_t const WIDTH;   ///< This is the 'raw' display width - never changes
-  uint16_t const HEIGHT;  ///< This is the 'raw' display height - never changes
+  uint16_t textcolor;    ///< 16-bit background color for print()
+  uint16_t textbgcolor;  ///< 16-bit text color for print()
 
-  uint8_t _utf8_state{0};
+  uint8_t _utf8_state = 0;
   uint8_t _u8g2_glyph_cnt;
   uint8_t _u8g2_bits_per_0;
   uint8_t _u8g2_bits_per_1;
@@ -430,17 +441,17 @@ protected:
   int8_t _u8g2_dx;
   int8_t _u8g2_dy;
 
-  uint8_t
-      textsize_x,         ///< Desired magnification in X-axis of text to print()
-      textsize_y,         ///< Desired magnification in Y-axis of text to print()
-      text_pixel_margin,  ///< Margin for each text pixel
-      _rotation;          ///< Display rotation (0 thru 3)
+  uint8_t textsize_x;         ///< Desired magnification in X-axis of text to print()
+  uint8_t textsize_y;         ///< Desired magnification in Y-axis of text to print()
+  uint8_t text_pixel_margin;  ///< Margin for each text pixel
+  uint8_t _rotation;          ///< Display rotation (0 thru 3)
 
   uint8_t _u8g2_decode_bit_pos;
 
-  bool _isRoundMode = false;
   bool _enableUTF8Print = false;
   bool wrap;  ///< If set, 'wrap' text at right edge of display
-};
 
-#endif  // _ARDUINO_GFX_H_
+#if CONFIG_IDF_TARGET_ESP32P4
+  bool _ppa_enabled{false};
+#endif  // #if CONFIG_IDF_TARGET_ESP32P4
+};
