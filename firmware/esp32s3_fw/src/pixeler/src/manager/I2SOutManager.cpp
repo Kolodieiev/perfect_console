@@ -26,6 +26,8 @@ namespace pixeler
       else
         _i2s_tx_std_cfg.slot_cfg = I2S_STD_MSB_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO);
 
+      _i2s_tx_std_cfg.slot_cfg.slot_mask = I2S_STD_SLOT_BOTH;
+
       _i2s_tx_std_cfg.gpio_cfg.bclk = (gpio_num_t)PIN_I2S_OUT_BCLK;
       _i2s_tx_std_cfg.gpio_cfg.din = I2S_GPIO_UNUSED;
       _i2s_tx_std_cfg.gpio_cfg.dout = (gpio_num_t)PIN_I2S_OUT_DOUT;
@@ -37,6 +39,7 @@ namespace pixeler
       _i2s_tx_std_cfg.clk_cfg.clk_src = I2S_CLK_SRC_DEFAULT;
       _i2s_tx_std_cfg.clk_cfg.mclk_multiple = I2S_MCLK_MULTIPLE_128;
       _i2s_tx_std_cfg.clk_cfg.sample_rate_hz = sample_rate;
+
       result |= i2s_channel_init_std_mode(_i2s_tx_handle, &_i2s_tx_std_cfg);
     }
 
@@ -48,6 +51,7 @@ namespace pixeler
     {
       _is_inited = true;
       clearBuffer();
+      log_i("I2S-вихід успішно ініціалізовано");
     }
 
     return !result;
@@ -55,37 +59,46 @@ namespace pixeler
 
   void I2SOutManager::reconfigSampleRate(uint32_t sample_rate)
   {
-    if (_is_inited)
+    if (!_is_inited)
     {
-      i2s_channel_disable(_i2s_tx_handle);
-      _i2s_tx_std_cfg.clk_cfg.sample_rate_hz = sample_rate;
-      i2s_channel_reconfig_std_clock(_i2s_tx_handle, &_i2s_tx_std_cfg.clk_cfg);
-      clearBuffer();
-      i2s_channel_enable(_i2s_tx_handle);
+      log_e("I2S-вихід ще не було ініціалізовано");
+      return;
     }
+
+    i2s_channel_disable(_i2s_tx_handle);
+    _i2s_tx_std_cfg.clk_cfg.sample_rate_hz = sample_rate;
+    i2s_channel_reconfig_std_clock(_i2s_tx_handle, &_i2s_tx_std_cfg.clk_cfg);
+    clearBuffer();
+    i2s_channel_enable(_i2s_tx_handle);
   }
 
   void I2SOutManager::setI2SCommFMT_LSB(bool comm_fmt)
   {
     _comm_fmt = comm_fmt;
 
-    if (_is_inited)
+    if (!_is_inited)
     {
-      i2s_channel_disable(_i2s_tx_handle);
-      if (!_comm_fmt)
-        _i2s_tx_std_cfg.slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO);
-      else
-        _i2s_tx_std_cfg.slot_cfg = I2S_STD_MSB_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO);
-      i2s_channel_reconfig_std_slot(_i2s_tx_handle, &_i2s_tx_std_cfg.slot_cfg);
-      i2s_channel_enable(_i2s_tx_handle);
+      log_e("I2S-вихід ще не було ініціалізовано");
+      return;
     }
+
+    i2s_channel_disable(_i2s_tx_handle);
+    if (!_comm_fmt)
+      _i2s_tx_std_cfg.slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO);
+    else
+      _i2s_tx_std_cfg.slot_cfg = I2S_STD_MSB_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO);
+
+    _i2s_tx_std_cfg.slot_cfg.slot_mask = I2S_STD_SLOT_BOTH;
+
+    i2s_channel_reconfig_std_slot(_i2s_tx_handle, &_i2s_tx_std_cfg.slot_cfg);
+    i2s_channel_enable(_i2s_tx_handle);
   }
 
   size_t I2SOutManager::write(const int16_t* buffer, size_t buff_len, bool only_left_chan)
   {
     if (!_is_inited)
     {
-      log_e("I2SOutManager не ініціалізовано");
+      log_e("I2S-вихід ще не було ініціалізовано");
       esp_restart();
     }
 
@@ -96,7 +109,8 @@ namespace pixeler
 
     if (!only_left_chan)
     {
-      i2s_channel_write(_i2s_tx_handle, buffer, buff_len * sizeof(int16_t), &bytes_written, portMAX_DELAY);
+      if (error_t err = i2s_channel_write(_i2s_tx_handle, buffer, buff_len * sizeof(int16_t), &bytes_written, portMAX_DELAY) != ESP_OK)
+        log_e("Помилка відтворення даних: %i", err);
     }
     else
     {
@@ -109,7 +123,8 @@ namespace pixeler
         *dst++ = buffer[i];
       }
 
-      i2s_channel_write(_i2s_tx_handle, buffer_copy, buff_len * 2 * sizeof(int16_t), &bytes_written, portMAX_DELAY);
+      if (error_t err = i2s_channel_write(_i2s_tx_handle, buffer_copy, buff_len * 2 * sizeof(int16_t), &bytes_written, portMAX_DELAY) != ESP_OK)
+        log_e("Помилка відтворення даних: %i", err);
     }
 
     return bytes_written;
@@ -146,7 +161,10 @@ namespace pixeler
   esp_err_t I2SOutManager::enable()
   {
     if (!_is_inited)
+    {
+      log_e("I2S-вихід ще не було ініціалізовано");
       return ESP_FAIL;
+    }
 
     return i2s_channel_enable(_i2s_tx_handle);
   }
@@ -163,8 +181,8 @@ namespace pixeler
       return;
 
     uint8_t* buff = static_cast<uint8_t*>(calloc(128, sizeof(uint8_t)));
-    size_t bytes_loaded = 0;
-    i2s_channel_preload_data(_i2s_tx_handle, buff, sizeof(buff), &bytes_loaded);
+    size_t bytes_loaded;
+    i2s_channel_preload_data(_i2s_tx_handle, buff, 128, &bytes_loaded);
     free(buff);
   }
 
