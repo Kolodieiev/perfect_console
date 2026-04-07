@@ -261,6 +261,7 @@ namespace pixeler
     uint16_t _temp_width{0};
     uint16_t _first_draw_char_pos{0};
     uint16_t _char_hgt{0};
+    int16_t _y_char_offset{0};
 
     uint8_t _text_size{1};
     uint8_t _h_padding{0};

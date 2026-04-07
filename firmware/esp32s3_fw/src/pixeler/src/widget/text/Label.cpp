@@ -337,14 +337,14 @@ namespace pixeler
 
   void Label::updateHeight()
   {
-    int16_t x1, y1;
+    int16_t x1;
     uint16_t w;
     _display.setTextSize(_text_size);
     _display.setFont(_font_ptr);
-    _display.calcTextBounds("I", 0, 0, x1, y1, w, _char_hgt);
+    _display.calcTextBounds("Йg", 0, 0, x1, _y_char_offset, w, _char_hgt);
 
-    if (_char_hgt + RESERVE_PIX_HEIGHT > _height)
-      _height = _char_hgt + RESERVE_PIX_HEIGHT;
+    if (_char_hgt + RESERVE_PIX_HEIGHT >= _height)
+      _height = _char_hgt + RESERVE_PIX_HEIGHT + 2;
   }
 
   uint32_t Label::utf8ToUnicode(const uint8_t* buf, uint16_t& byte_pos, uint16_t remaining) const
@@ -586,29 +586,26 @@ namespace pixeler
               else
                 ++_first_draw_char_pos;
             }
+            else if (!_is_reverse_autoscroll)
+            {
+              if (!_text.endsWith(sub_str))
+                ++_first_draw_char_pos;
+              else
+                _is_reverse_autoscroll = true;
+            }
             else
             {
-              if (!_is_reverse_autoscroll)
-              {
-                if (sub_str_pix_num + _h_padding > (_width * 3) >> 2)  // 3/4 від ширини
-                  ++_first_draw_char_pos;
-                else
-                  _is_reverse_autoscroll = true;
-              }
+              if (_first_draw_char_pos > 0)
+                --_first_draw_char_pos;
               else
-              {
-                if (_first_draw_char_pos > 0)
-                  --_first_draw_char_pos;
-                else
-                  _is_reverse_autoscroll = false;
-              }
+                _is_reverse_autoscroll = false;
             }
 
             _last_autoscroll_ts = millis();
           }
         }
 
-        _display.setCursor(_x_pos + x_offset + txt_x_pos, _y_pos + y_offset + txtYPos + _char_hgt);
+        _display.setCursor(_x_pos + x_offset + txt_x_pos, _y_pos + y_offset + txtYPos - _y_char_offset);
         _display.print(sub_str.c_str());
       }
       else
@@ -618,8 +615,10 @@ namespace pixeler
         _has_autoscroll_in_focus = false;
 
         _display.setTextWrap(true);
+        _display.setTextBound(x_offset + 1, _y_pos + y_offset + 1, _width - 1, _height - 1);
         _display.setCursor(x_offset, _y_pos + y_offset + _char_hgt + 2);
         _display.print(_text.c_str());
+        _display.resetTextBound();
         _display.setTextWrap(false);
       }
     }
