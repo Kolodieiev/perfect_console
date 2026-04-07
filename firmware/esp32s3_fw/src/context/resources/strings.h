@@ -59,11 +59,13 @@ const char STR_PREF_BRIGHT[] = "brightness";
 const char STR_PREF_MONO_AUDIO[] = "forcemono";
 const char STR_PREF_AUDIO_AMP[] = "audioamp";
 const char STR_PREF_LED_GREET[] = "ledgreeting";
-const char STR_PREF_FS_AP_SSID[] = "fs_ap_ssid";
-const char STR_PREF_FS_AP_PWD[] = "fs_ap_pwd";
-const char STR_PREF_WIFI_POWER[] = "wifi_power";
-
+const char STR_PREF_FS_AP_SSID[] = "fsapssid";
+const char STR_PREF_FS_AP_PWD[] = "fsappwd";
+const char STR_PREF_WIFI_POWER[] = "wifipower";
+const char STR_PREF_WIFI_AUTOCONNECT[] = "wifiautoconn";
+const char STR_PREF_WIFI_LAST_SSID[] = "lastssid";
 //
+const char STR_WIFI_SUBDIR[] = "wifi";
 
 const char STR_SD_ERR[] = "SD не примонтовано";
 
@@ -81,20 +83,16 @@ const char STR_NEW_DIR[] = "Новий каталог";
 //
 
 const char STR_BRIGHT[] = "Яскравість";
-const char STR_AUDIO_MONO[] = "Монозвук";
-const char STR_AUDIO_AMP[] = "Підсилювач звуку";
-const char STR_LED_GREET[] = "Привітання LED";
-const char STR_FILE_SERVER[] = "Файловий сервер";
 const char STR_WIFI_POWER[] = "Потужність WiFi";
 
 //
 
 const char STR_MULTI_GAME[] = "Мультиплеєр";
 const char STR_SOLO_GAME[] = "Один гравець";
-const char STR_TEST_GAME_NICK[] = "test_game_nick";
-const char STR_TEST_GAME_C_PWD[] = "test_game_c_pwd";
-const char STR_TEST_GAME_S_PWD[] = "test_game_s_pwd";
-const char STR_TEST_GAME_S_NAME[] = "test_game_s_name";
+const char STR_TEST_GAME_NICK[] = "testgamenick";
+const char STR_TEST_GAME_C_PWD[] = "testgamecpwd";
+const char STR_TEST_GAME_S_PWD[] = "testgamespwd";
+const char STR_TEST_GAME_S_NAME[] = "testgamesname";
 const char STR_NICKNAME[] = "Нікнейм";
 const char STR_ENTER_NICK[] = "Введіть нікнейм";
 const char STR_SERV_NAME[] = "Назва сервера";
