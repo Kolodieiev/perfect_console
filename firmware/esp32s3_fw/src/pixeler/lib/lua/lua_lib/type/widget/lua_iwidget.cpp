@@ -314,7 +314,12 @@ int lua_iwgt_set_back_color(lua_State* L)
   return 0;
 }
 
-// -------------------------------------------------------------------------------------------------------------
+int lua_iwgt_unload(lua_State* L)
+{
+  lua_pushnil(L);
+  lua_setfield(L, LUA_REGISTRYINDEX, STR_TYPE_NAME_IWIDGET);
+  return 0;
+}
 
 const struct luaL_Reg TYPE_METH_IWIDGET[] = {
     {"drawForced", lua_iwgt_forced_draw},
@@ -338,6 +343,7 @@ const struct luaL_Reg TYPE_METH_IWIDGET[] = {
     {"removeFocus", lua_iwgt_remove_focus},
     {"setVisibility", lua_iwgt_set_visibility},
     {"setTransparency", lua_iwgt_set_transparency},
+    {STR_LUA_UNLOAD, lua_iwgt_unload},
     {nullptr, nullptr},
 };
 

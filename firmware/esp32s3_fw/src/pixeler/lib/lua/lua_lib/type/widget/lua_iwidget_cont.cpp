@@ -98,7 +98,12 @@ int lua_cont_disable(lua_State* L)
   return 0;
 }
 
-// -------------------------------------------------------------------------------------------------------------
+int lua_cont_unload(lua_State* L)
+{
+  lua_pushnil(L);
+  lua_setfield(L, LUA_REGISTRYINDEX, STR_TYPE_NAME_IWIDGET_CONT);
+  return 0;
+}
 
 const struct luaL_Reg TYPE_METH_IWIDGET_CONT[] = {
     {"addWidget", lua_cont_add_widget},
@@ -110,6 +115,7 @@ const struct luaL_Reg TYPE_METH_IWIDGET_CONT[] = {
     {"getSize", lua_cont_get_size},
     {"enable", lua_cont_enable},
     {"disable", lua_cont_disable},
+    {STR_LUA_UNLOAD, lua_cont_unload},
     {nullptr, nullptr},
 };
 
