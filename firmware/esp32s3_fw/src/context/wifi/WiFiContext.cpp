@@ -16,8 +16,6 @@ const char STR_FORGET[] = "Забути";
 const char STR_CONNECTING[] = "З'єднання...";
 const char STR_CONNECT_ERR[] = "Помилка з'єднання";
 
-const char STR_WIFI_SUBDIR[] = "wifi";
-
 WiFiContext::WiFiContext()
 {
   if (!_fs.isMounted())
@@ -512,6 +510,11 @@ void WiFiContext::connectToNet(const String& ssid)
   else
   {
     _wifi.setConnectDoneHandler(connDoneHandler, this);
+
+    String wifi_autoconn = SettingsManager::get(STR_PREF_WIFI_AUTOCONNECT, STR_WIFI_SUBDIR);
+    if (wifi_autoconn.equals("1"))
+      SettingsManager::set(STR_PREF_WIFI_LAST_SSID, ssid.c_str(), STR_WIFI_SUBDIR);
+
     if (!_wifi.tryConnectTo(ssid, wifi_pass))
       showToast(STR_FAIL, TOAST_LENGTH_SHORT);
     else

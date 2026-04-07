@@ -5,10 +5,11 @@
 #include "pixeler/src/manager/FileManager.h"
 #include "pixeler/src/manager/I2C_Manager.h"
 #include "pixeler/src/manager/SettingsManager.h"
+#include "pixeler/src/manager/WiFiManager.h"
 
 #define OFFSET_LBL_INFO 0
 #define OFFSET_LBL_RESULT 70
-#define SHOW_INIT_TIME 2000
+#define SHOW_INIT_TIME 1500
 
 #define LED_DATA_PIN 40
 #define LED_EN_PIN 41
@@ -66,6 +67,21 @@ void SplashContext::update()
 {
   if (millis() - _start_time > SHOW_INIT_TIME)
   {
+    if (_fs.isMounted())
+    {
+      String wifi_autoconn = SettingsManager::get(STR_PREF_WIFI_AUTOCONNECT, STR_WIFI_SUBDIR);
+      if (wifi_autoconn.equals("1"))
+      {
+        String last_ssid = SettingsManager::get(STR_PREF_WIFI_LAST_SSID, STR_WIFI_SUBDIR);
+        if (!last_ssid.isEmpty())
+        {
+          String last_ssid_pwd = SettingsManager::get(last_ssid.c_str(), STR_WIFI_SUBDIR);
+          _wifi.enable();
+          _wifi.tryConnectTo(last_ssid, last_ssid_pwd);
+        }
+      }
+    }
+
     openContextByID(ContextID::ID_CONTEXT_HOME);
   }
 }
