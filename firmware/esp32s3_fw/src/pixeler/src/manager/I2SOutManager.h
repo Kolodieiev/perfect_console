@@ -64,7 +64,7 @@ namespace pixeler
     void disable();
 
     /**
-     * @brief Очищує перші 128 байтів буферу каналу аудіовиходу.
+     * @brief Очищує буфер каналу аудіовиходу.
      *
      */
     void clearBuffer();

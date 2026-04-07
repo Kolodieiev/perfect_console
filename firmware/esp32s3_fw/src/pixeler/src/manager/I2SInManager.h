@@ -66,7 +66,7 @@ namespace pixeler
     size_t read(int16_t* out_buffer, size_t buff_len);
 
     /**
-     * @brief Очищує перші 128 байтів буферу каналу аудіовиходу.
+     * @brief Очищує буфер каналу аудіовходу.
      *
      */
     void clearBuffer();
