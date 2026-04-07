@@ -179,8 +179,8 @@ namespace pixeler
 
   uint16_t IGameObject::calcDistToPoint(uint16_t x, uint16_t y)
   {
-    uint16_t a = abs(_x_global + _sprite.x_pivot - x);
-    uint16_t b = abs(_y_global + _sprite.y_pivot - y);
+    uint16_t a = __builtin_abs(_x_global + _sprite.x_pivot - x);
+    uint16_t b = __builtin_abs(_y_global + _sprite.y_pivot - y);
 
     return sqrt((a * a) + (b * b));
   }
@@ -195,7 +195,7 @@ namespace pixeler
 
     if (dx == 0)
     {  // Рух строго по вертикалі
-      if (abs(dy) <= step_w)
+      if (__builtin_abs(dy) <= step_w)
         _y_global = y_to;
       else
         _y_global += (dy > 0) ? step_w : -step_w;
@@ -204,7 +204,7 @@ namespace pixeler
 
     if (dy == 0)
     {  // Рух строго по горизонталі
-      if (abs(dx) <= step_w)
+      if (__builtin_abs(dx) <= step_w)
         _x_global = x_to;
       else
         _x_global += (dx > 0) ? step_w : -step_w;
@@ -212,11 +212,11 @@ namespace pixeler
     }
 
     // Визначаємо, по якій осі відстань більша, щоб зробити її базовою
-    if (abs(dx) >= abs(dy))
+    if (__builtin_abs(dx) >= __builtin_abs(dy))
     {
       // Рух переважно по X
       int16_t x_prev = _x_global;
-      if (abs(dx) <= step_w)
+      if (__builtin_abs(dx) <= step_w)
       {
         _x_global = x_to;
         _y_global = y_to;
@@ -231,7 +231,7 @@ namespace pixeler
     else
     {
       int16_t y_prev = _y_global;
-      if (abs(dy) <= step_w)
+      if (__builtin_abs(dy) <= step_w)
       {
         _y_global = y_to;
         _x_global = x_to;
@@ -268,7 +268,7 @@ namespace pixeler
     if (rigid_only && !_sprite.is_rigid)
       return false;
 
-    // Визначаємо межі прямокутника (AABB)
+    // 1. Визначаємо межі прямокутника (AABB)
     int16_t rect_x1, rect_y1, rect_x2, rect_y2;
 
     if (rigid_only)
@@ -286,15 +286,15 @@ namespace pixeler
       rect_y2 = _y_global + _sprite.height;
     }
 
-    // Знаходимо найближчу точку на прямокутнику до центру кола
+    // 2. Знаходимо найближчу точку на прямокутнику до центру кола
     int16_t closest_x = (x_mid < rect_x1) ? rect_x1 : (x_mid > rect_x2 ? rect_x2 : x_mid);
     int16_t closest_y = (y_mid < rect_y1) ? rect_y1 : (y_mid > rect_y2 ? rect_y2 : y_mid);
 
-    // Рахуємо відстань від найближчої точки до центру кола
+    // 3. Рахуємо відстань від найближчої точки до центру кола
     int32_t dx = static_cast<int32_t>(x_mid) - closest_x;
     int32_t dy = static_cast<int32_t>(y_mid) - closest_y;
 
-    // Перевірка чи відстань менша за радіус (використовуємо квадрат відстані)
+    // 4. Перевірка: чи відстань менша за радіус (використовуємо квадрат відстані)
     return (dx * dx + dy * dy) <= (static_cast<int32_t>(radius) * radius);
   }
 
