@@ -1556,6 +1556,22 @@ bool Arduino_GFX::isPPAEnabled() const
 #endif  // #if CONFIG_IDF_TARGET_ESP32P4
 }
 
+void Arduino_GFX::setTextBound(int16_t x, int16_t y, int16_t w, int16_t h)
+{
+  _min_text_x = x;
+  _min_text_y = y;
+  _max_text_x = x + w - 1;
+  _max_text_y = y + h - 1;
+}
+
+void Arduino_GFX::resetTextBound()
+{
+  _min_text_x = 0;
+  _min_text_y = 0;
+  _max_text_x = _max_x;
+  _max_text_y = _max_y;
+}
+
 /**************************************************************************/
 /*!
   @brief  Print one byte/character of data, used to support print()

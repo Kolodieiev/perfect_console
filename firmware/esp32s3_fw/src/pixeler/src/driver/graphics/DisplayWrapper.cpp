@@ -53,6 +53,30 @@ namespace pixeler
 #endif  // #ifdef GRAPHICS_ENABLED
   }
 
+  void DisplayWrapper::setTextBound(int16_t x, int16_t y, int16_t w, int16_t h)
+  {
+#ifdef GRAPHICS_ENABLED
+#ifdef DIRECT_DRAWING
+    return _output->setTextBound(x, y, w, h);
+#else
+    _is_buff_changed = true;
+    return _canvas.setTextBound(x, y, w, h);
+#endif  // #ifdef DIRECT_DRAWING
+#endif  // #ifdef GRAPHICS_ENABLED
+  }
+
+  void DisplayWrapper::resetTextBound()
+  {
+#ifdef GRAPHICS_ENABLED
+#ifdef DIRECT_DRAWING
+    return _output->resetTextBound();
+#else
+    _is_buff_changed = true;
+    return _canvas.resetTextBound();
+#endif  // #ifdef DIRECT_DRAWING
+#endif  // #ifdef GRAPHICS_ENABLED
+  }
+
   size_t DisplayWrapper::print(const char* str)
   {
 #ifdef GRAPHICS_ENABLED
