@@ -3,10 +3,10 @@
 
 #include "../WidgetCreator.h"
 
-const char STR_BOOK_DIR_PREF[] = "book_dir";
-const char STR_BOOK_NAME_PREF[] = "book_name";
-const char STR_READ_BOOK_PAGE[] = "book_page";
-const char STR_BOOK_BRIGHT_PREF[] = "book_bright";
+static const char STR_BOOK_DIR_PREF[] = "book_dir";
+static const char STR_BOOK_NAME_PREF[] = "book_name";
+static const char STR_READ_BOOK_PAGE[] = "book_page";
+static const char STR_BOOK_BRIGHT_PREF[] = "book_bright";
 
 #define BOOK_DIR_ITEMS_NUM 7
 #define BOOKS_ITEMS_NUM 7
@@ -211,14 +211,6 @@ void ReaderContext::showReadTmpl()
 
   layout->setBackColor(COLOR_DARKGREY);
 
-  _page = new Label(ID_PAGE_LBL);
-  layout->addWidget(_page);
-  _page->setMultiline(true);
-  _page->setWidth(UI_WIDTH);
-  _page->setHeight(UI_HEIGHT - 16);
-  _page->setBackColor(COLOR_DARKGREY);
-  _page->setTextColor(COLOR_WHITE);
-
   _progress_lbl = new Label(ID_PROGRESS_LBL);
   layout->addWidget(_progress_lbl);
   _progress_lbl->setText("0000/0000");
@@ -226,6 +218,14 @@ void ReaderContext::showReadTmpl()
   _progress_lbl->setBackColor(COLOR_DARKGREY);
   _progress_lbl->initWidthToFit(5);
   _progress_lbl->setPos(0, UI_HEIGHT - _progress_lbl->getHeight());
+
+  _page = new Label(ID_PAGE_LBL);
+  layout->addWidget(_page);
+  _page->setMultiline(true);
+  _page->setWidth(UI_WIDTH);
+  _page->setHeight(UI_HEIGHT - _progress_lbl->getHeight() - 5);
+  _page->setBackColor(COLOR_DARKGREY);
+  _page->setTextColor(COLOR_WHITE);
 
   _display.setBrightness(_brightness);
 }
@@ -250,7 +250,7 @@ void ReaderContext::indexBooks()
   String books_path = ROOT_PATH;
   books_path += "/";
   books_path += _dirname;
-  _fs.indexFilesExt(_books, books_path.c_str(), BOOK_EXT);
+  _fs.indexFilesExt(_books, books_path.c_str(), {BOOK_EXT});
 }
 
 void ReaderContext::handleNextItemsLoad(std::vector<MenuItem*>& items, uint8_t size, uint16_t cur_id)
