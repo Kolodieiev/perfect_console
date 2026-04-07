@@ -13,8 +13,8 @@
 #include <functional>
 #include <unordered_map>
 
-#include "pixeler/src/driver/graphics/DisplayWrapper.h"
 #include "context_id_setup.h"
+#include "pixeler/src/driver/graphics/DisplayWrapper.h"
 
 // -------------------------------- Підключи нижче заголовкові файли контекстів першого рівня
 #include "context/files/FilesContext.h"
@@ -40,7 +40,7 @@ namespace pixeler
    * @brief Фабрика генерації об'єкту контексту по його ідентифікатору.
    *
    */
-  std::unordered_map<ContextID, std::function<IContext*()>> _context_id_map = {
+  const std::unordered_map<ContextID, std::function<IContext*()>> _context_id_map = {
       {ContextID::ID_CONTEXT_SPLASH, []()
        { return new SplashContext(); }},
       {ContextID::ID_CONTEXT_HOME, []()
