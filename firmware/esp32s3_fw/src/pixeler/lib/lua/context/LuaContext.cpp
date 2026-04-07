@@ -2,29 +2,108 @@
 #include "LuaContext.h"
 
 #include <esp_heap_caps.h>
-
-#include "../lua_lib/custom_register.h"
-#include "../lua_lib/custom_searcher.h"
-#include "../lua_lib/custom_type_initializer.h"
+//
 #include "../lua_lib/helper/lua_helper.h"
+#include "../lua_lib/type/widget/lua_empty_layout.h"
+#include "../lua_lib/type/widget/lua_image.h"
+#include "../lua_lib/type/widget/lua_iwidget.h"
 #include "../lua_lib/type/widget/lua_iwidget_cont.h"
+#include "../lua_lib/type/widget/lua_label.h"
+#include "../lua_lib/type/widget/lua_menu.h"
+#include "../lua_lib/type/widget/lua_menu_item.h"
+#include "../lua_lib/type/widget/lua_progress.h"
+#include "../lua_lib/type/widget/lua_toggle_item.h"
+#include "../lua_lib/type/widget/lua_toggle_switch.h"
+
+//---------------------------------------------------------------------------------- Бібліотеки, що будуть доступні в скриптах завжди
+#include "../lua_lib/register/lua_gl.h"
+#include "../lua_lib/register/lua_mcu.h"
+#include "../lua_lib/register/lua_pin.h"
+//---------------------------------------------------------------------------------- Бібліотеки, які можна підключати та відключати
+#include "../lua_lib/require/lua_i2c.h"
+#include "../lua_lib/require/lua_pwm.h"
+#include "../lua_lib/require/lua_sd.h"
+#include "../lua_lib/require/lua_uart.h"
+#include "../lua_lib/require/lua_web.h"
+#include "../lua_lib/require/lua_wifi.h"
+//---------------------------------------------------------------------------------- Реєстрація користувацьких типів
+#include "../lua_lib/type/widget/lua_empty_layout.h"
+#include "../lua_lib/type/widget/lua_image.h"
+#include "../lua_lib/type/widget/lua_iwidget.h"
+#include "../lua_lib/type/widget/lua_iwidget_cont.h"
+#include "../lua_lib/type/widget/lua_label.h"
+#include "../lua_lib/type/widget/lua_menu.h"
+#include "../lua_lib/type/widget/lua_menu_item.h"
+#include "../lua_lib/type/widget/lua_progress.h"
+#include "../lua_lib/type/widget/lua_toggle_item.h"
+#include "../lua_lib/type/widget/lua_toggle_switch.h"
+//
 #include "pixeler/src/manager/ResManager.h"
 #include "pixeler/src/widget/layout/EmptyLayout.h"
 
-const char STR_NOTIFICATION[] = "Повідомлення";
-const char STR_OK[] = "OK";
-const char STR_NOT_ENOUGH_RAM[] = "Недостатньо RAM для роботи LuaVM";
-const char STR_LUA_START[] = "LuaVM стартувала";
-const char STR_LUA_STOP[] = "LuaVM зупинено";
-//
-const char STR_UPDATE_NAME[] = "update";
+static const char STR_NOTIFICATION[] = "Повідомлення";
+static const char STR_OK[] = "OK";
+static const char STR_NOT_ENOUGH_RAM[] = "Недостатньо RAM для роботи LuaVM";
+static const char STR_LUA_START[] = "LuaVM стартувала";
+static const char STR_LUA_STOP[] = "LuaVM зупинено";
+
+static const char STR_UPDATE_NAME[] = "update";
 //
 namespace pixeler
 {
-  const LuaRegisterFunc LuaContext::LIB_REGISTER_FUNCS[] = {
+
+  //---------------------------------------------------------------------------------- Бібліотеки, що будуть доступні в скриптах завжди
+
+  // Додай сюди функції для глобальної реєстрації бібліотек
+  const LuaRegisterFunc LuaContext::LIB_REGULAR_MODULE[] = {
       LuaContext::lua_register_context,
       LuaContext::lua_register_input,
+      lua_register_mcu,
+      lua_register_pin,
+      lua_register_gl,
   };
+
+  //---------------------------------------------------------------------------------- Бібліотеки, які можна підключати та відключати
+
+  // Додай сюди функції для підключення бібліотек з допомогою require
+  int LuaContext::registerRequire(lua_State* L)
+  {
+    const char* lib_name = luaL_checkstring(L, 1);
+    if (strcmp(lib_name, STR_LIB_NAME_SD) == 0)
+      lua_pushcfunction(L, lua_open_sd);
+    else if (strcmp(lib_name, STR_LIB_NAME_WIFI) == 0)
+      lua_pushcfunction(L, lua_open_wifi);
+    else if (strcmp(lib_name, STR_LIB_NAME_NET) == 0)
+      lua_pushcfunction(L, lua_open_web);
+    else if (strcmp(lib_name, STR_LIB_NAME_UART) == 0)
+      lua_pushcfunction(L, lua_open_uart);
+    else if (strcmp(lib_name, STR_LIB_NAME_I2C) == 0)
+      lua_pushcfunction(L, lua_open_i2c);
+    else if (strcmp(lib_name, STR_LIB_NAME_PWM) == 0)
+      lua_pushcfunction(L, lua_open_pwm);
+    else
+      luaL_error(L, "Відсутній завантажувач для модуля: %s", lib_name);
+
+    return 1;
+  }
+
+  //---------------------------------------------------------------------------------- Реєстрація користувацьких типів
+  /* Назва типу в луа, {список імен типів-залежностей}, функція-ініціалізатор типу */
+  const LuaContext::LuaCustomType LuaContext::LIB_CUSTOM_TYPE[] = {
+      {STR_TYPE_NAME_IWIDGET, {}, lua_init_iwidget},
+      {STR_TYPE_NAME_IWIDGET_CONT, {STR_TYPE_NAME_IWIDGET}, lua_init_iwidget_cont},
+      {STR_TYPE_NAME_LABEL, {STR_TYPE_NAME_IWIDGET}, lua_init_label},
+      {STR_TYPE_NAME_IMAGE, {STR_TYPE_NAME_IWIDGET}, lua_init_image},
+      {STR_TYPE_NAME_EMPTY_LAYOUT, {STR_TYPE_NAME_IWIDGET, STR_TYPE_NAME_IWIDGET_CONT}, lua_init_empty_layout},
+      {STR_TYPE_NAME_MENU, {STR_TYPE_NAME_IWIDGET_CONT}, lua_init_menu},
+      {STR_TYPE_NAME_MENU_ITEM, {STR_TYPE_NAME_LABEL, STR_TYPE_NAME_IMAGE}, lua_init_menu_item},
+      {STR_TYPE_NAME_TOGGLE_ITEM, {STR_TYPE_NAME_MENU_ITEM, STR_TYPE_NAME_TOGGLE_SWITCH}, lua_init_toggle_item},
+      {STR_TYPE_NAME_TOGGLE_SWITCH, {STR_TYPE_NAME_IWIDGET}, lua_init_toggle_switch},
+      {STR_TYPE_NAME_PROGRESS, {STR_TYPE_NAME_IWIDGET}, lua_init_progress},
+      {nullptr, {}, nullptr},
+  };
+
+  //----------------------------------------------------------------------------------
 
   const struct luaL_Reg LuaContext::LIB_CONTEXT[] = {
       {"manageWidget", LuaContext::lua_context_manage_widget},
@@ -68,7 +147,6 @@ namespace pixeler
   LuaContext::~LuaContext()
   {
     lua_close(_lua);
-    reset_custom_initializer();
     delete _notification;
 
     for (size_t i = 0; i < _loaded_img_id.size(); ++i)
@@ -97,12 +175,8 @@ namespace pixeler
     luaL_openlibs(_lua);
     lua_sethook(_lua, luaHook, LUA_MASKCOUNT, 10000);
 
-    const size_t funcs_num = sizeof(LIB_REGISTER_FUNCS) / sizeof(LuaRegisterFunc);
-    for (size_t i = 0; i < funcs_num; ++i)
-      LIB_REGISTER_FUNCS[i](_lua);
-
-    register_custom_modules(_lua);
-    register_custom_searcher(_lua);
+    regRegularModule(_lua);
+    regRequireModule(_lua);
 
     lua_register(_lua, "initType", lua_init_type);
     lua_register(_lua, "unrequire", lua_unrequire);
@@ -422,52 +496,6 @@ namespace pixeler
   }
 #endif  // #ifdef TOUCHSCREEN_SUPPORT
 
-  int LuaContext::lua_init_type(lua_State* L)
-  {
-    init_custom_type(L);
-    return 0;
-  }
-
-  int LuaContext::lua_unrequire(lua_State* L)
-  {
-    const char* module_name = luaL_checkstring(L, 1);
-
-    lua_getglobal(L, "package");
-    lua_getfield(L, -1, "loaded");
-    lua_getfield(L, -1, module_name);  // stack: package, loaded, module
-
-    if (!lua_isnil(L, -1))
-    {
-      lua_getfield(L, -1, "__unload");
-      if (!lua_isfunction(L, -1))
-      {
-        lua_pop(L, 1);
-      }
-      else
-      {
-        lua_pushvalue(L, -2);
-        if (lua_pcall(L, 1, 0, 0) != LUA_OK)
-        {
-          const char* err = lua_tostring(L, -1);
-          log_e("Error in __unload: %s\n", err);
-          lua_pop(L, 1);
-        }
-      }
-    }
-
-    lua_pop(L, 1);
-
-    lua_pushnil(L);
-    lua_setfield(L, -2, module_name);
-
-    lua_pop(L, 2);
-
-    lua_pushnil(L);
-    lua_setglobal(L, module_name);
-
-    return 0;
-  }
-
   int LuaContext::lua_show_toast(lua_State* L)
   {
     uint8_t arg_num = lua_gettop(L);
@@ -580,4 +608,125 @@ namespace pixeler
 
     return 0;
   }
+
+  void LuaContext::regRequireModule(lua_State* L)
+  {
+    lua_getglobal(L, "package");
+    lua_getfield(L, -1, "searchers");
+    int searchers_len = lua_rawlen(L, -1);
+    lua_pushinteger(L, searchers_len + 1);
+    lua_pushcfunction(L, registerRequire);
+    lua_rawset(L, -3);
+    lua_pop(L, 2);
+  }
+
+  void LuaContext::regRegularModule(lua_State* L)
+  {
+    const size_t funcs_num = sizeof(LIB_REGULAR_MODULE) / sizeof(LuaRegisterFunc);
+    for (size_t i = 0; i < funcs_num; ++i)
+      LIB_REGULAR_MODULE[i](L);
+  }
+
+  bool LuaContext::initType(lua_State* L, const char* type_name)
+  {
+    if (isTypeInited(type_name))
+      return true;
+
+    for (const auto& type : LIB_CUSTOM_TYPE)
+    {
+      if (type.name && strcmp(type.name, type_name) == 0)
+      {
+        for (const char* dep_name : type.deps)
+        {
+          if (!initType(L, dep_name))
+            return false;  // Неможливо ініціалізувати одну із залежностей
+        }
+
+        if (type.initializer)
+        {
+          type.initializer(L);                 // Реєструємо основний тип
+          _inited_types.push_back(type_name);  // Запам'ятали реєстрацію
+          return true;
+        }
+      }
+    }
+
+    luaL_error(L, "Відсутній ініціалізатор для типу: %s", type_name);
+    return false;
+  }
+
+  void LuaContext::clearInitialization(const char* type_name)
+  {
+    for (auto it_b = _inited_types.begin(), it_e = _inited_types.end(); it_b != it_e; ++it_b)
+    {
+      if (strcmp(*it_b, type_name) == 0)
+      {
+        _inited_types.erase(it_b);
+        return;
+      }
+    }
+  }
+
+  int LuaContext::lua_init_type(lua_State* L)
+  {
+    const char* type_name = luaL_checkstring(L, 1);
+    _self->initType(L, type_name);
+    return 0;
+  }
+
+  int LuaContext::lua_unrequire(lua_State* L)
+  {
+    const char* module_name = luaL_checkstring(L, 1);
+
+    lua_getglobal(L, "package");
+    lua_getfield(L, -1, "loaded");
+    lua_getfield(L, -1, module_name);  // stack: package, loaded, module
+
+    if (!lua_isnil(L, -1))
+    {
+      lua_getfield(L, -1, "__unload");
+      if (!lua_isfunction(L, -1))
+      {
+        lua_pop(L, 1);
+      }
+      else
+      {
+        lua_pushvalue(L, -2);
+        if (lua_pcall(L, 1, 0, 0) != LUA_OK)
+        {
+          const char* err = lua_tostring(L, -1);
+          log_e("Error in __unload: %s\n", err);
+          lua_pop(L, 1);
+        }
+      }
+    }
+
+    lua_pop(L, 1);
+
+    lua_pushnil(L);
+    lua_setfield(L, -2, module_name);
+
+    lua_pop(L, 2);
+
+    lua_pushnil(L);
+    lua_setglobal(L, module_name);
+
+    _self->clearInitialization(module_name);  // Забули реєстрацію
+
+    return 0;
+  }
+
+  bool LuaContext::isTypeInited(const char* type_name)
+  {
+    for (const char* t_name : _inited_types)
+    {
+      if (strcmp(t_name, type_name) == 0)
+        return true;
+    }
+
+    return false;
+  }
+
+  //----------------------------------------------------------------------------------
+
 }  // namespace pixeler
