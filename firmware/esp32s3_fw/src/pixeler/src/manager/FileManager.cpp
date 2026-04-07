@@ -242,6 +242,35 @@ namespace pixeler
     return bytes_read;
   }
 
+  String FileManager::readFileToStr(String path)
+  {
+    if (path.isEmpty())
+      return emptyString;
+
+    size_t file_size = getFileSize(path.c_str());
+
+    if (file_size == 0)
+      return emptyString;
+
+    char* buffer = static_cast<char*>(malloc(file_size + 1));
+
+    if (!buffer)
+    {
+      log_e("Bad memory alloc: %zu b", file_size);
+      return emptyString;
+    }
+
+    size_t bytes_read = readFile(path.c_str(), buffer, file_size);
+    buffer[bytes_read] = '\0';
+
+    String ret;
+    if (bytes_read > 0)
+      ret = buffer;
+
+    free(buffer);
+    return ret;
+  }
+
   bool FileManager::readFromFileExact(FILE* file, void* out_buffer, size_t len, size_t seek_pos)
   {
     return readFromFile(file, out_buffer, len, seek_pos) == static_cast<ssize_t>(len);
@@ -816,7 +845,7 @@ namespace pixeler
     }
   }
 
-  void FileManager::index(std::vector<FileInfo>& out_vec, const char* dir_path, IndexMode mode, const char* file_ext)
+  void FileManager::index(std::vector<FileInfo>& out_vec, const char* dir_path, IndexMode mode, const std::vector<String>& file_ext)
   {
     out_vec.clear();
     out_vec.reserve(40);
@@ -875,8 +904,14 @@ namespace pixeler
             out_vec.emplace_back(filename, false);
           break;
         case INDX_MODE_FILES_EXT:
-          if (!is_dir && filename.endsWith(file_ext))
-            out_vec.emplace_back(filename, false);
+          for (const String& i : file_ext)
+          {
+            if (!is_dir && filename.endsWith(i))
+            {
+              out_vec.emplace_back(filename, false);
+              break;
+            }
+          }
           break;
         case INDX_MODE_ALL:
           if (is_dir)
@@ -900,24 +935,24 @@ namespace pixeler
       closedir(dir);
   }
 
-  void FileManager::indexFilesExt(std::vector<FileInfo>& out_vec, const char* dir_path, const char* file_ext)
+  void FileManager::indexFilesExt(std::vector<FileInfo>& out_vec, const char* dir_path, const std::vector<String>& file_ext)
   {
     return index(out_vec, dir_path, INDX_MODE_FILES_EXT, file_ext);
   }
 
   void FileManager::indexFiles(std::vector<FileInfo>& out_vec, const char* dir_path)
   {
-    return index(out_vec, dir_path, INDX_MODE_FILES);
+    return index(out_vec, dir_path, INDX_MODE_FILES, {});
   }
 
   void FileManager::indexDirs(std::vector<FileInfo>& out_vec, const char* dir_path)
   {
-    return index(out_vec, dir_path, INDX_MODE_DIR);
+    return index(out_vec, dir_path, INDX_MODE_DIR, {});
   }
 
   void FileManager::indexAll(std::vector<FileInfo>& out_vec, const char* dir_path)
   {
-    return index(out_vec, dir_path, INDX_MODE_ALL);
+    return index(out_vec, dir_path, INDX_MODE_ALL, {});
   }
 
   void FileManager::taskDone(bool result)

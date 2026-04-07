@@ -88,7 +88,7 @@ namespace pixeler
      * @param dir_path Шлях до папки, в якій повинна бути виконана індексація, вказаний без точки монтування.
      * @param file_ext Розширення бінарних файлів, які повинні бути проіндексовані.
      */
-    void indexFilesExt(std::vector<FileInfo>& out_vec, const char* dir_path, const char* file_ext);
+    void indexFilesExt(std::vector<FileInfo>& out_vec, const char* dir_path, const std::vector<String>& file_ext);
 
     /**
      * @brief Індексує усі бінарні файли у вказаній папці без обходу вкладених директорій.
@@ -212,6 +212,16 @@ namespace pixeler
      * @return size_t - Кількість успішно прочитаних байтів.
      */
     size_t readFromFile(FILE* file, void* out_buffer, size_t len = 1, size_t seek_pos = 0);
+
+    /**
+     * @brief Читає вміст файла до рядка.
+     * 
+     * @param path Шлях до бінарного файла, вказаний без точки монтування.
+     * @return String - Вміст файла, якщо читання відбулось успішно.
+     * @return Порожній рядок - інакше.
+     * 
+     */
+    String readFileToStr(String path);
 
     /**
      * @brief Створює або перезаписує бінарний файл, та записує до нього вказану кількість байтів із буфера.
@@ -365,7 +375,7 @@ namespace pixeler
 
     uint8_t getEntryTypeUnlocked(const char* path, dirent* entry = nullptr);
     //
-    void index(std::vector<FileInfo>& out_vec, const char* dir_path, IndexMode mode, const char* file_ext = "");
+    void index(std::vector<FileInfo>& out_vec, const char* dir_path, IndexMode mode, const std::vector<String>& file_ext);
     //
     void rm();
     void copyFile();
