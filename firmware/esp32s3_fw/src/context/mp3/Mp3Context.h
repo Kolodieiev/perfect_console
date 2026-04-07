@@ -1,8 +1,8 @@
 #pragma once
 
 #include "pixeler/lib/audio/mp3/Audio.h"
-#include "pixeler/src/manager/SettingsManager.h"
 #include "pixeler/src/context/IContext.h"
+#include "pixeler/src/manager/SettingsManager.h"
 #include "pixeler/src/widget/image/Image.h"
 #include "pixeler/src/widget/menu/DynamicMenu.h"
 #include "pixeler/src/widget/menu/FixedMenu.h"
@@ -44,6 +44,7 @@ private:
     ID_D_MENU,
     ID_SCROLL,
     ID_TRACK_NAME,
+    ID_STREAM_TITLE,
     ID_CUR_TRACK_TIME,
     ID_GEN_TRACK_TIME,
     ID_PLAY_BTN,
@@ -123,6 +124,7 @@ private:
   std::vector<FileInfo> _tracks;
 
   Label* _track_name_lbl;
+  Label* _stream_title_lbl;
   Image* _play_btn;
   Label* _cur_track_time_lbl;
   Label* _gen_track_time_lbl;
@@ -135,12 +137,12 @@ private:
   FixedMenu* _playlists_list;
   //
   unsigned long _upd_msg_time{0};
-  int32_t _track_time{-1};
+  uint32_t _track_time{0};
   uint16_t _track_pos{0};
 
   Mode _mode{MODE_PLST_SEL};
 
-  uint8_t _attempt_to_play_next_counter{0};
+  uint8_t _try_next_counter{0};
   uint8_t _brightness;
   uint8_t _upd_counter{0};
   uint8_t _volume;
@@ -149,4 +151,6 @@ private:
   bool _is_playing{false};
   bool _is_locked{false};
   bool _is_audio_amp_en{false};
+  bool _is_radio_mode{false};
+  bool _is_woken_up{false};
 };

@@ -15,18 +15,19 @@
 #define PLAYLIST_ITEMS_NUM 7
 #define TRACKS_ITEMS_NUM 7
 
-const char STR_PLAYLIST_PREF[] = "Playlist";
-const char STR_TRACK_NAME_PREF[] = "TrackName";
-const char STR_VOLUME_PREF[] = "Volume";
-const char STR_TRACK_POS_PREF[] = "TrackPos";
-const char STR_TRACK_TIME_PREF[] = "TrackTime";
+static const char STR_PLAYLIST_PREF[] = "playlist";
+static const char STR_TRACK_NAME_PREF[] = "trackname";
+static const char STR_VOLUME_PREF[] = "volume";
+static const char STR_TRACK_POS_PREF[] = "trackpos";
+static const char STR_TRACK_TIME_PREF[] = "tracktime";
 
-const char ROOT_PATH[] = "/music";
-const char AUDIO_EXT[] = ".mp3";
-
-const char STR_ZERO_TRACK_TIME[] = "000:00";
-
-const char STR_STOPPED[] = "Зупинено";
+static const char ROOT_PATH[] = "/music";
+static const char AUDIO_MP3_EXT[] = ".mp3";
+static const char AUDIO_FLAC_EXT[] = ".flac";
+static const char AUDIO_AAC_EXT[] = ".aac";
+static const char AUDIO_RADIO_EXT[] = ".fm";
+static const char STR_ZERO_TRACK_TIME[] = "000:00";
+static const char STR_STOPPED[] = "Зупинено";
 
 bool Mp3Context::loop()
 {
@@ -76,7 +77,8 @@ Mp3Context::Mp3Context()
   _playlist_name = SettingsManager::get(STR_PLAYLIST_PREF);
   _track_name = SettingsManager::get(STR_TRACK_NAME_PREF);
 
-  _audio.setVolumeSteps(31);
+  _audio.begin();
+  _audio.setVolumeSteps(30);
   _audio.setVolume(_volume);
 
   String mono_mode = SettingsManager::get(STR_PREF_MONO_AUDIO);
@@ -98,7 +100,6 @@ Mp3Context::Mp3Context()
 
 Mp3Context::~Mp3Context()
 {
-  _audio.deinit();
   uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_OFF, CH_PIN_SPK_PWR};
   _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
 
@@ -136,32 +137,54 @@ void Mp3Context::showPlaying()
   _track_name_lbl->setAutoscroll(true);
   _track_name_lbl->setPos(getCenterX(_track_name_lbl), 0);
 
-  _progress = new ProgressBar(ID_PROGRESS);
-  layout->addWidget(_progress);
-  _progress->setBackColor(COLOR_BLACK);
-  _progress->setProgressColor(COLOR_ORANGE);
-  _progress->setBorderColor(COLOR_WHITE);
-  _progress->setMax(9999);
-  _progress->setWidth(UI_WIDTH - 20);
-  _progress->setHeight(10);
-  _progress->setProgress(1);
-  _progress->setPos(paddings, UI_HEIGHT - _progress->getHeight());
+  if (!_is_radio_mode)
+  {
+    _progress = new ProgressBar(ID_PROGRESS);
+    layout->addWidget(_progress);
+    _progress->setBackColor(COLOR_BLACK);
+    _progress->setProgressColor(COLOR_ORANGE);
+    _progress->setBorderColor(COLOR_WHITE);
+    _progress->setMax(9999);
+    _progress->setWidth(UI_WIDTH);
+    _progress->setHeight(10);
+    _progress->setProgress(1);
+    _progress->setPos(0, UI_HEIGHT - _progress->getHeight());
 
-  _cur_track_time_lbl = _track_name_lbl->clone(ID_CUR_TRACK_TIME);
-  layout->addWidget(_cur_track_time_lbl);
-  _cur_track_time_lbl->setText(STR_ZERO_TRACK_TIME);
-  _cur_track_time_lbl->setAlign(IWidget::ALIGN_END);
-  _cur_track_time_lbl->initWidthToFit();
-  _cur_track_time_lbl->setBackColor(COLOR_MAIN_BACK);
-  _cur_track_time_lbl->setPos(paddings, _progress->getYPos() - 25);
-  _cur_track_time_lbl->setAutoscroll(false);
+    _cur_track_time_lbl = _track_name_lbl->clone(ID_CUR_TRACK_TIME);
+    layout->addWidget(_cur_track_time_lbl);
+    _cur_track_time_lbl->setText(STR_ZERO_TRACK_TIME);
+    _cur_track_time_lbl->setAlign(IWidget::ALIGN_END);
+    _cur_track_time_lbl->initWidthToFit();
+    _cur_track_time_lbl->setBackColor(COLOR_MAIN_BACK);
+    _cur_track_time_lbl->setPos(paddings, _progress->getYPos() - 25);
+    _cur_track_time_lbl->setAutoscroll(false);
 
-  _gen_track_time_lbl = _cur_track_time_lbl->clone(ID_GEN_TRACK_TIME);
-  layout->addWidget(_gen_track_time_lbl);
-  _gen_track_time_lbl->setText(STR_ZERO_TRACK_TIME);
-  _gen_track_time_lbl->initWidthToFit();
-  _gen_track_time_lbl->setPos(UI_WIDTH - _cur_track_time_lbl->getWidth() - paddings, _cur_track_time_lbl->getYPos());
+    _gen_track_time_lbl = _cur_track_time_lbl->clone(ID_GEN_TRACK_TIME);
+    layout->addWidget(_gen_track_time_lbl);
+    _gen_track_time_lbl->setText(STR_ZERO_TRACK_TIME);
+    _gen_track_time_lbl->initWidthToFit();
+    _gen_track_time_lbl->setPos(UI_WIDTH - _cur_track_time_lbl->getWidth() - paddings, _cur_track_time_lbl->getYPos());
+  }
+  else
+  {
+    _stream_title_lbl = new Label(ID_STREAM_TITLE);
+    layout->addWidget(_stream_title_lbl);
+    _stream_title_lbl->setAlign(IWidget::ALIGN_CENTER);
+    _stream_title_lbl->setGravity(IWidget::GRAVITY_CENTER);
+    _stream_title_lbl->setBackColor(COLOR_BLACK);
+    _stream_title_lbl->setTextColor(COLOR_WHITE);
+    _stream_title_lbl->setWidth(UI_WIDTH);
+    _stream_title_lbl->setFont(font_inr24);
+    _stream_title_lbl->setPos(0, _track_name_lbl->getYPos() + _track_name_lbl->getHeight() + 5);
+    _stream_title_lbl->setAutoscroll(true);
+    _stream_title_lbl->setFullAutoscroll(false);
 
+    if (_is_woken_up)
+    {
+      _is_woken_up = false;
+      _stream_title_lbl->setText(_audio.getStreamTitle());
+    }
+  }
   //
 
   _play_btn = new Image(ID_PLAY_BTN);
@@ -202,7 +225,14 @@ void Mp3Context::showPlaying()
   _volume_lbl->setWidth(20);
   _volume_lbl->setBackColor(COLOR_MAIN_BACK);
   _volume_lbl->setTextColor(COLOR_ORANGE);
-  _volume_lbl->setPos(getCenterX(_volume_lbl) + _volume_lbl->getWidth() / 2, _progress->getYPos() - _volume_lbl->getHeight() - 5);
+
+  uint16_t y_pos;
+  if (!_is_radio_mode)
+    y_pos = _progress->getYPos() - _volume_lbl->getHeight() - 5;
+  else
+    y_pos = UI_HEIGHT - _volume_lbl->getHeight() - 5;
+
+  _volume_lbl->setPos(getCenterX(_volume_lbl) + _volume_lbl->getWidth() / 2, y_pos);
 
   Image* volume_img = new Image(ID_VOLUME_IMG);
   layout->addWidget(volume_img);
@@ -486,33 +516,54 @@ void Mp3Context::update()
   {
     if (_audio.isRunning())
     {
-      if (_is_new_track && updateTrackDuration())
+      if (!_is_radio_mode)
       {
-        _track_name_lbl->setText(_track_name);
-        _is_new_track = false;
-      }
+        if (_audio.isRunning())
+        {
+          if (_is_new_track)
+          {
+            if (updateTrackDuration())
+            {
+              if (_track_time > 0)
+              {
+                _audio.setAudioPlayPosition(_track_time);
+                _track_time = 0;
+              }
 
-      if (millis() - _upd_msg_time > UPD_TRACK_INF_INTERVAL)
-      {
-        updateTrackTime();
-        _upd_msg_time = millis();
+              _track_name_lbl->setText(_track_name);
+              _is_new_track = false;
+            }
+          }
+          else if (millis() - _upd_msg_time > UPD_TRACK_INF_INTERVAL)
+          {
+            updateTrackTime();
+            _upd_msg_time = millis();
+          }
+        }
+        else if (_is_playing)
+        {
+          // Якщо трек скінчився самостійно
+          if (playNext())
+          {
+            // Намагаємося перемкнути
+            _is_new_track = true;
+          }
+          else if (_try_next_counter == 3)
+          {
+            // Якщо не вдалося змінити трек з 3х спроб, зупинити плеєр
+            setStopState();
+          }
+          else
+          {
+            ++_try_next_counter;
+          }
+        }
       }
-    }
-    // Якщо трек скінчився самостійно
-    else if (_is_playing)
-    {
-      // Намагаємося перемкнути
-      if (playNext())
+      else if (_audio.hasNewStreamTitle())
       {
-        _is_new_track = true;
+        _audio.resetStreamTitleState();
+        _stream_title_lbl->setText(_audio.getStreamTitle());
       }
-      // Якщо не вдалося змінити трек з 3х спроб, зупинити плеєр
-      else if (_attempt_to_play_next_counter == 3)
-      {
-        setStopState();
-      }
-      else
-        ++_attempt_to_play_next_counter;
     }
   }
 }
@@ -583,12 +634,27 @@ bool Mp3Context::playTrack(bool contn)
     _track_time = 0;
   }
 
-  String track_path = getTrackPath(_playlist_name.c_str(), _track_name.c_str());
+  bool result{false};
 
-  if (!_audio.connecttoFS(track_path.c_str(), _track_time))
+  String track_path = getTrackPath(_playlist_name.c_str(), _track_name.c_str());
+  if (_track_name.endsWith(AUDIO_RADIO_EXT))
   {
-    if (_mode == MODE_AUDIO_PLAY)
-      setStopState();
+    String station_link = _fs.readFileToStr(track_path);
+    station_link.trim();
+    result = _audio.connecttohost(station_link.c_str());
+    _is_radio_mode = true;
+  }
+  else
+  {
+    result = _audio.connecttoFS(track_path.c_str());
+    _is_radio_mode = false;
+  }
+
+  if (!result)
+  {
+    setStopState();
+
+    showToast(STR_FAIL);
     return false;
   }
 
@@ -600,7 +666,7 @@ bool Mp3Context::playTrack(bool contn)
 
 void Mp3Context::volumeUp()
 {
-  if (_volume < _audio.maxVolume() - 2)
+  if (_volume <= _audio.maxVolume() - 2)
   {
     if (_volume < 10)
       _volume += 1;
@@ -630,6 +696,9 @@ void Mp3Context::volumeDown()
 
 void Mp3Context::setStopState()
 {
+  if (_mode != MODE_AUDIO_PLAY)
+    return;
+
   _audio.stopSong();
 
   _is_playing = false;
@@ -680,7 +749,6 @@ bool Mp3Context::updateTrackDuration()
 void Mp3Context::updateTrackTime()
 {
   _track_time = _audio.getAudioCurrentTime();
-
   uint32_t minutes = floor((float)_track_time / 60);
   String track_time_str;
 
@@ -783,7 +851,12 @@ void Mp3Context::ok()
   {
     if (_track_name != "")
     {
-      _audio.pauseResume();
+      if (!_is_radio_mode)
+        _audio.pauseResume();
+      else if (_is_playing)
+        _audio.stopSong();
+      else
+        playTrack();
 
       if (_audio.isRunning())
       {
@@ -839,7 +912,7 @@ void Mp3Context::indexTracks()
   String playlist_path = ROOT_PATH;
   playlist_path += "/";
   playlist_path += _playlist_name;
-  _fs.indexFilesExt(_tracks, playlist_path.c_str(), AUDIO_EXT);
+  _fs.indexFilesExt(_tracks, playlist_path.c_str(), {AUDIO_MP3_EXT, AUDIO_FLAC_EXT, AUDIO_AAC_EXT, AUDIO_RADIO_EXT});
 }
 
 String Mp3Context::getTrackPath(const char* dirname, const char* track_name) const
@@ -909,6 +982,7 @@ void Mp3Context::changeBackLight()
   {
     _display.setBrightness(_brightness);
     _gui_enabled = true;
+    _is_woken_up = true;
 
     uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_ON, CH_PIN_DISPLAY_PWR};
     _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
@@ -922,7 +996,7 @@ void Mp3Context::changeBackLight()
   else
   {
     _display.setBrightness(0);
-    _display.__flush(); // Запобігає ефекту "вигорання" зображення.
+    _display.__flush();  // Запобігає ефекту "вигорання" зображення.
     _gui_enabled = false;
 
     uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_OFF, CH_PIN_DISPLAY_PWR};
