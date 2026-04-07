@@ -17,6 +17,7 @@ namespace pixeler
   {
   public:
     FileStream(FILE* file, const char* name, size_t size);
+    FileStream() = default;
     virtual ~FileStream();
     virtual int available() override;
     virtual size_t readBytes(char* out_buffer, size_t length) override;
@@ -24,7 +25,10 @@ namespace pixeler
     virtual size_t write(uint8_t byte) override;
     virtual int peek() override;
     virtual void flush() override {}
+    bool open(FILE* file, const char* name, size_t size);
     void close();
+    bool seek(int32_t position);
+    size_t position() const;
 
     const char* name() const;
     size_t size() const;

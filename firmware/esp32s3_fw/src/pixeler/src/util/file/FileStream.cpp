@@ -6,17 +6,43 @@
 
 namespace pixeler
 {
-  FileStream::FileStream(FILE* file, const char* name, size_t size) : _name{name}, _file{file}, _size{size}
+  FileStream::FileStream(FILE* file, const char* name, size_t size)
   {
-    _cache = static_cast<uint8_t*>(heap_caps_malloc(MAX_CACHE_SIZE, MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL));
+    open(file, name, size);
+  }
+
+  bool FileStream::open(FILE* file, const char* name, size_t size)
+  {
+    close();
+
+    if (!file)
+      return false;
+
+    _file = file;
+    _name = name;
+    _size = size;
 
     if (!_cache)
-      log_e("Помилка виділення [ %zu ] байт для файлового потоку [ %s ]", MAX_CACHE_SIZE, name);
+    {
+      _cache = static_cast<uint8_t*>(heap_caps_malloc(MAX_CACHE_SIZE, MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL));
+
+      if (!_cache)
+      {
+        log_e("Помилка виділення [ %zu ] байт для файлового потоку [ %s ]", MAX_CACHE_SIZE, name);
+        _file = nullptr;
+        _name = emptyString;
+        return false;
+      }
+    }
+
+    return true;
   }
 
   FileStream::~FileStream()
   {
     close();
+    free(_cache);
+    _cache = nullptr;
   }
 
   int FileStream::available()
@@ -96,8 +122,32 @@ namespace pixeler
   void FileStream::close()
   {
     _fs.closeFile(_file);
-    free(_cache);
-    _cache = nullptr;
+
+    _consumed_total = 0;
+    _cache_pos = 0;
+    _cache_available = 0;
+  }
+
+  bool FileStream::seek(int32_t position)
+  {
+    if (!_file)
+      return false;
+
+    bool success = _fs.seekPos(_file, position, SEEK_SET);
+
+    if (success)
+    {
+      _cache_pos = 0;
+      _cache_available = 0;
+      _consumed_total = position;
+    }
+
+    return success;
+  }
+
+  size_t FileStream::position() const
+  {
+    return _consumed_total;
   }
 
   const char* FileStream::name() const
