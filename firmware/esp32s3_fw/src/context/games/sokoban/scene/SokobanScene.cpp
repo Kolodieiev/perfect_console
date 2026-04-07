@@ -87,7 +87,7 @@
 //
 namespace sokoban
 {
-  const uint16_t(*LVL_TEMPLATE[]) = {
+  constexpr static const uint16_t* LVL_TEMPLATE[] = {
       MAP_SCENE_0_2,
       MAP_SCENE_0_2,
       MAP_SCENE_0_2,
@@ -159,7 +159,7 @@ namespace sokoban
       MAP_SCENE_69,
       MAP_SCENE_70};
 
-  const uint8_t LVL_SIZE[][2] =  // Розмір мапи
+  static const uint8_t LVL_SIZE[][2] =  // Розмір мапи
       {
           {8, 10},   // 0
           {8, 10},   // 1
@@ -233,7 +233,7 @@ namespace sokoban
           {26, 16}   // 70
   };
 
-  const uint16_t SOKOBAN_POS[][2] =  // Позиція сокобана
+  static const uint16_t SOKOBAN_POS[][2] =  // Позиція сокобана
       {
           {2 * 32, 6 * 32},    // 0
           {2 * 32, 6 * 32},    // 1
@@ -307,7 +307,7 @@ namespace sokoban
           {6 * 32, 8 * 32}     // 70
   };
 
-  const uint8_t BOX_NUM[] =  // Кількість ящиків на рівень
+  static const uint8_t BOX_NUM[] =  // Кількість ящиків на рівень
       {
           1,   // 0
           2,   // 1
@@ -381,7 +381,7 @@ namespace sokoban
           24   // 70
   };
 
-  const uint16_t (*LVL_BOX[])[2] =
+  constexpr static const uint16_t (*LVL_BOX[])[2] =
       {
           BOX_POS_0,
           BOX_POS_1,
@@ -454,7 +454,7 @@ namespace sokoban
           BOX_POS_69,
           BOX_POS_70};
 
-  const uint16_t (*LVL_POINT[])[2] =
+  constexpr static const uint16_t (*LVL_POINT[])[2] =
       {
           POINT_POS_0,
           POINT_POS_1,

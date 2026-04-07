@@ -26,4 +26,27 @@
 #pragma once
 #pragma GCC optimize("O3")
 
-extern int RSECC_encode(size_t data_length, size_t ecc_length, const unsigned char* data, unsigned char* ecc);
+class Rsecc
+{
+public:
+  int encode(size_t data_length, size_t ecc_length, const unsigned char* data, unsigned char* ecc);
+
+private:
+  void initLookupTable();
+  void init();
+  void generator_init(size_t length);
+
+private:
+#define SYMBOL_SIZE (8)
+#define symbols ((1U << SYMBOL_SIZE) - 1)
+/* min/max codeword length of ECC, calculated from the specification. */
+#define min_length (2)
+#define max_length (30)
+#define max_generatorSize (max_length)
+
+  int initialized = 0;
+  unsigned char alpha[symbols + 1];
+  unsigned char aindex[symbols + 1];
+  unsigned char generator[max_length - min_length + 1][max_generatorSize + 1];
+  unsigned char generatorInitialized[max_length - min_length + 1];
+};

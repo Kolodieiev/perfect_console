@@ -39,23 +39,9 @@
 static pthread_mutex_t RSECC_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
-static int initialized = 0;
-
-#define SYMBOL_SIZE (8)
-#define symbols ((1U << SYMBOL_SIZE) - 1)
 static const unsigned int proot = 0x11d; /* stands for x^8+x^4+x^3+x^2+1 (see pp.37 of JIS X0510:2004) */
 
-/* min/max codeword length of ECC, calculated from the specification. */
-#define min_length (2)
-#define max_length (30)
-#define max_generatorSize (max_length)
-
-static unsigned char alpha[symbols + 1];
-static unsigned char aindex[symbols + 1];
-static unsigned char generator[max_length - min_length + 1][max_generatorSize + 1];
-static unsigned char generatorInitialized[max_length - min_length + 1];
-
-static void RSECC_initLookupTable(void)
+void Rsecc::initLookupTable()
 {
   unsigned int i, b;
 
@@ -76,14 +62,14 @@ static void RSECC_initLookupTable(void)
   }
 }
 
-static void RSECC_init(void)
+void Rsecc::init()
 {
-  RSECC_initLookupTable();
+  initLookupTable();
   memset(generatorInitialized, 0, (max_length - min_length + 1));
   initialized = 1;
 }
 
-static void generator_init(size_t length)
+void Rsecc::generator_init(size_t length)
 {
   size_t i, j;
   int g[max_generatorSize + 1];
@@ -108,7 +94,7 @@ static void generator_init(size_t length)
   generatorInitialized[length - min_length] = 1;
 }
 
-int RSECC_encode(size_t data_length, size_t ecc_length, const unsigned char* data, unsigned char* ecc)
+int Rsecc::encode(size_t data_length, size_t ecc_length, const unsigned char* data, unsigned char* ecc)
 {
   size_t i, j;
   unsigned char feedback;
@@ -119,7 +105,7 @@ int RSECC_encode(size_t data_length, size_t ecc_length, const unsigned char* dat
 #endif
   if (!initialized)
   {
-    RSECC_init();
+    init();
   }
 #if HAVE_LIBPTHREAD
   pthread_mutex_unlock(&RSECC_mutex);
