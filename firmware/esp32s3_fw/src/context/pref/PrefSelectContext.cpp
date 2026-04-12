@@ -10,6 +10,7 @@
 #include "wifi_power/PrefWiFiPowerContext.h"
 
 static const char STR_AUDIO_MONO[] = "Монозвук";
+static const char STR_VU_METR[] = "Увімкнути VU-метр";
 static const char STR_WIFI_AUTOCONNECT[] = "Автопідключення до WiFi";
 static const char STR_AUDIO_AMP[] = "Підсилювач звуку";
 static const char STR_LED_GREET[] = "Привітання LED";
@@ -74,6 +75,17 @@ void PrefSelectContext::showMainTmpl()
     toggle_mono->setOn(false);
   else
     toggle_mono->setOn(true);
+
+  // VU-metr
+  ToggleItem* vu_metr_item = mono_item->clone(ITEM_ID_AUDIO_VU_METR);
+  _menu->addItem(vu_metr_item);
+  vu_metr_item->getLbl()->setText(STR_VU_METR);
+
+  String vu_metr_setting = SettingsManager::get(STR_PREF_EN_VU_METR);
+  if (vu_metr_setting.equals("1"))
+    vu_metr_item->getToggle()->setOn(true);
+  else
+    vu_metr_item->getToggle()->setOn(false);
 
   // Автоматичне підключення wifi
   ToggleItem* wifi_autoconn_item = mono_item->clone(ITEM_ID_WIFI_AUTOCONN);
@@ -206,6 +218,20 @@ void PrefSelectContext::ok()
     else
     {
       if (SettingsManager::set(STR_PREF_MONO_AUDIO, "1"))
+        toggle->setOn(true);
+    }
+  }
+  else if (id == ITEM_ID_AUDIO_VU_METR)
+  {
+    ToggleItem* toggle = _menu->getCurrItem()->castTo<ToggleItem>();
+    if (toggle->isOn())
+    {
+      if (SettingsManager::set(STR_PREF_EN_VU_METR, "0"))
+        toggle->setOn(false);
+    }
+    else
+    {
+      if (SettingsManager::set(STR_PREF_EN_VU_METR, "1"))
         toggle->setOn(true);
     }
   }

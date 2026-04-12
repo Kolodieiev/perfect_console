@@ -57,6 +57,7 @@ const char STR_LOADING[] = "Завантаження";
 
 const char STR_PREF_BRIGHT[] = "brightness";
 const char STR_PREF_MONO_AUDIO[] = "forcemono";
+const char STR_PREF_EN_VU_METR[] = "envumetr";
 const char STR_PREF_AUDIO_AMP[] = "audioamp";
 const char STR_PREF_LED_GREET[] = "ledgreeting";
 const char STR_PREF_FS_AP_SSID[] = "fsapssid";
