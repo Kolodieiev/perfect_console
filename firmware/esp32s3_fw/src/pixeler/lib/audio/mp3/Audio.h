@@ -112,7 +112,7 @@ public:
   uint32_t getBitRate(bool avg = false);
   uint32_t getAudioFileDuration();
   uint32_t getAudioCurrentTime();
-  uint16_t getVUlevel();
+  uint8_t getVUlevel();
 
   uint32_t inBufferFilled();       // returns the number of stored bytes in the inputbuffer
   uint32_t inBufferFree();         // returns the number of free bytes in the inputbuffer
@@ -186,7 +186,6 @@ private:
   }
   bool ts_parsePacket(uint8_t* packet, uint8_t* packetStart, uint8_t* packetLength);
   uint32_t find_m4a_atom(uint32_t fileSize, const char* atomType, uint32_t depth = 0);
-
 
 private:
   //+++ W E B S T R E A M  -  H E L P   F U N C T I O N S +++
@@ -627,7 +626,6 @@ private:
   String _file_name;
   String _stream_title;
 
-
   WiFiClient client;
   WiFiClientSecure clientsecure;
   WiFiClient* _client = nullptr;
@@ -780,8 +778,10 @@ private:
   uint8_t m_filterType[2];                 // lowpass, highpass
   uint8_t m_streamType = ST_NONE;
   uint8_t m_ID3Size = 0;  // lengt of ID3frame - ID3header
-  uint8_t m_vuLeft = 0;   // average value of samples, left channel
-  uint8_t m_vuRight = 0;  // average value of samples, right channel
+  uint8_t m_vulvl = 0;    // average value of samples, left channel
+  float lp_left = 0;
+  float lp_right = 0;
+  const float alpha_vu_filter = 0.03f;
   uint8_t m_audioTaskCoreId = 0;
   uint8_t m_M4A_objectType = 0;   // set in read_M4A_Header
   uint8_t m_M4A_chConfig = 0;     // set in read_M4A_Header

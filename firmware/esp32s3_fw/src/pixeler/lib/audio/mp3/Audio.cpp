@@ -431,7 +431,9 @@ void Audio::setDefaults()
   m_M4A_objectType = 0;
   m_M4A_sampleRate = 0;
   m_sumBytesDecoded = 0;
-  m_vuLeft = m_vuRight = 0;  // #835
+  m_vulvl = 0;
+  lp_left = 0;
+  lp_right = 0;
   _file_name = emptyString;
 
   if (m_f_reset_m3u8Codec)
@@ -5575,7 +5577,7 @@ void Audio::computeAudioTime(uint16_t bytesDecoderIn, uint16_t bytesDecoderOut)
       audiotime_nominalBitRate = (m_audioDataSize / flac_decoder.getAudioFileDuration()) * 8;
       m_avr_bitrate = audiotime_nominalBitRate;
     }
-    if (m_codec == CODEC_WAV)
+    else if (m_codec == CODEC_WAV)
     {
       audiotime_nominalBitRate = getBitRate();
       m_avr_bitrate = audiotime_nominalBitRate;
@@ -6004,24 +6006,29 @@ const char* Audio::getCodecname() const
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void Audio::computeVUlevel(int16_t sample[2])
 {
+  lp_left = lp_left + alpha_vu_filter * (sample[LEFTCHANNEL] - lp_left);
+  lp_right = lp_right + alpha_vu_filter * (sample[RIGHTCHANNEL] - lp_right);
+
+  int16_t filtered[2];
+  filtered[LEFTCHANNEL] = (int16_t)lp_left;
+  filtered[RIGHTCHANNEL] = (int16_t)lp_right;
+
   bool f_vu = false;
 
-  auto avg = [&](uint8_t* sampArr) {  // lambda, inner function, compute the average of 8 samples
+  auto avg = [&](uint8_t* sampArr)
+  {
     uint16_t av = 0;
     for (int i = 0; i < 8; i++)
-    {
       av += sampArr[i];
-    }
     return av >> 3;
   };
 
-  auto largest = [&](uint8_t* sampArr) {  // lambda, inner function, compute the largest of 8 samples
+  auto largest = [&](uint8_t* sampArr)
+  {
     uint16_t maxValue = 0;
     for (int i = 0; i < 8; i++)
-    {
       if (maxValue < sampArr[i])
         maxValue = sampArr[i];
-    }
     return maxValue;
   };
 
@@ -6052,39 +6059,42 @@ void Audio::computeVUlevel(int16_t sample[2])
   }
 
   if (!cnt0)
-  {  // store every 64th sample in the array[0]
-    uvlvl_sampleArray[LEFTCHANNEL][0][cnt1] = __builtin_abs(sample[LEFTCHANNEL] >> 7);
-    uvlvl_sampleArray[RIGHTCHANNEL][0][cnt1] = __builtin_abs(sample[RIGHTCHANNEL] >> 7);
+  {
+    uvlvl_sampleArray[LEFTCHANNEL][0][cnt1] = __builtin_abs(filtered[LEFTCHANNEL] >> 7);
+    uvlvl_sampleArray[RIGHTCHANNEL][0][cnt1] = __builtin_abs(filtered[RIGHTCHANNEL] >> 7);
   }
   if (!cnt1)
-  {  // store argest from 64 * 8 samples in the array[1]
+  {
     uvlvl_sampleArray[LEFTCHANNEL][1][cnt2] = largest(uvlvl_sampleArray[LEFTCHANNEL][0]);
     uvlvl_sampleArray[RIGHTCHANNEL][1][cnt2] = largest(uvlvl_sampleArray[RIGHTCHANNEL][0]);
   }
   if (!cnt2)
-  {  // store avg from 64 * 8 * 8 samples in the array[2]
+  {
     uvlvl_sampleArray[LEFTCHANNEL][2][cnt3] = largest(uvlvl_sampleArray[LEFTCHANNEL][1]);
     uvlvl_sampleArray[RIGHTCHANNEL][2][cnt3] = largest(uvlvl_sampleArray[RIGHTCHANNEL][1]);
   }
   if (!cnt3)
-  {  // store avg from 64 * 8 * 8 * 8 samples in the array[3]
+  {
     uvlvl_sampleArray[LEFTCHANNEL][3][cnt4] = avg(uvlvl_sampleArray[LEFTCHANNEL][2]);
     uvlvl_sampleArray[RIGHTCHANNEL][3][cnt4] = avg(uvlvl_sampleArray[RIGHTCHANNEL][2]);
   }
   if (f_vu)
   {
-    m_vuLeft = avg(uvlvl_sampleArray[LEFTCHANNEL][3]);
-    m_vuRight = avg(uvlvl_sampleArray[RIGHTCHANNEL][3]);
+    uint8_t raw = max(avg(uvlvl_sampleArray[LEFTCHANNEL][3]),
+                      avg(uvlvl_sampleArray[RIGHTCHANNEL][3]));
+    m_vulvl = min(static_cast<uint8_t>(127), static_cast<uint8_t>(raw * 1.4f));
   }
-  cnt1++;
+
+  ++cnt1;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-uint16_t Audio::getVUlevel()
+uint8_t Audio::getVUlevel()
 {
   // avg 0 ... 127
   if (!m_f_running)
     return 0;
-  return (m_vuLeft << 8) + m_vuRight;
+
+  return m_vulvl;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void Audio::forceMono(bool m)
