@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pixeler/lib/audio/mp3/Audio.h"
+#include "pixeler/lib/neo_pixel/Adafruit_NeoPixel.h"
 #include "pixeler/src/context/IContext.h"
 #include "pixeler/src/manager/SettingsManager.h"
 #include "pixeler/src/widget/image/Image.h"
@@ -8,6 +9,10 @@
 #include "pixeler/src/widget/menu/FixedMenu.h"
 #include "pixeler/src/widget/progress/ProgressBar.h"
 #include "pixeler/src/widget/scrollbar/ScrollBar.h"
+
+#define LED_DATA_PIN 40
+#define LED_EN_PIN 41
+#define LED_COUNT 3
 
 using namespace pixeler;
 
@@ -114,8 +119,12 @@ private:
   void handlePrevItemsLoad(std::vector<MenuItem*>& items, uint8_t size, uint16_t cur_id);
   static void onPrevItemsLoad(std::vector<MenuItem*>& items, uint8_t size, uint16_t cur_id, void* arg);
 
+  void updateVU(uint8_t vu_lvl);
+
 private:
   Audio _audio;
+
+  Adafruit_NeoPixel _strip{LED_COUNT, LED_DATA_PIN, NEO_GRB + NEO_KHZ800};
 
   String _playlist_name;
   String _track_name;
@@ -147,6 +156,7 @@ private:
   uint8_t _upd_counter{0};
   uint8_t _volume;
 
+  bool _is_vu_metr_en{false};
   bool _is_new_track{true};
   bool _is_playing{false};
   bool _is_locked{false};

@@ -32,7 +32,69 @@ static const char STR_STOPPED[] = "Зупинено";
 bool Mp3Context::loop()
 {
   _audio.loop();
+  if (_is_vu_metr_en)
+    updateVU(_audio.getVUlevel());
   return true;
+}
+
+void Mp3Context::updateVU(uint8_t vu)
+{
+  _strip.clear();
+
+  const uint8_t SILENCE = 10;
+  if (vu < SILENCE)
+  {
+    _strip.show();
+    return;
+  }
+
+  uint8_t norm = (uint8_t)((uint32_t)(vu - SILENCE) * 255 / (127 - SILENCE));
+
+  // LED 0: синій→зелений (0–85)
+  // LED 1: зелений→рожевий (85–170)
+  // LED 2: рожевий→фіолетовий (170–255)
+
+  // LED 0
+  {
+    uint8_t r = map(norm, 0, 85, 80, 0);
+    uint8_t g = map(norm, 0, 85, 180, 40);
+    uint8_t b = map(norm, 0, 85, 255, 180);
+    if (norm > 85)
+    {
+      r = 0;
+      g = 40;
+      b = 180;
+    }
+    _strip.setPixelColor(0, _strip.Color(r, g, b));
+  }
+
+  // LED 1
+  if (norm >= 85)
+  {
+    uint8_t t = norm - 85;
+    uint8_t r = map(t, 0, 85, 0, 180);    // синій→фіолетовий: r росте
+    uint8_t g = map(t, 0, 85, 40, 0);     // зелений зникає
+    uint8_t b = map(t, 0, 85, 180, 255);  // синій залишається
+    if (norm > 170)
+    {
+      r = 180;
+      g = 0;
+      b = 255;
+    }
+    _strip.setPixelColor(1, _strip.Color(r, g, b));
+  }
+
+  // LED 2
+  if (norm >= 170)
+  {
+    uint8_t t = norm - 170;
+    uint8_t r = map(t, 0, 85, 180, 255);  // r росте до червоного
+    uint8_t g = map(t, 0, 85, 0, 0);      // зеленого немає
+    uint8_t b = map(t, 0, 85, 255, 0);    // синій зникає
+    _strip.setPixelColor(2, _strip.Color(r, g, b));
+  }
+
+  _strip.show();
 }
 
 void Mp3Context::savePref()
@@ -57,6 +119,19 @@ Mp3Context::Mp3Context()
   {
     showSDErrTmpl();
     return;
+  }
+
+  String vu_metr_setting = SettingsManager::get(STR_PREF_EN_VU_METR);
+  if (vu_metr_setting.equals("1"))
+    _is_vu_metr_en = true;
+
+  if (_is_vu_metr_en)
+  {
+    pinMode(LED_EN_PIN, OUTPUT);
+    digitalWrite(LED_EN_PIN, HIGH);
+
+    _strip.setBrightness(110);
+    _strip.begin();
   }
 
   uint8_t ccpu_cmd_data[2]{CCPU_CMD_PIN_ON, CH_PIN_SPK_PWR};
@@ -107,6 +182,13 @@ Mp3Context::~Mp3Context()
   {
     ccpu_cmd_data[1] = CH_PIN_LORA_PWR;
     _ccpu.sendCmd(ccpu_cmd_data, sizeof(ccpu_cmd_data), 2);
+  }
+
+  if (_is_vu_metr_en)
+  {
+    digitalWrite(LED_EN_PIN, LOW);
+    pinMode(LED_EN_PIN, INPUT);
+    pinMode(LED_DATA_PIN, INPUT);
   }
 
   setCpuFrequencyMhz(BASE_CPU_FREQ_MHZ);
@@ -518,51 +600,48 @@ void Mp3Context::update()
     {
       if (!_is_radio_mode)
       {
-        if (_audio.isRunning())
+        if (_is_new_track)
         {
-          if (_is_new_track)
+          if (updateTrackDuration())
           {
-            if (updateTrackDuration())
+            if (_track_time > 0)
             {
-              if (_track_time > 0)
-              {
-                _audio.setAudioPlayPosition(_track_time);
-                _track_time = 0;
-              }
-
-              _track_name_lbl->setText(_track_name);
-              _is_new_track = false;
+              _audio.setAudioPlayPosition(_track_time);
+              _track_time = 0;
             }
-          }
-          else if (millis() - _upd_msg_time > UPD_TRACK_INF_INTERVAL)
-          {
-            updateTrackTime();
-            _upd_msg_time = millis();
+
+            _track_name_lbl->setText(_track_name);
+            _is_new_track = false;
           }
         }
-        else if (_is_playing)
+        else if (millis() - _upd_msg_time > UPD_TRACK_INF_INTERVAL)
         {
-          // Якщо трек скінчився самостійно
-          if (playNext())
-          {
-            // Намагаємося перемкнути
-            _is_new_track = true;
-          }
-          else if (_try_next_counter == 3)
-          {
-            // Якщо не вдалося змінити трек з 3х спроб, зупинити плеєр
-            setStopState();
-          }
-          else
-          {
-            ++_try_next_counter;
-          }
+          updateTrackTime();
+          _upd_msg_time = millis();
         }
       }
       else if (_audio.hasNewStreamTitle())
       {
         _audio.resetStreamTitleState();
         _stream_title_lbl->setText(_audio.getStreamTitle());
+      }
+    }
+    else if (_is_playing)
+    {
+      // Якщо трек скінчився самостійно
+      if (playNext())
+      {
+        // Намагаємося перемкнути
+        _is_new_track = true;
+      }
+      else if (_try_next_counter == 3)
+      {
+        // Якщо не вдалося змінити трек з 3х спроб, зупинити плеєр
+        setStopState();
+      }
+      else
+      {
+        ++_try_next_counter;
       }
     }
   }
