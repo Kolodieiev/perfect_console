@@ -130,7 +130,7 @@ Mp3Context::Mp3Context()
     pinMode(LED_EN_PIN, OUTPUT);
     digitalWrite(LED_EN_PIN, HIGH);
 
-    _strip.setBrightness(110);
+    _strip.setBrightness(50);
     _strip.begin();
   }
 
