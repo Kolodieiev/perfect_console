@@ -250,7 +250,7 @@ void ReaderContext::indexBooks()
   String books_path = ROOT_PATH;
   books_path += "/";
   books_path += _dirname;
-  _fs.indexFilesExt(_books, books_path.c_str(), {BOOK_EXT});
+  _fs.indexFilesByExt(_books, books_path.c_str(), {BOOK_EXT});
 }
 
 void ReaderContext::handleNextItemsLoad(std::vector<MenuItem*>& items, uint8_t size, uint16_t cur_id)
