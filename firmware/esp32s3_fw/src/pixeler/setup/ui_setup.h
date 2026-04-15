@@ -28,9 +28,9 @@
 #include "context/splash/SplashContext.h"
 #include "context/wifi/WiFiContext.h"
 // Ігрові контексти
-#include "context/games/simple_rpg/SimpleRpgContext.h"
+// #include "context/games/simple_rpg/SimpleRpgContext.h"
 #include "context/games/sokoban/SokobanContext.h"
-#include "context/games/test_server/TestServerContext.h"
+// #include "context/games/test_server/TestServerContext.h"
 
 namespace pixeler
 {
@@ -61,10 +61,10 @@ namespace pixeler
        { return new FirmwareContext(); }},
       {ContextID::ID_CONTEXT_SOKOBAN, []()
        { return new sokoban::SokobanContext(); }},
-      {ContextID::ID_CONTEXT_TEST_SERVER, []()
-       { return new test_server::TestServerContext(); }},
-      {ContextID::ID_CONTEXT_SIMPLE_RPG, []()
-       { return new simple_rpg::SimpleRpgContext(); }},
+      // {ContextID::ID_CONTEXT_TEST_SERVER, []()
+      //  { return new test_server::TestServerContext(); }},
+      // {ContextID::ID_CONTEXT_SIMPLE_RPG, []()
+      //  { return new simple_rpg::SimpleRpgContext(); }},
       {ContextID::ID_CONTEXT_WIFI, []()
        { return new WiFiContext(); }},
   };
