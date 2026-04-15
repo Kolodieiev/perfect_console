@@ -636,7 +636,7 @@ namespace sokoban
     IGameScene::update();  // Необхідно обов'язково перевикликати метод кожен кадр у базовму класі. Інакше сцена не буде перемальовуватися.
   }
 
-  void SokobanScene::onTrigger(uint8_t id)
+  void SokobanScene::onTriggered(uint16_t id)
   {
     if (id == TriggerID::TRIGGER_NEXT_SCENE)
     {
@@ -663,17 +663,14 @@ namespace sokoban
   void SokobanScene::createGhost()
   {
     _ghost = createObject<GhostObj>();  // Створити об'єкт привида
-    _ghost->init();                     // Обов'язковий виклик для ініціалізації об'єкта
     _main_obj = _ghost;                 // Встановити головним об'єктом сцени привида. Саме за цим головним об'єктом слідкує viewport
   }
 
   void SokobanScene::createSokoban()
   {
     _sokoban = createObject<SokobanObj>();
-    _sokoban->init();
-    _game_objs.emplace(_sokoban->getId(), _sokoban);
-    _sokoban->_x_global = SOKOBAN_POS[_level][0];
-    _sokoban->_y_global = SOKOBAN_POS[_level][1];
+    _sokoban->setPos(SOKOBAN_POS[_level][0], SOKOBAN_POS[_level][1]);
+    addObject(*_sokoban);
   }
 
   void SokobanScene::createBoxes()
@@ -681,12 +678,9 @@ namespace sokoban
     for (uint8_t i{0}; i < BOX_NUM[_level]; ++i)
     {
       BoxObj* box = createObject<BoxObj>();  // Створити об'єкт ящика
-      box->init();
-      box->_x_global = LVL_BOX[_level][i][0];
-      box->_y_global = LVL_BOX[_level][i][1];
-
-      _sokoban->addBoxPtr(box);               // Додати вказівник на об'єкт до комірника.
-      _game_objs.emplace(box->getId(), box);  // Додати об'єкт до ігрового світу
+      box->setPos(LVL_BOX[_level][i][0], LVL_BOX[_level][i][1]);
+      _sokoban->addBoxPtr(box);  // Додати вказівник на об'єкт до комірника.
+      addObject(*box);           // Додати об'єкт до ігрового світу
     }
   }
 
@@ -695,11 +689,8 @@ namespace sokoban
     for (uint8_t i{0}; i < BOX_NUM[_level]; ++i)
     {
       BoxPointObj* point = createObject<BoxPointObj>();  // Створити об'єкт точки
-      point->init();
-      point->_x_global = LVL_POINT[_level][i][0];
-      point->_y_global = LVL_POINT[_level][i][1];
-
-      _game_objs.emplace(point->getId(), point);
+      point->setPos(LVL_POINT[_level][i][0], LVL_POINT[_level][i][1]);
+      addObject(*point);
     }
   }
 
