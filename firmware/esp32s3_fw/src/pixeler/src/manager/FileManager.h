@@ -12,7 +12,7 @@
 
 #include "pixeler/setup/sd_setup.h"
 #include "pixeler/src/defines.h"
-#include "pixeler/src/util/file/FileInfo.h"
+#include "pixeler/src/manager/file/FileInfo.h"
 
 #ifdef SD_TYPE_MMC
 #include <sd_protocol_types.h>
@@ -215,11 +215,11 @@ namespace pixeler
 
     /**
      * @brief Читає вміст файла до рядка.
-     * 
+     *
      * @param path Шлях до бінарного файла, вказаний без точки монтування.
      * @return String - Вміст файла, якщо читання відбулось успішно.
      * @return Порожній рядок - інакше.
-     * 
+     *
      */
     String readFileToStr(String path);
 

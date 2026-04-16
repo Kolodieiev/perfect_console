@@ -14,7 +14,7 @@
 
 #include "./FServer/FServer.h"
 #include "pixeler/src/manager/FileManager.h"
-#include "pixeler/src/util/file/FileStream.h"
+#include "pixeler/src/manager/file/FileStream.h"
 
 namespace pixeler
 {
