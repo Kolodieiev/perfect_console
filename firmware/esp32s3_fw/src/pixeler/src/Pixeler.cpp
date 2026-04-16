@@ -1,12 +1,11 @@
 #include "Pixeler.h"
 
-#include "pixeler/src/driver/graphics/DisplayWrapper.h"
-#include "pixeler/src/manager/SPI_Manager.h"
 #include "pixeler/setup/context_id_setup.h"
+#include "pixeler/setup/cpu_setup.h"
 #include "pixeler/setup/graphics_setup.h"
 #include "pixeler/setup/ui_setup.h"
 #include "pixeler/src/context/IContext.h"
-#include "pixeler/setup/cpu_setup.h"
+#include "pixeler/src/driver/graphics/DisplayWrapper.h"
 
 namespace pixeler
 {
