@@ -1064,7 +1064,7 @@ namespace pixeler
     pinMode(SDSPI_PIN_CS, OUTPUT);
     digitalWrite(SDSPI_PIN_CS, HIGH);
 
-    SPI_Bus::initBus(SDSPI_BUS, SDSPI_PIN_SCLK, SDSPI_PIN_MISO, SDSPI_PIN_MOSI);
+    SPI_Bus::init(SDSPI_BUS, SDSPI_PIN_SCLK, SDSPI_PIN_MISO, SDSPI_PIN_MOSI);
     SPIClass* spi = SPI_Bus::getSpi4Bus(SDSPI_BUS);
 
     if (!spi || !spi->begin())

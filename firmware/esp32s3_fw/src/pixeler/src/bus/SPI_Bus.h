@@ -28,7 +28,7 @@ namespace pixeler
      * @return true - Якщо шину було успішно ініціалізовано.
      * @return false - Інакше.
      */
-    static bool initBus(uint8_t bus_num, int8_t sclk_pin = -1, int8_t miso_pin = -1, int8_t mosi_pin = -1);
+    static bool init(uint8_t bus_num, int8_t sclk_pin = -1, int8_t miso_pin = -1, int8_t mosi_pin = -1);
 
     /**
      * @brief Деініціалізує шину для вказаного модуля SPI, якщо її було ініціалізовано раніше.
