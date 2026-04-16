@@ -1,14 +1,14 @@
 #pragma GCC optimize("O3")
-#include "WavManager.h"
+#include "SfxPlayer.h"
 
 #include <cmath>
 #include <limits>
 
-#include "I2SOutManager.h"
+#include "pixeler/src/bus/I2S_Out_Bus.h"
 
 namespace pixeler
 {
-  WavManager::~WavManager()
+  SfxPlayer::~SfxPlayer()
   {
     if (_task_handle)
     {
@@ -20,7 +20,7 @@ namespace pixeler
       delete mix_it->second;
   }
 
-  uint16_t WavManager::addToMix(WavTrack* track)
+  uint16_t SfxPlayer::addSFX(SFX* track)
   {
     if (!track)
     {
@@ -29,16 +29,16 @@ namespace pixeler
     }
 
     ++_track_id;
-    _mix.insert(std::pair<uint16_t, WavTrack*>(_track_id, track));
+    _mix.insert(std::pair<uint16_t, SFX*>(_track_id, track));
     return _track_id;
   }
 
-  void WavManager::removeFromMix(uint16_t id)
+  void SfxPlayer::removeSFX(uint16_t id)
   {
     _mix.erase(id);
   }
 
-  void WavManager::startMix()
+  void SfxPlayer::startMix()
   {
     if (!_i2s_out.isInited())
       esp_restart();
@@ -51,7 +51,7 @@ namespace pixeler
     xTaskCreatePinnedToCore(mixTask, "mixTask", (1024 / 2) * 10, this, 10, &_task_handle, 0);
   }
 
-  void WavManager::pauseResume()
+  void SfxPlayer::pauseResume()
   {
     if (_params.cmd == TaskParams::CMD_NONE)
     {
@@ -63,11 +63,11 @@ namespace pixeler
     }
   }
 
-  void WavManager::mixTask(void* params)
+  void SfxPlayer::mixTask(void* params)
   {
     int16_t _samples_buf[256];
 
-    WavManager* self = static_cast<WavManager*>(params);
+    SfxPlayer* self = static_cast<SfxPlayer*>(params);
 
     int16_t sample;
     uint32_t cycles_counter = 0;

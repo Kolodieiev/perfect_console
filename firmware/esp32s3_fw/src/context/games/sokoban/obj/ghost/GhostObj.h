@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pixeler/src/game/object/IGameObject.h"
+#include "pixeler/src/game/IGameObject.h"
 
 using namespace pixeler;
 
@@ -9,7 +9,7 @@ namespace sokoban
   class GhostObj : public IGameObject
   {
   public:
-    GhostObj(uint32_t id, IGameScene& game_scene, WavManager& audio);
+    GhostObj(uint32_t id, IGameScene& game_scene, SfxPlayer& audio);
     virtual ~GhostObj() {}
 
     virtual void __update() override;

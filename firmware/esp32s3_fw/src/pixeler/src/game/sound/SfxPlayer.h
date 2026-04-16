@@ -10,25 +10,25 @@
 #include <list>
 #include <unordered_map>
 
+#include "SFX.h"
 #include "pixeler/src/defines.h"
-#include "pixeler/src/util/audio/WavTrack.h"
 
 namespace pixeler
 {
-  class WavManager
+  class SfxPlayer
   {
   public:
-    ~WavManager();
+    ~SfxPlayer();
 
     /*!
      * @brief
      *      Додати звукову доріжку до списку міксування. Ресурси зі списку міксування звільняються автоматично.
-     * @param  track
+     * @param  sfx
      *      Вказівник на передзавантажену доріжку.
      * @return
      *      Ідентифікатор на доріжку в списку міксування.
      */
-    uint16_t addToMix(WavTrack* track);
+    uint16_t addSFX(SFX* sfx);
 
     /*!
      * @brief
@@ -36,11 +36,10 @@ namespace pixeler
      * @param  id
      *     Ідентифікатор, який було присвоєно доріжці, під час додавання до міксу.
      */
-    void removeFromMix(uint16_t id);
+    void removeSFX(uint16_t id);
 
     /*!
-     * @brief
-     *     Стартувати задачу відтворення міксу.
+     * @brief Стартувати задачу відтворення міксу.
      */
     void startMix();
 
@@ -54,7 +53,7 @@ namespace pixeler
     static void mixTask(void* params);
 
   private:
-    std::unordered_map<uint16_t, WavTrack*> _mix;
+    std::unordered_map<uint16_t, SFX*> _mix;
     uint64_t _track_id{0};
     TaskHandle_t _task_handle{nullptr};
 
