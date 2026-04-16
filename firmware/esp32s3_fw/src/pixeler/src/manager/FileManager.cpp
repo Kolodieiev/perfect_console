@@ -1,7 +1,6 @@
 #pragma GCC optimize("O3")
 #include "FileManager.h"
 
-#include <SPI.h>
 #include <errno.h>
 #include <esp_task_wdt.h>
 #include <sd_diskio.h>
@@ -9,7 +8,7 @@
 #include <cstring>
 #include <vector>
 
-#include "pixeler/src/manager/SPI_Manager.h"
+#include "pixeler/src/bus/SPI_Bus.h"
 #include "pixeler/src/util/MutexGuard.h"
 
 #ifdef SD_TYPE_MMC
@@ -1065,8 +1064,8 @@ namespace pixeler
     pinMode(SDSPI_PIN_CS, OUTPUT);
     digitalWrite(SDSPI_PIN_CS, HIGH);
 
-    SPI_Manager::initBus(SDSPI_BUS, SDSPI_PIN_SCLK, SDSPI_PIN_MISO, SDSPI_PIN_MOSI);
-    SPIClass* spi = SPI_Manager::getSpi4Bus(SDSPI_BUS);
+    SPI_Bus::initBus(SDSPI_BUS, SDSPI_PIN_SCLK, SDSPI_PIN_MISO, SDSPI_PIN_MOSI);
+    SPIClass* spi = SPI_Bus::getSpi4Bus(SDSPI_BUS);
 
     if (!spi || !spi->begin())
     {
