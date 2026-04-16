@@ -1,56 +1,52 @@
 #pragma GCC optimize("O3")
-#include "WavUtil.h"
+#include "WavLoader.h"
 
 #include "pixeler/src/manager/FileManager.h"
 
 namespace pixeler
 {
-  AudioData WavUtil::loadWav(const char* path_to_wav)
+  AudioResource* WavLoader::load(const char* path, const char* name)
   {
-    AudioData wav_data;
-
-    if (!_fs.fileExist(path_to_wav))
-      return wav_data;
+    if (!_fs.fileExist(path))
+      return nullptr;
 
     WavHeader header;
 
-    _fs.readFile(path_to_wav, &header, sizeof(WavHeader));
+    _fs.readFile(path, &header, sizeof(WavHeader));
 
     if (!validateHeader(header))
     {
-      log_e("Помилка валідації файлу: %s", path_to_wav);
-      return wav_data;
+      log_e("Помилка валідації файла: %s", path);
+      return nullptr;
     }
 
     if (!psramInit())
     {
       log_e("Помилка ініціалізації PSRAM");
-      return wav_data;
+      return nullptr;
     }
 
     uint8_t* data = static_cast<uint8_t*>(ps_malloc(header.data_size));
     if (!data)
     {
       log_e("Помилка виділення пам'яті");
-      return wav_data;
+      return nullptr;
     }
 
-    size_t bytes_read = _fs.readFile(path_to_wav, data, header.data_size, sizeof(WavHeader));
+    size_t bytes_read = _fs.readFile(path, data, header.data_size, sizeof(WavHeader));
 
     if (bytes_read != header.data_size)
     {
       free(data);
       log_e("Помилка читання звуковго файлу");
-      return wav_data;
+      return nullptr;
     }
 
-    wav_data.size = header.data_size;
-    wav_data.data_ptr = data;
-
-    return wav_data;
+    const char* res_name = name ? name : path;
+    return new AudioResource(res_name, data, header.data_size);
   }
 
-  bool WavUtil::validateHeader(const WavHeader& wav_header)
+  bool WavLoader::validateHeader(const WavHeader& wav_header)
   {
     if (memcmp(wav_header.riff_section_ID, "RIFF", 4) != 0)
     {

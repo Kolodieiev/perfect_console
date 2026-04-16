@@ -3,7 +3,7 @@
 
 #include "pixeler/lib/qr/QR_Gen.h"
 #include "pixeler/src/manager/SettingsManager.h"
-#include "pixeler/src/util/img/BmpUtil.h"
+#include "pixeler/src/manager/res/BmpLoader.h"
 //
 #include "../WidgetCreator.h"
 #include "./res/folder.h"
@@ -306,8 +306,8 @@ void FilesContext::showContextMenu()
         FILE* bmp_file = _fs.openFile(path_to_bmp.c_str(), "rb");
         if (bmp_file)
         {
-          BmpHeader bmp_header;
-          if (BmpUtil::checkBmpFile(bmp_file, bmp_header))
+          BmpLoader::BmpHeader bmp_header;
+          if (BmpLoader::checkBmpFile(bmp_file, bmp_header))
           {
             MenuItem* set_wall_item = WidgetCreator::getMenuItem(ID_ITEM_SET_WALLPP);
             _context_menu->addItem(set_wall_item);

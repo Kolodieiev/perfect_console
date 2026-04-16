@@ -2,6 +2,7 @@
 
 #include "pixeler/src/context/IContext.h"
 #include "pixeler/src/widget/text/Label.h"
+#include "pixeler/src/manager/res/BmpLoader.h"
 
 using namespace pixeler;
 
@@ -24,11 +25,12 @@ private:
     ID_DATE_LBL,
     ID_DAY_LBL,
   };
+  
+  void updateBattVoltage();
 
+private:
   Image* _batt_ico;
   Label* _batt_volt_lbl{nullptr};
+  ImageResource* _wall_res{nullptr};
   unsigned long _upd_timer{0};
-  uint16_t* _wallpaper_ptr{nullptr};
-
-  void updateBattVoltage();
 };

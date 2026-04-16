@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-#include "pixeler/src/util/img/BmpUtil.h"
+#include "pixeler/src/manager/res/BmpLoader.h"
 
 namespace pixeler
 {
@@ -536,7 +536,8 @@ namespace pixeler
     path_to_bmp += millis();
     path_to_bmp += ".bmp";
 
-    bool res = BmpUtil::saveBmp(header,
+    BmpLoader loader;
+    bool res = loader.saveBmp(header,
                                 self->_canvas.getFramebuffer(),
                                 path_to_bmp.c_str(),
                                 true);

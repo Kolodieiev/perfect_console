@@ -4,7 +4,6 @@
 #include "../resources/ico/battery.h"
 #include "pixeler/src/manager/SettingsManager.h"
 #include "pixeler/src/util/batt_util.h"
-#include "pixeler/src/util/img/BmpUtil.h"
 
 #define UPD_DISPLAY_INTERVAL_MS 5000UL
 
@@ -17,16 +16,16 @@ HomeContext::HomeContext()
 
   if (!walpp_path.isEmpty())
   {
-    ImgData bmp = BmpUtil::loadBmp(walpp_path.c_str());
-
-    if (bmp.data_ptr)
+    BmpLoader loader;
+    _wall_res = loader.load(walpp_path.c_str());
+    
+    if (_wall_res)
     {
       Image* wallpp_img = new Image(ID_WALLPAPER);
       layout->addWidget(wallpp_img);
-      _wallpaper_ptr = bmp.data_ptr;
-      wallpp_img->setWidth(bmp.width);
-      wallpp_img->setHeight(bmp.height);
-      wallpp_img->setSrc(_wallpaper_ptr);
+      wallpp_img->setWidth(_wall_res->getWidth());
+      wallpp_img->setHeight(_wall_res->getHeight());
+      wallpp_img->setSrc(static_cast<const uint16_t*>(_wall_res->getData()));
     }
   }
 
@@ -54,7 +53,7 @@ HomeContext::HomeContext()
 HomeContext::~HomeContext()
 {
   delete _batt_ico;
-  free(_wallpaper_ptr);
+  delete _wall_res;
 }
 
 bool HomeContext::loop()

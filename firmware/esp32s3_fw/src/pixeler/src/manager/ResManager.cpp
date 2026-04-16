@@ -1,105 +1,120 @@
 #pragma GCC optimize("O3")
 #include "ResManager.h"
 
-#include "../util/audio/WavUtil.h"
-#include "../util/img/BmpUtil.h"
+#include "pixeler/src/util/string_util.h"
+#include "res/BmpLoader.h"
+#include "res/WavLoader.h"
 
 namespace pixeler
 {
-  uint16_t ResManager::loadBmpRes(const char* path_to_bmp)
+  uint32_t ResManager::load(const char* path, const char* res_name)
   {
-    if (!path_to_bmp)
+    std::unique_ptr<IResLoader> loader = getLoaderByExt(path);
+    if (!loader)
       return 0;
 
-    ImgData data = BmpUtil::loadBmp(path_to_bmp);
-
-    if (data.width == 0)
-    {
-      log_e("Помилка завантаження: %s", path_to_bmp);
+    IResource* resource = loader->load(path, res_name);
+    if (!resource)
       return 0;
-    }
 
-    _bmp_res.insert(std::pair<uint16_t, ImgData>(_img_res_id_i, data));
-    return _img_res_id_i++;
+    _resources.emplace(++_res_id_counter, resource);
+
+    return _res_id_counter;
   }
 
-  uint16_t ResManager::loadWavRes(const char* path_to_wav)
+  const IResource* ResManager::getResByID(uint32_t res_id) const
   {
-    if (!path_to_wav)
-      return 0;
+    const auto it = _resources.find(res_id);
 
-    AudioData data = WavUtil::loadWav(path_to_wav);
-
-    if (data.size == 0)
+    if (it == _resources.end())
     {
-      log_e("Помилка завантаження: %s", path_to_wav);
-      return 0;
-    }
-
-    _wav_res.insert(std::pair<uint16_t, AudioData>(_audio_res_id_i, data));
-    return _audio_res_id_i++;
-  }
-
-  ImgData ResManager::getBmpRes(uint16_t res_id)
-  {
-    const auto it = _bmp_res.find(res_id);
-    if (it == _bmp_res.end())
-    {
-      log_e("Bmp-ресурс не знайдено по ID: %u", res_id);
-      return _empty_img;
+      log_e("Невідомий ідентифікатор ресурса: %u", res_id);
+      return nullptr;
     }
 
     return it->second;
   }
 
-  AudioData ResManager::getWavRes(uint16_t res_id)
+  void ResManager::deleteResByID(uint32_t res_id)
   {
-    const auto it = _wav_res.find(res_id);
-    if (it == _wav_res.end())
-      return _empty_audio;
+    const auto it = _resources.find(res_id);
 
-    return it->second;
-  }
-
-  void ResManager::deleteBmpRes(uint16_t res_id)
-  {
-    if (res_id == 0)
+    if (it == _resources.end())
+    {
+      log_e("Невідомий ідентифікатор ресурса: %u", res_id);
       return;
-
-    auto it = _bmp_res.find(res_id);
-
-    if (it != _bmp_res.end())
-    {
-      free(it->second.data_ptr);
-      _bmp_res.erase(it);
     }
+
+    delete it->second;
+    _resources.erase(it);
   }
 
-  void ResManager::deleteWavRes(uint16_t res_id)
+  const IResource* ResManager::getResByName(const char* res_name, uint32_t& out_id) const
   {
-    auto it = _wav_res.find(res_id);
-
-    if (it != _wav_res.end())
+    if (!res_name)
     {
-      free(it->second.data_ptr);
-      _wav_res.erase(it);
+      log_e("res_name не повинен бути null");
+      return nullptr;
     }
+
+    for (const auto& it : _resources)
+    {
+      if (it.second->hasName(res_name))
+      {
+        out_id = it.first;
+        return it.second;
+      }
+    }
+
+    log_e("Не знайдено ресурс з іменем: %s", res_name);
+    return nullptr;
   }
 
-  void ResManager::clearBmpRes()
+  void ResManager::deleteResByName(const char* res_name)
   {
-    for (auto it = _bmp_res.begin(), last_it = _bmp_res.end(); it != last_it; ++it)
-      free(it->second.data_ptr);
+    if (!res_name)
+    {
+      log_e("res_name не повинен бути null");
+      return;
+    }
 
-    _bmp_res.clear();
+    for (auto it = _resources.begin(), it_end = _resources.end(); it != it_end; ++it)
+    {
+      if (it->second->hasName(res_name))
+      {
+        delete it->second;
+        _resources.erase(it);
+        return;
+      }
+    }
+
+    log_e("Не знайдено ресурс з іменем: %s", res_name);
   }
 
-  void ResManager::clearWavRes()
+  void ResManager::freeRes()
   {
-    for (auto it = _wav_res.begin(), last_it = _wav_res.end(); it != last_it; ++it)
-      free(it->second.data_ptr);
+    for (const auto& it : _resources)
+      delete it.second;
 
-    _wav_res.clear();
+    _resources.clear();
+    _res_id_counter = 0;
+  }
+
+  std::unique_ptr<IResLoader> ResManager::getLoaderByExt(const char* path)
+  {
+    if (!path)
+    {
+      log_e("path не повинен бути null");
+      return nullptr;
+    }
+
+    if (endsWith(path, ".bmp"))
+      return std::make_unique<BmpLoader>();
+    if (endsWith(path, ".wav"))
+      return std::make_unique<WavLoader>();
+
+    log_e("Незареєстрований тип файла: %s", path);
+    return nullptr;
   }
 
   ResManager _res;
