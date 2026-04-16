@@ -1,5 +1,5 @@
 /**
- * @file I2SInManager.h
+ * @file I2S_In_Bus.h
  * @brief Абстрація над бібліотекою I2S для зчитування даних з цифрового мікрофону
  * @details Не повинен бути реалізований в користувацькому коді.
  * Доступ до класу повинен виконуватися тільки через глобальний об'єкт "_i2s_in".
@@ -14,7 +14,7 @@
 
 namespace pixeler
 {
-  class I2SInManager
+  class I2S_In_Bus
   {
   public:
     /**
@@ -93,5 +93,5 @@ namespace pixeler
    * @brief Глобальний об'єкт для зчитування аудіо-даних по шині I2S.
    *
    */
-  extern I2SInManager _i2s_in;
+  extern I2S_In_Bus _i2s_in;
 }  // namespace pixeler

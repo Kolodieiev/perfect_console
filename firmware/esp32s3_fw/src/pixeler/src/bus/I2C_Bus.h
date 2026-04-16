@@ -1,5 +1,5 @@
 /**
- * @file I2C_Manager.h
+ * @file I2C_Bus.h
  * @brief Абстакція над бібліотекою I2C
  * @details Загортає стандартні виклики I2C в зручніші методи, задля уникнення дублювання коду.
  */
@@ -11,7 +11,7 @@
 
 namespace pixeler
 {
-  class I2C_Manager
+  class I2C_Bus
   {
   public:
     enum I2C_MODE : uint8_t
@@ -174,13 +174,13 @@ namespace pixeler
      */
     void setBufferSize(size_t buffer_size);
 
-    I2C_Manager() {}
+    I2C_Bus() {}
 
-    I2C_Manager(const I2C_Manager&) = delete;
-    I2C_Manager& operator=(const I2C_Manager&) = delete;
+    I2C_Bus(const I2C_Bus&) = delete;
+    I2C_Bus& operator=(const I2C_Bus&) = delete;
 
-    I2C_Manager(I2C_Manager&&) = delete;
-    I2C_Manager& operator=(I2C_Manager&&) = delete;
+    I2C_Bus(I2C_Bus&&) = delete;
+    I2C_Bus& operator=(I2C_Bus&&) = delete;
 
   private:
     bool _is_inited = false;
@@ -190,5 +190,5 @@ namespace pixeler
    * @brief Глобальний об'єкт-обгортка для роботи з шиною I2C.
    *
    */
-  extern I2C_Manager _i2c;
+  extern I2C_Bus _i2c;
 }  // namespace pixeler

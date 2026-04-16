@@ -1,11 +1,11 @@
 #pragma GCC optimize("O3")
-#include "I2SOutManager.h"
+#include "I2S_Out_Bus.h"
 
 #include "pixeler/setup/i2s_setup.h"
 
 namespace pixeler
 {
-  bool I2SOutManager::init(uint32_t sample_rate)
+  bool I2S_Out_Bus::init(uint32_t sample_rate)
   {
     if (_is_inited)
       return true;
@@ -45,7 +45,7 @@ namespace pixeler
 
     if (result != ESP_OK)
     {
-      log_e("Помилка ініціалізації I2SOutManager");
+      log_e("Помилка ініціалізації I2S_Out_Bus");
     }
     else
     {
@@ -57,7 +57,7 @@ namespace pixeler
     return !result;
   }
 
-  void I2SOutManager::reconfigSampleRate(uint32_t sample_rate)
+  void I2S_Out_Bus::reconfigSampleRate(uint32_t sample_rate)
   {
     if (!_is_inited)
     {
@@ -72,7 +72,7 @@ namespace pixeler
     i2s_channel_enable(_i2s_tx_handle);
   }
 
-  void I2SOutManager::setI2SCommFMT_LSB(bool comm_fmt)
+  void I2S_Out_Bus::setI2SCommFMT_LSB(bool comm_fmt)
   {
     _comm_fmt = comm_fmt;
 
@@ -94,7 +94,7 @@ namespace pixeler
     i2s_channel_enable(_i2s_tx_handle);
   }
 
-  size_t I2SOutManager::write(const int16_t* buffer, size_t buff_len, bool only_left_chan)
+  size_t I2S_Out_Bus::write(const int16_t* buffer, size_t buff_len, bool only_left_chan)
   {
     if (!_is_inited)
     {
@@ -130,7 +130,7 @@ namespace pixeler
     return bytes_written;
   }
 
-  bool I2SOutManager::isInited() const
+  bool I2S_Out_Bus::isInited() const
   {
     if (!_is_inited)
       log_e("I2S вихід не ініціалізовано");
@@ -138,7 +138,7 @@ namespace pixeler
     return _is_inited;
   }
 
-  void I2SOutManager::deinit()
+  void I2S_Out_Bus::deinit()
   {
     if (!_is_inited)
       return;
@@ -158,7 +158,7 @@ namespace pixeler
     _is_inited = false;
   }
 
-  esp_err_t I2SOutManager::enable()
+  esp_err_t I2S_Out_Bus::enable()
   {
     if (!_is_inited)
     {
@@ -169,13 +169,13 @@ namespace pixeler
     return i2s_channel_enable(_i2s_tx_handle);
   }
 
-  void I2SOutManager::disable()
+  void I2S_Out_Bus::disable()
   {
     if (_is_inited)
       i2s_channel_disable(_i2s_tx_handle);
   }
 
-  void I2SOutManager::clearBuffer()
+  void I2S_Out_Bus::clearBuffer()
   {
     if (!_is_inited)
       return;
@@ -186,5 +186,5 @@ namespace pixeler
     free(buff);
   }
 
-  I2SOutManager _i2s_out;
+  I2S_Out_Bus _i2s_out;
 }  // namespace pixeler

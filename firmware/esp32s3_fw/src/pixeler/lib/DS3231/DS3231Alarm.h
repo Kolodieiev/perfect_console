@@ -32,7 +32,5 @@ namespace pixeler
     const uint8_t DS3231_A1F = 0;
     const uint8_t DS3231_A2F = 1;
     const uint8_t DS3231_AIFMASK = (_BV(DS3231_A1F) | _BV(DS3231_A2F));
-    //
-    I2C_Manager _i2c;
   };
 }  // namespace pixeler

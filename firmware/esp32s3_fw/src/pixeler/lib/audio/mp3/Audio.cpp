@@ -18,8 +18,8 @@
 
 #include "Audio.h"
 
+#include "pixeler/src/bus/I2S_Out_Bus.h"
 #include "pixeler/src/manager/FileManager.h"
-#include "pixeler/src/manager/I2SOutManager.h"
 #include "pixeler/src/manager/WiFiManager.h"
 #include "pixeler/src/util/string_util.h"
 

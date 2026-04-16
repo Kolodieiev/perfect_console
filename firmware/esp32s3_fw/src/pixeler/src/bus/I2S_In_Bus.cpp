@@ -1,5 +1,5 @@
 #pragma GCC optimize("O3")
-#include "I2SInManager.h"
+#include "I2S_In_Bus.h"
 
 #include "pixeler/setup//i2s_setup.h"
 
@@ -7,7 +7,7 @@
 
 namespace pixeler
 {
-  bool I2SInManager::init(uint32_t sample_rate, bool has_interleaving)
+  bool I2S_In_Bus::init(uint32_t sample_rate, bool has_interleaving)
   {
     if (_is_inited)
       return true;
@@ -43,7 +43,7 @@ namespace pixeler
     }
 
     if (result != ESP_OK)
-      log_e("Помилка ініціалізації I2SInManager");
+      log_e("Помилка ініціалізації I2S_In_Bus");
     else
     {
       _is_inited = true;
@@ -53,7 +53,7 @@ namespace pixeler
     return !result;
   }
 
-  bool I2SInManager::isInited() const
+  bool I2S_In_Bus::isInited() const
   {
     if (!_is_inited)
       log_e("I2S вхід не ініціалізовано");
@@ -61,7 +61,7 @@ namespace pixeler
     return _is_inited;
   }
 
-  void I2SInManager::deinit()
+  void I2S_In_Bus::deinit()
   {
     if (!_is_inited)
       return;
@@ -71,7 +71,7 @@ namespace pixeler
     _is_inited = false;
   }
 
-  void I2SInManager::clearBuffer()
+  void I2S_In_Bus::clearBuffer()
   {
     if (!_is_inited)
       return;
@@ -82,7 +82,7 @@ namespace pixeler
     free(buff);
   }
 
-  esp_err_t I2SInManager::enable()
+  esp_err_t I2S_In_Bus::enable()
   {
     if (!_is_inited)
       return ESP_FAIL;
@@ -90,13 +90,13 @@ namespace pixeler
     return i2s_channel_enable(_i2s_rx_handle);
   }
 
-  void I2SInManager::disable()
+  void I2S_In_Bus::disable()
   {
     if (_is_inited)
       i2s_channel_disable(_i2s_rx_handle);
   }
 
-  void I2SInManager::reconfigSampleRate(uint32_t sample_rate)
+  void I2S_In_Bus::reconfigSampleRate(uint32_t sample_rate)
   {
     if (_is_inited)
     {
@@ -108,11 +108,11 @@ namespace pixeler
     }
   }
 
-  size_t I2SInManager::read(int16_t* out_buffer, size_t buff_len)
+  size_t I2S_In_Bus::read(int16_t* out_buffer, size_t buff_len)
   {
     if (!_is_inited)
     {
-      log_e("I2SInManager не ініціалізовано");
+      log_e("I2S_In_Bus не ініціалізовано");
       esp_restart();
     }
 
@@ -152,5 +152,5 @@ namespace pixeler
     return samples_read;
   }
 
-  I2SInManager _i2s_in;
+  I2S_In_Bus _i2s_in;
 }  // namespace pixeler

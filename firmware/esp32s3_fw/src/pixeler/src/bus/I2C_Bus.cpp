@@ -1,11 +1,11 @@
 #pragma GCC optimize("O3")
-#include "I2C_Manager.h"
+#include "I2C_Bus.h"
 
 #include <Wire.h>
 
 namespace pixeler
 {
-  bool I2C_Manager::begin(I2C_MODE mode, uint8_t slave_addr, void (*receive_callback)(int), void (*request_callback)())
+  bool I2C_Bus::begin(I2C_MODE mode, uint8_t slave_addr, void (*receive_callback)(int), void (*request_callback)())
   {
     if (_is_inited)
       return true;
@@ -34,14 +34,14 @@ namespace pixeler
     return _is_inited;
   }
 
-  void I2C_Manager::end()
+  void I2C_Bus::end()
   {
     Wire.end();
     Wire.flush();
     _is_inited = false;
   }
 
-  bool I2C_Manager::hasConnect(uint8_t addr) const
+  bool I2C_Bus::hasConnect(uint8_t addr) const
   {
     if (!isInited())
       return false;
@@ -56,7 +56,7 @@ namespace pixeler
     return success;
   }
 
-  bool I2C_Manager::write(uint8_t addr, const void* data_buff, size_t data_size) const
+  bool I2C_Bus::write(uint8_t addr, const void* data_buff, size_t data_size) const
   {
     if (!isInited())
       return false;
@@ -66,7 +66,7 @@ namespace pixeler
     return !Wire.endTransmission();
   }
 
-  bool I2C_Manager::writeRegister8(uint8_t addr, uint8_t reg, const void* data_buff, size_t data_size) const
+  bool I2C_Bus::writeRegister8(uint8_t addr, uint8_t reg, const void* data_buff, size_t data_size) const
   {
     if (!isInited())
       return false;
@@ -77,7 +77,7 @@ namespace pixeler
     return Wire.endTransmission() == 0;
   }
 
-  bool I2C_Manager::writeRegister16(uint8_t addr, uint16_t reg, const void* data_buff, size_t data_size) const
+  bool I2C_Bus::writeRegister16(uint8_t addr, uint16_t reg, const void* data_buff, size_t data_size) const
   {
     if (!isInited())
       return false;
@@ -89,14 +89,14 @@ namespace pixeler
     return Wire.endTransmission() == 0;
   }
 
-  bool I2C_Manager::send(const void* data_buff, size_t data_size) const
+  bool I2C_Bus::send(const void* data_buff, size_t data_size) const
   {
     if (!isInited())
       return false;
     return Wire.write(static_cast<const uint8_t*>(data_buff), data_size) == data_size;
   }
 
-  bool I2C_Manager::readRegister8(uint8_t addr, uint8_t reg, void* out_data_buff, uint8_t data_size) const
+  bool I2C_Bus::readRegister8(uint8_t addr, uint8_t reg, void* out_data_buff, uint8_t data_size) const
   {
     if (!isInited())
       return false;
@@ -109,7 +109,7 @@ namespace pixeler
     return read(addr, out_data_buff, data_size);
   }
 
-  bool I2C_Manager::readRegister16(uint8_t addr, uint16_t reg, void* out_data_buff, uint8_t data_size) const
+  bool I2C_Bus::readRegister16(uint8_t addr, uint16_t reg, void* out_data_buff, uint8_t data_size) const
   {
     if (!isInited())
       return false;
@@ -123,7 +123,7 @@ namespace pixeler
     return read(addr, out_data_buff, data_size);
   }
 
-  bool I2C_Manager::read(uint8_t addr, void* out_data_buff, uint8_t data_size) const
+  bool I2C_Bus::read(uint8_t addr, void* out_data_buff, uint8_t data_size) const
   {
     if (!isInited())
       return false;
@@ -146,7 +146,7 @@ namespace pixeler
     return true;
   }
 
-  bool I2C_Manager::receive(void* out_data_buff, size_t data_size) const
+  bool I2C_Bus::receive(void* out_data_buff, size_t data_size) const
   {
     if (!isInited())
       return false;
@@ -166,7 +166,7 @@ namespace pixeler
     return i == data_size;
   }
 
-  void I2C_Manager::beginTransmission(uint8_t addr) const
+  void I2C_Bus::beginTransmission(uint8_t addr) const
   {
     if (!isInited())
       return;
@@ -174,12 +174,12 @@ namespace pixeler
     Wire.beginTransmission(addr);
   }
 
-  bool I2C_Manager::endTransmission() const
+  bool I2C_Bus::endTransmission() const
   {
     return !Wire.endTransmission();
   }
 
-  bool I2C_Manager::isInited() const
+  bool I2C_Bus::isInited() const
   {
     if (!_is_inited)
     {
@@ -190,7 +190,7 @@ namespace pixeler
     return true;
   }
 
-  void I2C_Manager::scanBus() const
+  void I2C_Bus::scanBus() const
   {
     if (!isInited())
       return;
@@ -226,10 +226,10 @@ namespace pixeler
     }
   }
 
-  void I2C_Manager::setBufferSize(size_t buffer_size)
+  void I2C_Bus::setBufferSize(size_t buffer_size)
   {
     Wire.setBufferSize(buffer_size);
   }
 
-  I2C_Manager _i2c;
+  I2C_Bus _i2c;
 }  // namespace pixeler

@@ -1,8 +1,8 @@
 #pragma once
 #include "./DS3231ComnConst.h"
 #include "./DS3231DateTime.h"
+#include "pixeler/src/bus/I2C_Bus.h"
 #include "pixeler/src/defines.h"
-#include "pixeler/src/manager/I2C_Manager.h"
 
 namespace pixeler
 {
@@ -28,7 +28,5 @@ namespace pixeler
     const uint8_t STS_BIT_BSY{2};
     const uint8_t STS_BIT_EN32KHZ{3};
     const uint8_t STS_BIT_OSF{7};
-
-    I2C_Manager _i2c;
   };
 }  // namespace pixeler

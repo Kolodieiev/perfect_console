@@ -1,11 +1,11 @@
 #pragma GCC optimize("O3")
-#include "SPI_Manager.h"
+#include "SPI_Bus.h"
 
 namespace pixeler
 {
-  std::unordered_map<uint8_t, SPIClass*> SPI_Manager::_spi_map;
+  std::unordered_map<uint8_t, SPIClass*> SPI_Bus::_spi_map;
 
-  bool SPI_Manager::initBus(uint8_t bus_num, int8_t sclk_pin, int8_t miso_pin, int8_t mosi_pin)
+  bool SPI_Bus::initBus(uint8_t bus_num, int8_t sclk_pin, int8_t miso_pin, int8_t mosi_pin)
   {
     auto it = _spi_map.find(bus_num);
     if (it != _spi_map.end())
@@ -37,7 +37,7 @@ namespace pixeler
     }
   }
 
-  void SPI_Manager::deinitBus(uint8_t bus_num)
+  void SPI_Bus::deinitBus(uint8_t bus_num)
   {
     auto it = _spi_map.find(bus_num);
     if (it == _spi_map.end())
@@ -48,7 +48,7 @@ namespace pixeler
     _spi_map.erase(it);
   }
 
-  SPIClass* SPI_Manager::getSpi4Bus(uint8_t bus_num)
+  SPIClass* SPI_Bus::getSpi4Bus(uint8_t bus_num)
   {
     auto it = _spi_map.find(bus_num);
 

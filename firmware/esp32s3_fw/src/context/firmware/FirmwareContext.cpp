@@ -3,13 +3,14 @@
 #include "../WidgetCreator.h"
 #include "Update.h"
 #include "pixeler/src/manager/FileManager.h"
-#include "pixeler/src/util/file/FileStream.h"
+#include "pixeler/src/manager/file/FileStream.h"
 
 const char STR_FIRMWARE_FN[] = "/firmware.bin";
 const char STR_UPDATE_FIRMWARE[] = "Оновлення прошивки";
 
-extern "C" bool verifyRollbackLater() {
-    return true;
+extern "C" bool verifyRollbackLater()
+{
+  return true;
 }
 
 FirmwareContext::FirmwareContext()

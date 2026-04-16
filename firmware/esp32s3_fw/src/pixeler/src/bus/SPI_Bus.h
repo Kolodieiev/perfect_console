@@ -1,5 +1,5 @@
 /**
- * @file SPI_Manager.h
+ * @file SPI_Bus.h
  * @brief Менеджер ініціалізції та деініціалізації пристроїв SPI
  * @details Ініціалізує та деініціалізує пристрої SPI. 
  * Слідкує, щоб не виникало повторної ініціалізації раніше ініціалізованої шини.
@@ -15,7 +15,7 @@
 
 namespace pixeler
 {
-  class SPI_Manager
+  class SPI_Bus
   {
   public:
     /**
@@ -46,13 +46,13 @@ namespace pixeler
      */
     static SPIClass* getSpi4Bus(uint8_t bus_num);
 
-    SPI_Manager(const SPI_Manager&) = delete;
-    SPI_Manager& operator=(const SPI_Manager&) = delete;
-    SPI_Manager(SPI_Manager&&) = delete;
-    SPI_Manager& operator=(SPI_Manager&&) = delete;
+    SPI_Bus(const SPI_Bus&) = delete;
+    SPI_Bus& operator=(const SPI_Bus&) = delete;
+    SPI_Bus(SPI_Bus&&) = delete;
+    SPI_Bus& operator=(SPI_Bus&&) = delete;
 
   private:
-    SPI_Manager() {}
+    SPI_Bus() {}
     static std::unordered_map<uint8_t, SPIClass*> _spi_map;
   };
 }  // namespace pixeler

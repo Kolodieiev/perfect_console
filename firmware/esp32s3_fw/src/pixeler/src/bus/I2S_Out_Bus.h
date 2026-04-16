@@ -1,5 +1,5 @@
 /**
- * @file I2SOutManager.h
+ * @file I2S_Out_Bus.h
  * @brief Абстрація над бібліотекою I2S для надсилання даних на зовнішню звукову карту
  * @details Не повинен бути реалізований в користувацькому коді.
  * Доступ до класу повинен виконуватися тільки через глобальний об'єкт "_i2s_out".
@@ -14,7 +14,7 @@
 
 namespace pixeler
 {
-  class I2SOutManager
+  class I2S_Out_Bus
   {
   public:
     /**
@@ -105,5 +105,5 @@ namespace pixeler
    * @brief Глобальний об'єкт для виводу аудіо по шині I2S.
    *
    */
-  extern I2SOutManager _i2s_out;
+  extern I2S_Out_Bus _i2s_out;
 }  // namespace pixeler

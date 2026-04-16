@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 #include "pixeler/setup/input_setup.h"
-#include "pixeler/src/manager/I2C_Manager.h"
+#include "pixeler/src/bus/I2C_Bus.h"
 
 #ifdef TOUCHSCREEN_SUPPORT
 
