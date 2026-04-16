@@ -3,7 +3,6 @@
 #include "../WidgetCreator.h"
 #include "pixeler/lib/neo_pixel/Adafruit_NeoPixel.h"
 #include "pixeler/src/manager/FileManager.h"
-#include "pixeler/src/manager/I2C_Manager.h"
 #include "pixeler/src/manager/SettingsManager.h"
 #include "pixeler/src/manager/WiFiManager.h"
 
