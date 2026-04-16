@@ -44,10 +44,8 @@ namespace pixeler
           log_e("Невідомий ідентифікатор контексту: %u", next_context_id);
           esp_restart();
         }
-        else
-        {
-          context = it->second();
-        }
+
+        context = it->second();
       }
 
       if (millis() - ts > WDT_GUARD_TIME)
