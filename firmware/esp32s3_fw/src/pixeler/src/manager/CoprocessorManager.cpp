@@ -1,7 +1,7 @@
 #pragma GCC optimize("O3")
 #include "CoprocessorManager.h"
 
-#include "../manager/I2C_Manager.h"
+#include "pixeler/src/bus/I2C_Bus.h"
 
 namespace pixeler
 {
