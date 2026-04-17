@@ -2,7 +2,6 @@
 #pragma GCC optimize("O3")
 
 #include "pixeler/lib/server/FileServer.h"
-#include "pixeler/src/context/IContext.h"
 #include "pixeler/src/manager/FileManager.h"
 //
 #include "pixeler/lib/lua/context/LuaContext.h"
