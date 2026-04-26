@@ -19,7 +19,7 @@
 // -------------------------------- Підключи нижче заголовкові файли контекстів першого рівня
 #include "context/files/FilesContext.h"
 #include "context/firmware/FirmwareContext.h"
-#include "context/games/GamesListContext.h"
+#include "context/games/GameListContext.h"
 #include "context/home/HomeContext.h"
 #include "context/menu/MenuContext.h"
 #include "context/mp3/Mp3Context.h"
@@ -28,9 +28,8 @@
 #include "context/splash/SplashContext.h"
 #include "context/wifi/WiFiContext.h"
 // Ігрові контексти
-// #include "context/games/simple_rpg/SimpleRpgContext.h"
 #include "context/games/sokoban/SokobanContext.h"
-// #include "context/games/test_server/TestServerContext.h"
+#include "context/games/chess/ChessContext.h"
 
 namespace pixeler
 {
@@ -52,21 +51,19 @@ namespace pixeler
       {ContextID::ID_CONTEXT_FILES, []()
        { return new FilesContext(); }},
       {ContextID::ID_CONTEXT_GAMES, []()
-       { return new GamesListContext(); }},
+       { return new GameListContext(); }},
       {ContextID::ID_CONTEXT_PREF_SEL, []()
        { return new PrefSelectContext(); }},
       {ContextID::ID_CONTEXT_READER, []()
        { return new ReaderContext(); }},
       {ContextID::ID_CONTEXT_FIRMWARE, []()
        { return new FirmwareContext(); }},
-      {ContextID::ID_CONTEXT_SOKOBAN, []()
-       { return new sokoban::SokobanContext(); }},
-      // {ContextID::ID_CONTEXT_TEST_SERVER, []()
-      //  { return new test_server::TestServerContext(); }},
-      // {ContextID::ID_CONTEXT_SIMPLE_RPG, []()
-      //  { return new simple_rpg::SimpleRpgContext(); }},
       {ContextID::ID_CONTEXT_WIFI, []()
        { return new WiFiContext(); }},
+      {ContextID::ID_CONTEXT_SOKOBAN, []()
+       { return new sokoban::SokobanContext(); }},
+      {ContextID::ID_CONTEXT_CHESS, []()
+       { return new chess::ChessContext(); }},
   };
 }  // namespace pixeler
 

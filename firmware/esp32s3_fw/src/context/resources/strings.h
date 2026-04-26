@@ -87,19 +87,17 @@ const char STR_BRIGHT[] = "Яскравість";
 const char STR_WIFI_POWER[] = "Потужність WiFi";
 
 //
+const char STR_PREF_NICKNAME[] = "nickname";
+const char STR_PREF_SERVER_SSID[] = "serverssid";
+const char STR_PREF_SERVER_PWD[] = "serverpwd";
 
-const char STR_MULTI_GAME[] = "Мультиплеєр";
-const char STR_SOLO_GAME[] = "Один гравець";
-const char STR_TEST_GAME_NICK[] = "testgamenick";
-const char STR_TEST_GAME_C_PWD[] = "testgamecpwd";
-const char STR_TEST_GAME_S_PWD[] = "testgamespwd";
-const char STR_TEST_GAME_S_NAME[] = "testgamesname";
+const char STR_MODE_ONE_PL[] = "Один гравець";
+const char STR_MODE_TWO_PL[] = "Два гравці";
+const char STR_MODE_CLIENT[] = "Клієнт";
+const char STR_MODE_SERVER[] = "Сервер";
 const char STR_NICKNAME[] = "Нікнейм";
-const char STR_ENTER_NICK[] = "Введіть нікнейм";
 const char STR_SERV_NAME[] = "Назва сервера";
-const char STR_ENTER_SERV_NAME[] = "Введіть назву сервера";
-const char STR_SERV_PWD[] = "Пароль від сервера";
-const char STR_ENTER_SERV_PWD[] = "Введіть пароль від сервера";
+const char STR_SERV_PWD[] = "Пароль до сервера";
 
 //
 const char STR_EMPTY_BAT[] = "0.00";
