@@ -40,7 +40,7 @@ bool Arduino_Canvas::begin(int32_t speed)
 
   if (!_framebuffer)
   {
-    log_e("Помилка виділення пам'яті для буферів дисплея");
+    log_e("Memory allocation failed");
     esp_restart();
   }
 
@@ -57,7 +57,7 @@ bool Arduino_Canvas::begin(int32_t speed)
 
   if (!_framebuffer2)
   {
-    log_e("Помилка виділення пам'яті для буферів дисплея");
+    log_e("Memory allocation failed");
     esp_restart();
   }
 
