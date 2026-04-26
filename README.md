@@ -16,6 +16,7 @@
 Демонстрація можливостей ігрового рушія(зібрано в портованій версії для ПК):
 <br>
 ![alt text](resources/images/screenshot/rpg.png)
+![alt text](resources/images/screenshot/chess1.png)
 <br>
 Більше скриншотів можна знайти в [Screenshots](resources/images/screenshot)
 <br>
