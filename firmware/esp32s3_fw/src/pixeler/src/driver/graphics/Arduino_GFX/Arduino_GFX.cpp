@@ -1542,8 +1542,6 @@ void Arduino_GFX::setPPAState(bool state)
 {
 #if CONFIG_IDF_TARGET_ESP32P4
   _ppa_enabled = state;
-#else
-  log_e("Модуль PPA відсутній на даному чіпі");
 #endif  // #if CONFIG_IDF_TARGET_ESP32P4
 }
 
