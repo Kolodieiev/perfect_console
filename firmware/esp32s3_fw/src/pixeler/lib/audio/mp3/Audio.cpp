@@ -6142,7 +6142,7 @@ void Audio::computeLimit()
   /* logarithmic scaling of balance, too? */
   if (m_balance > 0)
   {
-    r -= (double)__builtin_abs(m_balance) / 16;
+    r -= (double)m_balance / 16;
   }
   else if (m_balance < 0)
   {
