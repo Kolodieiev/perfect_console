@@ -327,17 +327,6 @@ public:
 
 #endif  // #if CONFIG_IDF_TARGET_ESP32P4
 
-protected:
-  void drawBitmapToFramebuffer(
-      const uint16_t* from_bitmap,
-      int16_t bitmap_w,
-      int16_t bitmap_h,
-      uint16_t* framebuffer,
-      int16_t x,
-      int16_t y,
-      int16_t framebuffer_w,
-      int16_t framebuffer_h);
-
   void drawBitmapToFramebufferRotate1(
       const uint16_t* from_bitmap,
       int16_t bitmap_w,
@@ -359,6 +348,17 @@ protected:
       int16_t framebuffer_h);
 
   void drawBitmapToFramebufferRotate3(
+      const uint16_t* from_bitmap,
+      int16_t bitmap_w,
+      int16_t bitmap_h,
+      uint16_t* framebuffer,
+      int16_t x,
+      int16_t y,
+      int16_t framebuffer_w,
+      int16_t framebuffer_h);
+
+protected:
+  void drawBitmapToFramebuffer(
       const uint16_t* from_bitmap,
       int16_t bitmap_w,
       int16_t bitmap_h,
